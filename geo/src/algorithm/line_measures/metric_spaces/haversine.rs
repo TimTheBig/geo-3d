@@ -1,7 +1,8 @@
 use num_traits::FromPrimitive;
 
 use super::super::{Bearing, Destination, Distance, InterpolatePoint};
-use crate::{CoordFloat, Point};
+use crate::utils::normalize_longitude;
+use crate::{CoordFloat, Point, MEAN_EARTH_RADIUS};
 
 /// A spherical model of the earth using the [haversine formula].
 ///
@@ -14,7 +15,46 @@ use crate::{CoordFloat, Point};
 ///
 /// [haversine formula]: https://en.wikipedia.org/wiki/Haversine_formula//
 /// [great circle]: https://en.wikipedia.org/wiki/Great_circle
-pub struct Haversine;
+pub struct Haversine {
+    mean_earth_radius: f64,
+}
+
+impl Default for Haversine {
+    fn default() -> Self {
+        Self {
+            mean_earth_radius: MEAN_EARTH_RADIUS,
+        }
+    }
+}
+
+impl Haversine {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Create a new Haversine metric space with a custom mean earth radius.
+    pub fn with_mean_earth_radius(mean_earth_radius: f64) -> Self {
+        Self { mean_earth_radius }
+    }
+
+    // TODO: What to call this? I think the vast majority of users *won't* want to customize mean_earth_radius,
+    // so I think we should optimize naming for them, while making it not toooo arduous for the minority of use cases that want to customize mean_earth_radius
+    pub fn _distance<F: CoordFloat + FromPrimitive>(
+        &self,
+        origin: Point<F>,
+        destination: Point<F>,
+    ) -> F {
+        let two = F::one() + F::one();
+        let theta1 = origin.y().to_radians();
+        let theta2 = destination.y().to_radians();
+        let delta_theta = (destination.y() - origin.y()).to_radians();
+        let delta_lambda = (destination.x() - origin.x()).to_radians();
+        let a = (delta_theta / two).sin().powi(2)
+            + theta1.cos() * theta2.cos() * (delta_lambda / two).sin().powi(2);
+        let c = two * a.sqrt().asin();
+        F::from(self.mean_earth_radius).unwrap() * c
+    }
+}
 
 impl<F: CoordFloat + FromPrimitive> Bearing<F> for Haversine {
     /// Returns the bearing from `origin` to `destination` in degrees along a [great circle].
@@ -119,7 +159,7 @@ impl<F: CoordFloat + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversin
     ///
     /// [haversine formula]: https://en.wikipedia.org/wiki/Haversine_formula
     fn distance(origin: Point<F>, destination: Point<F>) -> F {
-        crate::algorithm::HaversineDistance::haversine_distance(&origin, &destination)
+        Self::default()._distance(origin, destination)
     }
 }
 
@@ -283,6 +323,13 @@ mod tests {
             assert_relative_eq!(
                 5_570_230., // meters
                 distance.round()
+            );
+
+            let half_radius_haversine = Haversine::with_mean_earth_radius(MEAN_EARTH_RADIUS / 2.0);
+            let half_radius_distance = half_radius_haversine._distance(new_york_city, london);
+            assert_relative_eq!(
+                2_785_115., // meters
+                half_radius_distance.round()
             );
         }
     }
