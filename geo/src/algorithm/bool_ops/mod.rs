@@ -128,9 +128,14 @@ pub enum OpType {
 
 /// Returns the [BooleanOps::union] of all contained geometries
 ///
-/// This is more efficient than a manual union, but may result in increased memory use due the the use of an R*-tree
+/// This is more efficient than a manual union, but may result in increased memory use due to the use of an R*-tree
 pub trait UnaryUnion {
     type Scalar: BoolOpsNum;
+
+    /// Construct a tree of all the input geometries and progressively union them from the "bottom up"
+    ///
+    /// This is considerably more efficient than successively adding new [Polygon]s to an ever more complex [Polygon].
+    /// The output [MultiPolygon] will contain a single member.
     fn unary_union(&self) -> MultiPolygon<Self::Scalar>;
 }
 
@@ -159,7 +164,7 @@ where
             .fold(init(), |accum, child| match child {
                 RTreeNode::Leaf(value) => fold(accum, value),
                 RTreeNode::Parent(parent) => {
-                    let value = inner(&parent, init, fold, reduce);
+                    let value = inner(parent, init, fold, reduce);
 
                     reduce(accum, value)
                 }
@@ -185,11 +190,14 @@ impl<T: BoolOpsNum> BooleanOps for MultiPolygon<T> {
     }
 }
 
-impl<T: BoolOpsNum> UnaryUnion for MultiPolygon<T>
+/// Allows the unary union operation to be performed on any container which can produce items of type `Polygon<T>`
+impl<T: BoolOpsNum, C> UnaryUnion for C
 where
+    C: IntoIterator<Item = Polygon<T>> + Clone,
     Polygon<T>: RTreeObject,
 {
     type Scalar = T;
+
     fn unary_union(&self) -> MultiPolygon<Self::Scalar> {
         let init = || MultiPolygon::<T>::new(vec![]);
 
@@ -201,7 +209,7 @@ where
         let reduce = |accum1: MultiPolygon<T>, accum2: MultiPolygon<T>| -> MultiPolygon<T> {
             accum1.union(&accum2)
         };
-        let rtree = RTree::bulk_load(self.0.clone());
+        let rtree = RTree::bulk_load(self.clone().into_iter().collect());
 
         bottom_up_fold_reduce(&rtree, init, fold, reduce)
     }
