@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add Unary Union algorithm for fast union ops on adjacent / overlapping geometries
+  - <https://github.com/georust/geo/pull/1246>
+  - Adds an optional dependency on Rayon (previously depended on by i_overlay)
+  - Bumps minimum rstar version to 0.12.2
+
 ## 0.29.2 - 2024.11.15
 
 - Pin `i_overlay` to < 1.8.0 to work around [recursion bug](https://github.com/georust/geo/issues/1270).
