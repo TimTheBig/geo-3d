@@ -67,7 +67,8 @@
 //!
 //! ## Boolean Operations
 //!
-//! - **[`BooleanOps`]**: combine or split (Multi)Polygons using intersecton, union, xor, or difference operations.
+//! - **[`BooleanOps`]**: Combine or split (Multi)Polygons using intersecton, union, xor, or difference operations
+//! - **[`UnaryUnion`]**: A fast union of a collection of [`Polygon`]s, backed by an R*-tree
 //!
 //! ## Outlier Detection
 //!
