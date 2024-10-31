@@ -135,7 +135,6 @@ pub trait UnaryUnion {
     /// Construct a tree of all the input geometries and progressively union them from the "bottom up"
     ///
     /// This is considerably more efficient than successively adding new [Polygon]s to an ever more complex [Polygon].
-    /// The output [MultiPolygon] will contain a single member.
     fn unary_union(&self) -> MultiPolygon<Self::Scalar>;
 }
 
