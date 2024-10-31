@@ -1,5 +1,16 @@
-use super::BooleanOps;
-use crate::{wkt, Convert, MultiPolygon, Relate};
+use super::{BooleanOps, UnaryUnion};
+use crate::{wkt, Convert, MultiPolygon, Polygon, Relate};
+
+#[test]
+fn test_unary_union() {
+    let poly1: Polygon = wkt!(POLYGON((204.0 287.0,206.69670020700084 288.2213844497616,200.38308697914755 288.338793163584,204.0 287.0)));
+    let poly2: Polygon = wkt!(POLYGON((210.0 290.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
+    let poly3: Polygon = wkt!(POLYGON((211.0 292.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
+
+    let polys = vec![poly1, poly2, poly3];
+    let res = polys.unary_union();
+    assert_eq!(res.0.len(), 1);
+}
 
 #[test]
 fn jts_test_overlay_la_1() {
