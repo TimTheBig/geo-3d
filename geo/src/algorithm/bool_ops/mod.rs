@@ -5,6 +5,7 @@ mod tests;
 pub use i_overlay_integration::BoolOpsNum;
 
 use crate::geometry::{LineString, MultiLineString, MultiPolygon, Polygon};
+use rstar::{ParentNode, RTree, RTreeNode, RTreeObject};
 
 /// Boolean Operations on geometry.
 ///
@@ -125,6 +126,49 @@ pub enum OpType {
     Xor,
 }
 
+/// Returns the [BooleanOps::union] of all contained geometries
+///
+/// This is more efficient than a manual union, but may result in increased memory use due the the use of an R*-tree
+pub trait UnaryUnion {
+    type Scalar: BoolOpsNum;
+    fn unary_union(&self) -> MultiPolygon<Self::Scalar>;
+}
+
+fn bottom_up_fold_reduce<T, S, I, F, R>(
+    tree: &RTree<T>,
+    mut init: I,
+    mut fold: F,
+    mut reduce: R,
+) -> S
+where
+    T: RTreeObject,
+    I: FnMut() -> S,
+    F: FnMut(S, &T) -> S,
+    R: FnMut(S, S) -> S,
+{
+    fn inner<T, S, I, F, R>(parent: &ParentNode<T>, init: &mut I, fold: &mut F, reduce: &mut R) -> S
+    where
+        T: RTreeObject,
+        I: FnMut() -> S,
+        F: FnMut(S, &T) -> S,
+        R: FnMut(S, S) -> S,
+    {
+        parent
+            .children()
+            .iter()
+            .fold(init(), |accum, child| match child {
+                RTreeNode::Leaf(value) => fold(accum, value),
+                RTreeNode::Parent(parent) => {
+                    let value = inner(&parent, init, fold, reduce);
+
+                    reduce(accum, value)
+                }
+            })
+    }
+
+    inner(tree.root(), &mut init, &mut fold, &mut reduce)
+}
+
 impl<T: BoolOpsNum> BooleanOps for Polygon<T> {
     type Scalar = T;
 
@@ -138,5 +182,27 @@ impl<T: BoolOpsNum> BooleanOps for MultiPolygon<T> {
 
     fn rings(&self) -> impl Iterator<Item = &LineString<Self::Scalar>> {
         self.0.iter().flat_map(|p| p.rings())
+    }
+}
+
+impl<T: BoolOpsNum> UnaryUnion for MultiPolygon<T>
+where
+    Polygon<T>: RTreeObject,
+{
+    type Scalar = T;
+    fn unary_union(&self) -> MultiPolygon<Self::Scalar> {
+        let init = || MultiPolygon::<T>::new(vec![]);
+
+        let fold = |mut accum: MultiPolygon<T>, poly: &Polygon<T>| -> MultiPolygon<T> {
+            accum = accum.union(poly);
+            accum
+        };
+
+        let reduce = |accum1: MultiPolygon<T>, accum2: MultiPolygon<T>| -> MultiPolygon<T> {
+            accum1.union(&accum2)
+        };
+        let rtree = RTree::bulk_load(self.0.clone());
+
+        bottom_up_fold_reduce(&rtree, init, fold, reduce)
     }
 }
