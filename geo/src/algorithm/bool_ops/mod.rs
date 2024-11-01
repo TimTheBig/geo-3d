@@ -228,7 +228,7 @@ where
     type Scalar = T;
 
     fn unary_union(&self) -> MultiPolygon<Self::Scalar> {
-        // these three funcions drive the union operation
+        // these three functions drive the union operation
         let init = || MultiPolygon::<T>::new(vec![]);
         let fold = |mut accum: MultiPolygon<T>, poly: &Polygon<T>| -> MultiPolygon<T> {
             accum = accum.union(poly);
