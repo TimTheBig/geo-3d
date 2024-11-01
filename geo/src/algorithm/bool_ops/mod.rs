@@ -27,6 +27,12 @@ use rstar::{ParentNode, RTree, RTreeNode, RTreeObject};
 /// In particular, taking `union` with an empty geom should remove degeneracies
 /// and fix invalid polygons as long the interior-exterior requirement above is
 /// satisfied.
+///
+/// # Performance
+///
+/// For union operations on a collection of overlapping and / or adjacent [`Polygon`]s
+/// (e.g. contained in a `Vec` or a [`MultiPolygon`]), using [`UnaryUnion`] will
+/// yield far better performance.
 pub trait BooleanOps {
     type Scalar: BoolOpsNum;
 
@@ -126,7 +132,7 @@ pub enum OpType {
     Xor,
 }
 
-/// Returns the [BooleanOps::union] of all contained geometries
+/// Efficient [BooleanOps::union] of adjacent / overlapping geometries
 ///
 /// For geometries with a high degree of overlap or adjacency
 /// (for instance, merging a large contiguous area made up of many adjacent polygons)
