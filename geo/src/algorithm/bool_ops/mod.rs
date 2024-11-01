@@ -168,7 +168,7 @@ pub trait UnaryUnion {
 // This function carries out a full post-order traversal of the tree, building up MultiPolygons from inside to outside.
 // Though the operation is carried out via fold() over the tree iterator, there are two actual nested operations:
 // "fold" operations on leaf nodes build up output MultiPolygons by adding Polygons to them via union and
-// "reduce" operations on parent nodes combine these output MultiPolygons from leaf operations via union
+// "reduce" operations on parent nodes combine these output MultiPolygons from leaf operations by recursion
 fn bottom_up_fold_reduce<T, S, I, F, R>(
     tree: &RTree<T>,
     mut init: I,
