@@ -128,16 +128,47 @@ pub enum OpType {
 
 /// Returns the [BooleanOps::union] of all contained geometries
 ///
-/// This is more efficient than a manual union, but may result in increased memory use due to the use of an R*-tree
+/// For geometries with a high degree of overlap or adjacency
+/// (for instance, merging a large contiguous area made up of many adjacent polygons)
+/// this method will be orders of magnitude faster than a manual iteration and union approach.
 pub trait UnaryUnion {
     type Scalar: BoolOpsNum;
 
     /// Construct a tree of all the input geometries and progressively union them from the "bottom up"
     ///
-    /// This is considerably more efficient than successively adding new [Polygon]s to an ever more complex [Polygon].
+    /// This is considerably more efficient than using e.g. `fold()` over an iterator of Polygons.
+    /// # Examples
+    ///
+    /// ```
+    /// use geo::{BooleanOps, UnaryUnion};
+    /// use geo::{MultiPolygon, polygon};
+    /// let poly1 = polygon![
+    ///     (x: 0.0, y: 0.0),
+    ///     (x: 4.0, y: 0.0),
+    ///     (x: 4.0, y: 4.0),
+    ///     (x: 0.0, y: 4.0),
+    ///     (x: 0.0, y: 0.0),
+    /// ];
+    /// let poly2 = polygon![
+    ///     (x: 4.0, y: 0.0),
+    ///     (x: 8.0, y: 0.0),
+    ///     (x: 8.0, y: 4.0),
+    ///     (x: 4.0, y: 4.0),
+    ///     (x: 4.0, y: 0.0),
+    /// ];
+    /// let merged = &poly1.union(&poly2);
+    /// let mp = MultiPolygon(vec![poly1, poly2]);
+    /// // A larger single rectangle
+    /// let combined = mp.unary_union();
+    /// assert_eq!(&combined, merged);
+    /// ```
     fn unary_union(&self) -> MultiPolygon<Self::Scalar>;
 }
 
+// This function carries out a full post-order traversal of the tree, building up MultiPolygons from inside to outside.
+// Though the operation is carried out via fold() over the tree iterator, there are two actual nested operations:
+// "fold" operations on leaf nodes build up output MultiPolygons by adding Polygons to them via union and
+// "reduce" operations on parent nodes combine these output MultiPolygons from leaf operations via union
 fn bottom_up_fold_reduce<T, S, I, F, R>(
     tree: &RTree<T>,
     mut init: I,
@@ -164,7 +195,6 @@ where
                 RTreeNode::Leaf(value) => fold(accum, value),
                 RTreeNode::Parent(parent) => {
                     let value = inner(parent, init, fold, reduce);
-
                     reduce(accum, value)
                 }
             })
@@ -198,13 +228,12 @@ where
     type Scalar = T;
 
     fn unary_union(&self) -> MultiPolygon<Self::Scalar> {
+        // these three funcions drive the union operation
         let init = || MultiPolygon::<T>::new(vec![]);
-
         let fold = |mut accum: MultiPolygon<T>, poly: &Polygon<T>| -> MultiPolygon<T> {
             accum = accum.union(poly);
             accum
         };
-
         let reduce = |accum1: MultiPolygon<T>, accum2: MultiPolygon<T>| -> MultiPolygon<T> {
             accum1.union(&accum2)
         };
