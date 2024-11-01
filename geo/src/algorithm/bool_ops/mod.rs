@@ -220,9 +220,10 @@ impl<T: BoolOpsNum> BooleanOps for MultiPolygon<T> {
 }
 
 /// Allows the unary union operation to be performed on any container which can produce items of type `Polygon<T>`
-impl<T: BoolOpsNum, C> UnaryUnion for C
+impl<T, Container> UnaryUnion for Container
 where
-    C: IntoIterator<Item = Polygon<T>> + Clone,
+    T: BoolOpsNum,
+    Container: IntoIterator<Item = Polygon<T>> + Clone,
     Polygon<T>: RTreeObject,
 {
     type Scalar = T;
@@ -238,7 +239,6 @@ where
             accum1.union(&accum2)
         };
         let rtree = RTree::bulk_load(self.clone().into_iter().collect());
-
         bottom_up_fold_reduce(&rtree, init, fold, reduce)
     }
 }
