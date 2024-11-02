@@ -7,9 +7,17 @@ fn test_unary_union() {
     let poly2: Polygon = wkt!(POLYGON((210.0 290.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
     let poly3: Polygon = wkt!(POLYGON((211.0 292.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
 
-    let polys = vec![poly1, poly2, poly3];
-    let res = polys.unary_union();
-    assert_eq!(res.0.len(), 1);
+    let polys = vec![poly1.clone(), poly2.clone(), poly3.clone()];
+    let poly_union = polys.unary_union();
+    assert_eq!(poly_union.0.len(), 1);
+
+    let multi_poly_1 = MultiPolygon::new(vec![poly1, poly2]);
+    let multi_poly_2 = MultiPolygon::new(vec![poly3]);
+    let multi_polys = vec![multi_poly_1, multi_poly_2];
+    let multi_poly_union = multi_polys.unary_union();
+    // FIXME: This should be 1, same as poly_union, right?
+    assert_eq!(multi_poly_union.0.len(), 1);
+    assert_eq!(poly_union, multi_poly_union);
 }
 
 #[test]

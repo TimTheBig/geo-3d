@@ -226,18 +226,18 @@ impl<T: BoolOpsNum> BooleanOps for MultiPolygon<T> {
 }
 
 /// Allows the unary union operation to be performed on any container which can produce items of type `Polygon<T>`
-impl<T, Container> UnaryUnion for Container
+impl<T, Boppable, BoppableCollection> UnaryUnion for BoppableCollection
 where
     T: BoolOpsNum,
-    Container: IntoIterator<Item = Polygon<T>> + Clone,
-    Polygon<T>: RTreeObject,
+    Boppable: BooleanOps<Scalar = T> + RTreeObject,
+    BoppableCollection: IntoIterator<Item = Boppable> + Clone,
 {
     type Scalar = T;
 
     fn unary_union(&self) -> MultiPolygon<Self::Scalar> {
         // these three functions drive the union operation
         let init = || MultiPolygon::<T>::new(vec![]);
-        let fold = |mut accum: MultiPolygon<T>, poly: &Polygon<T>| -> MultiPolygon<T> {
+        let fold = |mut accum: MultiPolygon<T>, poly: &Boppable| -> MultiPolygon<T> {
             accum = accum.union(poly);
             accum
         };
