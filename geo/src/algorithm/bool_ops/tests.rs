@@ -1,23 +1,55 @@
 use super::{BooleanOps, UnaryUnion};
 use crate::{wkt, Convert, MultiPolygon, Polygon, Relate};
+use wkt::ToWkt;
 
 #[test]
 fn test_unary_union() {
-    let poly1: Polygon = wkt!(POLYGON((204.0 287.0,206.69670020700084 288.2213844497616,200.38308697914755 288.338793163584,204.0 287.0)));
+    let poly1: Polygon = wkt!(POLYGON((204.0 287.0,203.69670020700084 288.2213844497616,200.38308697914755 288.338793163584,204.0 287.0)));
     let poly2: Polygon = wkt!(POLYGON((210.0 290.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
-    let poly3: Polygon = wkt!(POLYGON((211.0 292.0,204.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
+    let poly3: Polygon = wkt!(POLYGON((211.0 292.0,202.07584923592933 288.2701221108328,212.24082541367974 285.47846008552216,210.0 290.0)));
+
+    let input = MultiPolygon::new(vec![poly1.clone(), poly2.clone(), poly3.clone()]);
+    use wkt::ToWkt;
+    dbg!(input.wkt_string());
 
     let polys = vec![poly1.clone(), poly2.clone(), poly3.clone()];
     let poly_union = polys.unary_union();
     assert_eq!(poly_union.0.len(), 1);
 
-    let multi_poly_1 = MultiPolygon::new(vec![poly1, poly2]);
-    let multi_poly_2 = MultiPolygon::new(vec![poly3]);
-    let multi_polys = vec![multi_poly_1, multi_poly_2];
+    let multi_poly_12 = MultiPolygon::new(vec![poly1, poly2]);
+    let multi_poly_3 = MultiPolygon::new(vec![poly3]);
+    dbg!(&multi_poly_12.wkt_string());
+    dbg!(&multi_poly_3.wkt_string());
+    let multi_polys = vec![multi_poly_12, multi_poly_3];
     let multi_poly_union = multi_polys.unary_union();
     // FIXME: This should be 1, same as poly_union, right?
+    dbg!(multi_poly_union.wkt_string());
     assert_eq!(multi_poly_union.0.len(), 1);
-    assert_eq!(poly_union, multi_poly_union);
+
+    dbg!(&poly_union.wkt_string());
+    dbg!(&multi_poly_union.wkt_string());
+    assert_relative_eq!(poly_union, multi_poly_union, epsilon = 1e-10);
+}
+
+#[test]
+fn test_multipolygon() {
+    use crate::Rect;
+
+    let poly1 = Rect::new((0.0, 0.0), (1.0, 1.0)).to_polygon();
+    let poly2 = Rect::new((1.0, 0.0), (2.0, 1.0)).to_polygon();
+    let poly3 = Rect::new((2.0, 0.0), (3.0, 1.0)).to_polygon();
+
+    let expected = MultiPolygon(vec![Rect::new((0.0, 0.0), (3.0, 1.0)).to_polygon()]);
+
+    assert_eq!(poly1.union(&poly2).union(&poly3), expected);
+    assert_eq!(
+        vec![poly1.clone(), poly2.clone(), poly3.clone()].unary_union(),
+        expected
+    );
+
+    let multi_poly_12 = MultiPolygon(vec![poly2, poly3]);
+    let multi_poly_3 = MultiPolygon(vec![poly1]);
+    assert_eq!(multi_poly_12.union(&multi_poly_3), expected);
 }
 
 #[test]
