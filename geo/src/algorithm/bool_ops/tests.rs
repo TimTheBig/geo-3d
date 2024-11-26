@@ -19,6 +19,17 @@ fn test_unary_union() {
 }
 
 #[test]
+fn test_fails_on_i_overlay_1_7_4() {
+    use wkt::TryFromWkt;
+
+    let wkt_str = std::fs::read_to_string("parcels.wkt").unwrap();
+    let multi_polygon = MultiPolygon::<f64>::try_from_wkt_str(&wkt_str).unwrap();
+    assert_eq!(multi_polygon.0.len(), 39490);
+    let unioned = multi_polygon.unary_union();
+    assert_eq!(unioned.0.len(), 1);
+}
+
+#[test]
 fn jts_test_overlay_la_1() {
     // From TestOverlayLA.xml test case with description "mLmA - A and B complex, overlapping and touching #1"
     let a: MultiPolygon<f64> = wkt!(MULTIPOLYGON(
