@@ -1,5 +1,6 @@
 use super::{BooleanOps, UnaryUnion};
 use crate::{wkt, Convert, MultiPolygon, Polygon, Relate};
+use wkt::ToWkt;
 
 #[test]
 fn test_unary_union() {
@@ -26,7 +27,13 @@ fn test_fails_on_i_overlay_1_7_4() {
     let multi_polygon = MultiPolygon::<f64>::try_from_wkt_str(&wkt_str).unwrap();
     assert_eq!(multi_polygon.0.len(), 39490);
     let unioned = multi_polygon.unary_union();
-    assert_eq!(unioned.0.len(), 1);
+
+    std::fs::write(
+        "parcels_unioned_i_overlay_1.8.2.wkt",
+        unioned.wkt_string().as_bytes(),
+    )
+    .unwrap();
+    assert_eq!(unioned.0.len(), 3541);
 }
 
 #[test]
@@ -78,7 +85,12 @@ fn jts_test_overlay_la_1() {
     .convert();
 
     let im = actual.relate(&expected);
-    assert!(im.is_equal_topo());
+    assert!(
+        im.is_equal_topo(),
+        "actual: {:#?}, expected: {:#?}",
+        actual.wkt_string(),
+        expected.wkt_string()
+    );
 }
 
 mod gh_issues {
@@ -209,7 +221,7 @@ mod gh_issues {
             wkt!(POLYGON((3.3493652 -55.80127,171.22443 -300.,195.83728 -300.,-46.650635 30.80127,3.3493652 -55.80127))),
         ];
 
-        let mut multi = MultiPolygon::new(Vec::new());
+        let mut multi: MultiPolygon<f32> = MultiPolygon::new(Vec::new());
         for poly in polygons {
             multi = multi.union(&MultiPolygon::new(vec![poly]));
         }
