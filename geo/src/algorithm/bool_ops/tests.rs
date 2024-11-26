@@ -29,7 +29,7 @@ fn test_fails_on_i_overlay_1_7_4() {
     let unioned = multi_polygon.unary_union();
 
     std::fs::write(
-        "parcels_unioned_i_overlay_1.8.2.wkt",
+        "parcels_unioned_i_overlay_1.9.1.wkt",
         unioned.wkt_string().as_bytes(),
     )
     .unwrap();
