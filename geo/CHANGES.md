@@ -6,7 +6,7 @@
   - <https://github.com/georust/geo/pull/1278>
 - Added: `Validation` trait to check validity of `Geometry`.
   - https://github.com/georust/geo/pull/1279
-  ```
+  ```rust
   // use in control flow
   if polygon.is_valid() { foo() }
 
