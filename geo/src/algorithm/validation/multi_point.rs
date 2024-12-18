@@ -27,12 +27,12 @@ impl<F: GeoFloat> Validation for MultiPoint<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         for (i, point) in self.0.iter().enumerate() {
-            point.visit_validation(Box::new(&mut |invalid_point| {
-                let err = InvalidMultiPoint::InvalidPoint(GeometryIndex(i), invalid_point);
-                handle_validation_error(err)
+            point.visit_validation(Box::new(&mut |invalid_point: Box<InvalidPoint>| {
+                let err = InvalidMultiPoint::InvalidPoint(GeometryIndex(i), *invalid_point);
+                handle_validation_error(Box::new(err))
             }))?;
         }
         Ok(())

@@ -64,39 +64,39 @@ impl<F: GeoFloat> Validation for Geometry<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         match self {
-            Geometry::Point(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidPoint(err))
-            }))?,
-            Geometry::Line(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidLine(err))
-            }))?,
-            Geometry::LineString(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidLineString(err))
-            }))?,
-            Geometry::Polygon(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidPolygon(err))
-            }))?,
-            Geometry::MultiPoint(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiPoint(err))
-            }))?,
-            Geometry::MultiLineString(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiLineString(err))
-            }))?,
-            Geometry::MultiPolygon(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiPolygon(err))
-            }))?,
-            Geometry::GeometryCollection(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidGeometryCollection(err))
-            }))?,
-            Geometry::Rect(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidRect(err))
-            }))?,
-            Geometry::Triangle(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidTriangle(err))
-            }))?,
+            Geometry::Point(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidPoint(*err)))
+            })?,
+            Geometry::Line(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidLine(*err)))
+            })?,
+            Geometry::LineString(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidLineString(*err)))
+            })?,
+            Geometry::Polygon(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidPolygon(*err)))
+            })?,
+            Geometry::MultiPoint(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiPoint(*err)))
+            })?,
+            Geometry::MultiLineString(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiLineString(*err)))
+            })?,
+            Geometry::MultiPolygon(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiPolygon(*err)))
+            })?,
+            Geometry::GeometryCollection(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidGeometryCollection(*err)))
+            })?,
+            Geometry::Rect(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidRect(*err)))
+            })?,
+            Geometry::Triangle(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidTriangle(*err)))
+            })?,
         }
         Ok(())
     }
@@ -107,39 +107,39 @@ impl<F: GeoFloat> Validation for GeometryCow<'_, F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         match self {
-            GeometryCow::Point(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidPoint(err))
-            }))?,
-            GeometryCow::Line(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidLine(err))
-            }))?,
-            GeometryCow::LineString(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidLineString(err))
-            }))?,
-            GeometryCow::Polygon(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidPolygon(err))
-            }))?,
-            GeometryCow::MultiPoint(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiPoint(err))
-            }))?,
-            GeometryCow::MultiLineString(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiLineString(err))
-            }))?,
-            GeometryCow::MultiPolygon(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidMultiPolygon(err))
-            }))?,
-            GeometryCow::GeometryCollection(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidGeometryCollection(err))
-            }))?,
-            GeometryCow::Rect(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidRect(err))
-            }))?,
-            GeometryCow::Triangle(g) => g.visit_validation(Box::new(|err| {
-                handle_validation_error(InvalidGeometry::InvalidTriangle(err))
-            }))?,
+            GeometryCow::Point(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidPoint(*err)))
+            })?,
+            GeometryCow::Line(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidLine(*err)))
+            })?,
+            GeometryCow::LineString(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidLineString(*err)))
+            })?,
+            GeometryCow::Polygon(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidPolygon(*err)))
+            })?,
+            GeometryCow::MultiPoint(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiPoint(*err)))
+            })?,
+            GeometryCow::MultiLineString(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiLineString(*err)))
+            })?,
+            GeometryCow::MultiPolygon(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidMultiPolygon(*err)))
+            })?,
+            GeometryCow::GeometryCollection(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidGeometryCollection(*err)))
+            })?,
+            GeometryCow::Rect(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidRect(*err)))
+            })?,
+            GeometryCow::Triangle(g) => g.visit_validation(|err| {
+                handle_validation_error(Box::new(InvalidGeometry::InvalidTriangle(*err)))
+            })?,
         }
         Ok(())
     }

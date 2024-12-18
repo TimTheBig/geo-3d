@@ -27,18 +27,16 @@ impl<F: GeoFloat> Validation for GeometryCollection<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         // Loop over all the geometries, collect the reasons of invalidity
         // and change the ProblemPosition to reflect the GeometryCollection
         for (i, geometry) in self.0.iter().enumerate() {
-            geometry.visit_validation(Box::new(&mut |geometry_err| {
-                let err = InvalidGeometryCollection::InvalidGeometry(
-                    GeometryIndex(i),
-                    Box::new(geometry_err),
-                );
-                handle_validation_error(err)
-            }))?;
+            geometry.visit_validation(&mut |geometry_err| {
+                let err =
+                    InvalidGeometryCollection::InvalidGeometry(GeometryIndex(i), geometry_err);
+                handle_validation_error(Box::new(err))
+            })?;
         }
         Ok(())
     }

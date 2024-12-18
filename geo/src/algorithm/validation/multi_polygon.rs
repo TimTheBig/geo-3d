@@ -46,14 +46,14 @@ impl<F: GeoFloat> Validation for MultiPolygon<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         for (i, polygon) in self.0.iter().enumerate() {
-            polygon.visit_validation(Box::new(&mut |invalid_polygon| {
-                handle_validation_error(InvalidMultiPolygon::InvalidPolygon(
+            polygon.visit_validation(Box::new(&mut |invalid_polygon: Box<InvalidPolygon>| {
+                handle_validation_error(Box::new(InvalidMultiPolygon::InvalidPolygon(
                     GeometryIndex(i),
-                    invalid_polygon,
-                ))
+                    *invalid_polygon,
+                )))
             }))?;
 
             // Special case for MultiPolygon: elements must not overlap and must touch only at points
@@ -62,7 +62,7 @@ impl<F: GeoFloat> Validation for MultiPolygon<F> {
                 if im.get(CoordPos::Inside, CoordPos::Inside) == Dimensions::TwoDimensional {
                     let err =
                         InvalidMultiPolygon::ElementsOverlaps(GeometryIndex(i), GeometryIndex(j));
-                    handle_validation_error(err)?;
+                    handle_validation_error(Box::new(err))?;
                 }
                 if im.get(CoordPos::OnBoundary, CoordPos::OnBoundary) == Dimensions::OneDimensional
                 {
@@ -70,7 +70,7 @@ impl<F: GeoFloat> Validation for MultiPolygon<F> {
                         GeometryIndex(i),
                         GeometryIndex(j),
                     );
-                    handle_validation_error(err)?;
+                    handle_validation_error(Box::new(err))?;
                 }
             }
         }

@@ -28,14 +28,14 @@ impl<F: GeoFloat> Validation for MultiLineString<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         for (i, line_string) in self.0.iter().enumerate() {
-            line_string.visit_validation(Box::new(&mut |line_string_err| {
+            line_string.visit_validation(&mut |line_string_err: Box<InvalidLineString>| {
                 let err =
-                    InvalidMultiLineString::InvalidLineString(GeometryIndex(i), line_string_err);
-                handle_validation_error(err)
-            }))?;
+                    InvalidMultiLineString::InvalidLineString(GeometryIndex(i), *line_string_err);
+                handle_validation_error(Box::new(err))
+            })?;
         }
         Ok(())
     }

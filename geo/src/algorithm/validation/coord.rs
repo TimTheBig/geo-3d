@@ -24,10 +24,10 @@ impl<F: GeoFloat> Validation for Coord<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         if utils::check_coord_is_not_finite(self) {
-            handle_validation_error(InvalidCoord::NonFinite)?;
+            handle_validation_error(Box::new(InvalidCoord::NonFinite))?;
         }
         Ok(())
     }

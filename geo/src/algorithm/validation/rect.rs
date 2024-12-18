@@ -27,13 +27,13 @@ impl<F: GeoFloat> Validation for Rect<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         if utils::check_coord_is_not_finite(&self.min()) {
-            handle_validation_error(InvalidRect::NonFiniteCoord(CoordIndex(0)))?;
+            handle_validation_error(Box::new(InvalidRect::NonFiniteCoord(CoordIndex(0))))?;
         }
         if utils::check_coord_is_not_finite(&self.max()) {
-            handle_validation_error(InvalidRect::NonFiniteCoord(CoordIndex(1)))?;
+            handle_validation_error(Box::new(InvalidRect::NonFiniteCoord(CoordIndex(1))))?;
         }
         Ok(())
     }

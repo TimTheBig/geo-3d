@@ -38,45 +38,45 @@ impl<F: CoordFloat> Validation for Triangle<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         if utils::check_coord_is_not_finite(&self.0) {
-            handle_validation_error(InvalidTriangle::NonFiniteCoord(CoordIndex(0)))?;
+            handle_validation_error(Box::new(InvalidTriangle::NonFiniteCoord(CoordIndex(0))))?;
         }
         if utils::check_coord_is_not_finite(&self.1) {
-            handle_validation_error(InvalidTriangle::NonFiniteCoord(CoordIndex(1)))?;
+            handle_validation_error(Box::new(InvalidTriangle::NonFiniteCoord(CoordIndex(1))))?;
         }
         if utils::check_coord_is_not_finite(&self.2) {
-            handle_validation_error(InvalidTriangle::NonFiniteCoord(CoordIndex(2)))?;
+            handle_validation_error(Box::new(InvalidTriangle::NonFiniteCoord(CoordIndex(2))))?;
         }
 
         // We wont check if the points are collinear if they are identical
         let mut identical = false;
 
         if self.0 == self.1 {
-            handle_validation_error(InvalidTriangle::IdenticalCoords(
+            handle_validation_error(Box::new(InvalidTriangle::IdenticalCoords(
                 CoordIndex(0),
                 CoordIndex(1),
-            ))?;
+            )))?;
             identical = true;
         }
         if self.0 == self.2 {
-            handle_validation_error(InvalidTriangle::IdenticalCoords(
+            handle_validation_error(Box::new(InvalidTriangle::IdenticalCoords(
                 CoordIndex(0),
                 CoordIndex(2),
-            ))?;
+            )))?;
             identical = true;
         }
         if self.1 == self.2 {
-            handle_validation_error(InvalidTriangle::IdenticalCoords(
+            handle_validation_error(Box::new(InvalidTriangle::IdenticalCoords(
                 CoordIndex(1),
                 CoordIndex(2),
-            ))?;
+            )))?;
             identical = true;
         }
 
         if !identical && utils::robust_check_points_are_collinear::<F>(&self.0, &self.1, &self.2) {
-            handle_validation_error(InvalidTriangle::CollinearCoords)?;
+            handle_validation_error(Box::new(InvalidTriangle::CollinearCoords))?;
         }
 
         Ok(())

@@ -31,7 +31,7 @@ impl<F: GeoFloat> Validation for LineString<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         if self.is_empty() {
             return Ok(());
@@ -39,13 +39,13 @@ impl<F: GeoFloat> Validation for LineString<F> {
 
         // Perform the various checks
         if utils::check_too_few_points(self, false) {
-            handle_validation_error(InvalidLineString::TooFewPoints)?;
+            handle_validation_error(Box::new(InvalidLineString::TooFewPoints))?;
         }
 
         for (coord_idx, coord) in self.0.iter().enumerate() {
             if utils::check_coord_is_not_finite(coord) {
                 let err = InvalidLineString::NonFiniteCoord(CoordIndex(coord_idx));
-                handle_validation_error(err)?;
+                handle_validation_error(Box::new(err))?;
             }
         }
 

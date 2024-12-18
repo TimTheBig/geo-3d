@@ -61,7 +61,7 @@ impl<F: GeoFloat> Validation for Polygon<F> {
 
     fn visit_validation<T>(
         &self,
-        mut handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        mut handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T> {
         if self.is_empty() {
             return Ok(());
@@ -82,19 +82,19 @@ impl<F: GeoFloat> Validation for Polygon<F> {
 
             // Perform the various checks
             if utils::check_too_few_points(ring, true) {
-                handle_validation_error(InvalidPolygon::TooFewPointsInRing(ring_role))?;
+                handle_validation_error(Box::new(InvalidPolygon::TooFewPointsInRing(ring_role)))?;
             }
 
             if utils::linestring_has_self_intersection(ring) {
-                handle_validation_error(InvalidPolygon::SelfIntersection(ring_role))?;
+                handle_validation_error(Box::new(InvalidPolygon::SelfIntersection(ring_role)))?;
             }
 
             for (coord_idx, coord) in ring.0.iter().enumerate() {
                 if utils::check_coord_is_not_finite(coord) {
-                    handle_validation_error(InvalidPolygon::NonFiniteCoord(
+                    handle_validation_error(Box::new(InvalidPolygon::NonFiniteCoord(
                         ring_role,
                         CoordIndex(coord_idx),
-                    ))?;
+                    )))?;
                 }
             }
         }
@@ -109,8 +109,8 @@ impl<F: GeoFloat> Validation for Polygon<F> {
             let exterior_vs_interior = polygon_exterior.relate(interior_1);
 
             if !exterior_vs_interior.is_contains() {
-                handle_validation_error(InvalidPolygon::InteriorRingNotContainedInExteriorRing(
-                    ring_role_1,
+                handle_validation_error(Box::new(
+                    InvalidPolygon::InteriorRingNotContainedInExteriorRing(ring_role_1),
                 ))?;
             }
 
@@ -119,10 +119,10 @@ impl<F: GeoFloat> Validation for Polygon<F> {
             if exterior_vs_interior.get(CoordPos::OnBoundary, CoordPos::Inside)
                 == Dimensions::OneDimensional
             {
-                handle_validation_error(InvalidPolygon::IntersectingRingsOnALine(
+                handle_validation_error(Box::new(InvalidPolygon::IntersectingRingsOnALine(
                     RingRole::Exterior,
                     ring_role_1,
-                ))?;
+                )))?;
             }
 
             // PERF: consider using PreparedGeometry
@@ -138,18 +138,18 @@ impl<F: GeoFloat> Validation for Polygon<F> {
                 if intersection_matrix.get(CoordPos::Inside, CoordPos::Inside)
                     == Dimensions::TwoDimensional
                 {
-                    handle_validation_error(InvalidPolygon::IntersectingRingsOnAnArea(
+                    handle_validation_error(Box::new(InvalidPolygon::IntersectingRingsOnAnArea(
                         ring_role_1,
                         ring_role_2,
-                    ))?;
+                    )))?;
                 }
                 if intersection_matrix.get(CoordPos::OnBoundary, CoordPos::OnBoundary)
                     == Dimensions::OneDimensional
                 {
-                    handle_validation_error(InvalidPolygon::IntersectingRingsOnALine(
+                    handle_validation_error(Box::new(InvalidPolygon::IntersectingRingsOnALine(
                         ring_role_1,
                         ring_role_2,
-                    ))?;
+                    )))?;
                 }
             }
         }

@@ -77,10 +77,10 @@ pub trait Validation {
     fn validation_errors(&self) -> Vec<Self::Error> {
         let mut validation_errors = Vec::new();
 
-        self.visit_validation(Box::new(|problem| {
-            validation_errors.push(problem);
+        self.visit_validation(|problem: Box<Self::Error>| {
+            validation_errors.push(*problem);
             Ok::<(), Self::Error>(())
-        }))
+        })
         .expect("no errors are returned");
 
         validation_errors
@@ -88,7 +88,7 @@ pub trait Validation {
 
     /// Return the first reason of invalidity of the geometry.
     fn check_validation(&self) -> Result<(), Self::Error> {
-        self.visit_validation(Box::new(Err))
+        self.visit_validation(|err| Err(*err))
     }
 
     /// Visit the validation of the geometry.
@@ -96,7 +96,7 @@ pub trait Validation {
     /// The closure `handle_validation_error` is called for each validation error.
     fn visit_validation<T>(
         &self,
-        handle_validation_error: Box<dyn FnMut(Self::Error) -> Result<(), T> + '_>,
+        handle_validation_error: impl FnMut(Box<Self::Error>) -> Result<(), T>,
     ) -> Result<(), T>;
 }
 
