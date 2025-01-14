@@ -87,7 +87,7 @@ impl<F: CoordFloat> LengthMeasurable<F> for MultiLineString<F> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{coord, Euclidean, Geodesic, Haversine, Rhumb};
+    use crate::{coord, Euclidean, Geodesic, Rhumb, HAVERSINE};
 
     #[test]
     fn lines() {
@@ -107,7 +107,7 @@ mod tests {
         );
         assert_eq!(
             343_557., // meters
-            Haversine.length(&line).round()
+            HAVERSINE.length(&line).round()
         );
 
         // computing Euclidean length of an unprojected (lng/lat) line gives a nonsense answer
@@ -141,7 +141,7 @@ mod tests {
         );
         assert_eq!(
             6_304_387., // meters
-            Haversine.length(&line_string).round()
+            HAVERSINE.length(&line_string).round()
         );
 
         // computing Euclidean length of an unprojected (lng/lat) gives a nonsense answer
