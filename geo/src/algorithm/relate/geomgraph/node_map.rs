@@ -81,7 +81,7 @@ where
     /// Note: Coords must be non-NaN.
     pub fn insert_node_with_coordinate(&mut self, coord: Coord<F>) -> &mut NF::Node {
         debug_assert!(
-            !coord.x.is_nan() && !coord.y.is_nan(),
+            !coord.x.is_nan() && !coord.y.is_nan() && !coord.z.is_nan(),
             "NaN coordinates are not supported"
         );
         let key = NodeKey(coord);

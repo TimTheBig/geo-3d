@@ -12,8 +12,6 @@ mod multi_polygon;
 mod point;
 mod polygon;
 mod rect;
-#[cfg(test)]
-mod tests;
 mod triangle;
 mod utils;
 

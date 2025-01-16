@@ -5,6 +5,7 @@ impl<T> Intersects<Coord<T>> for Line<T>
 where
     T: GeoNum,
 {
+    // todo make 3d
     fn intersects(&self, rhs: &Coord<T>) -> bool {
         // First we check if the point is collinear with the line.
         T::Ker::orient2d(self.start, self.end, *rhs) == Orientation::Collinear

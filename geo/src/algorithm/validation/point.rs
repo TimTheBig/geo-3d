@@ -41,19 +41,19 @@ mod tests {
 
     #[test]
     fn test_point_valid() {
-        let p = Point::new(0., 0.);
+        let p = Point::new(0., 0., 0.);
         assert_valid!(p);
     }
 
     #[test]
     fn test_point_validation_errors() {
-        let p = Point::new(f64::NAN, f64::NAN);
+        let p = Point::new(f64::NAN, f64::NAN, f64::NAN);
         assert_validation_errors!(p, vec![InvalidPoint::NonFiniteCoord]);
     }
 
     #[test]
     fn test_point_check_validation() {
-        let p = Point::new(f64::NAN, f64::NAN);
+        let p = Point::new(f64::NAN, f64::NAN, f64::NAN);
 
         let err = p.check_validation().unwrap_err();
         assert_eq!(err, InvalidPoint::NonFiniteCoord);

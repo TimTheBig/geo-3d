@@ -16,7 +16,8 @@ where
 {
     let x = T::from(-91.147385).unwrap();
     let y = T::from(30.471165).unwrap();
-    Point::new(x, y)
+    let z = T::from(4.571367).unwrap();
+    Point::new(x, y, z)
 }
 
 pub fn east_baton_rouge<T>() -> Polygon<T>
@@ -178,7 +179,7 @@ fn wkt_line_string_to_geo<T>(line_string: &wkt::types::LineString<T>) -> LineStr
 where
     T: WktFloat + Default + FromStr,
 {
-    LineString::from_iter(line_string.0.iter().map(|coord| (coord.x, coord.y)))
+    LineString::from_iter(line_string.0.iter().map(|coord| (coord.x, coord.y, coord.z.expect("Z should be there"))))
 }
 
 fn wkt_polygon_to_geo<T>(polygon: &wkt::types::Polygon<T>) -> Polygon<T>

@@ -67,10 +67,6 @@
 //! - `approx`: Allows geometry types to be checked for approximate equality with [approx]
 //! - `arbitrary`: Allows geometry types to be created from unstructured input with [arbitrary]
 //! - `serde`: Allows geometry types to be serialized and deserialized with [Serde]
-//! - `use-rstar_0_8`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.8`)
-//! - `use-rstar_0_9`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.9`)
-//! - `use-rstar_0_10`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.10`)
-//! - `use-rstar_0_11`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.11`)
 //! - `use-rstar_0_12`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.12`)
 //!
 //! This library can be used in `#![no_std]` environments if the default `std` feature is disabled. At
@@ -95,7 +91,7 @@ use num_traits::{Float, Num, NumCast};
 #[macro_use]
 extern crate serde;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "approx"))]
 #[macro_use]
 extern crate approx;
 
@@ -124,9 +120,6 @@ pub use geometry::*;
 
 pub use geometry::line_string::PointsIter;
 
-#[allow(deprecated)]
-pub use geometry::rect::InvalidRectCoordinatesError;
-
 mod error;
 pub use error::Error;
 
@@ -139,13 +132,7 @@ mod wkt_macro;
 #[cfg(feature = "arbitrary")]
 mod arbitrary;
 
-#[cfg(any(
-    feature = "rstar_0_8",
-    feature = "rstar_0_9",
-    feature = "rstar_0_10",
-    feature = "rstar_0_11",
-    feature = "rstar_0_12"
-))]
+#[cfg(feature = "rstar_0_12")]
 #[doc(hidden)]
 pub mod private_utils;
 
@@ -159,9 +146,9 @@ pub mod _alloc {
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec;
-
     use super::*;
+    use alloc::vec;
+    use approx::assert_relative_eq;
     use core::convert::TryFrom;
 
     #[test]
@@ -169,6 +156,7 @@ mod tests {
         let c = coord! {
             x: 40.02f64,
             y: 116.34,
+            z: 23.9,
         };
 
         let p = Point::from(c);
@@ -178,14 +166,14 @@ mod tests {
         assert_relative_eq!(c.x, c2.x);
         assert_relative_eq!(c.y, c2.y);
 
-        let p: Point<f32> = (0f32, 1f32).into();
+        let p: Point<f32> = (0f32, 1f32, 2f32).into();
         assert_relative_eq!(p.x(), 0.);
         assert_relative_eq!(p.y(), 1.);
     }
 
     #[test]
     fn convert_types() {
-        let p: Point<f32> = Point::new(0., 0.);
+        let p: Point<f32> = Point::new(0., 0., 0.);
         let p1 = p;
         let g: Geometry<f32> = p.into();
         let p2 = Point::try_from(g).unwrap();
@@ -195,16 +183,16 @@ mod tests {
     #[test]
     fn polygon_new_test() {
         let exterior = LineString::new(vec![
-            coord! { x: 0., y: 0. },
-            coord! { x: 1., y: 1. },
-            coord! { x: 1., y: 0. },
-            coord! { x: 0., y: 0. },
+            coord! { x: 0., y: 0., z: 0. },
+            coord! { x: 1., y: 1., z: 1. },
+            coord! { x: 1., y: 0., z: 1. },
+            coord! { x: 0., y: 0., z: 0. },
         ]);
         let interiors = vec![LineString::new(vec![
-            coord! { x: 0.1, y: 0.1 },
-            coord! { x: 0.9, y: 0.9 },
-            coord! { x: 0.9, y: 0.1 },
-            coord! { x: 0.1, y: 0.1 },
+            coord! { x: 0.1, y: 0.1, z: 0. },
+            coord! { x: 0.9, y: 0.9, z: 0. },
+            coord! { x: 0.9, y: 0.1, z: 0. },
+            coord! { x: 0.1, y: 0.1, z: 0. },
         ])];
         let p = Polygon::new(exterior.clone(), interiors.clone());
 
@@ -214,85 +202,25 @@ mod tests {
 
     #[test]
     fn iters() {
-        let _: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
-        let _: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into_iter().collect();
+        let _: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
+        let _: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into_iter().collect();
 
-        let mut l1: LineString<_> = vec![(0., 0.), (1., 2.)].into();
-        assert_eq!(l1[1], coord! { x: 1., y: 2. }); // index into linestring
-        let _: LineString<_> = vec![(0., 0.), (1., 2.)].into_iter().collect();
+        let mut l1: LineString<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
+        assert_eq!(l1[1], coord! { x: 1., y: 2., z: 3. }); // index into linestring
+        let _: LineString<_> = vec![(0., 0., 0.), (1., 2., 3.)].into_iter().collect();
 
         // index mutably into a linestring
-        l1[0] = coord! { x: 1., y: 1. };
-        assert_eq!(l1, vec![(1., 1.), (1., 2.)].into());
+        l1[0] = coord! { x: 1., y: 1., z: 1. };
+        assert_eq!(l1, vec![(1., 1., 1.), (1., 2., 3.)].into());
     }
 
     #[test]
     fn test_coordinate_types() {
-        let p: Point<u8> = Point::new(0, 0);
+        let p: Point<u8> = Point::new(0, 0, 0);
         assert_eq!(p.x(), 0u8);
 
-        let p: Point<i64> = Point::new(1_000_000, 0);
+        let p: Point<i64> = Point::new(1_000_000, 0, 0);
         assert_eq!(p.x(), 1_000_000i64);
-    }
-
-    #[cfg(feature = "rstar_0_8")]
-    #[test]
-    /// ensure Line's SpatialObject impl is correct
-    fn line_test() {
-        use rstar_0_8::primitives::Line as RStarLine;
-        use rstar_0_8::{PointDistance, RTreeObject};
-
-        let rl = RStarLine::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 5., y: 5. });
-        assert_eq!(rl.envelope(), l.envelope());
-        // difference in 15th decimal place
-        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0)));
-    }
-
-    #[cfg(feature = "rstar_0_9")]
-    #[test]
-    /// ensure Line's SpatialObject impl is correct
-    fn line_test_0_9() {
-        use rstar_0_9::primitives::Line as RStarLine;
-        use rstar_0_9::{PointDistance, RTreeObject};
-
-        let rl = RStarLine::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 5., y: 5. });
-        assert_eq!(rl.envelope(), l.envelope());
-        // difference in 15th decimal place
-        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0)));
-    }
-
-    #[cfg(feature = "rstar_0_10")]
-    #[test]
-    /// ensure Line's SpatialObject impl is correct
-    fn line_test_0_10() {
-        use rstar_0_10::primitives::Line as RStarLine;
-        use rstar_0_10::{PointDistance, RTreeObject};
-
-        let rl = RStarLine::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 5., y: 5. });
-        assert_eq!(rl.envelope(), l.envelope());
-        // difference in 15th decimal place
-        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0)));
-    }
-
-    #[cfg(feature = "rstar_0_11")]
-    #[test]
-    /// ensure Line's SpatialObject impl is correct
-    fn line_test_0_11() {
-        use rstar_0_11::primitives::Line as RStarLine;
-        use rstar_0_11::{PointDistance, RTreeObject};
-
-        let rl = RStarLine::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 5., y: 5. });
-        assert_eq!(rl.envelope(), l.envelope());
-        // difference in 15th decimal place
-        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0)));
     }
 
     #[cfg(feature = "rstar_0_12")]
@@ -302,22 +230,22 @@ mod tests {
         use rstar_0_12::primitives::Line as RStarLine;
         use rstar_0_12::{PointDistance, RTreeObject};
 
-        let rl = RStarLine::new(Point::new(0.0, 0.0), Point::new(5.0, 5.0));
-        let l = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 5., y: 5. });
+        let rl = RStarLine::new(Point::new(0.0, 0.0, 0.0), Point::new(5.0, 5.0, 5.0));
+        let l = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5., y: 5., z: 5. });
         assert_eq!(rl.envelope(), l.envelope());
         // difference in 15th decimal place
-        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0)));
+        assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0, 0.0)));
+        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0, 0.0)));
     }
 
     #[test]
     fn test_rects() {
-        let r = Rect::new(coord! { x: -1., y: -1. }, coord! { x: 1., y: 1. });
+        let r = Rect::new(coord! { x: -1., y: -1., z: -1. }, coord! { x: 1., y: 1., z: -1. });
         let p: Polygon<_> = r.into();
         assert_eq!(
             p,
             Polygon::new(
-                vec![(-1., -1.), (1., -1.), (1., 1.), (-1., 1.), (-1., -1.)].into(),
+                vec![(-1., -1., -1.), (1., -1., 1.), (1., 1., 1.), (-1., 1., -1.), (-1., -1., -1.)].into(),
                 vec![]
             )
         );

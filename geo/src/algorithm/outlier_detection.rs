@@ -341,10 +341,10 @@ mod tests {
     fn test_lof() {
         // third point is an outlier
         let v = [
-            Point::new(0.0, 0.0),
-            Point::new(0.0, 1.0),
-            Point::new(3.0, 0.0),
-            Point::new(1.0, 1.0),
+            Point::new(0.0, 0.0, 0.0),
+            Point::new(0.0, 1.0, 0.0),
+            Point::new(3.0, 0.0, 3.0),
+            Point::new(1.0, 1.0, 1.0),
         ];
 
         let lofs = &v.outliers(3);

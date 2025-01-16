@@ -106,6 +106,7 @@ where
 {
     value_in_between(value.x, bound_1.x, bound_2.x)
         && value_in_between(value.y, bound_1.y, bound_2.y)
+        && value_in_between(value.z, bound_1.z, bound_2.z)
 }
 
 // A cheap bbox check to see if we can skip the more expensive intersection computation

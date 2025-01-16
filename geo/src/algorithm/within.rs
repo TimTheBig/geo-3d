@@ -53,8 +53,8 @@ mod tests {
     use crate::{point, Rect};
     #[test]
     fn basic() {
-        let a = point!(x: 1.0, y: 2.0);
-        let b = Rect::new((0.0, 0.0), (3.0, 3.0)).to_polygon();
+        let a = point!(x: 1.0, y: 2.0, z: 3.0);
+        let b = Rect::new((0.0, 0.0, 0.0), (3.0, 3.0, 3.0)).to_polygon();
         assert!(a.is_within(&b));
     }
 }

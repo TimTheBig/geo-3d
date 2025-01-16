@@ -25,7 +25,7 @@ use core::ops::{Index, IndexMut};
 /// ```
 /// use std::convert::TryFrom;
 /// use geo_types::{Point, point, Geometry, GeometryCollection};
-/// let p = point!(x: 1.0, y: 1.0);
+/// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
 /// for geom in gc {
@@ -37,7 +37,7 @@ use core::ops::{Index, IndexMut};
 /// ```
 /// use std::convert::TryFrom;
 /// use geo_types::{Point, point, Geometry, GeometryCollection};
-/// let p = point!(x: 1.0, y: 1.0);
+/// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
 /// gc.iter().for_each(|geom| println!("{:?}", geom));
@@ -48,7 +48,7 @@ use core::ops::{Index, IndexMut};
 /// ```
 /// use std::convert::TryFrom;
 /// use geo_types::{Point, point, Geometry, GeometryCollection};
-/// let p = point!(x: 1.0, y: 1.0);
+/// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let mut gc = GeometryCollection::new_from(vec![pe]);
 /// gc.iter_mut().for_each(|geom| {
@@ -65,7 +65,7 @@ use core::ops::{Index, IndexMut};
 /// ```
 /// use std::convert::TryFrom;
 /// use geo_types::{Point, point, Geometry, GeometryCollection};
-/// let p = point!(x: 1.0, y: 1.0);
+/// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
 /// println!("{:?}", gc[0]);
@@ -331,7 +331,7 @@ mod tests {
 
     #[test]
     fn from_vec() {
-        let gc = GeometryCollection::from(vec![Point::new(1i32, 2)]);
+        let gc = GeometryCollection::from(vec![Point::new(1i32, 2, 3)]);
         let p = Point::try_from(gc[0].clone()).unwrap();
         assert_eq!(p.y(), 2);
     }

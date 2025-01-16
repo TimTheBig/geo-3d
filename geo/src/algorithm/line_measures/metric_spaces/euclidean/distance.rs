@@ -26,9 +26,10 @@ macro_rules! symmetric_distance_impl {
 // └───────────────────────────┘
 
 impl<F: CoordFloat> Distance<F, Coord<F>, Coord<F>> for Euclidean {
+    // todo check z
     fn distance(origin: Coord<F>, destination: Coord<F>) -> F {
         let delta = origin - destination;
-        delta.x.hypot(delta.y)
+        delta.x.hypot(delta.y).hypot(delta.z)
     }
 }
 impl<F: CoordFloat> Distance<F, Coord<F>, &Line<F>> for Euclidean {
@@ -393,8 +394,8 @@ mod test {
 
     #[test]
     fn line_segment_distance_test() {
-        let o1 = Point::new(8.0, 0.0);
-        let o2 = Point::new(5.5, 0.0);
+        let o1 = Point::new(8.0, 0.0, 0.0);
+        let o2 = Point::new(5.5, 0.0, 0.0);
         let o3 = Point::new(5.0, 0.0);
         let o4 = Point::new(4.5, 1.5);
 
@@ -709,10 +710,12 @@ mod test {
             coord! {
                 x: -0.17084137691985102,
                 y: 0.8748085493016657,
+                z: 
             },
             coord! {
                 x: -0.17084137691985102,
                 y: 0.09858870312437906,
+                z: 
             },
         );
         let poly: Polygon<f64> = polygon![
@@ -775,15 +778,15 @@ mod test {
     // test vertex-vertex minimum distance
     fn test_minimum_polygon_distance_2() {
         let points_raw = [
-            (118., 200.),
-            (153., 179.),
-            (106., 155.),
-            (88., 190.),
-            (118., 200.),
+            (118., 200., 2.),
+            (153., 179., 10.),
+            (106., 155., 20.),
+            (88., 190., 30.),
+            (118., 200., 37.),
         ];
         let points = points_raw
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly1 = Polygon::new(LineString::from(points), vec![]);
 
@@ -870,8 +873,8 @@ mod test {
     #[test]
     // Line-Polygon test: closest point on Polygon is NOT nearest to a Line end-point
     fn test_line_polygon_simple() {
-        let line = Line::from([(0.0, 0.0), (0.0, 3.0)]);
-        let v = vec![(5.0, 1.0), (5.0, 2.0), (0.25, 1.5), (5.0, 1.0)];
+        let line = Line::from([(0.0, 0.0, 0.0), (0.0, 3.0, 0.0)]);
+        let v = vec![(5.0, 1.0, 0.0), (5.0, 2.0, 0.0), (0.25, 1.5, 0.0), (5.0, 1.0, 0.0)];
         let poly = Polygon::new(v.into(), vec![]);
         assert_relative_eq!(Euclidean::distance(&line, &poly), 0.25);
     }

@@ -368,6 +368,8 @@ macro_rules! impl_geo_num_for_int {
 // This is the list of primitives that we support.
 impl_geo_num_for_float!(f32);
 impl_geo_num_for_float!(f64);
+// for when f128 gets stabilized
+// impl_geo_num_for_float!(f128);
 impl_geo_num_for_int!(i16);
 impl_geo_num_for_int!(i32);
 impl_geo_num_for_int!(i64);
@@ -397,12 +399,14 @@ mod tests {
 
     #[test]
     fn numeric_types() {
-        let _n_i16 = Point::new(1i16, 2i16);
-        let _n_i32 = Point::new(1i32, 2i32);
-        let _n_i64 = Point::new(1i64, 2i64);
-        let _n_i128 = Point::new(1i128, 2i128);
-        let _n_isize = Point::new(1isize, 2isize);
-        let _n_f32 = Point::new(1.0f32, 2.0f32);
-        let _n_f64 = Point::new(1.0f64, 2.0f64);
+        let _n_i16 = Point::new(1i16, 2i16, 3i16);
+        let _n_i32 = Point::new(1i32, 2i32, 3i32);
+        let _n_i64 = Point::new(1i64, 2i64, 3i64);
+        let _n_i128 = Point::new(1i128, 2i128, 3i128);
+        let _n_isize = Point::new(1isize, 2isize, 3isize);
+        let _n_f32 = Point::new(1.0f32, 2.0f32, 3.0f32);
+        let _n_f64 = Point::new(1.0f64, 2.0f64, 3.0f64);
+        // for when f128 gets stabilized
+        // let _n_f128 = Point::new(1.0f128, 2.0f128, 3.0f128);
     }
 }

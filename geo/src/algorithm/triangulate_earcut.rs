@@ -124,7 +124,7 @@ impl<T: CoordFloat> TriangulateEarcut<T> for Polygon<T> {
     fn earcut_triangles_raw(&self) -> RawTriangulation<T> {
         let input = polygon_to_earcutr_input(self);
         let triangle_indices =
-            earcutr::earcut(&input.vertices, &input.interior_indexes, 2).unwrap();
+            earcutr::earcut(&input.vertices, &input.interior_indexes, 3).unwrap();
         RawTriangulation {
             vertices: input.vertices,
             triangle_indices,
@@ -165,6 +165,7 @@ impl<T: CoordFloat> Iter<T> {
         coord! {
             x: self.0.vertices[triangle_index * 2],
             y: self.0.vertices[triangle_index * 2 + 1],
+            z: self.0.vertices[triangle_index * 2 + 2],
         }
     }
 }
@@ -179,12 +180,12 @@ fn polygon_to_earcutr_input<T: CoordFloat>(polygon: &crate::Polygon<T>) -> Earcu
     let mut interior_indexes = Vec::with_capacity(polygon.interiors().len());
     debug_assert!(polygon.exterior().0.len() >= 4);
 
-    flat_line_string_coords_2(polygon.exterior(), &mut vertices);
+    flat_line_string_coords_3(polygon.exterior(), &mut vertices);
 
     for interior in polygon.interiors() {
         debug_assert!(interior.0.len() >= 4);
         interior_indexes.push(vertices.len() / 2);
-        flat_line_string_coords_2(interior, &mut vertices);
+        flat_line_string_coords_3(interior, &mut vertices);
     }
 
     EarcutrInput {
@@ -193,13 +194,14 @@ fn polygon_to_earcutr_input<T: CoordFloat>(polygon: &crate::Polygon<T>) -> Earcu
     }
 }
 
-fn flat_line_string_coords_2<T: CoordFloat>(
+fn flat_line_string_coords_3<T: CoordFloat>(
     line_string: &crate::LineString<T>,
     vertices: &mut Vec<T>,
 ) {
     for coord in &line_string.0 {
         vertices.push(coord.x);
         vertices.push(coord.y);
+        vertices.push(coord.z);
     }
 }
 
@@ -211,19 +213,19 @@ mod test {
     #[test]
     fn test_triangle() {
         let triangle_polygon = polygon![
-            (x: 0., y: 0.),
-            (x: 10., y: 0.),
-            (x: 10., y: 10.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 10., y: 0., z: 0.),
+            (x: 10., y: 10., z: 10.),
+            (x: 0., y: 0., z: 0.),
         ];
 
         let triangles = triangle_polygon.earcut_triangles();
 
         assert_eq!(
             &[Triangle(
-                coord! { x: 10.0, y: 0.0 },
-                coord! { x: 0.0, y: 0.0 },
-                coord! { x: 10.0, y: 10.0 },
+                coord! { x: 10.0, y: 0.0, z: 0.0 },
+                coord! { x: 0.0, y: 0.0, z: 0.0 },
+                coord! { x: 10.0, y: 10.0, z: 10.0 },
             ),][..],
             triangles,
         );
@@ -232,11 +234,11 @@ mod test {
     #[test]
     fn test_square() {
         let square_polygon = polygon![
-            (x: 0., y: 0.),
-            (x: 10., y: 0.),
-            (x: 10., y: 10.),
-            (x: 0., y: 10.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 10., y: 0., z: 10.),
+            (x: 10., y: 10., z: 10.),
+            (x: 0., y: 10., z: 0.),
+            (x: 0., y: 0., z: 0.),
         ];
 
         let mut triangles = square_polygon.earcut_triangles();
@@ -245,14 +247,14 @@ mod test {
         assert_eq!(
             &[
                 Triangle(
-                    coord! { x: 10.0, y: 0.0 },
-                    coord! { x: 0.0, y: 0.0 },
-                    coord! { x: 0.0, y: 10.0 },
+                    coord! { x: 10.0, y: 0.0, z: 10.0 },
+                    coord! { x: 0.0, y: 0.0, z: 0.0 },
+                    coord! { x: 0.0, y: 10.0, z: 0.0 },
                 ),
                 Triangle(
-                    coord! { x: 0.0, y: 10.0 },
-                    coord! { x: 10.0, y: 10.0 },
-                    coord! { x: 10.0, y: 0.0 },
+                    coord! { x: 0.0, y: 10.0, z: 0.0 },
+                    coord! { x: 10.0, y: 10.0, z: 10.0 },
+                    coord! { x: 10.0, y: 0.0, z: 10.0 },
                 ),
             ][..],
             triangles,

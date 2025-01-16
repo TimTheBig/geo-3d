@@ -28,20 +28,24 @@ where
     if let Some(pnt) = iter.next() {
         let mut xrange = (pnt.x, pnt.x);
         let mut yrange = (pnt.y, pnt.y);
+        let mut zrange = (pnt.z, pnt.z);
         for pnt in iter {
-            let (px, py) = pnt.x_y();
+            let (px, py, pz) = pnt.x_y_z();
             xrange = get_min_max(px, xrange.0, xrange.1);
             yrange = get_min_max(py, yrange.0, yrange.1);
+            zrange = get_min_max(pz, zrange.0, zrange.1);
         }
 
         return Some(Rect::new(
             coord! {
                 x: xrange.0,
                 y: yrange.0,
+                z: zrange.0,
             },
             coord! {
                 x: xrange.1,
                 y: yrange.1,
+                z: zrange.1,
             },
         ));
     }
@@ -72,7 +76,11 @@ where
     }
     let dx = end.x - start.x;
     let dy = end.y - start.y;
+    // todo use z
+    todo!("make 3d");
+    let dz = end.z - start.z;
     let d_squared = dx * dx + dy * dy;
+
     let r = ((point.x - start.x) * dx + (point.y - start.y) * dy) / d_squared;
     if r <= T::zero() {
         return line_euclidean_length(Line::new(point, start));
@@ -136,6 +144,7 @@ where
     if line_string.0.contains(&point.0) {
         return true;
     }
+
     for line in line_string.lines() {
         // This is a duplicate of the line-contains-point logic in the "intersects" module
         let tx = if line.dx() == T::zero() {
@@ -148,21 +157,38 @@ where
         } else {
             Some((point.y() - line.start.y) / line.dy())
         };
-        let contains = match (tx, ty) {
-            (None, None) => {
+        // todo use z
+        let tz = if line.dz() == T::zero() {
+            None
+        } else {
+            Some((point.z() - line.start.z) / line.dz())
+        };
+
+        let contains = match (tx, ty, tz) {
+            (None, None, None) => {
                 // Degenerate line
                 point.0 == line.start
             }
-            (Some(t), None) => {
+            (Some(t), None, None) => {
                 // Horizontal line
                 point.y() == line.start.y && T::zero() <= t && t <= T::one()
             }
-            (None, Some(t)) => {
-                // Vertical line
+            (None, Some(t), None) => {
+                // Sideways line
                 point.x() == line.start.x && T::zero() <= t && t <= T::one()
             }
-            (Some(t_x), Some(t_y)) => {
+            (None, None, Some(t)) => {
+                // Vertical line
+                point.z() == line.start.z && T::zero() <= t && t <= T::one()
+            }
+            // ? maybe these are not needed
+            (None, Some(t_y), Some(t_z)) => todo!(),
+            (Some(t_x), None, Some(t_z)) => todo!(),
+            (Some(t_x), Some(t_y), None) => todo!(),
+
+            (Some(t_x), Some(t_y), Some(t_z)) => {
                 // All other lines
+                todo!("make 3d")
                 (t_x - t_y).abs() <= T::epsilon() && T::zero() <= t_x && t_x <= T::one()
             }
         };

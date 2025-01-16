@@ -6,11 +6,10 @@ members = [
   "geo-test-fixtures",
   "geo-traits",
   "geo-types",
-  "jts-test-runner",
 ]
 
 [patch.crates-io]
 
 # Ensure any transitive dependencies also use the local geo/geo-types
-geo = { path = "geo" }
+geo = { package = "geo-3d", path = "geo" }
 geo-types = { path = "geo-types" }

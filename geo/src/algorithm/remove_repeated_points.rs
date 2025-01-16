@@ -205,90 +205,92 @@ mod test {
 
     fn make_test_mp_integer() -> MultiPoint<i32> {
         MultiPoint(vec![
-            Point::new(0, 0),
-            Point::new(1, 1),
-            Point::new(1, 1),
-            Point::new(1, 1),
-            Point::new(2, 2),
-            Point::new(0, 0),
+            Point::new(0, 0, 0),
+            Point::new(1, 1, 1),
+            Point::new(1, 1, 1),
+            Point::new(1, 1, 1),
+            Point::new(2, 2, 2),
+            Point::new(0, 0, 0),
         ])
     }
 
     fn make_result_mp_integer() -> MultiPoint<i32> {
-        MultiPoint(vec![Point::new(0, 0), Point::new(1, 1), Point::new(2, 2)])
+        MultiPoint(vec![Point::new(0, 0, 0), Point::new(1, 1, 1), Point::new(2, 2, 2)])
     }
 
     fn make_test_mp1() -> MultiPoint {
         MultiPoint(vec![
-            Point::new(0., 0.),
-            Point::new(1., 1.),
-            Point::new(1., 1.),
-            Point::new(1., 1.),
-            Point::new(2., 2.),
-            Point::new(0., 0.),
+            Point::new(0., 0., 0.),
+            Point::new(1., 1., 1.),
+            Point::new(1., 1., 1.),
+            Point::new(1., 1., 1.),
+            Point::new(2., 2., 2.),
+            Point::new(0., 0., 0.),
         ])
     }
 
     fn make_result_mp1() -> MultiPoint {
         MultiPoint(vec![
-            Point::new(0., 0.),
-            Point::new(1., 1.),
-            Point::new(2., 2.),
+            Point::new(0., 0., 0.),
+            Point::new(1., 1., 1.),
+            Point::new(2., 2., 2.),
         ])
     }
 
     fn make_test_line1() -> LineString {
         LineString(vec![
-            Coord { x: 0., y: 0. },
-            Coord { x: 1., y: 1. },
-            Coord { x: 1., y: 1. },
-            Coord { x: 1., y: 1. },
-            Coord { x: 2., y: 2. },
-            Coord { x: 2., y: 2. },
-            Coord { x: 0., y: 0. },
+            Coord { x: 0., y: 0., z: 0. },
+            Coord { x: 1., y: 1., z: 1. },
+            Coord { x: 1., y: 1., z: 1. },
+            Coord { x: 1., y: 1., z: 1. },
+            Coord { x: 2., y: 2., z: 2. },
+            Coord { x: 2., y: 2., z: 2. },
+            Coord { x: 0., y: 0., z: 0. },
         ])
     }
 
     fn make_result_line1() -> LineString {
         LineString(vec![
-            Coord { x: 0., y: 0. },
-            Coord { x: 1., y: 1. },
-            Coord { x: 2., y: 2. },
-            Coord { x: 0., y: 0. },
+            Coord { x: 0., y: 0., z: 0. },
+            Coord { x: 1., y: 1., z: 1. },
+            Coord { x: 2., y: 2., z: 2. },
+            Coord { x: 0., y: 0., z: 0. },
         ])
     }
 
     fn make_test_line2() -> LineString {
         LineString(vec![
-            Coord { x: 10., y: 10. },
-            Coord { x: 11., y: 11. },
-            Coord { x: 11., y: 11. },
-            Coord { x: 11., y: 11. },
-            Coord { x: 12., y: 12. },
-            Coord { x: 12., y: 12. },
-            Coord { x: 10., y: 10. },
+            Coord { x: 10., y: 10., z: 10. },
+            Coord { x: 11., y: 11., z: 11. },
+            Coord { x: 11., y: 11., z: 11. },
+            Coord { x: 11., y: 11., z: 11. },
+            Coord { x: 12., y: 12., z: 12. },
+            Coord { x: 12., y: 12., z: 12. },
+            Coord { x: 10., y: 10., z: 10. },
         ])
     }
 
     fn make_result_line2() -> LineString {
         LineString(vec![
-            Coord { x: 10., y: 10. },
-            Coord { x: 11., y: 11. },
-            Coord { x: 12., y: 12. },
-            Coord { x: 10., y: 10. },
+            Coord { x: 10., y: 10., z: 10. },
+            Coord { x: 11., y: 11., z: 11. },
+            Coord { x: 12., y: 12., z: 12. },
+            Coord { x: 10., y: 10., z: 10. },
         ])
     }
 
     fn make_test_poly1() -> Polygon {
         Polygon::new(
             LineString(vec![
-                Coord { x: 0., y: 0. },
-                Coord { x: 1., y: 1. },
-                Coord { x: 1., y: 1. },
-                Coord { x: 1., y: 1. },
-                Coord { x: 0., y: 2. },
-                Coord { x: 0., y: 2. },
-                Coord { x: 0., y: 0. },
+                Coord { x: 0., y: 0., z: 0. },
+                Coord { x: 1., y: 1., z: 1. },
+                Coord { x: 1., y: 1., z: 1. },
+                Coord { x: 1., y: 1., z: 1. },
+                Coord { x: 0., y: 2., z: 0. },
+                Coord { x: 0., y: 2., z: 0. },
+                Coord { x: 0., y: 0., z: 1. },
+                Coord { x: 0., y: 0., z: 1. },
+                Coord { x: 0., y: 0., z: 0. },
             ]),
             vec![],
         )
@@ -297,10 +299,10 @@ mod test {
     fn make_result_poly1() -> Polygon {
         Polygon::new(
             LineString(vec![
-                Coord { x: 0., y: 0. },
-                Coord { x: 1., y: 1. },
-                Coord { x: 0., y: 2. },
-                Coord { x: 0., y: 0. },
+                Coord { x: 0., y: 0., z: 0. },
+                Coord { x: 1., y: 1., z: 1. },
+                Coord { x: 0., y: 2., z: 0. },
+                Coord { x: 0., y: 0., z: 0. },
             ]),
             vec![],
         )
@@ -309,13 +311,13 @@ mod test {
     fn make_test_poly2() -> Polygon {
         Polygon::new(
             LineString(vec![
-                Coord { x: 10., y: 10. },
-                Coord { x: 11., y: 11. },
-                Coord { x: 11., y: 11. },
-                Coord { x: 11., y: 11. },
-                Coord { x: 10., y: 12. },
-                Coord { x: 10., y: 12. },
-                Coord { x: 10., y: 10. },
+                Coord { x: 10., y: 10., z: 10. },
+                Coord { x: 11., y: 11., z: 11. },
+                Coord { x: 11., y: 11., z: 11. },
+                Coord { x: 11., y: 11., z: 11. },
+                Coord { x: 10., y: 12., z: 10. },
+                Coord { x: 10., y: 12., z: 10. },
+                Coord { x: 10., y: 10., z: 10. },
             ]),
             vec![],
         )
@@ -324,10 +326,10 @@ mod test {
     fn make_result_poly2() -> Polygon {
         Polygon::new(
             LineString(vec![
-                Coord { x: 10., y: 10. },
-                Coord { x: 11., y: 11. },
-                Coord { x: 10., y: 12. },
-                Coord { x: 10., y: 10. },
+                Coord { x: 10., y: 10., z: 10. },
+                Coord { x: 11., y: 11., z: 11. },
+                Coord { x: 10., y: 12., z: 10. },
+                Coord { x: 10., y: 10., z: 10. },
             ]),
             vec![],
         )

@@ -37,18 +37,18 @@ impl<T: CoordNum> Triangle<T> {
     /// use geo_types::{coord, Triangle, polygon};
     ///
     /// let triangle = Triangle::new(
-    ///     coord! { x: 0., y: 0. },
-    ///     coord! { x: 10., y: 20. },
-    ///     coord! { x: 20., y: -10. },
+    ///     coord! { x: 0., y: 0., z: 0. },
+    ///     coord! { x: 10., y: 20., z: 30. },
+    ///     coord! { x: 20., y: -10., z: 25. },
     /// );
     ///
     /// assert_eq!(
     ///     triangle.to_polygon(),
     ///     polygon![
-    ///         (x: 0., y: 0.),
-    ///         (x: 10., y: 20.),
-    ///         (x: 20., y: -10.),
-    ///         (x: 0., y: 0.),
+    ///         (x: 0., y: 0., z: 0.),
+    ///         (x: 10., y: 20., z: 30.),
+    ///         (x: 20., y: -10., z: 25.),
+    ///         (x: 0., y: 0., z: 0.),
     ///     ],
     /// );
     /// ```
@@ -80,8 +80,8 @@ where
     /// ```
     /// use geo_types::{point, Triangle};
     ///
-    /// let a = Triangle::new((0.0, 0.0).into(), (10.0, 10.0).into(), (0.0, 5.0).into());
-    /// let b = Triangle::new((0.0, 0.0).into(), (10.01, 10.0).into(), (0.0, 5.0).into());
+    /// let a = Triangle::new((0.0, 0.0, 0.0).into(), (10.0, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
+    /// let b = Triangle::new((0.0, 0.0, 0.0).into(), (10.01, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
     ///
     /// approx::assert_relative_eq!(a, b, max_relative=0.1);
     /// approx::assert_relative_ne!(a, b, max_relative=0.0001);
@@ -127,8 +127,8 @@ where
     /// ```
     /// use geo_types::{point, Triangle};
     ///
-    /// let a = Triangle::new((0.0, 0.0).into(), (10.0, 10.0).into(), (0.0, 5.0).into());
-    /// let b = Triangle::new((0.0, 0.0).into(), (10.01, 10.0).into(), (0.0, 5.0).into());
+    /// let a = Triangle::new((0.0, 0.0, 0.0).into(), (10.0, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
+    /// let b = Triangle::new((0.0, 0.0, 0.0).into(), (10.01, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
     ///
     /// approx::abs_diff_eq!(a, b, epsilon=0.1);
     /// approx::abs_diff_ne!(a, b, epsilon=0.001);

@@ -22,15 +22,15 @@ use std::{fmt, ops::Mul, ops::Neg};
 /// use geo::{point, line_string, BoundingRect};
 /// use approx::assert_relative_eq;
 ///
-/// let line_string = line_string![(x: 0.0, y: 0.0),(x: 1.0, y: 1.0)];
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0),(x: 1.0, y: 1.0, z: 1.0)];
 ///
-/// let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, point!(x: 0.0, y: 0.0));
+/// let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, point!(x: 0.0, y: 0.0, z: 0.0));
 ///
 /// let transformed_line_string = line_string.affine_transform(&transform);
 ///
 /// assert_relative_eq!(
 ///     transformed_line_string,
-///     line_string![(x: 2.0, y: 2.0),(x: 4.0, y: 4.0)]
+///     line_string![(x: 2.0, y: 2.0, z: 2.0),(x: 4.0, y: 4.0, z: 4.0)]
 /// );
 /// ```
 pub trait AffineOps<T: CoordNum> {
@@ -121,7 +121,7 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 /// ```
 
 #[derive(Copy, Clone, PartialEq, Eq)]
-pub struct AffineTransform<T: CoordNum = f64>([[T; 3]; 3]);
+pub struct AffineTransform<T: CoordNum = f64>([[T; 4]; 4]);
 
 impl<T: CoordNum> Default for AffineTransform<T> {
     fn default() -> Self {
@@ -130,47 +130,95 @@ impl<T: CoordNum> Default for AffineTransform<T> {
     }
 }
 
+/// Makes an fn for a field at specified pos
+macro_rules! affine_field {
+    ($field_name: ident[$pos_0: literal][$pos_1: literal]) => {
+        /// See [AffineTransform::new] for this value's role in the affine transformation.
+        pub fn $field_name(&self) -> T {
+            self.0[$pos_0][$pos_1]
+        }
+    };
+}
+
 impl<T: CoordNum> AffineTransform<T> {
     /// Create a new affine transformation by composing two `AffineTransform`s.
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
     pub fn compose(&self, other: &Self) -> Self {
-        // lol
         Self([
             [
                 (other.0[0][0] * self.0[0][0])
                     + (other.0[0][1] * self.0[1][0])
-                    + (other.0[0][2] * self.0[2][0]),
+                    + (other.0[0][2] * self.0[2][0])
+                    + (other.0[0][3] * self.0[3][0]),
                 (other.0[0][0] * self.0[0][1])
                     + (other.0[0][1] * self.0[1][1])
-                    + (other.0[0][2] * self.0[2][1]),
+                    + (other.0[0][2] * self.0[2][1])
+                    + (other.0[0][3] * self.0[3][1]),
                 (other.0[0][0] * self.0[0][2])
                     + (other.0[0][1] * self.0[1][2])
-                    + (other.0[0][2] * self.0[2][2]),
+                    + (other.0[0][2] * self.0[2][2])
+                    + (other.0[0][3] * self.0[3][2]),
+                (other.0[0][0] * self.0[0][3])
+                    + (other.0[0][1] * self.0[1][3])
+                    + (other.0[0][2] * self.0[2][3])
+                    + (other.0[0][3] * self.0[3][3]),
             ],
             [
                 (other.0[1][0] * self.0[0][0])
                     + (other.0[1][1] * self.0[1][0])
-                    + (other.0[1][2] * self.0[2][0]),
+                    + (other.0[1][2] * self.0[2][0])
+                    + (other.0[1][3] * self.0[3][0]),
                 (other.0[1][0] * self.0[0][1])
                     + (other.0[1][1] * self.0[1][1])
-                    + (other.0[1][2] * self.0[2][1]),
+                    + (other.0[1][2] * self.0[2][1])
+                    + (other.0[1][3] * self.0[3][1]),
                 (other.0[1][0] * self.0[0][2])
                     + (other.0[1][1] * self.0[1][2])
-                    + (other.0[1][2] * self.0[2][2]),
+                    + (other.0[1][2] * self.0[2][2])
+                    + (other.0[1][3] * self.0[3][2]),
+                (other.0[1][0] * self.0[0][3])
+                    + (other.0[1][1] * self.0[1][3])
+                    + (other.0[1][2] * self.0[2][3])
+                    + (other.0[1][3] * self.0[3][3]),
             ],
             [
-                // this section isn't technically necessary since the last row is invariant: [0, 0, 1]
                 (other.0[2][0] * self.0[0][0])
                     + (other.0[2][1] * self.0[1][0])
-                    + (other.0[2][2] * self.0[2][0]),
+                    + (other.0[2][2] * self.0[2][0])
+                    + (other.0[2][3] * self.0[3][0]),
                 (other.0[2][0] * self.0[0][1])
                     + (other.0[2][1] * self.0[1][1])
-                    + (other.0[2][2] * self.0[2][1]),
+                    + (other.0[2][2] * self.0[2][1])
+                    + (other.0[2][3] * self.0[3][1]),
                 (other.0[2][0] * self.0[0][2])
                     + (other.0[2][1] * self.0[1][2])
-                    + (other.0[2][2] * self.0[2][2]),
+                    + (other.0[2][2] * self.0[2][2])
+                    + (other.0[2][3] * self.0[3][2]),
+                (other.0[2][0] * self.0[0][3])
+                    + (other.0[2][1] * self.0[1][3])
+                    + (other.0[2][2] * self.0[2][3])
+                    + (other.0[2][3] * self.0[3][3]),
+            ],
+            [
+                // this section isn't technically necessary since the last row is invariant: [0, 0, 0, 1]
+                (other.0[3][0] * self.0[0][0])
+                    + (other.0[3][1] * self.0[1][0])
+                    + (other.0[3][2] * self.0[2][0])
+                    + (other.0[3][3] * self.0[3][0]),
+                (other.0[3][0] * self.0[0][1])
+                    + (other.0[3][1] * self.0[1][1])
+                    + (other.0[3][2] * self.0[2][1])
+                    + (other.0[3][3] * self.0[3][1]),
+                (other.0[3][0] * self.0[0][2])
+                    + (other.0[3][1] * self.0[1][2])
+                    + (other.0[3][2] * self.0[2][2])
+                    + (other.0[3][3] * self.0[3][2]),
+                (other.0[3][0] * self.0[0][3])
+                    + (other.0[3][1] * self.0[1][3])
+                    + (other.0[3][2] * self.0[2][3])
+                    + (other.0[3][3] * self.0[3][3]),
             ],
         ])
     }
@@ -204,19 +252,18 @@ impl<T: CoordNum> AffineTransform<T> {
     ///
     /// The matrix is:
     /// ```ignore
-    /// [[1, 0, 0],
-    /// [0, 1, 0],
-    /// [0, 0, 1]]
+    /// [[1, 0, 0, 0],
+    ///  [0, 1, 0, 0],
+    ///  [0, 0, 1, 0],
+    ///  [0, 0, 0, 1]]
     /// ```
     pub fn identity() -> Self {
-        Self::new(
-            T::one(),
-            T::zero(),
-            T::zero(),
-            T::zero(),
-            T::one(),
-            T::zero(),
-        )
+        Self([
+            [T::one(), T::zero(), T::zero(), T::zero()],
+            [T::zero(), T::one(), T::zero(), T::zero()],
+            [T::zero(), T::zero(), T::one(), T::zero()],
+            [T::zero(), T::zero(), T::zero(), T::one()],
+        ])
     }
 
     /// Whether the transformation is equivalent to the [identity matrix](Self::identity),
@@ -228,11 +275,11 @@ impl<T: CoordNum> AffineTransform<T> {
     /// assert!(transform.is_identity());
     ///
     /// // mutate the transform a bit
-    /// transform = transform.translated(1.0, 2.0);
+    /// transform = transform.translated(1.0, 2.0, 3.0);
     /// assert!(!transform.is_identity());
     ///
     /// // put it back
-    /// transform = transform.translated(-1.0, -2.0);
+    /// transform = transform.translated(-1.0, -2.0, -3.0);
     /// assert!(transform.is_identity());
     /// ```
     pub fn is_identity(&self) -> bool {
@@ -253,11 +300,18 @@ impl<T: CoordNum> AffineTransform<T> {
     /// xoff = origin.x - (origin.x * xfact)
     /// yoff = origin.y - (origin.y * yfact)
     /// ```
-    pub fn scale(xfact: T, yfact: T, origin: impl Into<Coord<T>>) -> Self {
-        let (x0, y0) = origin.into().x_y();
-        let xoff = x0 - (x0 * xfact);
-        let yoff = y0 - (y0 * yfact);
-        Self::new(xfact, T::zero(), xoff, T::zero(), yfact, yoff)
+    /// Create a new affine transform for scaling in 3D
+    pub fn scale(xfact: T, yfact: T, zfact: T, origin: impl Into<Coord<T>>) -> Self {
+        let (x0, y0, z0) = origin.into().x_y_z();
+        let xoff = x0 - x0 * xfact;
+        let yoff = y0 - y0 * yfact;
+        let zoff = z0 - z0 * zfact;
+
+        Self::new(
+            xfact, T::zero(), T::zero(), xoff,
+            T::zero(), yfact, T::zero(), yoff,
+            T::zero(), T::zero(), zfact, zoff
+        )
     }
 
     /// **Add** an affine transform for scaling, scaled by factors along the `x` and `y` dimensions.
@@ -266,8 +320,8 @@ impl<T: CoordNum> AffineTransform<T> {
     /// Negative scale factors will mirror or reflect coordinates.
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
-    pub fn scaled(mut self, xfact: T, yfact: T, origin: impl Into<Coord<T>>) -> Self {
-        self.0 = self.compose(&Self::scale(xfact, yfact, origin)).0;
+    pub fn scaled(mut self, xfact: T, yfact: T, zfact: T, origin: impl Into<Coord<T>>) -> Self {
+        self.0 = self.compose(&Self::scale(xfact, yfact, zfact, origin)).0;
         self
     }
 
@@ -275,28 +329,34 @@ impl<T: CoordNum> AffineTransform<T> {
     ///
     /// The matrix is:
     /// ```ignore
-    /// [[1, 0, xoff],
-    /// [0, 1, yoff],
-    /// [0, 0, 1]]
+    /// [[1, 0, 0, xoff],
+    /// [0, 1, 0, yoff],
+    /// [0, 0, 1, zoff],
+    /// [0, 0, 0, 1]]
     /// ```
-    pub fn translate(xoff: T, yoff: T) -> Self {
-        Self::new(T::one(), T::zero(), xoff, T::zero(), T::one(), yoff)
+    pub fn translate(xoff: T, yoff: T, zoff: T) -> Self {
+        Self::new(
+            T::one(), T::zero(), T::zero(), xoff,
+            T::zero(), T::one(), T::zero(), yoff,
+            T::zero(), T::zero(), T::one(), zoff
+        )
     }
 
     /// **Add** an affine transform for translation, shifted by offsets along the `x` and `y` dimensions
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
-    pub fn translated(mut self, xoff: T, yoff: T) -> Self {
-        self.0 = self.compose(&Self::translate(xoff, yoff)).0;
+    pub fn translated(mut self, xoff: T, yoff: T, zoff: T) -> Self {
+        self.0 = self.compose(&Self::translate(xoff, yoff, zoff)).0;
         self
     }
 
     /// Apply the current transform to a coordinate
     pub fn apply(&self, coord: Coord<T>) -> Coord<T> {
         Coord {
-            x: (self.0[0][0] * coord.x + self.0[0][1] * coord.y + self.0[0][2]),
-            y: (self.0[1][0] * coord.x + self.0[1][1] * coord.y + self.0[1][2]),
+            x: self.0[0][0] * coord.x + self.0[0][1] * coord.y + self.0[0][2] * coord.z + self.0[0][3],
+            y: self.0[1][0] * coord.x + self.0[1][1] * coord.y + self.0[1][2] * coord.z + self.0[1][3],
+            z: self.0[2][0] * coord.x + self.0[2][1] * coord.y + self.0[2][2] * coord.z + self.0[2][3],
         }
     }
 
@@ -304,38 +364,35 @@ impl<T: CoordNum> AffineTransform<T> {
     ///
     /// The argument order matches that of the affine transform matrix:
     ///```ignore
-    /// [[a, b, xoff],
-    ///  [d, e, yoff],
-    ///  [0, 0, 1]] <-- not part of the input arguments
+    /// [[a, b, f, xoff],
+    ///  [d, e, g, yoff],
+    ///  [h, i, j, zoff],
+    ///  [0, 0, 0, 1]] <-- not part of the input arguments
     /// ```
-    pub fn new(a: T, b: T, xoff: T, d: T, e: T, yoff: T) -> Self {
-        Self([[a, b, xoff], [d, e, yoff], [T::zero(), T::zero(), T::one()]])
+    pub fn new(a: T, b: T, f: T, xoff: T, d: T, e: T, g: T, yoff: T, h: T, i: T, j: T, zoff: T) -> Self {
+        Self([
+            [a, b, f, xoff],
+            [d, e, g, yoff],
+            [h, i, j, zoff],
+            [T::zero(), T::zero(), T::zero(), T::one()]
+        ])
     }
 
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn a(&self) -> T {
-        self.0[0][0]
-    }
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn b(&self) -> T {
-        self.0[0][1]
-    }
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn xoff(&self) -> T {
-        self.0[0][2]
-    }
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn d(&self) -> T {
-        self.0[1][0]
-    }
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn e(&self) -> T {
-        self.0[1][1]
-    }
-    /// See [AffineTransform::new] for this value's role in the affine transformation.
-    pub fn yoff(&self) -> T {
-        self.0[1][2]
-    }
+    // See [AffineTransform::new] for these value's roles in the affine transformation.
+    affine_field!(a[0][0]);
+    affine_field!(b[0][1]);
+    affine_field!(f[0][2]);
+    affine_field!(xoff[0][3]);
+
+    affine_field!(d[1][0]);
+    affine_field!(e[1][1]);
+    affine_field!(g[1][2]);
+    affine_field!(yoff[1][3]);
+
+    affine_field!(h[2][0]);
+    affine_field!(i[2][1]);
+    affine_field!(j[2][2]);
+    affine_field!(zoff[2][3]);
 }
 
 impl<T: CoordNum + Neg> AffineTransform<T> {
@@ -378,28 +435,43 @@ impl<T: CoordNum> fmt::Debug for AffineTransform<T> {
         f.debug_struct("AffineTransform")
             .field("a", &self.0[0][0])
             .field("b", &self.0[0][1])
-            .field("xoff", &self.0[0][2])
+            .field("f", &self.0[0][2])
+            .field("xoff", &self.0[0][3])
             .field("d", &self.0[1][0])
             .field("e", &self.0[1][1])
-            .field("yoff", &self.0[1][2])
+            .field("g", &self.0[1][2])
+            .field("yoff", &self.0[1][3])
+            .field("h", &self.0[2][0])
+            .field("i", &self.0[2][1])
+            .field("j", &self.0[2][2])
+            .field("zoff", &self.0[2][3])
             .finish()
     }
 }
 
-impl<T: CoordNum> From<[T; 6]> for AffineTransform<T> {
-    fn from(arr: [T; 6]) -> Self {
-        Self::new(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
+impl<T: CoordNum> From<[T; 12]> for AffineTransform<T> {
+    fn from(arr: [T; 12]) -> Self {
+        Self::new(
+            arr[0], arr[1], arr[2], arr[3],
+            arr[4], arr[5], arr[6], arr[7],
+            arr[8], arr[9], arr[10], arr[11]
+        )
     }
 }
 
-impl<T: CoordNum> From<(T, T, T, T, T, T)> for AffineTransform<T> {
-    fn from(tup: (T, T, T, T, T, T)) -> Self {
-        Self::new(tup.0, tup.1, tup.2, tup.3, tup.4, tup.5)
+impl<T: CoordNum> From<(T, T, T, T, T, T, T, T, T, T, T, T)> for AffineTransform<T> {
+    fn from(tup: (T, T, T, T, T, T, T, T, T, T, T, T)) -> Self {
+        Self::new(
+            tup.0, tup.1, tup.2, tup.3,
+            tup.4, tup.5, tup.6, tup.7,
+            tup.8, tup.9, tup.10, tup.11
+        )
     }
 }
+
 
 impl<U: CoordFloat> AffineTransform<U> {
-    /// **Create** an affine transform for rotation, using an arbitrary point as its centre.
+    /// **Create** an affine transform for rotation, using an arbitrary point as its center.
     ///
     /// Note that this operation is only available for geometries with floating point coordinates.
     ///
@@ -407,19 +479,27 @@ impl<U: CoordFloat> AffineTransform<U> {
     ///
     /// The matrix (angle denoted as theta) is:
     /// ```ignore
-    /// [[cos_theta, -sin_theta, xoff],
-    /// [sin_theta, cos_theta, yoff],
-    /// [0, 0, 1]]
+    /// [[cos_theta, -sin_theta, 0, xoff],
+    ///  [sin_theta,  cos_theta, 0, yoff],
+    ///  [0,          0,         1, zoff],
+    ///  [0,          0,         0, 1]]
     ///
     /// xoff = origin.x - (origin.x * cos(theta)) + (origin.y * sin(theta))
-    /// yoff = origin.y - (origin.x * sin(theta)) + (origin.y * cos(theta))
+    /// yoff = origin.y - (origin.x * sin(theta)) - (origin.y * cos(theta))
+    /// zoff = origin.z
     /// ```
     pub fn rotate(degrees: U, origin: impl Into<Coord<U>>) -> Self {
         let (sin_theta, cos_theta) = degrees.to_radians().sin_cos();
-        let (x0, y0) = origin.into().x_y();
+        let Coord { x: x0, y: y0, z: z0 } = origin.into();
         let xoff = x0 - (x0 * cos_theta) + (y0 * sin_theta);
         let yoff = y0 - (x0 * sin_theta) - (y0 * cos_theta);
-        Self::new(cos_theta, -sin_theta, xoff, sin_theta, cos_theta, yoff)
+        let zoff = z0; // No change in the z-axis for a 2D rotation in 3D space.
+
+        Self::new(
+            cos_theta, -sin_theta, U::zero(), xoff,
+            sin_theta,  cos_theta, U::zero(), yoff,
+            U::zero(),  U::zero(), U::one(), zoff,
+        )
     }
 
     /// **Add** an affine transform for rotation, using an arbitrary point as its centre.
@@ -444,15 +524,17 @@ impl<U: CoordFloat> AffineTransform<U> {
     /// any coordinate may be specified. Angles are given in **degrees**.
     /// The matrix is:
     /// ```ignore
-    /// [[1, tan(x), xoff],
-    /// [tan(y), 1, yoff],
-    /// [0, 0, 1]]
+    /// [[1, tan(x), 0, xoff],
+    /// [tan(y), 1, 0, yoff],
+    /// [0, 0, 1, zoff],
+    /// [0, 0, 0, 1]]
     ///
     /// xoff = -origin.y * tan(xs)
     /// yoff = -origin.x * tan(ys)
+    /// zoff = origin.z
     /// ```
     pub fn skew(xs: U, ys: U, origin: impl Into<Coord<U>>) -> Self {
-        let Coord { x: x0, y: y0 } = origin.into();
+        let Coord { x: x0, y: y0, z: z0 } = origin.into();
         let mut tanx = xs.to_radians().tan();
         let mut tany = ys.to_radians().tan();
         // These checks are stolen from Shapely's implementation -- may not be necessary
@@ -464,7 +546,8 @@ impl<U: CoordFloat> AffineTransform<U> {
         }
         let xoff = -y0 * tanx;
         let yoff = -x0 * tany;
-        Self::new(U::one(), tanx, xoff, tany, U::one(), yoff)
+        let zoff = z0; // Z-offset remains unchanged during a 2D skew operation.
+        Self::new(U::one(), tanx, U::zero(), xoff, tany, U::one(), U::zero(), yoff, U::zero(), U::zero(), U::one(), zoff)
     }
 
     /// **Add** an affine transform for skewing.

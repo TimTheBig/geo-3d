@@ -6,7 +6,7 @@ use crate::{GeoFloat, HasDimensions, Polygon, Relate};
 use std::fmt;
 
 /// A [`Polygon`] must follow these rules to be valid:
-/// - [x] the polygon boundary rings (the exterior shell ring and interior hole rings) are simple (do not cross or self-touch). Because of this a polygon cannnot have cut lines, spikes or loops. This implies that polygon holes must be represented as interior rings, rather than by the exterior ring self-touching (a so-called "inverted hole").
+/// - [x] the polygon boundary rings (the exterior shell ring and interior hole rings) are simple (do not cross or self-touch). Because of this a polygon cannot have cut lines, spikes or loops. This implies that polygon holes must be represented as interior rings, rather than by the exterior ring self-touching (a so-called "inverted hole").
 /// - [x] boundary rings do not cross
 /// - [x] boundary rings may touch at points but only as a tangent (i.e. not in a line)
 /// - [x] interior rings are contained in the exterior ring
@@ -168,7 +168,7 @@ mod tests {
         // Unclosed rings are automatically closed by geo_types
         // so the following should be valid
         let polygon = wkt!(
-            POLYGON((0. 0., 1. 1., 0. 1.))
+            POLYGON((0. 0. 0., 1. 1. 1., 0. 1. 0.5))
         );
         assert_valid!(&polygon);
     }
@@ -180,8 +180,8 @@ mod tests {
         // This is valid according to the OGC spec.
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 1., 4. 4.,0. 4.,0. 0.),
-                (0. 2., 2. 1., 3. 2., 2. 3., 0. 2.)
+                (0. 0. 0., 4. 1. 1., 4. 4. 1.,0. 4. 0.5, 0. 0. 0.),
+                (0. 2. 0., 2. 1. 0.5, 3. 2. 0., 2. 3. 0., 0. 2. 0.)
             )
         );
         assert_valid!(&polygon);
@@ -193,9 +193,9 @@ mod tests {
         // at one point.
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 0., 4. 4.,0. 4.,0. 0.),
-                (1. 2., 2. 1., 3. 2., 2. 3., 1. 2.),
-                (3. 2., 3.5 1., 3.75 2., 3.5 3., 3. 2.)
+                (0. 0. 0., 4. 0. 0.5, 4. 4. 0.5, 0. 4. 0., 0. 0. 0.),
+                (1. 2. 3., 2. 1. 0., 3. 2. 1., 2. 3. 4., 1. 2. 3.),
+                (3. 2. 1., 3.5 1. 0.5, 3.75 2. 0.5, 3.5 3. 0.5, 3. 2. 1.)
             )
         );
         assert_valid!(&polygon);
@@ -207,9 +207,9 @@ mod tests {
         // on a line, this is not valid.
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 0., 4. 4.,0. 4.,0. 0.),
-                (1. 2., 2. 1., 3. 2., 2. 3., 1. 2.),
-                (3. 2., 2. 1., 3.5 1., 3.75 2., 3.5 3., 3. 2.)
+                (0. 0. 0., 4. 0. 0.5, 4. 4. 4., 0. 4. 3., 0. 0. 0.),
+                (1. 2. 3., 2. 1. 0., 3. 2. 1., 2. 3. 4., 1. 2. 3.),
+                (3. 2. 1., 2. 1. 0., 3.5 1. 4.5, 3.75 2. 6.7, 3.5 3. 6., 3. 2. 1.)
             )
         );
 
@@ -228,9 +228,9 @@ mod tests {
         // each other (they share some common area), this is not valid.
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 0.,  4. 4.,   0. 4.,  0. 0.),
-                (1. 2., 2. 1.,  3. 2.,   2. 3.,  1. 2.),
-                (2. 2., 2. 1., 3.5 1., 3.75 2., 3.5 3., 3. 2.)
+                (0. 0. 0., 4. 0. 0.5,  4. 4. 4.,   0. 4. 0.,  0. 0. 0.),
+                (1. 2. 3., 2. 1. 0.,  3. 2. 1.,   2. 3. 4.,  1. 2. 3.),
+                (2. 2. 2., 2. 1. 0., 3.5 1. 1., 3.75 2. 0., 3.5 3. 3., 3. 2. 2.)
             )
         );
 
@@ -250,9 +250,9 @@ mod tests {
         // This is valid according to the OGC spec.
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 0., 4. 4., 0. 4., 0. 0.),
+                (0. 0. 0., 4. 0. 4., 4. 4. 4., 0. 4. 0., 0. 0. 0.),
                 // First two points are on the exterior ring
-                (0. 2., 0. 1., 2. 1., 3. 2., 2. 3., 0. 2.)
+                (0. 2. 0., 0. 1. 0., 2. 1. 0., 3. 2. 1., 2. 3. 4., 0. 2. 0.)
             )
         );
 
@@ -270,7 +270,7 @@ mod tests {
         // Unclosed rings are automatically closed by geo_types
         // but there is still two few points in this ring
         // to be a non-empty polygon
-        let polygon = wkt!( POLYGON((0. 0., 1. 1.)) );
+        let polygon = wkt!( POLYGON((0. 0. 0., 1. 1. 1.)) );
         assert_validation_errors!(
             &polygon,
             vec![InvalidPolygon::TooFewPointsInRing(RingRole::Exterior)]
@@ -282,7 +282,7 @@ mod tests {
         // The following polygon contains a spike
         let polygon = wkt!(
             POLYGON(
-                (0. 0., 4. 0., 4. 4., 2. 4., 2. 6., 2. 4., 0. 4., 0. 0.)
+                (0. 0. 0., 4. 0. 4., 4. 4. 4., 2. 4. 2., 2. 6. 2., 2. 4. 2., 0. 4. 0., 0. 0. 0.)
             )
         );
 
@@ -296,7 +296,7 @@ mod tests {
     fn test_polygon_invalid_exterior_is_not_simple() {
         // The exterior ring of this polygon is not simple (i.e. it has a self-intersection)
         let polygon = wkt!(
-            POLYGON((0. 0., 4. 0., 0. 2., 4. 2., 0. 0.))
+            POLYGON((0. 0. 0., 4. 0. 4., 0. 2. 0., 4. 2. 4., 0. 0. 0.))
         );
         assert_validation_errors!(
             &polygon,
@@ -308,8 +308,8 @@ mod tests {
     fn test_polygon_invalid_interior_not_fully_contained_in_exterior() {
         let polygon = wkt!(
             POLYGON (
-                (0.5 0.5, 3.0 0.5, 3.0 2.5, 0.5 2.5, 0.5 0.5),
-                (1.0 1.0, 1.0 2.0, 2.5 2.0, 3.5 1.0, 1.0 1.0)
+                (0.5 0.5 0.5, 3.0 0.5 3.0, 3.0 2.5 3.0, 0.5 2.5 0.5, 0.5 0.5 0.5),
+                (1.0 1.0 1.0, 1.0 2.0 1.0, 2.5 2.0 2.5, 3.5 1.0 3.5, 1.0 1.0 1.0)
             )
         );
         assert_validation_errors!(
@@ -326,9 +326,9 @@ mod tests {
         // in another interior ring.
         let polygon_1 = wkt!(
             POLYGON(
-                (0. 0., 10. 0., 10. 10., 0. 10., 0. 0.),
-                (1. 1.,  1. 9.,  9.  9., 9.  1., 1. 1.),
-                (2. 2.,  2. 8.,  8.  8., 8.  2., 2. 2.)
+                (0. 0. 0., 10. 0. 10., 10. 10. 10., 0. 10. 0., 0. 0. 0.),
+                (1. 1. 1.,  1. 9. 1.,  9.  9. 9.,  9. 1. 9., 1. 1. 1.),
+                (2. 2. 2.,  2. 8. 2.,  8.  8. 8.,  8. 2. 8., 2. 2. 2.)
             )
         );
 
@@ -344,9 +344,9 @@ mod tests {
         // (this is still invalid)
         let polygon_2 = wkt!(
             POLYGON(
-                (0. 0., 10. 0., 10. 10., 0. 10., 0. 0.),
-                (2. 2.,  2. 8.,  8.  8., 8.  2., 2. 2.),
-                (1. 1.,  1. 9.,  9.  9., 9.  1., 1. 1.)
+                (0. 0. 0., 10. 0. 10., 10. 10. 10., 0. 10. 0., 0. 0. 0.),
+                (2. 2. 2.,  2. 8. 2.,  8.  8.  8.,  8. 2. 8., 2. 2. 2.),
+                (1. 1. 1.,  1. 9. 1.,  9.  9.  9.,  9. 1. 9., 1. 1. 1.)
             )
         );
 

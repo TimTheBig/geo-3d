@@ -222,15 +222,15 @@ mod test {
 
     #[test]
     fn test_iter() {
-        let multi = wkt! { MULTIPOINT(0 0,10 10) };
+        let multi = wkt! { MULTIPOINT(0 0 0, 10 10 10) };
 
         let mut first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 0, y: 0]);
+                assert_eq!(p, &point![x: 0, y: 0, z: 0]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 10, y: 10]);
+                assert_eq!(p, &point![x: 10, y: 10, z: 10]);
             }
         }
 
@@ -238,17 +238,17 @@ mod test {
         first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 0, y: 0]);
+                assert_eq!(p, &point![x: 0, y: 0, z: 0]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 10, y: 10]);
+                assert_eq!(p, &point![x: 10, y: 10, z: 10]);
             }
         }
     }
 
     #[test]
     fn test_iter_mut() {
-        let mut multi = wkt! { MULTIPOINT(0 0,10 10) };
+        let mut multi = wkt! { MULTIPOINT(0 0 0, 10 10 10) };
 
         for point in &mut multi {
             point.0.x += 1;
@@ -263,10 +263,10 @@ mod test {
         let mut first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 2, y: 2]);
+                assert_eq!(p, &point![x: 2, y: 2, z: 2]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 12, y: 12]);
+                assert_eq!(p, &point![x: 12, y: 12, z: 12]);
             }
         }
     }
@@ -275,7 +275,7 @@ mod test {
     fn test_relative_eq() {
         let delta = 1e-6;
 
-        let multi = wkt! { MULTIPOINT(0. 0.,10. 10.) };
+        let multi = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10.) };
 
         let mut multi_x = multi.clone();
         *multi_x.0[0].x_mut() += delta;
@@ -289,11 +289,11 @@ mod test {
         assert!(multi.relative_ne(&multi_y, 1e-12, 1e-12));
 
         // Under-sized but otherwise equal.
-        let multi_undersized = wkt! { MULTIPOINT(0. 0.) };
+        let multi_undersized = wkt! { MULTIPOINT(0. 0. 0.) };
         assert!(multi.relative_ne(&multi_undersized, 1., 1.));
 
         // Over-sized but otherwise equal.
-        let multi_oversized = wkt! { MULTIPOINT(0. 0.,10. 10.,10. 100.) };
+        let multi_oversized = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10., 10. 100. 100.) };
         assert!(multi.relative_ne(&multi_oversized, 1., 1.));
     }
 
@@ -301,7 +301,7 @@ mod test {
     fn test_abs_diff_eq() {
         let delta = 1e-6;
 
-        let multi = wkt! { MULTIPOINT(0. 0.,10. 10.) };
+        let multi = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10.) };
 
         let mut multi_x = multi.clone();
         *multi_x.0[0].x_mut() += delta;
@@ -314,11 +314,11 @@ mod test {
         assert!(multi.abs_diff_ne(&multi_y, 1e-12));
 
         // Under-sized but otherwise equal.
-        let multi_undersized = wkt! { MULTIPOINT(0. 0.) };
+        let multi_undersized = wkt! { MULTIPOINT(0. 0. 0.) };
         assert!(multi.abs_diff_ne(&multi_undersized, 1.));
 
         // Over-sized but otherwise equal.
-        let multi_oversized = wkt! { MULTIPOINT(0. 0.,10. 10.,10. 100.) };
+        let multi_oversized = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10., 0. 100. 100.) };
         assert!(multi.abs_diff_ne(&multi_oversized, 1.));
     }
 }

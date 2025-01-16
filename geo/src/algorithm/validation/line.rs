@@ -54,19 +54,19 @@ mod tests {
 
     #[test]
     fn test_line_valid() {
-        let l = Line::new((0., 0.), (1., 1.));
+        let l = Line::new((0., 0., 0.), (1., 1., 1.));
         assert_valid!(l);
     }
 
     #[test]
     fn test_line_invalid_not_finite_coords() {
-        let l = Line::new((0., 0.), (f64::NEG_INFINITY, 0.));
+        let l = Line::new((0., 0., 0.), (f64::NEG_INFINITY, 0., 0.));
         assert_validation_errors!(l, vec![InvalidLine::NonFiniteCoord(CoordIndex(1))]);
     }
 
     #[test]
     fn test_line_invalid_same_points() {
-        let l = Line::new((0., 0.), (0., 0.));
+        let l = Line::new((0., 0., 0.), (0., 0., 0.));
         assert_validation_errors!(l, vec![InvalidLine::IdenticalCoords]);
     }
 }

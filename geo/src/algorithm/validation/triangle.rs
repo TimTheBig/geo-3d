@@ -90,13 +90,13 @@ mod tests {
 
     #[test]
     fn test_triangle_valid() {
-        let t = Triangle((0., 0.).into(), (0., 1.).into(), (0.5, 2.).into());
+        let t = Triangle((0., 0., 0.).into(), (0., 1., 0.).into(), (0.5, 2., 4.).into());
         assert_valid!(t);
     }
 
     #[test]
     fn test_triangle_invalid_same_points() {
-        let t = Triangle((0., 0.).into(), (0., 1.).into(), (0., 1.).into());
+        let t = Triangle((0., 0., 0.).into(), (0., 1., 0.5).into(), (0., 1., 0.5).into());
         assert_validation_errors!(
             t,
             vec![InvalidTriangle::IdenticalCoords(
@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     fn test_triangle_invalid_points_collinear() {
-        let t = Triangle((0., 0.).into(), (1., 1.).into(), (2., 2.).into());
+        let t = Triangle((0., 0., 0.).into(), (1., 1., 1.).into(), (2., 2., 2.).into());
         assert_validation_errors!(t, vec![InvalidTriangle::CollinearCoords]);
     }
 }

@@ -10,7 +10,7 @@ edition = "2021"
 bench-foreign-booleanop = []
 
 [dependencies]
-geo = { path = "../geo" }
+geo = { package = "geo-3d", path = "../geo" }
 geo-types = { path = "../geo-types" }
 log = "0.4.11"
 
@@ -18,7 +18,6 @@ log = "0.4.11"
 approx = ">= 0.4.0, < 0.6.0"
 criterion = { version = "0.4", features = ["html_reports"] }
 geo-test-fixtures = { path = "../geo-test-fixtures" }
-jts-test-runner = { path = "../jts-test-runner" }
 pretty_env_logger = "0.4"
 rand = "0.8.0"
 rand_distr = "0.4.3"

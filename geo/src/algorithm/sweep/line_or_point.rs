@@ -23,11 +23,11 @@ pub enum LineOrPoint<T: GeoNum> {
 impl<T: GeoNum> std::fmt::Debug for LineOrPoint<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            LineOrPoint::Point(p) => f.debug_tuple("Pt").field(&p.x_y()).finish(),
+            LineOrPoint::Point(p) => f.debug_tuple("Pt").field(&p.x_y_z()).finish(),
             LineOrPoint::Line { left, right } => f
                 .debug_tuple("LPt")
-                .field(&left.x_y())
-                .field(&right.x_y())
+                .field(&left.x_y_z())
+                .field(&right.x_y_z())
                 .finish(),
         }
     }

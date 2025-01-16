@@ -53,9 +53,9 @@ mod tests {
     fn test_geometrycollection_contain_invalid_element() {
         let gc = wkt!(
             GEOMETRYCOLLECTION(
-                POINT(0. 0.),
-                LINESTRING(0. 0.,1. 1.),
-                LINESTRING(0. 0.,0. 0.)
+                POINT(0. 0. 0.),
+                LINESTRING(0. 0. 0., 1. 1. 1.),
+                LINESTRING(0. 0. 0., 0. 0. 0.)
             )
         );
         assert_validation_errors!(
@@ -73,12 +73,12 @@ mod tests {
     fn test_display() {
         let gc = wkt!(
             GEOMETRYCOLLECTION(
-                POINT(0. 0.),
-                LINESTRING(0. 0.,1. 1.),
-                LINESTRING(0. 0.,0. 0.),
+                POINT(0. 0. 0.),
+                LINESTRING(0. 0. 0., 1. 1. 1.),
+                LINESTRING(0. 0. 0., 0. 0. 0.),
                 POLYGON(
-                    (0. 0., 1. 1., 1. 0., 0. 0.),
-                    (0. 0., 1. 1., 1. 0., 0. 0.)
+                    (0. 0. 0., 1. 1. 1., 1. 0. 1., 0. 0. 0.),
+                    (0. 0. 0., 1. 1. 1., 1. 0. 1., 0. 0. 0.)
                 )
             )
         );

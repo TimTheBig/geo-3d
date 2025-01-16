@@ -486,13 +486,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for LineString<T> {
     }
 }
 
-#[cfg(any(
-    feature = "rstar_0_8",
-    feature = "rstar_0_9",
-    feature = "rstar_0_10",
-    feature = "rstar_0_11",
-    feature = "rstar_0_12"
-))]
+#[cfg(feature = "rstar_0_12")]
 macro_rules! impl_rstar_line_string {
     ($rstar:ident) => {
         impl<T> ::$rstar::RTreeObject for LineString<T>
@@ -506,12 +500,12 @@ macro_rules! impl_rstar_line_string {
                 let bounding_rect = crate::private_utils::line_string_bounding_rect(self);
                 match bounding_rect {
                     None => ::$rstar::AABB::from_corners(
-                        Point::new(Bounded::min_value(), Bounded::min_value()),
-                        Point::new(Bounded::max_value(), Bounded::max_value()),
+                        Point::new(Bounded::min_value(), Bounded::min_value(), Bounded::max_value()),
+                        Point::new(Bounded::max_value(), Bounded::max_value(), Bounded::min_value()),
                     ),
                     Some(b) => ::$rstar::AABB::from_corners(
-                        Point::new(b.min().x, b.min().y),
-                        Point::new(b.max().x, b.max().y),
+                        Point::new(b.min().x, b.min().y, b.max().z),
+                        Point::new(b.max().x, b.max().y, b.min().z),
                     ),
                 }
             }
@@ -533,18 +527,6 @@ macro_rules! impl_rstar_line_string {
     };
 }
 
-#[cfg(feature = "rstar_0_8")]
-impl_rstar_line_string!(rstar_0_8);
-
-#[cfg(feature = "rstar_0_9")]
-impl_rstar_line_string!(rstar_0_9);
-
-#[cfg(feature = "rstar_0_10")]
-impl_rstar_line_string!(rstar_0_10);
-
-#[cfg(feature = "rstar_0_11")]
-impl_rstar_line_string!(rstar_0_11);
-
 #[cfg(feature = "rstar_0_12")]
 impl_rstar_line_string!(rstar_0_12);
 
@@ -557,8 +539,8 @@ mod test {
     #[test]
     fn test_exact_size() {
         // see https://github.com/georust/geo/issues/762
-        let first = coord! { x: 0., y: 0. };
-        let ls = LineString::new(vec![first, coord! { x: 10., y: 0. }]);
+        let first = coord! { x: 0., y: 0., z: 0. };
+        let ls = LineString::new(vec![first, coord! { x: 10., y: 0., z: 0. }]);
 
         // reference to force the `impl IntoIterator for &LineString` impl, giving a `CoordinatesIter`
         for c in (&ls).into_iter().rev().skip(1).rev() {
@@ -573,26 +555,26 @@ mod test {
     fn test_abs_diff_eq() {
         let delta = 1e-6;
 
-        let coords = vec![(0., 0.), (5., 0.), (10., 10.)];
+        let coords = vec![(0., 0., 0.), (5., 0., 5.), (10., 10., 10.)];
         let ls: LineString<f32> = coords.into_iter().collect();
 
-        let coords_x = vec![(0., 0.), (5. + delta, 0.), (10., 10.)];
+        let coords_x = vec![(0., 0., 0.), (5. + delta, 0., 5. - delta), (10., 10., 10.)];
         let ls_x: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.abs_diff_eq(&ls_x, 1e-2));
         assert!(ls.abs_diff_ne(&ls_x, 1e-12));
 
-        let coords_y = vec![(0., 0.), (5., 0. + delta), (10., 10.)];
+        let coords_y = vec![(0., 0., 0.), (5., 0. + delta, 5. -delta), (10., 10., 10.)];
         let ls_y: LineString<f32> = coords_y.into_iter().collect();
         assert!(ls.abs_diff_eq(&ls_y, 1e-2));
         assert!(ls.abs_diff_ne(&ls_y, 1e-12));
 
         // Undersized, but otherwise equal.
-        let coords_x = vec![(0., 0.), (5., 0.)];
+        let coords_x = vec![(0., 0., 0.), (5., 0., 5.)];
         let ls_under: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.abs_diff_ne(&ls_under, 1.));
 
         // Oversized, but otherwise equal.
-        let coords_x = vec![(0., 0.), (5., 0.), (10., 10.), (10., 100.)];
+        let coords_x = vec![(0., 0., 0.), (5., 0., 5.), (10., 10., 10.), (10., 100., 100.)];
         let ls_oversized: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.abs_diff_ne(&ls_oversized, 1.));
     }
@@ -601,41 +583,41 @@ mod test {
     fn test_relative_eq() {
         let delta = 1e-6;
 
-        let coords = vec![(0., 0.), (5., 0.), (10., 10.)];
+        let coords = vec![(0., 0., 0.), (5., 0., 5.), (10., 10., 10.)];
         let ls: LineString<f32> = coords.into_iter().collect();
 
-        let coords_x = vec![(0., 0.), (5. + delta, 0.), (10., 10.)];
+        let coords_x = vec![(0., 0., 0.), (5. + delta, 0., 5. - delta), (10., 10., 10.)];
         let ls_x: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.relative_eq(&ls_x, 1e-2, 1e-2));
         assert!(ls.relative_ne(&ls_x, 1e-12, 1e-12));
 
-        let coords_y = vec![(0., 0.), (5., 0. + delta), (10., 10.)];
+        let coords_y = vec![(0., 0., 0.), (5., 0. + delta, 5. - delta), (10., 10., 10.)];
         let ls_y: LineString<f32> = coords_y.into_iter().collect();
         assert!(ls.relative_eq(&ls_y, 1e-2, 1e-2));
         assert!(ls.relative_ne(&ls_y, 1e-12, 1e-12));
 
         // Undersized, but otherwise equal.
-        let coords_x = vec![(0., 0.), (5., 0.)];
+        let coords_x = vec![(0., 0., 0.), (5., 0., 5.)];
         let ls_under: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.relative_ne(&ls_under, 1., 1.));
 
         // Oversized, but otherwise equal.
-        let coords_x = vec![(0., 0.), (5., 0.), (10., 10.), (10., 100.)];
+        let coords_x = vec![(0., 0., 0.), (5., 0., 5.), (10., 10., 10.), (10., 100., 100.)];
         let ls_oversized: LineString<f32> = coords_x.into_iter().collect();
         assert!(ls.relative_ne(&ls_oversized, 1., 1.));
     }
 
     #[test]
     fn should_be_built_from_line() {
-        let start = coord! { x: 0, y: 0 };
-        let end = coord! { x: 10, y: 10 };
+        let start = coord! { x: 0, y: 0, z: 0 };
+        let end = coord! { x: 10, y: 10, z: 10 };
         let line = Line::new(start, end);
         let expected = LineString::new(vec![start, end]);
 
         assert_eq!(expected, LineString::from(line));
 
-        let start = coord! { x: 10., y: 0.5 };
-        let end = coord! { x: 10000., y: 10.4 };
+        let start = coord! { x: 10., y: 0.5, z: 5. };
+        let end = coord! { x: 10000., y: 10.4, z: 10.6 };
         let line = Line::new(start, end);
         let expected = LineString::new(vec![start, end]);
 

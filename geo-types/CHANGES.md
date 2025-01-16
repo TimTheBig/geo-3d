@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.8.0
+
+- BREAKING: Move types to 3d
+
 ## 0.7.14
 
 - POSSIBLY BREAKING: Minimum supported version of Rust (MSRV) is now 1.75

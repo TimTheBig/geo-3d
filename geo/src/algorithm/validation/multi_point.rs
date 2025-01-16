@@ -47,15 +47,15 @@ mod tests {
 
     #[test]
     fn test_multipoint_valid() {
-        let mp = wkt!(MULTIPOINT(0. 0.,1. 1.));
+        let mp = wkt!(MULTIPOINT(0. 0. 0.,1. 1. 1.));
         assert_valid!(&mp);
     }
 
     #[test]
     fn test_multipoint_invalid() {
         let mp = MultiPoint(vec![
-            Point::new(0., f64::INFINITY),
-            Point::new(f64::NAN, 1.),
+            Point::new(0., f64::INFINITY, 0.),
+            Point::new(f64::NAN, 1., 409283.569369),
         ]);
         assert_validation_errors!(
             &mp,

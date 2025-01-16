@@ -90,7 +90,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{LineString, Polygon};
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     /// ```
@@ -101,7 +101,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{LineString, Polygon};
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![
     ///         (0.1, 0.1),
     ///         (0.9, 0.9),
@@ -117,11 +117,11 @@ impl<T: CoordNum> Polygon<T> {
     /// ```
     /// use geo_types::{coord, LineString, Polygon};
     ///
-    /// let mut polygon = Polygon::new(LineString::from(vec![(0., 0.), (1., 1.), (1., 0.)]), vec![]);
+    /// let mut polygon = Polygon::new(LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]), vec![]);
     ///
     /// assert_eq!(
     ///     polygon.exterior(),
-    ///     &LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.),])
+    ///     &LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)])
     /// );
     /// ```
     pub fn new(mut exterior: LineString<T>, mut interiors: Vec<LineString<T>>) -> Self {
@@ -144,7 +144,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![
     ///         (0.1, 0.1),
     ///         (0.9, 0.9),
@@ -157,7 +157,7 @@ impl<T: CoordNum> Polygon<T> {
     ///
     /// assert_eq!(
     ///     exterior,
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.),])
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)])
     /// );
     ///
     /// assert_eq!(
@@ -181,7 +181,7 @@ impl<T: CoordNum> Polygon<T> {
     /// ```
     /// use geo_types::{LineString, Polygon};
     ///
-    /// let exterior = LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]);
+    /// let exterior = LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]);
     ///
     /// let polygon = Polygon::new(exterior.clone(), vec![]);
     ///
@@ -202,7 +202,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     ///
@@ -223,7 +223,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     ///
@@ -271,7 +271,7 @@ impl<T: CoordNum> Polygon<T> {
     /// ])];
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     interiors.clone(),
     /// );
     ///
@@ -293,7 +293,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![
     ///         (0.1, 0.1),
     ///         (0.9, 0.9),
@@ -303,7 +303,7 @@ impl<T: CoordNum> Polygon<T> {
     /// );
     ///
     /// polygon.interiors_mut(|interiors| {
-    ///     interiors[0].0[1] = coord! { x: 0.8, y: 0.8 };
+    ///     interiors[0].0[1] = coord! { x: 0.8, y: 0.8, z: 0.8 };
     /// });
     ///
     /// assert_eq!(
@@ -324,7 +324,7 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![
     ///         (0.1, 0.1),
     ///         (0.9, 0.9),
@@ -334,7 +334,7 @@ impl<T: CoordNum> Polygon<T> {
     /// );
     ///
     /// polygon.interiors_mut(|interiors| {
-    ///     interiors[0].0[0] = coord! { x: 0.1, y: 0.2 };
+    ///     interiors[0].0[0] = coord! { x: 0.1, y: 0.2, z: 0.3 };
     /// });
     ///
     /// assert_eq!(
@@ -382,13 +382,13 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     ///
     /// assert_eq!(polygon.interiors().len(), 0);
     ///
-    /// polygon.interiors_push(vec![(0.1, 0.1), (0.9, 0.9), (0.9, 0.1)]);
+    /// polygon.interiors_push(vec![(0.1, 0.1, 0.1), (0.9, 0.9, 0.9), (0.9, 0.1, 0.9)]);
     ///
     /// assert_eq!(
     ///     polygon.interiors(),
@@ -424,14 +424,14 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     ///
     /// assert_eq!(polygon.num_rings(), 1);
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![(0.1, 0.1), (0.9, 0.9), (0.9, 0.1)])],
     /// );
     ///
@@ -449,14 +449,14 @@ impl<T: CoordNum> Polygon<T> {
     /// use geo_types::{coord, LineString, Polygon};
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![],
     /// );
     ///
     /// assert_eq!(polygon.num_interior_rings(), 0);
     ///
     /// let polygon = Polygon::new(
-    ///     LineString::from(vec![(0., 0.), (1., 1.), (1., 0.), (0., 0.)]),
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
     ///     vec![LineString::from(vec![(0.1, 0.1), (0.9, 0.9), (0.9, 0.1)])],
     /// );
     ///
@@ -484,7 +484,7 @@ impl<T: CoordFloat + Signed> Polygon<T> {
     // Take the cross product of these vectors
     // The polygon is convex if the z-components of the cross products are either
     // all positive or all negative. Otherwise, the polygon is non-convex.
-    // see: http://stackoverflow.com/a/1881201/416626
+    // see: https://stackoverflow.com/a/1881201/416626
     #[deprecated(
         since = "0.6.1",
         note = "Please use `geo::is_convex` on `poly.exterior()` instead"
@@ -498,7 +498,8 @@ impl<T: CoordFloat + Signed> Polygon<T> {
             .map(|(idx, _)| {
                 let prev_1 = self.previous_vertex(idx);
                 let prev_2 = self.previous_vertex(prev_1);
-                Point::from(self.exterior[prev_2]).cross_prod(
+                // todo make 3d or use `geo::is_convex` on `poly.exterior()`
+                Point::from(self.exterior[prev_2]).cross_prod_2d(
                     Point::from(self.exterior[prev_1]),
                     Point::from(self.exterior[idx]),
                 )
@@ -515,21 +516,53 @@ impl<T: CoordFloat + Signed> Polygon<T> {
     }
 }
 
+// impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
+//     fn from(r: Rect<T>) -> Self {
+//         // todo find z min/max order
+//         todo!("find z min/max order");
+//         Polygon::new(
+//             vec![
+//                 (r.min().x, r.min().y),
+//                 (r.max().x, r.min().y),
+//                 (r.max().x, r.max().y),
+//                 (r.min().x, r.max().y),
+//                 (r.min().x, r.min().y),
+//             ]
+//             .into(),
+//             Vec::new(),
+//         )
+//     }
+// }
+// todo check
 impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
     fn from(r: Rect<T>) -> Self {
-        Polygon::new(
-            vec![
-                (r.min().x, r.min().y),
-                (r.max().x, r.min().y),
-                (r.max().x, r.max().y),
-                (r.min().x, r.max().y),
-                (r.min().x, r.min().y),
-            ]
-            .into(),
-            Vec::new(),
-        )
+        // Determine the z-order: min z and max z
+        let z_min = r.min().z;
+        let z_max = r.max().z;
+
+        // Construct the 3D polygon. For a rectangle in 3D space, 
+        // we define two "levels" (z_min and z_max) and then close the shape.
+        let exterior_coords = vec![
+            // Bottom face (z_min)
+            (r.min().x, r.min().y, z_min),
+            (r.max().x, r.min().y, z_min),
+            (r.max().x, r.max().y, z_min),
+            (r.min().x, r.max().y, z_min),
+            (r.min().x, r.min().y, z_min),
+            
+            // Top face (z_max)
+            (r.min().x, r.min().y, z_max),
+            (r.max().x, r.min().y, z_max),
+            (r.max().x, r.max().y, z_max),
+            (r.min().x, r.max().y, z_max),
+            (r.min().x, r.min().y, z_max),
+        ];
+
+        // Convert exterior coordinates to polygon
+        Polygon::new(exterior_coords.into(), Vec::new())
     }
 }
+
 
 impl<T: CoordNum> From<Triangle<T>> for Polygon<T> {
     fn from(t: Triangle<T>) -> Self {
@@ -598,8 +631,8 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Polygon<T> {
     /// ```
     /// use geo_types::{Polygon, polygon};
     ///
-    /// let a: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7., y: 9.), (x: 0., y: 0.)];
-    /// let b: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7.01, y: 9.), (x: 0., y: 0.)];
+    /// let a: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 5.), (x: 0., y: 0., z: 0.01)];
+    /// let b: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7.01, y: 9., z: 5.01), (x: 0., y: 0., z: 0.)];
     ///
     /// approx::assert_abs_diff_eq!(a, b, epsilon=0.1);
     /// approx::assert_abs_diff_ne!(a, b, epsilon=0.001);
@@ -617,13 +650,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Polygon<T> {
     }
 }
 
-#[cfg(any(
-    feature = "rstar_0_8",
-    feature = "rstar_0_9",
-    feature = "rstar_0_10",
-    feature = "rstar_0_11",
-    feature = "rstar_0_12"
-))]
+#[cfg(feature = "rstar_0_12")]
 macro_rules! impl_rstar_polygon {
     ($rstar:ident) => {
         impl<T> $rstar::RTreeObject for Polygon<T>
@@ -638,18 +665,6 @@ macro_rules! impl_rstar_polygon {
         }
     };
 }
-
-#[cfg(feature = "rstar_0_8")]
-impl_rstar_polygon!(rstar_0_8);
-
-#[cfg(feature = "rstar_0_9")]
-impl_rstar_polygon!(rstar_0_9);
-
-#[cfg(feature = "rstar_0_10")]
-impl_rstar_polygon!(rstar_0_10);
-
-#[cfg(feature = "rstar_0_11")]
-impl_rstar_polygon!(rstar_0_11);
 
 #[cfg(feature = "rstar_0_12")]
 impl_rstar_polygon!(rstar_0_12);

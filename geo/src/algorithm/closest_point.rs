@@ -210,23 +210,24 @@ mod tests {
     closest!(intersects: start_point, (0.0, 0.0));
     closest!(intersects: end_point, (100.0, 100.0));
     closest!(intersects: mid_point, (50.0, 50.0));
-    closest!(in_line_far_away, (1000.0, 1000.0) => Closest::SinglePoint(Point::new(100.0, 100.0)));
-    closest!(perpendicular_from_50_50, (0.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0)));
+    closest!(in_line_far_away, (1000.0, 1000.0) => Closest::SinglePoint(Point::new(100.0, 100.0, 100.0)));
+    closest!(perpendicular_from_50_50, (0.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0, 50.0)));
 
     fn a_square(width: f32) -> LineString<f32> {
         LineString::from(vec![
-            (0.0, 0.0),
-            (width, 0.0),
-            (width, width),
-            (0.0, width),
-            (0.0, 0.0),
+            (0.0, 0.0, 0.0),
+            (width, 0.0, 0.0),
+            (width, width, width),
+            (0.0, width, 0.0),
+            (0.0, 0.0, width),
+            (0.0, 0.0, 0.0),
         ])
     }
 
     #[test]
     fn zero_length_line_is_indeterminate() {
         let line: Line<f32> = Line::from([(0.0, 0.0), (0.0, 0.0)]);
-        let p: Point<f32> = Point::new(100.0, 100.0);
+        let p: Point<f32> = Point::new(100.0, 100.0, 100.0);
         let should_be: Closest<f32> = Closest::Indeterminate;
 
         let got = line.closest_point(&p);
@@ -235,17 +236,17 @@ mod tests {
 
     #[test]
     fn line_string_with_single_element_behaves_like_line() {
-        let points = vec![(0.0, 0.0), (100.0, 100.0)];
+        let points = vec![(0.0, 0.0, 0.0), (100.0, 100.0, 100.0)];
         let line_string = LineString::<f32>::from(points.clone());
         let line = Line::new(points[0], points[1]);
 
         let some_random_points = vec![
-            point!(x: 0.0, y: 0.0),
-            point!(x: 100.0, y: 100.0),
-            point!(x: 1000.0, y: 1000.0),
-            point!(x: 100.0, y: 0.0),
-            point!(x: 50.0, y: 50.0),
-            point!(x: 1234.567, y: -987.6543),
+            point!(x: 0.0, y: 0.0, z: 0.0),
+            point!(x: 100.0, y: 100.0, z: 100.0),
+            point!(x: 1000.0, y: 1000.0, z: 1000.0),
+            point!(x: 100.0, y: 0.0, z: 100.0),
+            point!(x: 50.0, y: 50.0, z: 50.0),
+            point!(x: 1234.567, y: -987.6543, z: 6428.4014),
         ];
 
         for p in some_random_points {
@@ -261,7 +262,7 @@ mod tests {
     #[test]
     fn empty_line_string_is_indeterminate() {
         let ls = LineString::new(Vec::new());
-        let p = Point::new(0.0, 0.0);
+        let p = Point::new(0.0, 0.0, 0.0);
 
         let got = ls.closest_point(&p);
         assert_eq!(got, Closest::Indeterminate);
@@ -278,7 +279,7 @@ mod tests {
     #[test]
     fn polygon_without_rings_and_point_outside_is_same_as_linestring() {
         let poly = holy_polygon();
-        let p = Point::new(1000.0, 12345.678);
+        let p = Point::new(1000.0, 12345.678, 45665.5359);
         assert!(
             !poly.exterior().contains(&p),
             "`p` should be outside the polygon!"
@@ -304,7 +305,7 @@ mod tests {
     #[test]
     fn polygon_with_point_near_interior_ring() {
         let poly = holy_polygon();
-        let p = point!(x: 17.0, y: 33.0);
+        let p = point!(x: 17.0, y: 33.0, z: 96.0);
         assert!(poly.intersects(&p), "sanity check");
 
         assert_eq!(Closest::Intersection(p), poly.closest_point(&p));
@@ -313,15 +314,15 @@ mod tests {
     #[test]
     fn polygon_with_interior_point() {
         let square = polygon![
-            (x: 0.0, y: 0.0),
-            (x: 10.0, y: 0.0),
-            (x: 10.0, y: 10.0),
-            (x: 0.0, y: 10.0)
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 10.0, y: 0.0, z: 10.0),
+            (x: 10.0, y: 10.0, z: 10.0),
+            (x: 0.0, y: 10.0, z: 0.0)
         ];
-        let result = square.closest_point(&point!(x: 1.0, y: 2.0));
+        let result = square.closest_point(&point!(x: 1.0, y: 2.0, z: 3.0));
 
         // the point is within the square, so the closest point should be the point itself.
-        assert_eq!(result, Closest::Intersection(point!(x: 1.0, y: 2.0)));
+        assert_eq!(result, Closest::Intersection(point!(x: 1.0, y: 2.0, z: 3.0)));
     }
 
     #[test]
@@ -329,20 +330,20 @@ mod tests {
         use crate::{point, polygon};
 
         let square_1 = polygon![
-            (x: 0.0, y: 0.0),
-            (x: 1.0, y: 0.0),
-            (x: 1.0, y: 1.0),
-            (x: 0.0, y: 1.0)
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 1.0, y: 0.0, z: 0.0),
+            (x: 1.0, y: 1.0, z: 1.0),
+            (x: 0.0, y: 1.0, z: 1.0)
         ];
         use crate::Translate;
         let square_10 = square_1.translate(10.0, 10.0);
         let square_50 = square_1.translate(50.0, 50.0);
 
         let multi_polygon = MultiPolygon::new(vec![square_1, square_10, square_50]);
-        let result = multi_polygon.closest_point(&point!(x: 8.0, y: 8.0));
-        assert_eq!(result, Closest::SinglePoint(point!(x: 10.0, y: 10.0)));
+        let result = multi_polygon.closest_point(&point!(x: 8.0, y: 8.0, z: 8.0));
+        assert_eq!(result, Closest::SinglePoint(point!(x: 10.0, y: 10.0, z: 10.0)));
 
-        let result = multi_polygon.closest_point(&point!(x: 10.5, y: 10.5));
-        assert_eq!(result, Closest::Intersection(point!(x: 10.5, y: 10.5)));
+        let result = multi_polygon.closest_point(&point!(x: 10.5, y: 10.5, z: 10.5));
+        assert_eq!(result, Closest::Intersection(point!(x: 10.5, y: 10.5, z: 10.5)));
     }
 }

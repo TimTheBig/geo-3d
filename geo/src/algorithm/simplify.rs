@@ -322,29 +322,29 @@ mod test {
     #[test]
     fn recursion_test() {
         let input = [
-            coord! { x: 8.0, y: 100.0 },
-            coord! { x: 9.0, y: 100.0 },
-            coord! { x: 12.0, y: 100.0 },
+            coord! { x: 8.0, y: 100.0, z: 24.0 },
+            coord! { x: 9.0, y: 100.0, z: 26.0 },
+            coord! { x: 12.0, y: 100.0, z: 28.0 },
         ];
         let actual = rdp::<_, _, 2>(input.into_iter(), &1.0);
-        let expected = [coord! { x: 8.0, y: 100.0 }, coord! { x: 12.0, y: 100.0 }];
+        let expected = [coord! { x: 8.0, y: 100.0, z: 24.0 }, coord! { x: 12.0, y: 100.0, z: 28.0 }];
         assert_eq!(actual, expected);
     }
 
     #[test]
     fn rdp_test() {
         let vec = vec![
-            coord! { x: 0.0, y: 0.0 },
-            coord! { x: 5.0, y: 4.0 },
-            coord! { x: 11.0, y: 5.5 },
-            coord! { x: 17.3, y: 3.2 },
-            coord! { x: 27.8, y: 0.1 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
+            coord! { x: 5.0, y: 4.0, z: 3.0 },
+            coord! { x: 11.0, y: 5.5, z: 4.5 },
+            coord! { x: 17.3, y: 3.2, z: 3.2 },
+            coord! { x: 27.8, y: 0.1, z: 7.8 },
         ];
         let compare = vec![
-            coord! { x: 0.0, y: 0.0 },
-            coord! { x: 5.0, y: 4.0 },
-            coord! { x: 11.0, y: 5.5 },
-            coord! { x: 27.8, y: 0.1 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
+            coord! { x: 5.0, y: 4.0, z: 3.0 },
+            coord! { x: 11.0, y: 5.5, z: 4.5 },
+            coord! { x: 27.8, y: 0.1, z: 7.8 },
         ];
         let simplified = rdp::<_, _, 2>(vec.into_iter(), &1.0);
         assert_eq!(simplified, compare);
@@ -358,8 +358,8 @@ mod test {
     }
     #[test]
     fn rdp_test_two_point_linestring() {
-        let vec = vec![coord! { x: 0.0, y: 0.0 }, coord! { x: 27.8, y: 0.1 }];
-        let compare = vec![coord! { x: 0.0, y: 0.0 }, coord! { x: 27.8, y: 0.1 }];
+        let vec = vec![coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 27.8, y: 0.1, z: 57.9 }];
+        let compare = vec![coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 27.8, y: 0.1, z: 57.9 }];
         let simplified = rdp::<_, _, 2>(vec.into_iter(), &1.0);
         assert_eq!(simplified, compare);
     }
@@ -367,11 +367,11 @@ mod test {
     #[test]
     fn multilinestring() {
         let mline = MultiLineString::new(vec![LineString::from(vec![
-            (0.0, 0.0),
-            (5.0, 4.0),
-            (11.0, 5.5),
-            (17.3, 3.2),
-            (27.8, 0.1),
+            (0.0, 0.0, 0.0),
+            (5.0, 4.0, 3.0),
+            (11.0, 5.5, 22.0),
+            (17.3, 3.2, 20.0),
+            (27.8, 0.1, 19.5),
         ])]);
 
         let mline2 = mline.simplify(&1.0);
@@ -379,10 +379,10 @@ mod test {
         assert_eq!(
             mline2,
             MultiLineString::new(vec![LineString::from(vec![
-                (0.0, 0.0),
-                (5.0, 4.0),
-                (11.0, 5.5),
-                (27.8, 0.1),
+                (0.0, 0.0, 0.0),
+                (5.0, 4.0, 3.0),
+                (11.0, 5.5, 22.0),
+                (27.8, 0.1, 19.5),
             ])])
         );
     }
@@ -390,12 +390,12 @@ mod test {
     #[test]
     fn polygon() {
         let poly = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 10.),
-            (x: 5., y: 11.),
-            (x: 10., y: 10.),
-            (x: 10., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 10., z: 20.),
+            (x: 5., y: 11., z: 18.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 0., z: 10.),
+            (x: 0., y: 0., z: 0.),
         ];
 
         let poly2 = poly.simplify(&2.);
@@ -403,11 +403,11 @@ mod test {
         assert_eq!(
             poly2,
             polygon![
-                (x: 0., y: 0.),
-                (x: 0., y: 10.),
-                (x: 10., y: 10.),
-                (x: 10., y: 0.),
-                (x: 0., y: 0.),
+                (x: 0., y: 0., z: 0.),
+                (x: 0., y: 10., z: 0.),
+                (x: 10., y: 10., z: 10.),
+                (x: 10., y: 0., z: 10.),
+                (x: 0., y: 0., z: 0.),
             ],
         );
     }
@@ -415,12 +415,12 @@ mod test {
     #[test]
     fn multipolygon() {
         let mpoly = MultiPolygon::new(vec![polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 10.),
-            (x: 5., y: 11.),
-            (x: 10., y: 10.),
-            (x: 10., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 10., z: 0.),
+            (x: 5., y: 11., z: 5.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 0., z: 10.),
+            (x: 0., y: 0., z: 0.),
         ]]);
 
         let mpoly2 = mpoly.simplify(&2.);
@@ -428,11 +428,11 @@ mod test {
         assert_eq!(
             mpoly2,
             MultiPolygon::new(vec![polygon![
-                (x: 0., y: 0.),
-                (x: 0., y: 10.),
-                (x: 10., y: 10.),
-                (x: 10., y: 0.),
-                (x: 0., y: 0.)
+                (x: 0., y: 0., z: 0.),
+                (x: 0., y: 10., z: 0.),
+                (x: 10., y: 10., z: 10.),
+                (x: 10., y: 0., z: 10.),
+                (x: 0., y: 0., z: 0.)
             ]]),
         );
     }
@@ -440,11 +440,11 @@ mod test {
     #[test]
     fn simplify_negative_epsilon() {
         let ls = line_string![
-            (x: 0., y: 0.),
-            (x: 0., y: 10.),
-            (x: 5., y: 11.),
-            (x: 10., y: 10.),
-            (x: 10., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 10., z: 0.),
+            (x: 5., y: 11., z: 5.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 0., z: 10.),
         ];
         let simplified = ls.simplify(&-1.0);
         assert_eq!(ls, simplified);
@@ -453,11 +453,11 @@ mod test {
     #[test]
     fn simplify_idx_negative_epsilon() {
         let ls = line_string![
-            (x: 0., y: 0.),
-            (x: 0., y: 10.),
-            (x: 5., y: 11.),
-            (x: 10., y: 10.),
-            (x: 10., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 10., z: 0.),
+            (x: 5., y: 11., z: 5.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 0., z: 10.),
         ];
         let indices = ls.simplify_idx(&-1.0);
         assert_eq!(vec![0usize, 1, 2, 3, 4], indices);
@@ -467,10 +467,10 @@ mod test {
     #[test]
     fn simplify_line_string_polygon_initial_min() {
         let ls = line_string![
-            ( x: 1.4324054e-16, y: 1.4324054e-16 ),
-            ( x: 1.4324054e-16, y: 1.4324054e-16 ),
-            ( x: -5.9730447e26, y: 1.5590374e-27 ),
-            ( x: 1.4324054e-16, y: 1.4324054e-16 ),
+            ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
+            ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
+            ( x: -5.9730447e26, y: 1.5590374e-27, z: -5.9730447e26 ),
+            ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
         ];
         let epsilon: f64 = 3.46e-43;
 
@@ -478,9 +478,9 @@ mod test {
         let result = ls.simplify(&epsilon);
         assert_eq!(
             line_string![
-                ( x: 1.4324054e-16, y: 1.4324054e-16 ),
-                ( x: -5.9730447e26, y: 1.5590374e-27 ),
-                ( x: 1.4324054e-16, y: 1.4324054e-16 ),
+                ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
+                ( x: -5.9730447e26, y: 1.5590374e-27, z: -5.9730447e26 ),
+                ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
             ],
             result
         );
@@ -489,10 +489,10 @@ mod test {
         let result = Polygon::new(ls, vec![]).simplify(&epsilon);
         assert_eq!(
             polygon![
-                ( x: 1.4324054e-16, y: 1.4324054e-16 ),
-                ( x: 1.4324054e-16, y: 1.4324054e-16 ),
-                ( x: -5.9730447e26, y: 1.5590374e-27 ),
-                ( x: 1.4324054e-16, y: 1.4324054e-16 ),
+                ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
+                ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
+                ( x: -5.9730447e26, y: 1.5590374e-27, z: -5.9730447e26 ),
+                ( x: 1.4324054e-16, y: 1.4324054e-16, z: 1.4324054e-16 ),
             ],
             result,
         );
@@ -502,16 +502,16 @@ mod test {
     #[test]
     fn dont_oversimplify() {
         let unsimplified = line_string![
-            (x: 0.0, y: 0.0),
-            (x: 5.0, y: 4.0),
-            (x: 11.0, y: 5.5),
-            (x: 17.3, y: 3.2),
-            (x: 27.8, y: 0.1)
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 5.0, y: 4.0, z: 3.0),
+            (x: 11.0, y: 5.5, z: 7.7),
+            (x: 17.3, y: 3.2, z: 20.1),
+            (x: 27.8, y: 0.1, z: 28.7)
         ];
         let actual = unsimplified.simplify(&30.0);
         let expected = line_string![
-            (x: 0.0, y: 0.0),
-            (x: 27.8, y: 0.1)
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 27.8, y: 0.1, z: 28.7)
         ];
         assert_eq!(actual, expected);
     }

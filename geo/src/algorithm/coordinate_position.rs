@@ -1,10 +1,17 @@
 use std::cmp::Ordering;
+use std::ops::AddAssign;
+use geo_types::{coord, CoordFloat};
+// ! if this does not work use orient3d from kernels mod
+use ::robust::orient3d;
 
-use crate::geometry::*;
+use crate::{geometry::*, BooleanOps};
 use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
+
+use super::bool_ops::BoolOpsNum;
+use super::TriangulateEarcut;
 
 /// The position of a `Coord` relative to a `Geometry`
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -34,7 +41,7 @@ pub enum CoordPos {
 /// assert_eq!(square_poly.coordinate_position(&outside_coord), CoordPos::Outside);
 /// ```
 pub trait CoordinatePosition {
-    type Scalar: GeoNum;
+    type Scalar: GeoNum + CoordFloat + BoolOpsNum;
     fn coordinate_position(&self, coord: &Coord<Self::Scalar>) -> CoordPos {
         let mut is_inside = false;
         let mut boundary_count = 0;
@@ -68,7 +75,7 @@ pub trait CoordinatePosition {
 
 impl<T> CoordinatePosition for Coord<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -85,7 +92,7 @@ where
 
 impl<T> CoordinatePosition for Point<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -102,7 +109,7 @@ where
 
 impl<T> CoordinatePosition for Line<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -128,7 +135,7 @@ where
 
 impl<T> CoordinatePosition for LineString<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -177,7 +184,7 @@ where
 
 impl<T> CoordinatePosition for Triangle<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -205,7 +212,7 @@ where
 
 impl<T> CoordinatePosition for Rect<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -228,6 +235,11 @@ where
             Ordering::Equal => boundary = true,
             Ordering::Greater => {}
         }
+        match coord.z.partial_cmp(&min.z).unwrap() {
+            Ordering::Less => return,
+            Ordering::Equal => boundary = true,
+            Ordering::Greater => {}
+        }
 
         let max = self.max();
 
@@ -237,6 +249,11 @@ where
             Ordering::Greater => {}
         }
         match max.y.partial_cmp(&coord.y).unwrap() {
+            Ordering::Less => return,
+            Ordering::Equal => boundary = true,
+            Ordering::Greater => {}
+        }
+        match max.z.partial_cmp(&coord.z).unwrap() {
             Ordering::Less => return,
             Ordering::Equal => boundary = true,
             Ordering::Greater => {}
@@ -252,7 +269,7 @@ where
 
 impl<T> CoordinatePosition for MultiPoint<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -269,7 +286,7 @@ where
 
 impl<T> CoordinatePosition for Polygon<T>
 where
-    T: GeoNum,
+    T: CoordFloat + GeoNum + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -282,34 +299,42 @@ where
             return;
         }
 
-        match coord_pos_relative_to_ring(*coord, self.exterior()) {
-            CoordPos::Outside => {}
+        // todo check
+        match inside(self, coord, boundary_count) {
             CoordPos::OnBoundary => {
-                *boundary_count += 1;
-            }
-            CoordPos::Inside => {
-                for hole in self.interiors() {
-                    match coord_pos_relative_to_ring(*coord, hole) {
-                        CoordPos::Outside => {}
-                        CoordPos::OnBoundary => {
-                            *boundary_count += 1;
-                            return;
-                        }
-                        CoordPos::Inside => {
-                            return;
-                        }
-                    }
-                }
-                // the coord is *outside* the interior holes, so it's *inside* the polygon
-                *is_inside = true;
-            }
+                boundary_count.add_assign(1);
+            },
+            CoordPos::Inside => { *is_inside = true },
+            CoordPos::Outside => {},
         }
+        // match coord_pos_relative_to_ring(*coord, self.exterior()) {
+        //     CoordPos::Outside => {}
+        //     CoordPos::OnBoundary => {
+        //         *boundary_count += 1;
+        //     }
+        //     CoordPos::Inside => {
+        //         for hole in self.interiors() {
+        //             match coord_pos_relative_to_ring(*coord, hole) {
+        //                 CoordPos::Outside => {}
+        //                 CoordPos::OnBoundary => {
+        //                     *boundary_count += 1;
+        //                     return;
+        //                 }
+        //                 CoordPos::Inside => {
+        //                     return;
+        //                 }
+        //             }
+        //         }
+        //         // the coord is *outside* the interior holes, so it's *inside* the polygon
+        //         *is_inside = true;
+        //     }
+        // }
     }
 }
 
 impl<T> CoordinatePosition for MultiLineString<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -326,7 +351,7 @@ where
 
 impl<T> CoordinatePosition for MultiPolygon<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -343,7 +368,7 @@ where
 
 impl<T> CoordinatePosition for GeometryCollection<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -360,7 +385,7 @@ where
 
 impl<T> CoordinatePosition for Geometry<T>
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat + BoolOpsNum,
 {
     type Scalar = T;
     crate::geometry_delegate_impl! {
@@ -372,7 +397,7 @@ where
     }
 }
 
-impl<T: GeoNum> CoordinatePosition for GeometryCow<'_, T> {
+impl<T: GeoNum + CoordFloat + BoolOpsNum> CoordinatePosition for GeometryCow<'_, T> {
     type Scalar = T;
     crate::geometry_cow_delegate_impl! {
         fn calculate_coordinate_position(
@@ -383,8 +408,55 @@ impl<T: GeoNum> CoordinatePosition for GeometryCow<'_, T> {
     }
 }
 
+fn inside<T: CoordFloat + BoolOpsNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
+    debug_assert!(poly.exterior().is_closed());
+
+    for linestring in poly.rings() {
+        // LineString without points
+        if linestring.0.is_empty() {
+            return CoordPos::Outside;
+        }
+    }
+
+    let segment = Line::new(q.clone(), q.clone() + coord! { x: T::zero(), y: T::zero(), z: T::max_value() });
+
+    // todo check triangles from polygon
+    for triangle in poly.earcut_triangles_iter() {
+        if intersect(segment, triangle) {
+            boundary_count.add_assign(1);
+        }
+    }
+
+    // is odd
+    if !(*boundary_count % 2 == 0) {
+        CoordPos::Inside
+    } else {
+        CoordPos::Outside
+    }
+}
+
+fn intersect<T: CoordFloat>(segment: Line<T>, tri: Triangle<T>) -> bool {
+    let s1 = super::kernels::robust::RobustKernel::orient3d(segment.start,tri.0,tri.1,tri.2);
+    let s2 = super::kernels::robust::RobustKernel::orient3d(segment.end,tri.0,tri.1,tri.2);
+    // Test whether the two extermities of the segment
+    // are on the same side of the supporting plane of the triangle
+    if s1 == s2 {
+        return false
+    }
+
+    // Now we know that the segment 'straddles' the supporting
+    // plane. We need to test whether the three tetrahedra formed
+    // by the segment and the three edges of the triangle have the same orientation
+    let s3 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.0,tri.1);
+    let s4 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.1,tri.2);
+    let s5 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.2,tri.0);
+
+    s3 == s4 && s4 == s5
+}
+
 /// Calculate the position of a `Coord` relative to a
 /// closed `LineString`.
+// todo add z
 pub fn coord_pos_relative_to_ring<T>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos
 where
     T: GeoNum,
@@ -461,27 +533,29 @@ mod test {
 
     #[test]
     fn test_simple_poly() {
-        let square_poly = polygon![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0), (x: 2.0, y: 2.0), (x: 0.0, y: 2.0), (x: 0.0, y: 0.0)];
+        let square_poly = polygon![
+            (x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 2.0, y: 2.0, z: 2.0), (x: 0.0, y: 2.0, z: 0.0), (x: 0.0, y: 0.0, z: 0.0),
+        ];
 
-        let inside_coord = coord! { x: 1.0, y: 1.0 };
+        let inside_coord = coord! { x: 1.0, y: 1.0, z: 1.0 };
         assert_eq!(
             square_poly.coordinate_position(&inside_coord),
             CoordPos::Inside
         );
 
-        let vertex_coord = coord! { x: 0.0, y: 0.0 };
+        let vertex_coord = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(
             square_poly.coordinate_position(&vertex_coord),
             CoordPos::OnBoundary
         );
 
-        let boundary_coord = coord! { x: 0.0, y: 1.0 };
+        let boundary_coord = coord! { x: 0.0, y: 1.0, z: 0.0 };
         assert_eq!(
             square_poly.coordinate_position(&boundary_coord),
             CoordPos::OnBoundary
         );
 
-        let outside_coord = coord! { x: 5.0, y: 5.0 };
+        let outside_coord = coord! { x: 5.0, y: 5.0, z: 5.0 };
         assert_eq!(
             square_poly.coordinate_position(&outside_coord),
             CoordPos::Outside
@@ -492,80 +566,80 @@ mod test {
     fn test_poly_interior() {
         let poly = polygon![
             exterior: [
-                (x: 11., y: 11.),
-                (x: 20., y: 11.),
-                (x: 20., y: 20.),
-                (x: 11., y: 20.),
-                (x: 11., y: 11.),
+                (x: 11., y: 11., z: 11.),
+                (x: 20., y: 11., z: 20.),
+                (x: 20., y: 20., z: 20.),
+                (x: 11., y: 20., z: 11.),
+                (x: 11., y: 11., z: 11.),
             ],
             interiors: [
                 [
-                    (x: 13., y: 13.),
-                    (x: 13., y: 17.),
-                    (x: 17., y: 17.),
-                    (x: 17., y: 13.),
-                    (x: 13., y: 13.),
+                    (x: 13., y: 13., z: 13.),
+                    (x: 13., y: 17., z: 13.),
+                    (x: 17., y: 17., z: 17.),
+                    (x: 17., y: 13., z: 17.),
+                    (x: 13., y: 13., z: 13.),
                 ]
             ],
         ];
 
-        let inside_hole = coord! { x: 14.0, y: 14.0 };
+        let inside_hole = coord! { x: 14.0, y: 14.0, z: 14.0 };
         assert_eq!(poly.coordinate_position(&inside_hole), CoordPos::Outside);
 
-        let outside_poly = coord! { x: 30.0, y: 30.0 };
+        let outside_poly = coord! { x: 30.0, y: 30.0, z: 30.0 };
         assert_eq!(poly.coordinate_position(&outside_poly), CoordPos::Outside);
 
-        let on_outside_border = coord! { x: 20.0, y: 15.0 };
+        let on_outside_border = coord! { x: 20.0, y: 15.0, z: 10.0 };
         assert_eq!(
             poly.coordinate_position(&on_outside_border),
             CoordPos::OnBoundary
         );
 
-        let on_inside_border = coord! { x: 13.0, y: 15.0 };
+        let on_inside_border = coord! { x: 13.0, y: 15.0, z: 17.0 };
         assert_eq!(
             poly.coordinate_position(&on_inside_border),
             CoordPos::OnBoundary
         );
 
-        let inside_coord = coord! { x: 12.0, y: 12.0 };
+        let inside_coord = coord! { x: 12.0, y: 12.0, z: 12.0 };
         assert_eq!(poly.coordinate_position(&inside_coord), CoordPos::Inside);
     }
 
     #[test]
     fn test_simple_line() {
         use crate::point;
-        let line = Line::new(point![x: 0.0, y: 0.0], point![x: 10.0, y: 10.0]);
+        let line = Line::new(point![x: 0.0, y: 0.0, z: 0.0], point![x: 10.0, y: 10.0, z: 10.0]);
 
-        let start = coord! { x: 0.0, y: 0.0 };
+        let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(line.coordinate_position(&start), CoordPos::OnBoundary);
 
-        let end = coord! { x: 10.0, y: 10.0 };
+        let end = coord! { x: 10.0, y: 10.0, z: 10.0 };
         assert_eq!(line.coordinate_position(&end), CoordPos::OnBoundary);
 
-        let interior = coord! { x: 5.0, y: 5.0 };
+        let interior = coord! { x: 5.0, y: 5.0, z: 5.0 };
         assert_eq!(line.coordinate_position(&interior), CoordPos::Inside);
 
-        let outside = coord! { x: 6.0, y: 5.0 };
+        let outside = coord! { x: 6.0, y: 5.0, z: 6.0 };
         assert_eq!(line.coordinate_position(&outside), CoordPos::Outside);
     }
 
     #[test]
     fn test_degenerate_line() {
-        let line = Line::new(point![x: 0.0, y: 0.0], point![x: 0.0, y: 0.0]);
+        let line = Line::new(point![x: 0.0, y: 0.0, z: 0.0], point![x: 0.0, y: 0.0, z: 0.0]);
 
-        let start = coord! { x: 0.0, y: 0.0 };
+        let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(line.coordinate_position(&start), CoordPos::Inside);
 
-        let outside = coord! { x: 10.0, y: 10.0 };
+        let outside = coord! { x: 10.0, y: 10.0, z: 10.0 };
         assert_eq!(line.coordinate_position(&outside), CoordPos::Outside);
     }
 
     #[test]
     fn test_point() {
-        let p1 = point![x: 2.0, y: 0.0];
+        let p1 = point![x: 2.0, y: 0.0, z: 0.5];
 
-        let c1 = coord! { x: 2.0, y: 0.0 };
-        let c2 = coord! { x: 3.0, y: 3.0 };
+        let c1 = coord! { x: 2.0, y: 0.0, z: 0.5 };
+        let c2 = coord! { x: 3.0, y: 3.0, z: 0.0 };
 
         assert_eq!(p1.coordinate_position(&c1), CoordPos::Inside);
         assert_eq!(p1.coordinate_position(&c2), CoordPos::Outside);
@@ -577,7 +651,7 @@ mod test {
     #[test]
     fn test_simple_line_string() {
         let line_string =
-            line_string![(x: 0.0, y: 0.0), (x: 1.0, y: 1.0), (x: 2.0, y: 0.0), (x: 3.0, y: 0.0)];
+            line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 1.0, z: 1.0), (x: 2.0, y: 0.0, z: 2.0), (x: 3.0, y: 0.0, z: 3.0)];
 
         let start = Coord::zero();
         assert_eq!(
@@ -585,27 +659,27 @@ mod test {
             CoordPos::OnBoundary
         );
 
-        let midpoint = coord! { x: 0.5, y: 0.5 };
+        let midpoint = coord! { x: 0.5, y: 0.5, z: 0.5 };
         assert_eq!(line_string.coordinate_position(&midpoint), CoordPos::Inside);
 
-        let vertex = coord! { x: 2.0, y: 0.0 };
+        let vertex = coord! { x: 2.0, y: 0.0, z: 2.0 };
         assert_eq!(line_string.coordinate_position(&vertex), CoordPos::Inside);
 
-        let end = coord! { x: 3.0, y: 0.0 };
+        let end = coord! { x: 3.0, y: 0.0, z: 3.0 };
         assert_eq!(line_string.coordinate_position(&end), CoordPos::OnBoundary);
 
-        let outside = coord! { x: 3.0, y: 1.0 };
+        let outside = coord! { x: 3.0, y: 1.0, z: 0.6 };
         assert_eq!(line_string.coordinate_position(&outside), CoordPos::Outside);
     }
 
     #[test]
     fn test_degenerate_line_strings() {
-        let line_string = line_string![(x: 0.0, y: 0.0), (x: 0.0, y: 0.0)];
+        let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 0.0, y: 0.0, z: 0.0)];
 
         let start = Coord::zero();
         assert_eq!(line_string.coordinate_position(&start), CoordPos::Inside);
 
-        let line_string = line_string![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0)];
+        let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0)];
 
         let start = Coord::zero();
         assert_eq!(
@@ -616,7 +690,9 @@ mod test {
 
     #[test]
     fn test_closed_line_string() {
-        let line_string = line_string![(x: 0.0, y: 0.0), (x: 1.0, y: 1.0), (x: 2.0, y: 0.0), (x: 3.0, y: 2.0), (x: 0.0, y: 2.0), (x: 0.0, y: 0.0)];
+        let line_string = line_string![
+            (x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 1.0, z: 1.0), (x: 2.0, y: 0.0, z: 2.0), (x: 3.0, y: 2.0, z: 3.0), (x: 0.0, y: 2.0, z: 0.0), (x: 0.0, y: 0.0, z: 0.0),
+        ];
 
         // sanity check
         assert!(line_string.is_closed());
@@ -625,10 +701,10 @@ mod test {
         let start = Coord::zero();
         assert_eq!(line_string.coordinate_position(&start), CoordPos::Inside);
 
-        let midpoint = coord! { x: 0.5, y: 0.5 };
+        let midpoint = coord! { x: 0.5, y: 0.5, z: 0.5 };
         assert_eq!(line_string.coordinate_position(&midpoint), CoordPos::Inside);
 
-        let outside = coord! { x: 3.0, y: 1.0 };
+        let outside = coord! { x: 3.0, y: 1.0, z: 3.0 };
         assert_eq!(line_string.coordinate_position(&outside), CoordPos::Outside);
     }
 
@@ -636,23 +712,23 @@ mod test {
     fn test_boundary_rule() {
         let multi_line_string = MultiLineString::new(vec![
             // first two lines have same start point but different end point
-            line_string![(x: 0.0, y: 0.0), (x: 1.0, y: 1.0)],
-            line_string![(x: 0.0, y: 0.0), (x: -1.0, y: -1.0)],
+            line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 1.0, z: 1.0)],
+            line_string![(x: 0.0, y: 0.0, z: 0.0), (x: -1.0, y: -1.0, z: -1.0)],
             // third line has its own start point, but it's end touches the middle of first line
-            line_string![(x: 0.0, y: 1.0), (x: 0.5, y: 0.5)],
+            line_string![(x: 0.0, y: 1.0, z: 0.0), (x: 0.5, y: 0.5, z: 0.5)],
             // fourth and fifth have independent start points, but both end at the middle of the
             // second line
-            line_string![(x: 0.0, y: -1.0), (x: -0.5, y: -0.5)],
-            line_string![(x: 0.0, y: -2.0), (x: -0.5, y: -0.5)],
+            line_string![(x: 0.0, y: -1.0, z: 0.0), (x: -0.5, y: -0.5, z: -0.5)],
+            line_string![(x: 0.0, y: -2.0, z: 0.0), (x: -0.5, y: -0.5, z: -0.5)],
         ]);
 
-        let outside_of_all = coord! { x: 123.0, y: 123.0 };
+        let outside_of_all = coord! { x: 123.0, y: 123.0, z: 123.0 };
         assert_eq!(
             multi_line_string.coordinate_position(&outside_of_all),
             CoordPos::Outside
         );
 
-        let end_of_one_line = coord! { x: -1.0, y: -1.0 };
+        let end_of_one_line = coord! { x: -1.0, y: -1.0, z: -1.0 };
         assert_eq!(
             multi_line_string.coordinate_position(&end_of_one_line),
             CoordPos::OnBoundary
@@ -666,14 +742,14 @@ mod test {
         );
 
         // *in* the first line, on the boundary of the third line
-        let one_end_plus_midpoint = coord! { x: 0.5, y: 0.5 };
+        let one_end_plus_midpoint = coord! { x: 0.5, y: 0.5, z: 0.5 };
         assert_eq!(
             multi_line_string.coordinate_position(&one_end_plus_midpoint),
             CoordPos::OnBoundary
         );
 
         // *in* the first line, on the *boundary* of the fourth and fifth line
-        let two_ends_plus_midpoint = coord! { x: -0.5, y: -0.5 };
+        let two_ends_plus_midpoint = coord! { x: -0.5, y: -0.5, z: -0.5 };
         assert_eq!(
             multi_line_string.coordinate_position(&two_ends_plus_midpoint),
             CoordPos::Inside
@@ -682,65 +758,65 @@ mod test {
 
     #[test]
     fn test_rect() {
-        let rect = Rect::new((0.0, 0.0), (10.0, 10.0));
+        let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
         assert_eq!(
-            rect.coordinate_position(&coord! { x: 5.0, y: 5.0 }),
+            rect.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
             CoordPos::Inside
         );
         assert_eq!(
-            rect.coordinate_position(&coord! { x: 0.0, y: 5.0 }),
+            rect.coordinate_position(&coord! { x: 0.0, y: 5.0, z: 0.0 }),
             CoordPos::OnBoundary
         );
         assert_eq!(
-            rect.coordinate_position(&coord! { x: 15.0, y: 15.0 }),
+            rect.coordinate_position(&coord! { x: 15.0, y: 15.0, z: 15.0 }),
             CoordPos::Outside
         );
     }
 
     #[test]
     fn test_triangle() {
-        let triangle = Triangle::new((0.0, 0.0).into(), (5.0, 10.0).into(), (10.0, 0.0).into());
+        let triangle = Triangle::new((0.0, 0.0, 0.0).into(), (5.0, 10.0, 15.0).into(), (10.0, 0.0, 10.0).into());
         assert_eq!(
-            triangle.coordinate_position(&coord! { x: 5.0, y: 5.0 }),
+            triangle.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
             CoordPos::Inside
         );
         assert_eq!(
-            triangle.coordinate_position(&coord! { x: 2.5, y: 5.0 }),
+            triangle.coordinate_position(&coord! { x: 2.5, y: 5.0, z: 2.5 }),
             CoordPos::OnBoundary
         );
         assert_eq!(
-            triangle.coordinate_position(&coord! { x: 2.49, y: 5.0 }),
+            triangle.coordinate_position(&coord! { x: 2.49, y: 5.0, z: 2.5 }),
             CoordPos::Outside
         );
     }
 
     #[test]
     fn test_collection() {
-        let triangle = Triangle::new((0.0, 0.0).into(), (5.0, 10.0).into(), (10.0, 0.0).into());
-        let rect = Rect::new((0.0, 0.0), (10.0, 10.0));
+        let triangle = Triangle::new((0.0, 0.0, 0.0).into(), (5.0, 10.0, 15.0).into(), (10.0, 0.0, 10.0).into());
+        let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
         let collection = GeometryCollection::new_from(vec![triangle.into(), rect.into()]);
 
         //  outside of both
         assert_eq!(
-            collection.coordinate_position(&coord! { x: 15.0, y: 15.0 }),
+            collection.coordinate_position(&coord! { x: 15.0, y: 15.0, z: 15.0 }),
             CoordPos::Outside
         );
 
         // inside both
         assert_eq!(
-            collection.coordinate_position(&coord! { x: 5.0, y: 5.0 }),
+            collection.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
             CoordPos::Inside
         );
 
         // inside one, boundary of other
         assert_eq!(
-            collection.coordinate_position(&coord! { x: 2.5, y: 5.0 }),
+            collection.coordinate_position(&coord! { x: 2.5, y: 5.0, z: 2.5 }),
             CoordPos::OnBoundary
         );
 
         //  boundary of both
         assert_eq!(
-            collection.coordinate_position(&coord! { x: 5.0, y: 10.0 }),
+            collection.coordinate_position(&coord! { x: 5.0, y: 10.0, z: 15.0 }),
             CoordPos::Outside
         );
     }

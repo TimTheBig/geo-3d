@@ -42,7 +42,7 @@ use core::convert::TryFrom;
 /// ```
 /// use std::convert::TryFrom;
 /// use geo_types::{Point, point, Geometry, GeometryCollection};
-/// let p = point!(x: 1.0, y: 1.0);
+/// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe: Geometry = p.into();
 /// let pn = Point::try_from(pe).unwrap();
 /// ```
@@ -126,7 +126,7 @@ impl<T: CoordNum> Geometry<T> {
     /// use geo_types::*;
     /// use std::convert::TryInto;
     ///
-    /// let g = Geometry::Point(Point::new(0., 0.));
+    /// let g = Geometry::Point(Point::new(0., 0., 0.));
     /// let p2: Point<f32> = g.try_into().unwrap();
     /// assert_eq!(p2, Point::new(0., 0.,));
     /// ```
@@ -286,8 +286,8 @@ where
     /// ```
     /// use geo_types::{Geometry, polygon};
     ///
-    /// let a: Geometry<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7., y: 9.), (x: 0., y: 0.)].into();
-    /// let b: Geometry<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7.01, y: 9.), (x: 0., y: 0.)].into();
+    /// let a: Geometry<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 7.), (x: 0., y: 0., z: 0.)].into();
+    /// let b: Geometry<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7.01, y: 9., z: 7.), (x: 0., y: 0., z: 0.)].into();
     ///
     /// approx::assert_relative_eq!(a, b, max_relative=0.1);
     /// approx::assert_relative_ne!(a, b, max_relative=0.001);
@@ -345,8 +345,8 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Geometry<T> {
     /// ```
     /// use geo_types::{Geometry, polygon};
     ///
-    /// let a: Geometry<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7., y: 9.), (x: 0., y: 0.)].into();
-    /// let b: Geometry<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7.01, y: 9.), (x: 0., y: 0.)].into();
+    /// let a: Geometry<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 7.), (x: 0., y: 0., z: 0.)].into();
+    /// let b: Geometry<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7.01, y: 9., z: 7.), (x: 0., y: 0., z: 0.)].into();
     ///
     /// approx::assert_abs_diff_eq!(a, b, epsilon=0.1);
     /// approx::assert_abs_diff_ne!(a, b, epsilon=0.001);

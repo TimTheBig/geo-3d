@@ -61,7 +61,7 @@ mod tests {
 
     #[test]
     fn test_linestring_valid() {
-        let ls = wkt!(LINESTRING(0. 0., 1. 1.));
+        let ls = wkt!(LINESTRING(0. 0. 0., 1. 1. 1.));
         assert_valid!(&ls);
     }
 
@@ -73,13 +73,13 @@ mod tests {
 
     #[test]
     fn test_linestring_invalid_too_few_points_without_duplicate() {
-        let ls = wkt!(LINESTRING(0. 0.));
+        let ls = wkt!(LINESTRING(0. 0. 0.));
         assert_validation_errors!(&ls, vec![InvalidLineString::TooFewPoints]);
     }
 
     #[test]
     fn test_linestring_invalid_too_few_points_with_duplicate() {
-        let ls = wkt!(LINESTRING(0. 0.,0. 0.));
+        let ls = wkt!(LINESTRING(0. 0. 0., 0. 0. 0.));
         assert_validation_errors!(&ls, vec![InvalidLineString::TooFewPoints]);
     }
 }

@@ -12,6 +12,7 @@ where
         Ok(coord! {
             x: u.arbitrary::<T>()?,
             y: u.arbitrary::<T>()?,
+            z: u.arbitrary::<T>()?,
         })
     }
 }

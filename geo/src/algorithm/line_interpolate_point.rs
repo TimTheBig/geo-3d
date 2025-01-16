@@ -51,7 +51,7 @@ where
             // fraction between 0 and 1, return a point between start and end
             let diff = self.end - self.start;
             let r = self.start + diff * (fraction);
-            if r.x.is_finite() && r.y.is_finite() {
+            if r.x.is_finite() && r.y.is_finite() && r.z.is_finite() {
                 Some(r.into())
             } else {
                 None

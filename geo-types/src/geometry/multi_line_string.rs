@@ -249,16 +249,16 @@ mod test {
     #[test]
     fn test_iter() {
         let multi: MultiLineString<i32> = wkt! {
-            MULTILINESTRING((0 0,2 0,1 2,0 0), (10 10,12 10,11 12,10 10))
+            MULTILINESTRING((0 0 0, 2 0 2, 1 2 1, 0 0 0), (10 10 10, 12 10 12, 11 12 11, 10 10 10))
         };
 
         let mut first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &wkt! { LINESTRING(0 0,2 0,1 2,0 0) });
+                assert_eq!(p, &wkt! { LINESTRING(0 0 0, 2 0 2, 1 2 1, 0 0 0) });
                 first = false;
             } else {
-                assert_eq!(p, &wkt! { LINESTRING(10 10,12 10,11 12,10 10) });
+                assert_eq!(p, &wkt! { LINESTRING(10 10 10, 12 10 12, 11 12 11, 10 10 10) });
             }
         }
 
@@ -266,10 +266,10 @@ mod test {
         first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &wkt! { LINESTRING(0 0,2 0,1 2,0 0) });
+                assert_eq!(p, &wkt! { LINESTRING(0 0 0, 2 0 2, 1 2 1, 0 0 0) });
                 first = false;
             } else {
-                assert_eq!(p, &wkt! { LINESTRING(10 10,12 10,11 12,10 10) });
+                assert_eq!(p, &wkt! { LINESTRING(10 10 10, 12 10 12, 11 12 11, 10 10 10) });
             }
         }
     }
@@ -277,8 +277,8 @@ mod test {
     #[test]
     fn test_iter_mut() {
         let mut multi = MultiLineString::new(vec![
-            line_string![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)],
-            line_string![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)],
+            line_string![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x: 0, y: 0, z: 0)],
+            line_string![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x: 10, y: 10, z: 10)],
         ]);
 
         for line_string in &mut multi {
@@ -300,13 +300,17 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &line_string![(x: 2, y: 2), (x: 4, y: 2), (x: 3, y: 4), (x:2, y:2)]
+                    &line_string![
+                        (x: 2, y: 2, z: 2), (x: 4, y: 2, z: 2), (x: 3, y: 4, z: 5), (x: 2, y: 2, z: 2)
+                    ]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &line_string![(x: 12, y: 12), (x: 14, y: 12), (x: 13, y: 14), (x:12, y:12)]
+                    &line_string![
+                        (x: 12, y: 12, z: 12), (x: 14, y: 12, z: 14), (x: 13, y: 14, z: 15), (x:12, y:12, z: 12)
+                    ]
                 );
             }
         }

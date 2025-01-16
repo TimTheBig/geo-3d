@@ -53,8 +53,8 @@ mod tests {
     fn test_multilinestring_valid() {
         let mls = wkt!(
             MULTILINESTRING(
-                (0. 0.,1. 1.),
-                (3. 1.,4. 1.)
+                (0. 0. 0., 1. 1. 1.),
+                (3. 1. 1.5, 4. 1. 2.5)
             )
         );
         assert_valid!(&mls);
@@ -66,8 +66,8 @@ mod tests {
         // is not valid because it has only one (deduplicated) point
         let mls = wkt!(
             MULTILINESTRING(
-                (0. 0.,1. 1.),
-                (0. 0.,0. 0.)
+                (0. 0. 0., 1. 1. 1.),
+                (0. 0. 0., 0. 0. 0.)
             )
         );
         assert_validation_errors!(

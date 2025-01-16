@@ -85,8 +85,8 @@ fn generate_ds() -> Result<(), Box<dyn Error>> {
             let prev_p1 = convert_mpoly(&p1);
             let prev_p2 = convert_mpoly(&p2);
 
-            info!("p1: {wkt}", wkt = p1.to_wkt());
-            info!("p2: {wkt}", wkt = p2.to_wkt());
+            // info!("p1: {wkt}", wkt = p1.to_wkt());
+            // info!("p2: {wkt}", wkt = p2.to_wkt());
             fc.features
                 .into_iter()
                 .skip(2)
@@ -96,7 +96,7 @@ fn generate_ds() -> Result<(), Box<dyn Error>> {
                     let ty = props["operation"]
                         .as_str()
                         .context("operation was not a string")?;
-                    info!("op: {ty} {wkt}", wkt = p.to_wkt(),);
+                    // info!("op: {ty} {wkt}", wkt = p.to_wkt(),);
 
                     let result = catch_unwind(|| {
                         let geoms = if ty == "intersection" {

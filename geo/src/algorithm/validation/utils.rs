@@ -2,12 +2,13 @@ use crate::{Coord, CoordFloat, GeoFloat, Intersects, LineString, RemoveRepeatedP
 use robust::{orient2d, Coord as RobustCoord};
 
 pub(crate) fn check_coord_is_not_finite<T: CoordFloat>(geom: &Coord<T>) -> bool {
-    if geom.x.is_finite() && geom.y.is_finite() {
+    if geom.x.is_finite() && geom.y.is_finite() && geom.z.is_finite() {
         return false;
     }
     true
 }
 
+// todo make 3d if needed
 pub(crate) fn robust_check_points_are_collinear<T: CoordFloat>(
     p0: &Coord<T>,
     p1: &Coord<T>,
@@ -17,14 +18,17 @@ pub(crate) fn robust_check_points_are_collinear<T: CoordFloat>(
         RobustCoord {
             x: p0.x.to_f64().unwrap(),
             y: p0.y.to_f64().unwrap(),
+            // z: p0.z.to_f64().unwrap(),
         },
         RobustCoord {
             x: p1.x.to_f64().unwrap(),
             y: p1.y.to_f64().unwrap(),
+            // z: p1.z.to_f64().unwrap(),
         },
         RobustCoord {
             x: p2.x.to_f64().unwrap(),
             y: p2.y.to_f64().unwrap(),
+            // z: p2.z.to_f64().unwrap(),
         },
     ) == 0.
 }

@@ -140,9 +140,9 @@ where
     /// ```
     /// use geo_types::{polygon, Polygon, MultiPolygon};
     ///
-    /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7., y: 9.), (x: 0., y: 0.)];
+    /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 0.5), (x: 0., y: 0., z: 0.)];
     /// let a = MultiPolygon::new(vec![a_el]);
-    /// let b_el: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7.01, y: 9.), (x: 0., y: 0.)];
+    /// let b_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7.01, y: 9., z: 0.5), (x: 0., y: 0., z: 0.01)];
     /// let b = MultiPolygon::new(vec![b_el]);
     ///
     /// approx::assert_relative_eq!(a, b, max_relative=0.1);
@@ -184,9 +184,9 @@ where
     /// ```
     /// use geo_types::{polygon, Polygon, MultiPolygon};
     ///
-    /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7., y: 9.), (x: 0., y: 0.)];
+    /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 0.5), (x: 0., y: 0., z: 0.)];
     /// let a = MultiPolygon::new(vec![a_el]);
-    /// let b_el: Polygon<f32> = polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 7.01, y: 9.), (x: 0., y: 0.)];
+    /// let b_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7.01, y: 9., z: 0.5), (x: 0., y: 0., z: 0.01)];
     /// let b = MultiPolygon::new(vec![b_el]);
     ///
     /// approx::abs_diff_eq!(a, b, epsilon=0.1);
@@ -203,13 +203,7 @@ where
     }
 }
 
-#[cfg(any(
-    feature = "rstar_0_8",
-    feature = "rstar_0_9",
-    feature = "rstar_0_10",
-    feature = "rstar_0_11",
-    feature = "rstar_0_12"
-))]
+#[cfg(feature = "rstar_0_12")]
 macro_rules! impl_rstar_multi_polygon {
     ($rstar:ident) => {
         impl<T> $rstar::RTreeObject for MultiPolygon<T>
@@ -226,14 +220,7 @@ macro_rules! impl_rstar_multi_polygon {
         }
     };
 }
-#[cfg(feature = "rstar_0_8")]
-impl_rstar_multi_polygon!(rstar_0_8);
-#[cfg(feature = "rstar_0_9")]
-impl_rstar_multi_polygon!(rstar_0_9);
-#[cfg(feature = "rstar_0_10")]
-impl_rstar_multi_polygon!(rstar_0_10);
-#[cfg(feature = "rstar_0_11")]
-impl_rstar_multi_polygon!(rstar_0_11);
+
 #[cfg(feature = "rstar_0_12")]
 impl_rstar_multi_polygon!(rstar_0_12);
 
@@ -245,8 +232,8 @@ mod test {
     #[test]
     fn test_iter() {
         let multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)],
-            polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)],
+            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x: 0, y: 0, z: 0)],
+            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)],
         ]);
 
         let mut first = true;
@@ -254,13 +241,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)]
+                    &polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)]
+                    &polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)]
                 );
             }
         }
@@ -271,13 +258,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)]
+                    &polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)]
+                    &polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)]
                 );
             }
         }
@@ -287,12 +274,12 @@ mod test {
     #[test]
     fn test_par_iter() {
         let multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)],
-            polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)],
+            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
+            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
         ]);
         let mut multimut = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)],
-            polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)],
+            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
+            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
         ]);
         multi.par_iter().for_each(|_p| ());
         let _ = &multimut.par_iter_mut().for_each(|_p| ());
@@ -302,8 +289,8 @@ mod test {
     #[test]
     fn test_iter_mut() {
         let mut multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0), (x: 2, y: 0), (x: 1, y: 2), (x:0, y:0)],
-            polygon![(x: 10, y: 10), (x: 12, y: 10), (x: 11, y: 12), (x:10, y:10)],
+            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
+            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
         ]);
 
         for poly in &mut multi {
@@ -329,13 +316,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 2, y: 2), (x: 4, y: 2), (x: 3, y: 4), (x:2, y:2)]
+                    &polygon![(x: 2, y: 2, z: 2), (x: 4, y: 2, z: 4), (x: 3, y: 4, z: 5), (x:2, y:2, z:2)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 12, y: 12), (x: 14, y: 12), (x: 13, y: 14), (x:12, y:12)]
+                    &polygon![(x: 12, y: 12, z: 12), (x: 14, y: 12, z: 14), (x: 13, y: 14, z: 15), (x:12, y:12, z:12)]
                 );
             }
         }
