@@ -24,7 +24,7 @@ use std::{fmt, ops::Mul, ops::Neg};
 ///
 /// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0),(x: 1.0, y: 1.0, z: 1.0)];
 ///
-/// let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, point!(x: 0.0, y: 0.0, z: 0.0));
+/// let transform = AffineTransform::translate(1.0, 1.0, 1.0).scaled(2.0, 2.0, 2.0, point!(x: 0.0, y: 0.0, z: 0.0));
 ///
 /// let transformed_line_string = line_string.affine_transform(&transform);
 ///
@@ -62,21 +62,24 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 /// These are then composed, producing a final transformation matrix which is applied to the geometry coordinates.
 ///
 /// `AffineTransform` is a row-major matrix.
-/// 2D affine transforms require six matrix parameters:
+/// 3D affine transforms require twelve matrix parameters:
 ///
-/// `[a, b, xoff, d, e, yoff]`
+/// `[a, b, f, xoff, d, e, g, yoff, h, i, j, zoff]`
 ///
 /// these map onto the `AffineTransform` rows as follows:
 /// ```ignore
-/// [[a, b, xoff],
-/// [d, e, yoff],
-/// [0, 0, 1]]
+/// [[a, b, f, xoff],
+/// [d, e, g, yoff],
+/// [h, i, j, zoff],
+/// [0, 0, 0, 1]]
 /// ```
-/// The equations for transforming coordinates `(x, y) -> (x', y')` are given as follows:
+/// The equations for transforming coordinates `(x, y, z) -> (x', y', z')` are given as follows:
 ///
-/// `x' = ax + by + xoff`
+/// `x' = ax + by + fz + xoff`
 ///
-/// `y' = dx + ey + yoff`
+/// `y' = dx + ey + gz + yoff`
+/// 
+/// `z' = hx + iy + jz + zoff`
 ///
 /// # Usage
 ///
@@ -93,15 +96,15 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 /// use geo::{point, line_string, BoundingRect};
 /// use approx::assert_relative_eq;
 ///
-/// let line_string = line_string![(x: 0.0, y: 0.0),(x: 1.0, y: 1.0)];
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0),(x: 1.0, y: 1.0, z: 1.0)];
 ///
-/// let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, point!(x: 0.0, y: 0.0));
+/// let transform = AffineTransform::translate(1.0, 1.0, 1.0).scaled(2.0, 2.0, 2.0, point!(x: 0.0, y: 0.0, z: 0.0));
 ///
 /// let transformed_line_string = line_string.affine_transform(&transform);
 ///
 /// assert_relative_eq!(
 ///     transformed_line_string,
-///     line_string![(x: 2.0, y: 2.0),(x: 4.0, y: 4.0)]
+///     line_string![(x: 2.0, y: 2.0, z: 2.0),(x: 4.0, y: 4.0, z: 4.0)]
 /// );
 /// ```
 ///
@@ -109,15 +112,25 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 /// ```
 /// use geo::AffineTransform;
 ///
-/// let transform = AffineTransform::new(10.0, 0.0, 400_000.0, 0.0, -10.0, 500_000.0);
+/// let transform = AffineTransform::new(
+///     10.0, 0.0, 8.7, 400_000.0,
+///     0.0, -10.0, -8.7, 500_000.0,
+///     89.5, -3.4, 12.0, 600_000.0
+/// );
 ///
 /// let a: f64 = transform.a();
 /// let b: f64 = transform.b();
+/// let f: f64 = transform.f();
 /// let xoff: f64 = transform.xoff();
 /// let d: f64 = transform.d();
 /// let e: f64 = transform.e();
+/// let g: f64 = transform.g();
 /// let yoff: f64 = transform.yoff();
-/// assert_eq!(transform, AffineTransform::new(a, b, xoff, d, e, yoff))
+/// let h: f64 = transform.h();
+/// let i: f64 = transform.i();
+/// let j: f64 = transform.j();
+/// let zoff: f64 = transform.zoff();
+/// assert_eq!(transform, AffineTransform::new(a, b, f, xoff, d, e, g, yoff, h, i, j, zoff))
 /// ```
 
 #[derive(Copy, Clone, PartialEq, Eq)]
@@ -131,7 +144,7 @@ impl<T: CoordNum> Default for AffineTransform<T> {
 }
 
 /// Makes an fn for a field at specified pos
-macro_rules! affine_field {
+macro_rules! affine_field_getter {
     ($field_name: ident[$pos_0: literal][$pos_1: literal]) => {
         /// See [AffineTransform::new] for this value's role in the affine transformation.
         pub fn $field_name(&self) -> T {
@@ -231,8 +244,8 @@ impl<T: CoordNum> AffineTransform<T> {
     /// let mut transform = AffineTransform::identity();
     ///
     /// // create two transforms that cancel each other
-    /// let transform1 = AffineTransform::translate(1.0, 2.0);
-    /// let transform2 = AffineTransform::translate(-1.0, -2.0);
+    /// let transform1 = AffineTransform::translate(1.0, 2.0, 3.0);
+    /// let transform2 = AffineTransform::translate(-1.0, -2.0, -3.0);
     /// let transforms = vec![transform1, transform2];
     ///
     /// // apply them
@@ -286,19 +299,21 @@ impl<T: CoordNum> AffineTransform<T> {
         self == &Self::identity()
     }
 
-    /// **Create** a new affine transform for scaling, scaled by factors along the `x` and `y` dimensions.
-    /// The point of origin is *usually* given as the 2D bounding box centre of the geometry, but
+    /// **Create** a new affine transform for scaling, scaled by factors along the `x`, `y`, and `z` dimensions.
+    /// The point of origin is *usually* given as the 3D bounding box centre of the geometry, but
     /// any coordinate may be specified.
     /// Negative scale factors will mirror or reflect coordinates.
     ///
     /// The matrix is:
     /// ```ignore
-    /// [[xfact, 0, xoff],
-    /// [0, yfact, yoff],
-    /// [0, 0, 1]]
+    /// [[xfact, 0, 0, xoff],
+    /// [0, yfact, 0, yoff],
+    /// [0, 0, zfact, zoff],
+    /// [0, 0, 0, 1]]
     ///
     /// xoff = origin.x - (origin.x * xfact)
     /// yoff = origin.y - (origin.y * yfact)
+    /// zoff = origin.z - (origin.z * zfact)
     /// ```
     /// Create a new affine transform for scaling in 3D
     pub fn scale(xfact: T, yfact: T, zfact: T, origin: impl Into<Coord<T>>) -> Self {
@@ -314,8 +329,8 @@ impl<T: CoordNum> AffineTransform<T> {
         )
     }
 
-    /// **Add** an affine transform for scaling, scaled by factors along the `x` and `y` dimensions.
-    /// The point of origin is *usually* given as the 2D bounding box centre of the geometry, but
+    /// **Add** an affine transform for scaling, scaled by factors along the `x`, `y`, and `z` dimensions.
+    /// The point of origin is *usually* given as the 3D bounding box centre of the geometry, but
     /// any coordinate may be specified.
     /// Negative scale factors will mirror or reflect coordinates.
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
@@ -325,7 +340,7 @@ impl<T: CoordNum> AffineTransform<T> {
         self
     }
 
-    /// **Create** an affine transform for translation, shifted by offsets along the `x` and `y` dimensions.
+    /// **Create** an affine transform for translation, shifted by offsets along the `x`, `y`, and `z` dimensions.
     ///
     /// The matrix is:
     /// ```ignore
@@ -342,7 +357,7 @@ impl<T: CoordNum> AffineTransform<T> {
         )
     }
 
-    /// **Add** an affine transform for translation, shifted by offsets along the `x` and `y` dimensions
+    /// **Add** an affine transform for translation, shifted by offsets along the `x`, `y`, and `z` dimensions
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
@@ -378,24 +393,42 @@ impl<T: CoordNum> AffineTransform<T> {
         ])
     }
 
+    /// Create a new custom transform matrix, with no z transform
+    ///
+    /// The argument order matches that of the affine transform matrix:
+    ///```ignore
+    /// [[a, b, 1, xoff],
+    ///  [d, e, 1, yoff],
+    ///  [h, i, 1, zoff],
+    ///  [0, 0, 0, 1]] <-- not part of the input arguments
+    /// ```
+    pub fn new_2d(a: T, b: T, xoff: T, d: T, e: T, yoff: T) -> Self {
+        Self([
+            [a, b, T::one(), xoff],
+            [d, e, T::one(), yoff],
+            [T::one(), T::one(), T::one(), T::zero()],
+            [T::zero(), T::zero(), T::zero(), T::one()]
+        ])
+    }
+
     // See [AffineTransform::new] for these value's roles in the affine transformation.
-    affine_field!(a[0][0]);
-    affine_field!(b[0][1]);
-    affine_field!(f[0][2]);
-    affine_field!(xoff[0][3]);
+    affine_field_getter!(a[0][0]);
+    affine_field_getter!(b[0][1]);
+    affine_field_getter!(f[0][2]);
+    affine_field_getter!(xoff[0][3]);
 
-    affine_field!(d[1][0]);
-    affine_field!(e[1][1]);
-    affine_field!(g[1][2]);
-    affine_field!(yoff[1][3]);
+    affine_field_getter!(d[1][0]);
+    affine_field_getter!(e[1][1]);
+    affine_field_getter!(g[1][2]);
+    affine_field_getter!(yoff[1][3]);
 
-    affine_field!(h[2][0]);
-    affine_field!(i[2][1]);
-    affine_field!(j[2][2]);
-    affine_field!(zoff[2][3]);
+    affine_field_getter!(h[2][0]);
+    affine_field_getter!(i[2][1]);
+    affine_field_getter!(j[2][2]);
+    affine_field_getter!(zoff[2][3]);
 }
 
-impl<T: CoordNum + Neg> AffineTransform<T> {
+impl<T: CoordNum + Neg<Output = T>> AffineTransform<T> {
     /// Return the inverse of a given transform. Composing a transform with its inverse yields
     /// the [identity matrix](Self::identity)
     #[must_use]
@@ -403,31 +436,41 @@ impl<T: CoordNum + Neg> AffineTransform<T> {
     where
         <T as Neg>::Output: Mul<T>,
         <<T as Neg>::Output as Mul<T>>::Output: ToPrimitive,
-    {
-        let a = self.0[0][0];
-        let b = self.0[0][1];
-        let xoff = self.0[0][2];
-        let d = self.0[1][0];
-        let e = self.0[1][1];
-        let yoff = self.0[1][2];
-
-        let determinant = a * e - b * d;
+    {   
+        // Determinant of the upper-left 3x3 matrix
+        let determinant = self.a() * (self.e() * self.j() - self.g() * self.i())
+            - self.b() * (self.d() * self.j() - self.g() * self.h())
+            + self.f() * (self.d() * self.i() - self.e() * self.h());
 
         if determinant == T::zero() {
             return None; // The matrix is not invertible
         }
         let inv_det = T::one() / determinant;
 
-        // If conversion of either the b or d matrix value fails, bail out
+        // Invert the upper-left 3x3 matrix
+        let inv_a = (self.e() * self.j() - self.g() * self.i()) * inv_det;
+        let inv_b = (self.f() * self.i() - self.b() * self.j()) * inv_det;
+        let inv_f = (self.b() * self.g() - self.e() * self.f()) * inv_det;
+
+        let inv_d = (self.g() * self.h() - self.d() * self.j()) * inv_det;
+        let inv_e = (self.a() * self.j() - self.f() * self.h()) * inv_det;
+        let inv_g = (self.f() * self.d() - self.a() * self.g()) * inv_det;
+
+        let inv_h = (self.d() * self.i() - self.e() * self.h()) * inv_det;
+        let inv_i = (self.b() * self.h() - self.a() * self.i()) * inv_det;
+        let inv_j = (self.a() * self.e() - self.b() * self.d()) * inv_det;
+
+        // Invert the offsets
+        let inv_xoff = -(self.xoff() * inv_a + self.yoff() * inv_b + self.zoff() * inv_f);
+        let inv_yoff = -(self.xoff() * inv_d + self.yoff() * inv_e + self.zoff() * inv_g);
+        let inv_zoff = -(self.xoff() * inv_h + self.yoff() * inv_i + self.zoff() * inv_j);
+
         Some(Self::new(
-            e * inv_det,
-            T::from(-b * inv_det)?,
-            (b * yoff - e * xoff) * inv_det,
-            T::from(-d * inv_det)?,
-            a * inv_det,
-            (d * xoff - a * yoff) * inv_det,
+            inv_a, inv_b, inv_f, inv_xoff,
+            inv_d, inv_e, inv_g, inv_yoff,
+            inv_h, inv_i, inv_j, inv_zoff,
         ))
-    }
+    }        
 }
 
 impl<T: CoordNum> fmt::Debug for AffineTransform<T> {
@@ -471,7 +514,7 @@ impl<T: CoordNum> From<(T, T, T, T, T, T, T, T, T, T, T, T)> for AffineTransform
 
 
 impl<U: CoordFloat> AffineTransform<U> {
-    /// **Create** an affine transform for rotation, using an arbitrary point as its center.
+    /// **Create** an affine transform for 2D rotation, using an arbitrary point as its center.
     ///
     /// Note that this operation is only available for geometries with floating point coordinates.
     ///
@@ -642,87 +685,108 @@ mod tests {
     use crate::{wkt, Point};
 
     // given a matrix with the shape
-    // [[a, b, xoff],
-    // [d, e, yoff],
-    // [0, 0, 1]]
+    // [[a, b, f, xoff],
+    // [d, e, g, yoff],
+    // [h, i, j, zoff],
+    // [0, 0, 0, 1]]
     #[test]
     fn matrix_multiply() {
-        let a = AffineTransform::new(1, 2, 5, 3, 4, 6);
-        let b = AffineTransform::new(7, 8, 11, 9, 10, 12);
+        let a = AffineTransform::new(1, 2, 6, 5, 3, 4, 9, 6, 4, 8, 7, 14);
+        let b = AffineTransform::new(7, 8, 3, 11, 9, 10, 2, 12, 3, 9, 4, 19);
         let composed = a.compose(&b);
-        assert_eq!(composed.0[0][0], 31);
-        assert_eq!(composed.0[0][1], 46);
-        assert_eq!(composed.0[0][2], 94);
-        assert_eq!(composed.0[1][0], 39);
-        assert_eq!(composed.0[1][1], 58);
-        assert_eq!(composed.0[1][2], 117);
+
+        assert_eq!(composed.0[0][0], 43);
+        assert_eq!(composed.0[0][1], 82);
+        assert_eq!(composed.0[0][2], 31);
+        assert_eq!(composed.0[0][3], 154);
+    
+        assert_eq!(composed.0[1][0], 84);
+        assert_eq!(composed.0[1][1], 145);
+        assert_eq!(composed.0[1][2], 53);
+        assert_eq!(composed.0[1][3], 258);
+    
+        assert_eq!(composed.0[2][0], 121);
+        assert_eq!(composed.0[2][1], 175);
+        assert_eq!(composed.0[2][2], 56);
+        assert_eq!(composed.0[2][3], 287);
     }
     #[test]
     fn test_transform_composition() {
-        let p0 = Point::new(0.0f64, 0.0);
+        let p0 = Point::new(0.0f64, 0.0, 0.0);
         // scale once
-        let mut scale_a = AffineTransform::default().scaled(2.0, 2.0, p0);
+        let mut scale_a = AffineTransform::default().scaled(2.0, 2.0, 2.0, p0);
         // rotate
         scale_a = scale_a.rotated(45.0, p0);
         // rotate back
         scale_a = scale_a.rotated(-45.0, p0);
         // scale up again, doubling
-        scale_a = scale_a.scaled(2.0, 2.0, p0);
+        scale_a = scale_a.scaled(2.0, 2.0, 2.0, p0);
         // scaled once
-        let scale_b = AffineTransform::default().scaled(2.0, 2.0, p0);
+        let scale_b = AffineTransform::default().scaled(2.0, 2.0, 2.0, p0);
         // scaled once, but equal to 2 + 2
-        let scale_c = AffineTransform::default().scaled(4.0, 4.0, p0);
+        let scale_c = AffineTransform::default().scaled(4.0, 4.0, 4.0, p0);
         assert_ne!(&scale_a.0, &scale_b.0);
         assert_relative_eq!(&scale_a, &scale_c);
     }
 
     #[test]
     fn affine_transformed() {
-        let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, (0.0, 0.0));
-        let mut poly = wkt! { POLYGON((0.0 0.0,0.0 2.0,1.0 2.0)) };
+        let transform = AffineTransform::translate(1.0, 1.0, 1.0).scaled(2.0, 2.0, 2.0, (0.0, 0.0, 0.0));
+        let mut poly = wkt! { POLYGON((0.0 0.0 0.0, 0.0 2.0 0.0, 1.0 2.0 1.0)) };
         poly.affine_transform_mut(&transform);
 
-        let expected = wkt! { POLYGON((2.0 2.0,2.0 6.0,4.0 6.0)) };
+        let expected = wkt! { POLYGON((2.0 2.0 2.0, 2.0 6.0 2.0, 4.0 6.0 4.0)) };
         assert_eq!(expected, poly);
     }
     #[test]
     fn affine_transformed_inverse() {
-        let transform = AffineTransform::translate(1.0, 1.0).scaled(2.0, 2.0, (0.0, 0.0));
+        let transform = AffineTransform::translate(1.0, 1.0, 1.0).scaled(2.0, 2.0, 2.0, (0.0, 0.0, 0.0));
         let tinv = transform.inverse().unwrap();
         let identity = transform.compose(&tinv);
         // test really only needs this, but let's be sure
         assert!(identity.is_identity());
 
-        let mut poly = wkt! { POLYGON((0.0 0.0,0.0 2.0,1.0 2.0)) };
+        let mut poly = wkt! { POLYGON((0.0 0.0 0.0, 0.0 2.0 0.0, 1.0 2.0 1.0)) };
         let expected = poly.clone();
         poly.affine_transform_mut(&identity);
         assert_eq!(expected, poly);
     }
     #[test]
     fn test_affine_transform_getters() {
-        let transform = AffineTransform::new(10.0, 0.0, 400_000.0, 0.0, -10.0, 500_000.0);
+        let transform = AffineTransform::new(
+            10.0, 0.0, 8.7, 400_000.0,
+            0.0, -10.0, -8.7, 500_000.0,
+            89.5, -3.4, 12.0, 600_000.0
+        );
+
         assert_eq!(transform.a(), 10.0);
         assert_eq!(transform.b(), 0.0);
+        assert_eq!(transform.f(), 8.7);
         assert_eq!(transform.xoff(), 400_000.0);
         assert_eq!(transform.d(), 0.0);
         assert_eq!(transform.e(), -10.0);
+        assert_eq!(transform.g(), -8.7);
         assert_eq!(transform.yoff(), 500_000.0);
+        assert_eq!(transform.h(), 89.5);
+        assert_eq!(transform.i(), -3.4);
+        assert_eq!(transform.j(), 12.0);
+        assert_eq!(transform.zoff(), 600_000.0);
     }
     #[test]
     fn test_compose() {
-        let point = Point::new(1., 0.);
+        let point = Point::new(1., 0., 2.);
 
-        let translate = AffineTransform::translate(1., 0.);
-        let scale = AffineTransform::scale(4., 1., [0., 0.]);
+        let translate = AffineTransform::translate(1., 0., 1.);
+        let scale = AffineTransform::scale(4., 1., 2., [0., 0., 0.]);
         let composed = translate.compose(&scale);
 
-        assert_eq!(point.affine_transform(&translate), Point::new(2., 0.));
-        assert_eq!(point.affine_transform(&scale), Point::new(4., 0.));
+        assert_eq!(point.affine_transform(&translate), Point::new(2., 0., 3.));
+        assert_eq!(point.affine_transform(&scale), Point::new(4., 0., 4.));
         assert_eq!(
             point.affine_transform(&translate).affine_transform(&scale),
-            Point::new(8., 0.)
+            Point::new(8., 0., 6.)
         );
 
-        assert_eq!(point.affine_transform(&composed), Point::new(8., 0.));
+        assert_eq!(point.affine_transform(&composed), Point::new(8., 0., 6.));
     }
 }
