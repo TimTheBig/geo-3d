@@ -148,10 +148,12 @@ where
     let q = coord! {
         x: (T::from(0.75).unwrap() * c0.x) + (T::from(0.25).unwrap() * c1.x),
         y: (T::from(0.75).unwrap() * c0.y) + (T::from(0.25).unwrap() * c1.y),
+        z: (T::from(0.75).unwrap() * c0.z) + (T::from(0.25).unwrap() * c1.z),
     };
     let r = coord! {
         x: (T::from(0.25).unwrap() * c0.x) + (T::from(0.75).unwrap() * c1.x),
         y: (T::from(0.25).unwrap() * c0.y) + (T::from(0.75).unwrap() * c1.y),
+        z: (T::from(0.25).unwrap() * c0.z) + (T::from(0.75).unwrap() * c1.z),
     };
     (q, r)
 }
@@ -164,7 +166,7 @@ mod test {
     #[test]
     fn geometry() {
         // Test implemented geometry
-        let ls = LineString::from(vec![(3.0, 0.0), (6.0, 3.0), (3.0, 6.0), (0.0, 3.0)]);
+        let ls = LineString::from(vec![(3.0, 0.0, -3.0), (6.0, 3.0, -6.0), (3.0, 6.0, -3.0), (0.0, 3.0, 0.0)]);
         let ls_geo: Geometry = ls.into();
         let ls_geo_out = ls_geo.chaikin_smoothing(1);
         let ls_out: LineString = ls_geo_out.try_into().unwrap();

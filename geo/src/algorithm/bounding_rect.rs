@@ -205,10 +205,12 @@ fn bounding_rect_merge<T: CoordNum>(a: Rect<T>, b: Rect<T>) -> Rect<T> {
         coord! {
             x: partial_min(a.min().x, b.min().x),
             y: partial_min(a.min().y, b.min().y),
+            z: partial_min(a.min().z, b.min().z),
         },
         coord! {
             x: partial_max(a.max().x, b.max().x),
             y: partial_max(a.max().y, b.max().y),
+            z: partial_max(a.max().z, b.max().z),
         },
     )
 }
@@ -231,15 +233,17 @@ mod test {
     }
     #[test]
     fn linestring_one_point_test() {
-        let linestring = line_string![(x: 40.02f64, y: 116.34)];
+        let linestring = line_string![(x: 40.02f64, y: 116.34, z: 37.92)];
         let bounding_rect = Rect::new(
             coord! {
                 x: 40.02f64,
                 y: 116.34,
+                z: 37.92,
             },
             coord! {
                 x: 40.02,
                 y: 116.34,
+                z: 37.92,
             },
         );
         assert_eq!(bounding_rect, linestring.bounding_rect().unwrap());
@@ -247,39 +251,43 @@ mod test {
     #[test]
     fn linestring_test() {
         let linestring = line_string![
-            (x: 1., y: 1.),
-            (x: 2., y: -2.),
-            (x: -3., y: -3.),
-            (x: -4., y: 4.)
+            (x: 1., y: 1., z: 1.),
+            (x: 2., y: -2., z: 3.),
+            (x: 1., y: 2., z: -2.),
+            (x: 2., y: 2., z: 6.),
+            (x: -3., y: -3., z: 4.),
+            (x: -4., y: 4., z: 5.)
         ];
-        let bounding_rect = Rect::new(coord! { x: -4., y: -3. }, coord! { x: 2., y: 4. });
+        let bounding_rect = Rect::new(coord! { x: -4., y: -3., z: -2. }, coord! { x: 2., y: 4., z: 6. });
         assert_eq!(bounding_rect, linestring.bounding_rect().unwrap());
     }
     #[test]
     fn multilinestring_test() {
         let multiline = MultiLineString::new(vec![
-            line_string![(x: 1., y: 1.), (x: -40., y: 1.)],
-            line_string![(x: 1., y: 1.), (x: 50., y: 1.)],
-            line_string![(x: 1., y: 1.), (x: 1., y: -60.)],
-            line_string![(x: 1., y: 1.), (x: 1., y: 70.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: -40., y: 1., z: 4.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: 50., y: 1., z: 6.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: 1., y: -60., z: 7.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: 1., y: 6., z: 80.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: 2., y: 5., z: -80.)],
+            line_string![(x: 1., y: 1., z: 1.), (x: 1., y: 70., z: 12.)],
         ]);
-        let bounding_rect = Rect::new(coord! { x: -40., y: -60. }, coord! { x: 50., y: 70. });
+        let bounding_rect = Rect::new(coord! { x: -40., y: -60., z: -80. }, coord! { x: 50., y: 70., z: 80. });
         assert_eq!(bounding_rect, multiline.bounding_rect().unwrap());
     }
     #[test]
     fn multipoint_test() {
-        let multipoint = MultiPoint::from(vec![(1., 1.), (2., -2.), (-3., -3.), (-4., 4.)]);
-        let bounding_rect = Rect::new(coord! { x: -4., y: -3. }, coord! { x: 2., y: 4. });
+        let multipoint = MultiPoint::from(vec![(1., 1., 1.), (2., -2., -2.), (-3., -3., -3.), (-4., 4., 5.)]);
+        let bounding_rect = Rect::new(coord! { x: -4., y: -3., z: -3. }, coord! { x: 2., y: 4., z: 5. });
         assert_eq!(bounding_rect, multipoint.bounding_rect().unwrap());
     }
     #[test]
     fn polygon_test() {
         let linestring = line_string![
-            (x: 0., y: 0.),
-            (x: 5., y: 0.),
-            (x: 5., y: 6.),
-            (x: 0., y: 6.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 5., y: 0., z: 4.),
+            (x: 5., y: 6., z: 7.),
+            (x: 0., y: 6., z: 6.),
+            (x: 0., y: 0., z: 0.),
         ];
         let line_bounding_rect = linestring.bounding_rect().unwrap();
         let poly = Polygon::new(linestring, Vec::new());
@@ -297,15 +305,15 @@ mod test {
     }
     #[test]
     fn line_test() {
-        let line1 = Line::new(coord! { x: 0., y: 1. }, coord! { x: 2., y: 3. });
-        let line2 = Line::new(coord! { x: 2., y: 3. }, coord! { x: 0., y: 1. });
+        let line1 = Line::new(coord! { x: 0., y: 1., z: 2. }, coord! { x: 2., y: 3., z: 4. });
+        let line2 = Line::new(coord! { x: 2., y: 3., z: 4. }, coord! { x: 0., y: 1., z: 2. });
         assert_eq!(
             line1.bounding_rect(),
-            Rect::new(coord! { x: 0., y: 1. }, coord! { x: 2., y: 3. },)
+            Rect::new(coord! { x: 0., y: 1., z: 2. }, coord! { x: 2., y: 3., z: 4. },)
         );
         assert_eq!(
             line2.bounding_rect(),
-            Rect::new(coord! { x: 0., y: 1. }, coord! { x: 2., y: 3. },)
+            Rect::new(coord! { x: 0., y: 1., z: 2. }, coord! { x: 2., y: 3., z: 4. },)
         );
     }
 
@@ -313,28 +321,28 @@ mod test {
     fn bounding_rect_merge_test() {
         assert_eq!(
             bounding_rect_merge(
-                Rect::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. }),
-                Rect::new(coord! { x: 1., y: 1. }, coord! { x: 2., y: 2. }),
+                Rect::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. }),
+                Rect::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 2., y: 2., z: 2. }),
             ),
-            Rect::new(coord! { x: 0., y: 0. }, coord! { x: 2., y: 2. }),
+            Rect::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 2., y: 2., z: 2. }),
         );
     }
 
     #[test]
     fn point_bounding_rect_test() {
         assert_eq!(
-            Rect::new(coord! { x: 1., y: 2. }, coord! { x: 1., y: 2. }),
-            point! { x: 1., y: 2. }.bounding_rect(),
+            Rect::new(coord! { x: 1., y: 2., z: 3. }, coord! { x: 1., y: 2., z: 3. }),
+            point! { x: 1., y: 2., z: 3. }.bounding_rect(),
         );
     }
 
     #[test]
     fn geometry_collection_bounding_rect_test() {
         assert_eq!(
-            Some(Rect::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 2. })),
+            Some(Rect::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 2., z: 3. })),
             GeometryCollection::new_from(vec![
-                Geometry::Point(point! { x: 0., y: 0. }),
-                Geometry::Point(point! { x: 1., y: 2. }),
+                Geometry::Point(point! { x: 0., y: 0., z: 0. }),
+                Geometry::Point(point! { x: 1., y: 2., z: 3. }),
             ])
             .bounding_rect(),
         );

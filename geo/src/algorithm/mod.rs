@@ -6,10 +6,6 @@ pub use kernels::{Kernel, Orientation};
 pub mod area;
 pub use area::Area;
 
-/// Boolean Operations such as the union, xor, or difference of two geometries.
-pub mod bool_ops;
-pub use bool_ops::{unary_union, BooleanOps, OpType};
-
 /// Calculate the bounding rectangle of a `Geometry`.
 pub mod bounding_rect;
 pub use bounding_rect::BoundingRect;
@@ -261,15 +257,9 @@ pub mod triangulate_earcut;
 #[cfg(feature = "earcutr")]
 pub use triangulate_earcut::TriangulateEarcut;
 
-/// Triangulate polygons using an (un)constrained [Delaunay Triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation) algorithm.
-#[cfg(feature = "spade")]
-pub mod triangulate_spade;
-#[cfg(feature = "spade")]
-pub use triangulate_spade::TriangulateSpade;
-
-/// Vector Operations for 2D coordinates
+/// Vector Operations for 3D coordinates
 mod vector_ops;
-pub use vector_ops::Vector2DOps;
+pub use vector_ops::Vector3DOps;
 
 /// Calculate the Vincenty distance between two `Point`s.
 pub mod vincenty_distance;

@@ -25,9 +25,9 @@ pub trait CoordsIter {
     /// use geo::coords_iter::CoordsIter;
     ///
     /// let multi_point = geo::MultiPoint::new(vec![
-    ///     geo::point!(x: -10., y: 0.),
-    ///     geo::point!(x: 20., y: 20.),
-    ///     geo::point!(x: 30., y: 40.),
+    ///     geo::point!(x: -10., y: 0., z: 10.),
+    ///     geo::point!(x: 20., y: 20., z: 20.),
+    ///     geo::point!(x: 30., y: 40., z: 50.),
     /// ]);
     ///
     /// let mut iter = multi_point.coords_iter();
@@ -352,12 +352,10 @@ impl<T: CoordNum> CoordsIter for GeometryCollection<T> {
 // │ Implementation for Rect │
 // └─────────────────────────┘
 
-type RectIter<T> =
-    iter::Chain<iter::Chain<CoordinateChainOnce<T>, iter::Once<Coord<T>>>, iter::Once<Coord<T>>>;
+type RectIter<T> = std::array::IntoIter<geo_types::Coord<T>, 8>;
 
 impl<T: CoordNum> CoordsIter for Rect<T> {
-    type Iter<'a>
-        = RectIter<T>
+    type Iter<'a> = RectIter<T>
     where
         T: 'a;
     type ExteriorIter<'a>
@@ -367,30 +365,15 @@ impl<T: CoordNum> CoordsIter for Rect<T> {
     type Scalar = T;
 
     fn coords_iter(&self) -> Self::Iter<'_> {
-        iter::once(coord! {
-            x: self.min().x,
-            y: self.min().y,
-        })
-        .chain(iter::once(coord! {
-            x: self.min().x,
-            y: self.max().y,
-        }))
-        .chain(iter::once(coord! {
-            x: self.max().x,
-            y: self.max().y,
-        }))
-        .chain(iter::once(coord! {
-            x: self.max().x,
-            y: self.min().y,
-        }))
+        self.to_coords().into_iter()
     }
 
     /// Return the number of coordinates in the `Rect`.
     ///
     /// Note: Although a `Rect` is represented by two coordinates, it is
-    /// spatially represented by four, so this method returns `4`.
+    /// spatially represented by eight, so this method returns `8`.
     fn coords_count(&self) -> usize {
-        4
+        8
     }
 
     fn exterior_coords_iter(&self) -> Self::ExteriorIter<'_> {
@@ -772,12 +755,12 @@ mod test {
 
     #[test]
     fn test_line() {
-        let line = Line::new(coord! { x: 1., y: 2. }, coord! { x: 2., y: 3. });
+        let line = Line::new(coord! { x: 1., y: 2., z: 3. }, coord! { x: 2., y: 3., z: 4. });
 
         let coords = line.coords_iter().collect::<Vec<_>>();
 
         assert_eq!(
-            vec![coord! { x: 1., y: 2. }, coord! { x: 2., y: 3. },],
+            vec![coord! { x: 1., y: 2., z: 3. }, coord! { x: 2., y: 3., z: 4. },],
             coords
         );
     }
@@ -892,9 +875,9 @@ mod test {
     #[test]
     fn test_array() {
         let coords = [
-            coord! { x: 1., y: 2. },
-            coord! { x: 3., y: 4. },
-            coord! { x: 5., y: 6. },
+            coord! { x: 1., y: 2., z: 3. },
+            coord! { x: 3., y: 4., z: 5. },
+            coord! { x: 5., y: 6., z: 7. },
         ];
 
         let actual_coords = coords.coords_iter().collect::<Vec<_>>();
@@ -905,9 +888,9 @@ mod test {
     #[test]
     fn test_slice() {
         let coords = &[
-            coord! { x: 1., y: 2. },
-            coord! { x: 3., y: 4. },
-            coord! { x: 5., y: 6. },
+            coord! { x: 1., y: 2., z: 3. },
+            coord! { x: 3., y: 4., z: 5. },
+            coord! { x: 5., y: 6., z: 7. },
         ];
 
         let actual_coords = coords.coords_iter().collect::<Vec<_>>();
@@ -916,29 +899,29 @@ mod test {
     }
 
     fn create_point() -> (Point, Vec<Coord>) {
-        (point!(x: 1., y: 2.), vec![coord! { x: 1., y: 2. }])
+        (point!(x: 1., y: 2., z: 3.), vec![coord! { x: 1., y: 2., z: 3. }])
     }
 
     fn create_triangle() -> (Triangle, Vec<Coord>) {
         (
             Triangle::new(
-                coord! { x: 1., y: 2. },
-                coord! { x: 3., y: 4. },
-                coord! { x: 5., y: 6. },
+                coord! { x: 1., y: 2., z: 3. },
+                coord! { x: 3., y: 4., z: 5. },
+                coord! { x: 5., y: 6., z: 7. },
             ),
             vec![
-                coord! { x: 1., y: 2. },
-                coord! { x: 3., y: 4. },
-                coord! { x: 5., y: 6. },
+                coord! { x: 1., y: 2., z: 3. },
+                coord! { x: 3., y: 4., z: 5. },
+                coord! { x: 5., y: 6., z: 7. },
             ],
         )
     }
 
     fn create_rect() -> (Rect, Vec<Coord>) {
         (
-            Rect::new(coord! { x: 1., y: 2. }, coord! { x: 3., y: 4. }),
+            Rect::new(coord! { x: 1., y: 2., z: 3. }, coord! { x: 3., y: 4., z: 5. }),
             vec![
-                coord! { x: 1., y: 2. },
+                coord! { x: 1., y: 2., z: 3. },
                 coord! { x: 1., y: 4. },
                 coord! { x: 3., y: 4. },
                 coord! { x: 3., y: 2. },

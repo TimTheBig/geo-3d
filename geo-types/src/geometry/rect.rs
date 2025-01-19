@@ -236,13 +236,27 @@ impl<T: CoordNum> Rect<T> {
             (x: self.min.x, y: self.max.y, z: self.max.z),
             (x: self.max.x, y: self.max.y, z: self.max.z),
             (x: self.max.x, y: self.min.y, z: self.max.z),
-            (x: self.min.x, y: self.min.y, z: self.max.z),
             // bottom
+            (x: self.max.x, y: self.min.y, z: self.min.z),
             (x: self.min.x, y: self.min.y, z: self.min.z),
             (x: self.min.x, y: self.max.y, z: self.min.z),
             (x: self.max.x, y: self.max.y, z: self.min.z),
-            (x: self.max.x, y: self.min.y, z: self.min.z),
             (x: self.min.x, y: self.min.y, z: self.max.z),
+        ]
+    }
+
+    pub fn to_coords(self) -> [Coord<T>; 8] {
+        [
+            // top
+            coord!(x: self.min.x, y: self.min.y, z: self.max.z),
+            coord!(x: self.min.x, y: self.max.y, z: self.max.z),
+            coord!(x: self.max.x, y: self.max.y, z: self.max.z),
+            coord!(x: self.max.x, y: self.min.y, z: self.max.z),
+            // bottom
+            coord!(x: self.max.x, y: self.min.y, z: self.min.z),
+            coord!(x: self.min.x, y: self.min.y, z: self.min.z),
+            coord!(x: self.min.x, y: self.max.y, z: self.min.z),
+            coord!(x: self.max.x, y: self.max.y, z: self.min.z),
         ]
     }
 

@@ -337,6 +337,7 @@ impl<T: CoordFloat + FromPrimitive> HaversineIntermediateFillCalculation<T> {
         let lat = z.atan2(x.hypot(y));
         let lon = y.atan2(x);
 
+        // todo figure out what the lat/lon conversion is for
         Point::new(lon.to_degrees(), lat.to_degrees())
     }
 }

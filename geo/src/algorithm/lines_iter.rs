@@ -130,7 +130,7 @@ impl<'a, T: CoordNum + 'a> LinesIter<'a> for MultiPolygon<T> {
 
 impl<'a, T: CoordNum + 'a> LinesIter<'a> for Rect<T> {
     type Scalar = T;
-    type Iter = <[Line<Self::Scalar>; 4] as IntoIterator>::IntoIter;
+    type Iter = <[Line<Self::Scalar>; 12] as IntoIterator>::IntoIter;
 
     fn lines_iter(&'a self) -> Self::Iter {
         self.to_lines().into_iter()
@@ -171,8 +171,8 @@ mod test {
 
     #[test]
     fn test_line() {
-        let line = Line::new(coord! { x: 0., y: 0. }, coord! { x: 5., y: 10. });
-        let want = vec![Line::new(coord! { x: 0., y: 0. }, coord! { x: 5., y: 10. })];
+        let line = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 5., y: 10., z: 15. });
+        let want = vec![Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 5., y: 10., z: 15. })];
         assert_eq!(want, line.lines_iter().collect::<Vec<_>>());
     }
 

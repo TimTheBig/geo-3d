@@ -1,29 +1,29 @@
-//! This module defines the [Vector2DOps] trait and implements it for the
+//! This module defines the [Vector3DOps] trait and implements it for the
 //! [Coord] struct.
 
-use crate::{Coord, CoordFloat, CoordNum};
+use crate::{Coord, CoordFloat};
 
-/// Defines vector operations for 2D coordinate types which implement CoordFloat
+/// Defines vector operations for 3D coordinate types which implement CoordFloat
 ///
 /// This trait is intended for internal use within the geo crate as a way to
 /// bring together the various hand-crafted linear algebra operations used
 /// throughout other algorithms and attached to various structs.
-pub trait Vector2DOps<Rhs = Self>
+pub trait Vector3DOps<Rhs = Self>
 where
     Self: Sized,
 {
-    type Scalar: CoordNum;
+    type Scalar: CoordFloat;
 
     /// The euclidean distance between this coordinate and the origin
     ///
-    /// `sqrt(x² + y²)`
+    /// `sqrt(x² + y² + z²)`
     ///
     fn magnitude(self) -> Self::Scalar;
 
     /// The squared distance between this coordinate and the origin.
     /// (Avoids the square root calculation when it is not needed)
     ///
-    /// `x² + y²`
+    /// `x² + y² + z²`
     ///
     fn magnitude_squared(self) -> Self::Scalar;
 
@@ -34,6 +34,7 @@ where
     /// Assumes a coordinate system where positive `y` is up and positive `x` is
     /// to the right. The described rotation direction is consistent with the
     /// documentation for [crate::algorithm::rotate::Rotate].
+    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
     fn left(self) -> Self;
 
     /// Rotate this coordinate around the origin by 90 degrees anti-clockwise.
@@ -43,11 +44,12 @@ where
     /// Assumes a coordinate system where positive `y` is up and positive `x` is
     /// to the right. The described rotation direction is consistent with the
     /// documentation for [crate::algorithm::rotate::Rotate].
+    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
     fn right(self) -> Self;
 
     /// The inner product of the coordinate components
     ///
-    /// `a · b = a.x * b.x + a.y * b.y`
+    /// `a · b = a.x * b.x + a.y * b.y + a.z * b.z`
     ///
     fn dot_product(self, other: Rhs) -> Self::Scalar;
 
@@ -98,6 +100,14 @@ where
     ///     explicit and has a `RobustKernel` option for extra precision.
     fn wedge_product(self, other: Rhs) -> Self::Scalar;
 
+    /// Returns the cross product of 3 points in 3D space.
+    /// The result is a 3D vector, which is perpendicular to the plane formed
+    /// by the vectors `self` → `point_b` and `self` → `point_c`.
+    ///
+    /// - For 2D use cases, use `wedge_product`.
+    ///
+    fn cross_product(self, point_b: Self, point_c: Self) -> Self;
+
     /// Try to find a vector of unit length in the same direction as this
     /// vector.
     ///
@@ -110,14 +120,14 @@ where
     /// - Either x or y are `f64::NAN` or `f64::INFINITY`
     fn try_normalize(self) -> Option<Self>;
 
-    /// Returns true if both the x and y components are finite
+    /// Returns true if the x, y, and z components are finite
     // Annotation to disable bad clippy lint; It is not good to use
     // `&self` as clippy suggests since Coord is Copy
     #[allow(clippy::wrong_self_convention)]
     fn is_finite(self) -> bool;
 }
 
-impl<T> Vector2DOps for Coord<T>
+impl<T> Vector3DOps for Coord<T>
 where
     T: CoordFloat,
 {
@@ -127,31 +137,51 @@ where
         self.x * other.y - self.y * other.x
     }
 
+    fn cross_product(self, point_b: Self, point_c: Self) -> Self {
+        let ux = point_b.x - self.x;
+        let uy = point_b.y - self.y;
+        let uz = point_b.z - self.z;
+        
+        let vx = point_c.x - self.x;
+        let vy = point_c.y - self.y;
+        let vz = point_c.z - self.z;
+
+        // Compute the cross product:
+        let x = uy * vz - uz * vy;
+        let y = uz * vx - ux * vz;
+        let z = ux * vy - uy * vx;
+
+        Self { x: x, y: y, z: z }
+    }
+
     fn dot_product(self, other: Self) -> Self::Scalar {
-        self.x * other.x + self.y * other.y
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 
     fn magnitude(self) -> Self::Scalar {
-        // Note uses cmath::hypot which avoids 'undue overflow and underflow'
-        // This also increases the range of values for which `.try_normalize()` works
-        Self::Scalar::hypot(self.x, self.y)
+        // Use the 3D variant of hypot.
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     fn magnitude_squared(self) -> Self::Scalar {
-        self.x * self.x + self.y * self.y
+        self.x * self.x + self.y * self.y + self.z * self.z
     }
 
     fn left(self) -> Self {
+        // This assumes a 2D rotation in the XY plane, leaving Z unchanged.
         Self {
             x: -self.y,
             y: self.x,
+            z: self.z,
         }
     }
 
     fn right(self) -> Self {
+        // This assumes a 2D rotation in the XY plane, leaving Z unchanged.
         Self {
             x: self.y,
             y: -self.x,
+            z: self.z,
         }
     }
 
@@ -177,11 +207,11 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::Vector2DOps;
+    use super::Vector3DOps;
     use crate::coord;
 
     #[test]
-    fn test_cross_product() {
+    fn test_wedge_product() {
         // perpendicular unit length
         let a = coord! { x: 1f64, y: 0f64 };
         let b = coord! { x: 0f64, y: 1f64 };
@@ -201,9 +231,31 @@ mod test {
         assert_eq!(b.wedge_product(a), -1f64);
 
         // Make Colinear; expect zero
+        let a = coord! { x: 2f64, y: 2f64, z: 3f64 };
+        let b = coord! { x: 1f64, y: 1f64, z: 1f64 };
+        assert_eq!(a.wedge_product(b), 0f64);
+    }
+
+    #[test]
+    fn test_cross_product() {
+        let a = coord! { x: 1f64, y: 0f64, z: -1. };
+        let b = coord! { x: 0f64, y: 1f64, z: 0. };
+        let c = coord! { x: 0f64, y: 1f64, z: 0. };
+
+        assert_eq!(a.cross_product(b, c), 1f64);
+        assert_eq!(b.cross_product(a, c), -1f64);
+        assert_eq!(c.cross_product(a, b), -1f64);
+
+        let a = coord! { x: 1f64, y: 0f64 };
+        let b = coord! { x: 1f64, y: 1f64 };
+
+        assert_eq!(a.cross_product(b), 1f64);
+        // expect swapping will result in negative
+        assert_eq!(b.cross_product(a), -1f64);
+
         let a = coord! { x: 2f64, y: 2f64 };
         let b = coord! { x: 1f64, y: 1f64 };
-        assert_eq!(a.wedge_product(b), 0f64);
+        assert_eq!(a.cross_product(b), 0f64);
     }
 
     #[test]

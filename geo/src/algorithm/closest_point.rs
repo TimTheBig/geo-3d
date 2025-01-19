@@ -78,7 +78,8 @@ impl<F: GeoFloat> ClosestPoint<F> for Line<F> {
 
         let x = direction_vector.x();
         let y = direction_vector.y();
-        let c = Point::from(self.start + (t * x, t * y).into());
+        let z = direction_vector.z();
+        let c = Point::from(self.start + (t * x, t * y, t * z).into());
 
         if self.intersects(p) {
             Closest::Intersection(c)

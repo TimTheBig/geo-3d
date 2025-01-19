@@ -47,11 +47,14 @@ impl<T> Intersects<Line<T>> for Rect<T>
 where
     T: GeoNum,
 {
+    // todo check 3D, maybe more lines are needed
     fn intersects(&self, rhs: &Line<T>) -> bool {
+        // left top
         let lt = self.min();
+        // right bottom
         let rb = self.max();
-        let lb = Coord::from((lt.x, rb.y));
-        let rt = Coord::from((rb.x, lt.y));
+        let lb = Coord::from((lt.x, rb.y, rb.z));
+        let rt = Coord::from((rb.x, lt.y, lt.z));
         // If either rhs.{start,end} lies inside Rect, then true
         self.intersects(&rhs.start)
             || self.intersects(&rhs.end)

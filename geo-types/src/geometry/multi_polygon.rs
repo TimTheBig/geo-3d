@@ -1,4 +1,5 @@
 use crate::{CoordNum, Polygon};
+use super::LineString;
 
 use alloc::vec;
 use alloc::vec::Vec;
@@ -120,6 +121,10 @@ impl<T: CoordNum> MultiPolygon<T> {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Polygon<T>> {
         self.0.iter_mut()
+    }
+
+    fn rings(&self) -> impl Iterator<Item = &LineString<T>> {
+        self.iter().flat_map(Polygon::rings)
     }
 }
 

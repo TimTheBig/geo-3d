@@ -51,10 +51,10 @@ pub trait Scale<T: CoordNum> {
     /// ]);
     /// ```
     #[must_use]
-    fn scale_xy(&self, x_factor: T, y_factor: T) -> Self;
+    fn scale_xyz(&self, x_factor: T, y_factor: T, z_factor: T) -> Self;
 
     /// Mutable version of [`scale_xy`](Self::scale_xy).
-    fn scale_xy_mut(&mut self, x_factor: T, y_factor: T);
+    fn scale_xyz_mut(&mut self, x_factor: T, y_factor: T, z_factor: T);
 
     /// Scale a geometry around a point of `origin`.
     ///
@@ -78,10 +78,10 @@ pub trait Scale<T: CoordNum> {
     /// ]);
     /// ```
     #[must_use]
-    fn scale_around_point(&self, x_factor: T, y_factor: T, origin: impl Into<Coord<T>>) -> Self;
+    fn scale_around_point(&self, x_factor: T, y_factor: T, z_factor: T, origin: impl Into<Coord<T>>) -> Self;
 
     /// Mutable version of [`scale_around_point`](Self::scale_around_point).
-    fn scale_around_point_mut(&mut self, x_factor: T, y_factor: T, origin: impl Into<Coord<T>>);
+    fn scale_around_point_mut(&mut self, x_factor: T, y_factor: T, z_factor: T, origin: impl Into<Coord<T>>);
 }
 
 impl<T, IR, G> Scale<T> for G
@@ -91,40 +91,40 @@ where
     G: Clone + AffineOps<T> + BoundingRect<T, Output = IR>,
 {
     fn scale(&self, scale_factor: T) -> Self {
-        self.scale_xy(scale_factor, scale_factor)
+        self.scale_xyz(scale_factor, scale_factor, scale_factor)
     }
 
     fn scale_mut(&mut self, scale_factor: T) {
-        self.scale_xy_mut(scale_factor, scale_factor);
+        self.scale_xyz_mut(scale_factor, scale_factor, scale_factor);
     }
 
-    fn scale_xy(&self, x_factor: T, y_factor: T) -> Self {
+    fn scale_xyz(&self, x_factor: T, y_factor: T, z_factor: T) -> Self {
         let origin = match self.bounding_rect().into() {
             Some(rect) => rect.center(),
             // Empty geometries have no bounding rect, but in that case
             // transforming is a no-op anyway.
             None => return self.clone(),
         };
-        self.scale_around_point(x_factor, y_factor, origin)
+        self.scale_around_point(x_factor, y_factor, z_factor, origin)
     }
 
-    fn scale_xy_mut(&mut self, x_factor: T, y_factor: T) {
+    fn scale_xyz_mut(&mut self, x_factor: T, y_factor: T, z_factor: T) {
         let origin = match self.bounding_rect().into() {
             Some(rect) => rect.center(),
             // Empty geometries have no bounding rect, but in that case
             // transforming is a no-op anyway.
             None => return,
         };
-        self.scale_around_point_mut(x_factor, y_factor, origin);
+        self.scale_around_point_mut(x_factor, y_factor, z_factor, origin);
     }
 
-    fn scale_around_point(&self, x_factor: T, y_factor: T, origin: impl Into<Coord<T>>) -> Self {
-        let affineop = AffineTransform::scale(x_factor, y_factor, origin);
+    fn scale_around_point(&self, x_factor: T, y_factor: T, z_factor: T, origin: impl Into<Coord<T>>) -> Self {
+        let affineop = AffineTransform::scale(x_factor, y_factor, z_factor, origin);
         self.affine_transform(&affineop)
     }
 
-    fn scale_around_point_mut(&mut self, x_factor: T, y_factor: T, origin: impl Into<Coord<T>>) {
-        let affineop = AffineTransform::scale(x_factor, y_factor, origin);
+    fn scale_around_point_mut(&mut self, x_factor: T, y_factor: T, z_factor: T, origin: impl Into<Coord<T>>) {
+        let affineop = AffineTransform::scale(x_factor, y_factor, z_factor, origin);
         self.affine_transform_mut(&affineop)
     }
 }

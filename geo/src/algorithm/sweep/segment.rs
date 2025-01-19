@@ -187,11 +187,11 @@ mod tests {
     #[test]
     fn test_split() {
         let lines: Vec<_> = vec![
-            LineOrPoint::from(((0., 0.).into(), (10., 10.).into())),
-            ((10.0, 0.).into(), (0., 10.).into()).into(),
-            ((0., 0.).into(), (0., 10.).into()).into(),
-            ((0., 0.).into(), (5., 5.).into()).into(),
-            ((10., 10.).into(), (5., 5.).into()).into(),
+            LineOrPoint::from(((0., 0., 0.).into(), (10., 10., 10.).into())),
+            ((10.0, 0., 10.0).into(), (0., 10., 0.).into()).into(),
+            ((0., 0., 0.).into(), (0., 10., 0.).into()).into(),
+            ((0., 0., 0.).into(), (5., 5., 5.).into()).into(),
+            ((10., 10., 10.).into(), (5., 5., 5.).into()).into(),
         ]
         .into_iter()
         .map(|lp| Segment::new(lp, None))
@@ -231,34 +231,34 @@ mod tests {
             TestCase {
                 a: 0,
                 b: 1,
-                isec: Some(LineOrPoint::from(SweepPoint::from((5., 5.)))),
+                isec: Some(LineOrPoint::from(SweepPoint::from((5., 5., 5.)))),
                 split: Some(SplitSegments::SplitOnce {
                     overlap: None,
-                    right: LineOrPoint::from(((5., 5.).into(), (10., 10.).into())),
+                    right: LineOrPoint::from(((5., 5., 5.).into(), (10., 10., 10.).into())),
                 }),
             },
             TestCase {
                 a: 0,
                 b: 2,
-                isec: Some(LineOrPoint::from(SweepPoint::from((0., 0.)))),
+                isec: Some(LineOrPoint::from(SweepPoint::from((0., 0., 0.)))),
                 split: Some(SplitSegments::Unchanged { overlap: false }),
             },
             TestCase {
                 a: 0,
                 b: 3,
-                isec: Some(LineOrPoint::from(((0., 0.).into(), (5., 5.).into()))),
+                isec: Some(LineOrPoint::from(((0., 0., 0.).into(), (5., 5., 5.).into()))),
                 split: Some(SplitSegments::SplitOnce {
                     overlap: Some(false),
-                    right: LineOrPoint::from(((5., 5.).into(), (10., 10.).into())),
+                    right: LineOrPoint::from(((5., 5., 5.).into(), (10., 10., 10.).into())),
                 }),
             },
             TestCase {
                 a: 0,
                 b: 4,
-                isec: Some(LineOrPoint::from(((5., 5.).into(), (10., 10.).into()))),
+                isec: Some(LineOrPoint::from(((5., 5., 5.).into(), (10., 10., 10.).into()))),
                 split: Some(SplitSegments::SplitOnce {
                     overlap: Some(true),
-                    right: LineOrPoint::from(((5., 5.).into(), (10., 10.).into())),
+                    right: LineOrPoint::from(((5., 5., 5.).into(), (10., 10., 10.).into())),
                 }),
             },
         ];

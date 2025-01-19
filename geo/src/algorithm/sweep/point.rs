@@ -21,6 +21,7 @@ impl<T: GeoNum> std::fmt::Debug for SweepPoint<T> {
         f.debug_tuple("SPt")
             .field(&self.0.x)
             .field(&self.0.y)
+            .field(&self.0.z)
             .finish()
     }
 }
@@ -37,7 +38,10 @@ impl<T: GeoNum> PartialOrd for SweepPoint<T> {
 impl<T: GeoNum> Ord for SweepPoint<T> {
     fn cmp(&self, other: &Self) -> Ordering {
         match self.0.x.total_cmp(&other.0.x) {
-            Ordering::Equal => self.0.y.total_cmp(&other.0.y),
+            Ordering::Equal => match self.0.y.total_cmp(&other.0.y) {
+                Ordering::Equal => self.0.z.total_cmp(&other.0.z),
+                o => o
+            },
             o => o,
         }
     }
@@ -74,14 +78,16 @@ mod tests {
 
     #[test]
     fn test_sweep_point_ordering() {
-        let p1 = SweepPoint::from(Coord { x: 0., y: 0. });
-        let p2 = SweepPoint::from(Coord { x: 1., y: 0. });
-        let p3 = SweepPoint::from(Coord { x: 1., y: 1. });
-        let p4 = SweepPoint::from(Coord { x: 1., y: 1. });
+        let p1 = SweepPoint::from(Coord { x: 0., y: 0., z: 0. });
+        let p2 = SweepPoint::from(Coord { x: 1., y: 0., z: 1. });
+        let p3 = SweepPoint::from(Coord { x: 1., y: 1., z: 1. });
+        let p4 = SweepPoint::from(Coord { x: 1., y: 1., z: 1. });
+        let p5 = SweepPoint::from(Coord { x: 1., y: 1., z: 2. });
 
         assert!(p1 < p2);
         assert!(p1 < p3);
         assert!(p2 < p3);
         assert!(p3 <= p4);
+        assert!(p4 <= p5);
     }
 }

@@ -117,12 +117,14 @@ where
 {
     let h = max_dist + max_dist;
     let w = line.length::<Euclidean>() + h;
-    let two = T::add(T::one(), T::one());
+    let two = T::one() + T::one();
+
     let search_dist = T::div(T::sqrt(T::powi(w, 2) + T::powi(h, 2)), two);
     let centroid = line.centroid();
     let centroid_coord = coord! {
         x: centroid.x(),
         y: centroid.y(),
+        z: centroid.z(),
     };
     let mut candidates = interior_coords_tree
         .locate_within_distance(centroid_coord, search_dist)
@@ -132,8 +134,8 @@ where
         None => None,
         Some(&point) => {
             let closest_point =
-                candidates.fold(Point::new(point.x, point.y), |acc_point, candidate| {
-                    let candidate_point = Point::new(candidate.x, candidate.y);
+                candidates.fold(Point::new(point.x, point.y, point.z), |acc_point, candidate| {
+                    let candidate_point = Point::new(candidate.x, candidate.y, candidate.z);
                     if Euclidean::distance(&line, &acc_point)
                         > Euclidean::distance(&line, &candidate_point)
                     {
@@ -174,6 +176,7 @@ where
                     Some(coord! {
                         x: closest_point.x(),
                         y: closest_point.y(),
+                        z: closest_point.z(),
                     })
                 } else {
                     None
@@ -231,7 +234,7 @@ where
         if let Some(closest_point) = possible_closest_point {
             interior_points_tree.remove(&closest_point);
             line_tree.remove(&line);
-            let point = Point::new(closest_point.x, closest_point.y);
+            let point = Point::new(closest_point.x, closest_point.y, closest_point.z);
             let start_line = Line::new(line.start_point(), point);
             let end_line = Line::new(point, line.end_point());
             line_tree.insert(start_line);
@@ -259,16 +262,16 @@ mod test {
     #[test]
     fn triangle_test() {
         let mut triangle = vec![
-            coord! { x: 0.0, y: 0.0 },
-            coord! { x: 4.0, y: 0.0 },
-            coord! { x: 2.0, y: 2.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
+            coord! { x: 4.0, y: 0.0, z: -4.0 },
+            coord! { x: 2.0, y: 2.0, z: 2.0 },
         ];
 
         let correct = line_string![
-            (x: 0.0, y: 0.0),
-            (x: 4.0, y: 0.0),
-            (x: 2.0, y: 2.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 4.0, y: 0.0, z: -4.0),
+            (x: 2.0, y: 2.0, z: 2.0),
+            (x: 0.0, y: 0.0, z: 0.0),
         ];
 
         let concavity = 2.0;
@@ -279,7 +282,7 @@ mod test {
     #[test]
     fn square_test() {
         let mut square = vec![
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 4.0, y: 0.0 },
             coord! { x: 4.0, y: 4.0 },
             coord! { x: 0.0, y: 4.0 },
@@ -289,7 +292,7 @@ mod test {
             (x: 4.0, y: 0.0),
             (x: 4.0, y: 4.0),
             (x: 0.0, y: 4.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
             (x: 4.0, y: 0.0),
         ];
 
@@ -301,7 +304,7 @@ mod test {
     #[test]
     fn one_flex_test() {
         let mut v = vec![
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 2.0, y: 1.0 },
             coord! { x: 4.0, y: 0.0 },
             coord! { x: 4.0, y: 4.0 },
@@ -311,7 +314,7 @@ mod test {
             (x: 4.0, y: 0.0),
             (x: 4.0, y: 4.0),
             (x: 0.0, y: 4.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
             (x: 2.0, y: 1.0),
             (x: 4.0, y: 0.0),
         ];
@@ -323,7 +326,7 @@ mod test {
     #[test]
     fn four_flex_test() {
         let mut v = vec![
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 2.0, y: 1.0 },
             coord! { x: 4.0, y: 0.0 },
             coord! { x: 3.0, y: 2.0 },
@@ -339,7 +342,7 @@ mod test {
             (x: 2.0, y: 3.0),
             (x: 0.0, y: 4.0),
             (x: 1.0, y: 2.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
             (x: 2.0, y: 1.0),
             (x: 4.0, y: 0.0),
         ];
@@ -351,7 +354,7 @@ mod test {
     #[test]
     fn consecutive_flex_test() {
         let mut v = vec![
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 4.0, y: 0.0 },
             coord! { x: 4.0, y: 4.0 },
             coord! { x: 3.0, y: 1.0 },
@@ -362,7 +365,7 @@ mod test {
             (x: 4.0, y: 4.0),
             (x: 3.0, y: 2.0),
             (x: 3.0, y: 1.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
             (x: 4.0, y: 0.0),
         ];
         let concavity = 2.0;
@@ -381,7 +384,7 @@ mod test {
     #[test]
     fn concave_hull_linestring_test() {
         let linestring = line_string![
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
             (x: 4.0, y: 0.0),
             (x: 4.0, y: 4.0),
             (x: 3.0, y: 1.0),
@@ -393,7 +396,7 @@ mod test {
             Coord::from((4.0, 4.0)),
             Coord::from((3.0, 2.0)),
             Coord::from((3.0, 1.0)),
-            Coord::from((0.0, 0.0)),
+            Coord::from((0.0, 0.0, z: 0.0)),
             Coord::from((4.0, 0.0)),
         ];
         assert_eq!(concave.exterior().0, correct);
@@ -402,22 +405,22 @@ mod test {
     #[test]
     fn concave_hull_multilinestring_test() {
         let v1 = line_string![
-             (x: 0.0, y: 0.0),
-             (x: 4.0, y: 0.0)
+             (x: 0.0, y: 0.0, z: 0.0),
+             (x: 4.0, y: 0.0, z: -4.0)
         ];
         let v2 = line_string![
-             (x: 4.0, y: 4.0),
-             (x: 3.0, y: 1.0),
-             (x: 3.0, y: 2.0)
+             (x: 4.0, y: 4.0, z: 4.0),
+             (x: 3.0, y: 1.0, z: -3.0),
+             (x: 3.0, y: 2.0, z: 1.0)
         ];
         let mls = MultiLineString::new(vec![v1, v2]);
         let correct = vec![
-            Coord::from((4.0, 0.0)),
-            Coord::from((4.0, 4.0)),
-            Coord::from((3.0, 2.0)),
-            Coord::from((3.0, 1.0)),
-            Coord::from((0.0, 0.0)),
-            Coord::from((4.0, 0.0)),
+            Coord::from((4.0, 0.0, -4.0)),
+            Coord::from((4.0, 4.0, 4.0)),
+            Coord::from((3.0, 2.0, -3.0)),
+            Coord::from((3.0, 1.0, -3.0)),
+            Coord::from((0.0, 0.0, 0.0)),
+            Coord::from((4.0, 0.0, -4.0)),
         ];
         let res = mls.concave_hull(2.0);
         assert_eq!(res.exterior().0, correct);
@@ -426,7 +429,7 @@ mod test {
     #[test]
     fn concave_hull_multipolygon_test() {
         let v1 = polygon![
-             (x: 0.0, y: 0.0),
+             (x: 0.0, y: 0.0, z: 0.0),
              (x: 4.0, y: 0.0)
         ];
         let v2 = polygon![
@@ -441,7 +444,7 @@ mod test {
             Coord::from((4.0, 4.0)),
             Coord::from((3.0, 2.0)),
             Coord::from((3.0, 1.0)),
-            Coord::from((0.0, 0.0)),
+            Coord::from((0.0, 0.0, 0.0)),
             Coord::from((4.0, 0.0)),
         ];
         assert_eq!(res.exterior().0, correct);

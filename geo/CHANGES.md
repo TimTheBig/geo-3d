@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Drop int support
+- Make 3D
+
+## Old
+
 - Add top-level doc link for `InteriorPoint`
 - Add Unary Union algorithm for fast union ops on adjacent / overlapping geometries
   - <https://github.com/georust/geo/pull/1246>

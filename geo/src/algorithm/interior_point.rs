@@ -162,6 +162,8 @@ fn polygon_interior_point_with_segment_length<T: GeoFloat>(
     // next-closest-to-center vertex if possible, to reduce the likelihood of collinear
     // intersections
     let mut y_mid = (bounds.min().y + bounds.max().y) / two;
+    let mut z_mid = (bounds.min().z + bounds.max().z) / two;
+
     if polygon.coords_iter().any(|coord| coord.y == y_mid) {
         let next_closest = polygon
             .coords_iter()
@@ -174,7 +176,8 @@ fn polygon_interior_point_with_segment_length<T: GeoFloat>(
             })
             .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Less));
         if let Some((closest, _)) = next_closest {
-            y_mid = (y_mid + closest) / two
+            y_mid = (y_mid + closest) / two;
+            z_mid = (z_mid + closest) / two;
         }
     };
 
@@ -182,10 +185,12 @@ fn polygon_interior_point_with_segment_length<T: GeoFloat>(
         Coord {
             x: bounds.min().x,
             y: y_mid,
+            z: z_mid,
         },
         Coord {
             x: bounds.max().x,
             y: y_mid,
+            z: z_mid,
         },
     );
 
@@ -212,7 +217,7 @@ fn polygon_interior_point_with_segment_length<T: GeoFloat>(
     let mut intersections_iter = intersections.iter().peekable();
     while let (Some(start), Some(end)) = (intersections_iter.next(), intersections_iter.peek()) {
         let length = end.x - start.x;
-        let midpoint = Point::new((start.x + end.x) / two, y_mid);
+        let midpoint = Point::new((start.x + end.x) / two, y_mid, z_mid);
         segments.push((midpoint, length));
     }
     segments.sort_by(|a, b| b.1.total_cmp(&a.1));

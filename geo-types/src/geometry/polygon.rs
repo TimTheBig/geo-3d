@@ -6,7 +6,7 @@ use num_traits::{Float, Signed};
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
 
-/// A bounded two-dimensional area.
+/// A bounded three-dimensional area.
 ///
 /// A `Polygon`’s outer boundary (_exterior ring_) is represented by a
 /// [`LineString`]. It may contain zero or more holes (_interior rings_), also
@@ -133,6 +133,11 @@ impl<T: CoordNum> Polygon<T> {
             exterior,
             interiors,
         }
+    }
+
+    /// Returns the rings of the polygon
+    pub fn rings(&self) -> impl Iterator<Item = &LineString<T>> {
+        std::iter::once(self.exterior()).chain(self.interiors())
     }
 
     /// Consume the `Polygon`, returning the exterior `LineString` ring and

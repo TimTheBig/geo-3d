@@ -309,7 +309,7 @@ pub(super) struct Chain<T: GeoNum>(LineString<T>);
 
 impl<T: GeoNum + std::fmt::Debug> std::fmt::Debug for Chain<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let bot: Vec<SweepPoint<T>> = self.0 .0.iter().map(|c| (*c).into()).collect();
+        let bot: Vec<SweepPoint<T>> = self.0.0.iter().map(|c| (*c).into()).collect();
         f.debug_tuple("Chain").field(&bot).finish()
     }
 }

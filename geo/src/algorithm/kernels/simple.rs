@@ -1,5 +1,5 @@
 use super::Kernel;
-use crate::CoordNum;
+use crate::CoordFloat;
 
 /// Simple kernel provides the direct implementation of the
 /// predicates. These are meant to be used with exact
@@ -7,4 +7,4 @@ use crate::CoordNum;
 #[derive(Default, Debug)]
 pub struct SimpleKernel;
 
-impl<T: CoordNum> Kernel<T> for SimpleKernel {}
+impl<T: CoordFloat> Kernel<T> for SimpleKernel {}

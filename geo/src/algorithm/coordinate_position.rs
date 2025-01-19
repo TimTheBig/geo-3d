@@ -4,13 +4,12 @@ use geo_types::{coord, CoordFloat};
 // ! if this does not work use orient3d from kernels mod
 use ::robust::orient3d;
 
-use crate::{geometry::*, BooleanOps};
+use crate::geometry::*;
 use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
 
-use super::bool_ops::BoolOpsNum;
 use super::TriangulateEarcut;
 
 /// The position of a `Coord` relative to a `Geometry`
@@ -29,19 +28,19 @@ pub enum CoordPos {
 /// use geo::{polygon, coord};
 /// use geo::coordinate_position::{CoordinatePosition, CoordPos};
 ///
-/// let square_poly = polygon![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0), (x: 2.0, y: 2.0), (x: 0.0, y: 2.0), (x: 0.0, y: 0.0)];
+/// let square_poly = polygon![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 2.0, y: 2.0, z: 2.0), (x: 0.0, y: 2.0, z: 0.0), (x: 0.0, y: 0.0, z: 0.0)];
 ///
-/// let inside_coord = coord! { x: 1.0, y: 1.0 };
+/// let inside_coord = coord! { x: 1.0, y: 1.0, z: 1.0 };
 /// assert_eq!(square_poly.coordinate_position(&inside_coord), CoordPos::Inside);
 ///
-/// let boundary_coord = coord! { x: 0.0, y: 1.0 };
+/// let boundary_coord = coord! { x: 0.0, y: 1.0, z: 0.0 };
 /// assert_eq!(square_poly.coordinate_position(&boundary_coord), CoordPos::OnBoundary);
 ///
-/// let outside_coord = coord! { x: 5.0, y: 5.0 };
+/// let outside_coord = coord! { x: 5.0, y: 5.0, z: 5.0 };
 /// assert_eq!(square_poly.coordinate_position(&outside_coord), CoordPos::Outside);
 /// ```
 pub trait CoordinatePosition {
-    type Scalar: GeoNum + CoordFloat + BoolOpsNum;
+    type Scalar: GeoNum + CoordFloat;
     fn coordinate_position(&self, coord: &Coord<Self::Scalar>) -> CoordPos {
         let mut is_inside = false;
         let mut boundary_count = 0;
@@ -75,7 +74,7 @@ pub trait CoordinatePosition {
 
 impl<T> CoordinatePosition for Coord<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -92,7 +91,7 @@ where
 
 impl<T> CoordinatePosition for Point<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -109,7 +108,7 @@ where
 
 impl<T> CoordinatePosition for Line<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -135,7 +134,7 @@ where
 
 impl<T> CoordinatePosition for LineString<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -184,7 +183,7 @@ where
 
 impl<T> CoordinatePosition for Triangle<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -212,7 +211,7 @@ where
 
 impl<T> CoordinatePosition for Rect<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -269,7 +268,7 @@ where
 
 impl<T> CoordinatePosition for MultiPoint<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -286,7 +285,7 @@ where
 
 impl<T> CoordinatePosition for Polygon<T>
 where
-    T: CoordFloat + GeoNum + BoolOpsNum,
+    T: CoordFloat + GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -307,34 +306,12 @@ where
             CoordPos::Inside => { *is_inside = true },
             CoordPos::Outside => {},
         }
-        // match coord_pos_relative_to_ring(*coord, self.exterior()) {
-        //     CoordPos::Outside => {}
-        //     CoordPos::OnBoundary => {
-        //         *boundary_count += 1;
-        //     }
-        //     CoordPos::Inside => {
-        //         for hole in self.interiors() {
-        //             match coord_pos_relative_to_ring(*coord, hole) {
-        //                 CoordPos::Outside => {}
-        //                 CoordPos::OnBoundary => {
-        //                     *boundary_count += 1;
-        //                     return;
-        //                 }
-        //                 CoordPos::Inside => {
-        //                     return;
-        //                 }
-        //             }
-        //         }
-        //         // the coord is *outside* the interior holes, so it's *inside* the polygon
-        //         *is_inside = true;
-        //     }
-        // }
     }
 }
 
 impl<T> CoordinatePosition for MultiLineString<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -351,7 +328,7 @@ where
 
 impl<T> CoordinatePosition for MultiPolygon<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -368,7 +345,7 @@ where
 
 impl<T> CoordinatePosition for GeometryCollection<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -385,7 +362,7 @@ where
 
 impl<T> CoordinatePosition for Geometry<T>
 where
-    T: GeoNum + CoordFloat + BoolOpsNum,
+    T: GeoNum + CoordFloat,
 {
     type Scalar = T;
     crate::geometry_delegate_impl! {
@@ -397,7 +374,7 @@ where
     }
 }
 
-impl<T: GeoNum + CoordFloat + BoolOpsNum> CoordinatePosition for GeometryCow<'_, T> {
+impl<T: GeoNum + CoordFloat> CoordinatePosition for GeometryCow<'_, T> {
     type Scalar = T;
     crate::geometry_cow_delegate_impl! {
         fn calculate_coordinate_position(
@@ -408,7 +385,7 @@ impl<T: GeoNum + CoordFloat + BoolOpsNum> CoordinatePosition for GeometryCow<'_,
     }
 }
 
-fn inside<T: CoordFloat + BoolOpsNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
+fn inside<T: CoordFloat>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
     debug_assert!(poly.exterior().is_closed());
 
     for linestring in poly.rings() {
@@ -459,7 +436,7 @@ fn intersect<T: CoordFloat>(segment: Line<T>, tri: Triangle<T>) -> bool {
 // todo add z
 pub fn coord_pos_relative_to_ring<T>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos
 where
-    T: GeoNum,
+    T: GeoNum + CoordFloat,
 {
     debug_assert!(linestring.is_closed());
 

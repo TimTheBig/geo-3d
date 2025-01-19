@@ -9,9 +9,6 @@ use crate::{coord, Coord, CoordNum};
 pub enum Orientation {
     CounterClockwise,
     Clockwise,
-    Down,
-    Up,
-    // todo add combows or don't use an enum
     Collinear,
 }
 
@@ -20,8 +17,8 @@ impl Orientation {
     #[inline]
     pub(crate) fn as_ordering(&self) -> Ordering {
         match self {
-            Orientation::CounterClockwise | Orientation::Down => Ordering::Less,
-            Orientation::Clockwise | Orientation::Up => Ordering::Greater,
+            Orientation::CounterClockwise => Ordering::Less,
+            Orientation::Clockwise => Ordering::Greater,
             Orientation::Collinear => Ordering::Equal,
         }
     }
@@ -30,7 +27,7 @@ impl Orientation {
 /// Kernel trait to provide predicates to operate on
 /// different scalar types.
 // todo make 3d
-pub trait Kernel<T: CoordNum> {
+pub trait Kernel<T: CoordFloat> {
     /// Gives the orientation of 3 2-dimensional points:
     /// ccw, cw or collinear (None)
     fn orient2d(p: Coord<T>, q: Coord<T>, r: Coord<T>) -> Orientation {
@@ -47,7 +44,7 @@ pub trait Kernel<T: CoordNum> {
     fn orient3d(a: Coord<T>, b: Coord<T>, c: Coord<T>, d: Coord<T>) -> T {
         // Computes the sign of the signed volume  
         // of the tetrahedron (a,b,c,d)
-        b-a.cross(c-a).dot(d-a).sin()
+        (b-a).cross(c-a).dot(d-a).sin()
     }
 
     fn square_euclidean_distance(p: Coord<T>, q: Coord<T>) -> T {

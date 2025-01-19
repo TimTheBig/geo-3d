@@ -281,6 +281,7 @@ fn raw_line_intersection<F: GeoFloat>(p: Line<F>, q: Line<F>) -> Option<Coord<F>
         Some(coord! {
             x: x_int + mid_x,
             y: y_int + mid_y,
+            z: z_int + mid_z,
         })
     }
 }

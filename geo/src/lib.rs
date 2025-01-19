@@ -1,6 +1,6 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/georust/meta/master/logo/logo.png")]
 
-//! The `geo` crate provides geospatial primitive types and algorithms.
+//! The `geo-3d` crate provides geospatial primitive types and algorithms.
 //!
 //! # Types
 //!
@@ -22,12 +22,6 @@
 //!
 //! The preceding types are reexported from the [`geo-types`] crate. Consider using that crate
 //! if you only need access to these types and no other `geo` functionality.
-//!
-//! ## Semantics
-//!
-//! The geospatial types provided here aim to adhere to the [OpenGIS Simple feature access][OGC-SFA]
-//! standards. Thus, the types here are inter-operable with other implementations of the standards:
-//! [JTS], [GEOS], etc.
 //!
 //! # Algorithms
 //!
@@ -65,11 +59,6 @@
 //! - **[`ChamberlainDuquetteArea`]**: Calculate the geodesic area of a geometry on a sphere using the algorithm presented in _Some Algorithms for Polygons on a Sphere_ by Chamberlain and Duquette (2007)
 //! - **[`GeodesicArea`]**: Calculate the geodesic area and perimeter of a geometry on an ellipsoid using the algorithm presented in _Algorithms for geodesics_ by Charles Karney (2013)
 //!
-//! ## Boolean Operations
-//!
-//! - **[`BooleanOps`]**: Combine or split (Multi)Polygons using intersection, union, xor, or difference operations
-//! - **[`unary_union`]**: Efficient union of many [`Polygon`] or [`MultiPolygon`]s
-//!
 //! ## Outlier Detection
 //!
 //! - **[`OutlierDetection`]**: Detect outliers in a group of points using [LOF](https://en.wikipedia.org/wiki/Local_outlier_factor)
@@ -88,8 +77,8 @@
 //!   closest to a given point
 //! - **[`HaversineClosestPoint`]**: Find the point on a geometry
 //!   closest to a given point on a sphere using spherical coordinates and lines being great arcs
-//! - **[`IsConvex`]**: Calculate the convexity of a
-//!   [`LineString`]
+//! - **[`IsConvex`]**:
+//!   Calculate the convexity of a [`LineString`]
 //! - **[`LineInterpolatePoint`]**:
 //!   Generates a point that lies a given fraction along the line
 //! - **[`LineLocatePoint`]**: Calculate the
@@ -172,7 +161,7 @@
 //!
 //! # Spatial Indexing
 //!
-//! `geo` geometries ([`Point`], [`Line`], [`LineString`], [`Polygon`], [`MultiPolygon`]) can be used with the [rstar](https://docs.rs/rstar/0.12.0/rstar/struct.RTree.html#usage)
+//! `geo-3d` geometries ([`Point`], [`Line`], [`LineString`], [`Polygon`], [`MultiPolygon`]) can be used with the [rstar](https://docs.rs/rstar/0.12.0/rstar/struct.RTree.html#usage)
 //! R*-tree crate for fast distance and nearest-neighbour queries. Multi- geometries can be added to the tree by iterating over
 //! their members and adding them. Note in particular the availability of the [`bulk_load`](https://docs.rs/rstar/0.12.0/rstar/struct.RTree.html#method.bulk_load)
 //! method and [`GeomWithData`](https://docs.rs/rstar/0.12.0/rstar/primitives/struct.GeomWithData.html) struct.
@@ -251,7 +240,7 @@ pub mod algorithm;
 mod geometry_cow;
 mod types;
 mod utils;
-use crate::kernels::{RobustKernel, SimpleKernel};
+use crate::kernels::RobustKernel;
 pub(crate) use geometry_cow::GeometryCow;
 
 #[cfg(test)]
@@ -330,7 +319,7 @@ impl<T> GeoFloat for T where
 }
 
 /// A trait for methods which work for both integers **and** floating point
-pub trait GeoNum: CoordNum {
+pub trait GeoNum: CoordFloat {
     type Ker: Kernel<Self>;
 
     /// Return the ordering between self and other.
@@ -354,34 +343,19 @@ macro_rules! impl_geo_num_for_float {
         }
     };
 }
-macro_rules! impl_geo_num_for_int {
-    ($t: ident) => {
-        impl GeoNum for $t {
-            type Ker = SimpleKernel;
-            fn total_cmp(&self, other: &Self) -> Ordering {
-                self.cmp(other)
-            }
-        }
-    };
-}
 
 // This is the list of primitives that we support.
 impl_geo_num_for_float!(f32);
 impl_geo_num_for_float!(f64);
 // for when f128 gets stabilized
 // impl_geo_num_for_float!(f128);
-impl_geo_num_for_int!(i16);
-impl_geo_num_for_int!(i32);
-impl_geo_num_for_int!(i64);
-impl_geo_num_for_int!(i128);
-impl_geo_num_for_int!(isize);
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn total_ord_float() {
+    fn total_ord_f64() {
         assert_eq!(GeoNum::total_cmp(&3.0f64, &2.0f64), Ordering::Greater);
         assert_eq!(GeoNum::total_cmp(&2.0f64, &2.0f64), Ordering::Equal);
         assert_eq!(GeoNum::total_cmp(&1.0f64, &2.0f64), Ordering::Less);
@@ -391,19 +365,17 @@ mod tests {
     }
 
     #[test]
-    fn total_ord_int() {
-        assert_eq!(GeoNum::total_cmp(&3i32, &2i32), Ordering::Greater);
-        assert_eq!(GeoNum::total_cmp(&2i32, &2i32), Ordering::Equal);
-        assert_eq!(GeoNum::total_cmp(&1i32, &2i32), Ordering::Less);
+    fn total_ord_f32() {
+        assert_eq!(GeoNum::total_cmp(&3.0f32, &2.0f32), Ordering::Greater);
+        assert_eq!(GeoNum::total_cmp(&2.0f32, &2.0f32), Ordering::Equal);
+        assert_eq!(GeoNum::total_cmp(&1.0f32, &2.0f32), Ordering::Less);
+        assert_eq!(GeoNum::total_cmp(&1.0f32, &f32::NAN), Ordering::Less);
+        assert_eq!(GeoNum::total_cmp(&f32::NAN, &f32::NAN), Ordering::Equal);
+        assert_eq!(GeoNum::total_cmp(&f32::INFINITY, &f32::NAN), Ordering::Less);
     }
 
     #[test]
     fn numeric_types() {
-        let _n_i16 = Point::new(1i16, 2i16, 3i16);
-        let _n_i32 = Point::new(1i32, 2i32, 3i32);
-        let _n_i64 = Point::new(1i64, 2i64, 3i64);
-        let _n_i128 = Point::new(1i128, 2i128, 3i128);
-        let _n_isize = Point::new(1isize, 2isize, 3isize);
         let _n_f32 = Point::new(1.0f32, 2.0f32, 3.0f32);
         let _n_f64 = Point::new(1.0f64, 2.0f64, 3.0f64);
         // for when f128 gets stabilized

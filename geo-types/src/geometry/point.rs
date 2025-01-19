@@ -259,7 +259,7 @@ impl<T: CoordNum> Point<T> {
 
 impl<T: CoordNum> Point<T> {
     /// Returns the dot product of the two points:
-    /// `dot = x1 * x2 + y1 * y2`
+    /// `dot = x1 * x2 + y1 * y2 + z1 * z2`
     ///
     /// # Examples
     ///

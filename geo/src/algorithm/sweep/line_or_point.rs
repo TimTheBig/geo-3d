@@ -275,14 +275,14 @@ impl<T: GeoFloat> LineOrPoint<T> {
                 // specifically for this algo., that can track the neighbors of
                 // tree-nodes, and fix / report this issue. The crate
                 // `btree-slab` seems like a great starting point.
-                let (mut x, y) = p.x_y();
+                let (mut x, y, z) = p.x_y_z();
 
                 let c = self.left();
-                if x == c.x && y < c.y {
+                if x == c.x && y < c.y && z < c.z {
                     x = x.next_after(T::infinity());
                 }
 
-                let p = Coord { x, y }.into();
+                let p = Coord { x, y, z }.into();
                 debug_assert!(
                     p >= self.left(),
                     "line intersection before first line: {p:?}\n\tLine({lp1:?} - {lp2:?}) X Line({lp3:?} - {lp4:?})",

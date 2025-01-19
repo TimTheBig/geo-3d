@@ -31,10 +31,10 @@ pub trait Translate<T: CoordNum> {
     /// ]);
     /// ```
     #[must_use]
-    fn translate(&self, x_offset: T, y_offset: T) -> Self;
+    fn translate(&self, x_offset: T, y_offset: T, z_offset: T) -> Self;
 
     /// Translate a Geometry along its axes, but in place.
-    fn translate_mut(&mut self, x_offset: T, y_offset: T);
+    fn translate_mut(&mut self, x_offset: T, y_offset: T, z_offset: T);
 }
 
 impl<T, G> Translate<T> for G
@@ -42,13 +42,13 @@ where
     T: CoordNum,
     G: AffineOps<T>,
 {
-    fn translate(&self, x_offset: T, y_offset: T) -> Self {
-        let transform = AffineTransform::translate(x_offset, y_offset);
+    fn translate(&self, x_offset: T, y_offset: T, z_offset: T) -> Self {
+        let transform = AffineTransform::translate(x_offset, y_offset, z_offset);
         self.affine_transform(&transform)
     }
 
-    fn translate_mut(&mut self, x_offset: T, y_offset: T) {
-        let transform = AffineTransform::translate(x_offset, y_offset);
+    fn translate_mut(&mut self, x_offset: T, y_offset: T, z_offset: T) {
+        let transform = AffineTransform::translate(x_offset, y_offset, z_offset);
         self.affine_transform_mut(&transform)
     }
 }
@@ -60,57 +60,57 @@ mod test {
 
     #[test]
     fn test_translate_point() {
-        let p = point!(x: 1.0, y: 5.0);
-        let translated = p.translate(30.0, 20.0);
-        assert_eq!(translated, point!(x: 31.0, y: 25.0));
+        let p = point!(x: 1.0, y: 5.0, z: 1.0);
+        let translated = p.translate(30.0, 20.0, 10.0);
+        assert_eq!(translated, point!(x: 31.0, y: 25.0, z: 11.0));
     }
     #[test]
     fn test_translate_point_in_place() {
-        let mut p = point!(x: 1.0, y: 5.0);
-        p.translate_mut(30.0, 20.0);
-        assert_eq!(p, point!(x: 31.0, y: 25.0));
+        let mut p = point!(x: 1.0, y: 5.0, z: 5.5);
+        p.translate_mut(30.0, 20.0, 15.5);
+        assert_eq!(p, point!(x: 31.0, y: 25.0, z: 21.0));
     }
     #[test]
     fn test_translate_linestring() {
         let linestring = line_string![
-            (x: 0.0, y: 0.0),
-            (x: 5.0, y: 1.0),
-            (x: 10.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 5.0, y: 1.0, z: 5.0),
+            (x: 10.0, y: 0.0, z: 10.0),
         ];
-        let translated = linestring.translate(17.0, 18.0);
+        let translated = linestring.translate(17.0, 18.0, 19.0);
         assert_eq!(
             translated,
             line_string![
-                (x: 17.0, y: 18.0),
-                (x: 22.0, y: 19.0),
-                (x: 27., y: 18.),
+                (x: 17.0, y: 18.0, z: 19.0),
+                (x: 22.0, y: 19.0, z: 24.0),
+                (x: 27., y: 18., z: 29.),
             ]
         );
     }
     #[test]
     fn test_translate_polygon() {
         let poly1 = polygon![
-            (x: 5., y: 1.),
-            (x: 4., y: 2.),
-            (x: 4., y: 3.),
-            (x: 5., y: 4.),
-            (x: 6., y: 4.),
-            (x: 7., y: 3.),
-            (x: 7., y: 2.),
-            (x: 6., y: 1.),
-            (x: 5., y: 1.),
+            (x: 5., y: 1., z: 5.),
+            (x: 4., y: 2., z: 12.),
+            (x: 4., y: 3., z: 8.),
+            (x: 5., y: 4., z: 14.),
+            (x: 6., y: 4., z: 6.),
+            (x: 7., y: 3., z: 22.),
+            (x: 7., y: 2., z: 17.),
+            (x: 6., y: 1., z: 12.5),
+            (x: 5., y: 1., z: 5.),
         ];
-        let translated = poly1.translate(17.0, 18.0);
+        let translated = poly1.translate(17.0, 18.0, -12.0);
         let correct = polygon![
-            (x: 22.0, y: 19.0),
-            (x: 21.0, y: 20.0),
-            (x: 21.0, y: 21.0),
-            (x: 22.0, y: 22.0),
-            (x: 23.0, y: 22.0),
-            (x: 24.0, y: 21.0),
-            (x: 24.0, y: 20.0),
-            (x: 23.0, y: 19.0),
-            (x: 22.0, y: 19.0),
+            (x: 22.0, y: 19.0, z: -7.0),
+            (x: 21.0, y: 20.0, z: 0.0),
+            (x: 21.0, y: 21.0, z: -4.0),
+            (x: 22.0, y: 22.0, z: 2.0),
+            (x: 23.0, y: 22.0, z: -6.0),
+            (x: 24.0, y: 21.0, z: 10.0),
+            (x: 24.0, y: 20.0, z: 5.0),
+            (x: 23.0, y: 19.0, z: 0.5),
+            (x: 22.0, y: 19.0, z: -7.0),
         ];
         // results agree with Shapely / GEOS
         assert_eq!(translated, correct);

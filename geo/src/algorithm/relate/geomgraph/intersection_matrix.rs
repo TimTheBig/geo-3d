@@ -1,3 +1,5 @@
+//! This is a 2d mod
+
 use crate::{coordinate_position::CoordPos, dimensions::Dimensions, GeoNum, GeometryCow};
 
 use crate::geometry_cow::GeometryCow::Point;

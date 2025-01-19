@@ -7,16 +7,18 @@ pub trait ToRadians<T: CoordFloat>:
     Sized + MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>
 {
     fn to_radians(&self) -> Self {
-        self.map_coords(|Coord { x, y }| Coord {
+        self.map_coords(|Coord { x, y, z }| Coord {
             x: x.to_radians(),
             y: y.to_radians(),
+            z: z.to_radians(),
         })
     }
 
     fn to_radians_in_place(&mut self) {
-        self.map_coords_in_place(|Coord { x, y }| Coord {
+        self.map_coords_in_place(|Coord { x, y, z }| Coord {
             x: x.to_radians(),
             y: y.to_radians(),
+            z: z.to_radians(),
         })
     }
 }
@@ -26,16 +28,18 @@ pub trait ToDegrees<T: CoordFloat>:
     Sized + MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>
 {
     fn to_degrees(&self) -> Self {
-        self.map_coords(|Coord { x, y }| Coord {
+        self.map_coords(|Coord { x, y, z }| Coord {
             x: x.to_degrees(),
             y: y.to_degrees(),
+            z: z.to_degrees(),
         })
     }
 
     fn to_degrees_in_place(&mut self) {
-        self.map_coords_in_place(|Coord { x, y }| Coord {
+        self.map_coords_in_place(|Coord { x, y, z }| Coord {
             x: x.to_degrees(),
             y: y.to_degrees(),
+            z: z.to_degrees(),
         })
     }
 }

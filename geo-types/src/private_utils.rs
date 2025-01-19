@@ -74,29 +74,43 @@ where
     if start == end {
         return line_euclidean_length(Line::new(point, start));
     }
+
     let dx = end.x - start.x;
     let dy = end.y - start.y;
-    // todo use z
-    todo!("make 3d");
     let dz = end.z - start.z;
-    let d_squared = dx * dx + dy * dy;
 
-    let r = ((point.x - start.x) * dx + (point.y - start.y) * dy) / d_squared;
+    let d_squared = dx * dx + dy * dy + dz * dz; // Full 3D distance squared
+
+    // Projection parameter (normalized position on the line segment)
+    let r = ((point.x - start.x) * dx + (point.y - start.y) * dy + (point.z - start.z) * dz) / d_squared;
+
     if r <= T::zero() {
+        // Closest to the start point
         return line_euclidean_length(Line::new(point, start));
     }
     if r >= T::one() {
+        // Closest to the end point
         return line_euclidean_length(Line::new(point, end));
     }
-    let s = ((start.y - point.y) * dx - (start.x - point.x) * dy) / d_squared;
-    s.abs() * dx.hypot(dy)
+
+    // Closest point on the segment
+    let proj_x = start.x + r * dx;
+    let proj_y = start.y + r * dy;
+    let proj_z = start.z + r * dz;
+
+    // Distance from the point to the projected point
+    let dx_p = point.x - proj_x;
+    let dy_p = point.y - proj_y;
+    let dz_p = point.z - proj_z;
+
+    (dx_p * dx_p + dy_p * dy_p + dz_p * dz_p).sqrt()
 }
 
 pub fn line_euclidean_length<T>(line: Line<T>) -> T
 where
     T: CoordFloat,
 {
-    line.dx().hypot(line.dy())
+    line.dx().hypot(line.dy()).hypot(line.dz())
 }
 
 pub fn point_line_string_euclidean_distance<T>(p: Point<T>, l: &LineString<T>) -> T
@@ -136,17 +150,16 @@ where
     if line_string.0.is_empty() {
         return false;
     }
-    // LineString with one point equal p
+    // LineString with one point equal to the given point
     if line_string.0.len() == 1 {
         return point_contains_point(Point::from(line_string[0]), point);
     }
-    // check if point is a vertex
+    // Check if point is a vertex of the LineString
     if line_string.0.contains(&point.0) {
         return true;
     }
 
     for line in line_string.lines() {
-        // This is a duplicate of the line-contains-point logic in the "intersects" module
         let tx = if line.dx() == T::zero() {
             None
         } else {
@@ -157,7 +170,6 @@ where
         } else {
             Some((point.y() - line.start.y) / line.dy())
         };
-        // todo use z
         let tz = if line.dz() == T::zero() {
             None
         } else {
@@ -166,32 +178,42 @@ where
 
         let contains = match (tx, ty, tz) {
             (None, None, None) => {
-                // Degenerate line
+                // Degenerate line (line has no length, essentially a single point)
                 point.0 == line.start
             }
             (Some(t), None, None) => {
                 // Horizontal line
-                point.y() == line.start.y && T::zero() <= t && t <= T::one()
+                point.y() == line.start.y && point.z() == line.start.z && T::zero() <= t && t <= T::one()
             }
             (None, Some(t), None) => {
-                // Sideways line
-                point.x() == line.start.x && T::zero() <= t && t <= T::one()
+                // Vertical line in Y direction
+                point.x() == line.start.x && point.z() == line.start.z && T::zero() <= t && t <= T::one()
             }
             (None, None, Some(t)) => {
-                // Vertical line
-                point.z() == line.start.z && T::zero() <= t && t <= T::one()
+                // Vertical line in Z direction
+                point.x() == line.start.x && point.y() == line.start.y && T::zero() <= t && t <= T::one()
             }
-            // ? maybe these are not needed
-            (None, Some(t_y), Some(t_z)) => todo!(),
-            (Some(t_x), None, Some(t_z)) => todo!(),
-            (Some(t_x), Some(t_y), None) => todo!(),
-
-            (Some(t_x), Some(t_y), Some(t_z)) => {
-                // All other lines
-                todo!("make 3d")
+            (Some(t_x), Some(t_y), None) => {
+                // 2D line in XY plane
                 (t_x - t_y).abs() <= T::epsilon() && T::zero() <= t_x && t_x <= T::one()
             }
+            (Some(t_x), None, Some(t_z)) => {
+                // 2D line in XZ plane
+                (t_x - t_z).abs() <= T::epsilon() && T::zero() <= t_x && t_x <= T::one()
+            }
+            (None, Some(t_y), Some(t_z)) => {
+                // 2D line in YZ plane
+                (t_y - t_z).abs() <= T::epsilon() && T::zero() <= t_y && t_y <= T::one()
+            }
+            (Some(t_x), Some(t_y), Some(t_z)) => {
+                // General 3D line
+                (t_x - t_y).abs() <= T::epsilon()
+                    && (t_y - t_z).abs() <= T::epsilon()
+                    && T::zero() <= t_x
+                    && t_x <= T::one()
+            }
         };
+
         if contains {
             return true;
         }

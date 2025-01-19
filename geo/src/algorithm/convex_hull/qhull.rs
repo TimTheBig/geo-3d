@@ -89,8 +89,9 @@ where
             let p_diff = coord! {
                 x: pt.x - p_a.x,
                 y: pt.y - p_a.y,
+                z: pt.z - p_a.z,
             };
-            p_orth.x * p_diff.x + p_orth.y * p_diff.y
+            p_orth.x * p_diff.x + p_orth.y * p_diff.y + p_orth.z * p_diff.z
         })
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
@@ -118,13 +119,13 @@ mod test {
     #[test]
     fn quick_hull_test1() {
         let mut v = vec![
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 4.0, y: 0.0 },
             coord! { x: 4.0, y: 1.0 },
             coord! { x: 1.0, y: 1.0 },
             coord! { x: 1.0, y: 4.0 },
             coord! { x: 0.0, y: 4.0 },
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
         ];
         let res = quick_hull(&mut v);
         assert!(res.is_strictly_ccw_convex());
