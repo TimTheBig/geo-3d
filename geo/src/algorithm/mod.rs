@@ -93,29 +93,9 @@ pub use frechet_distance::FrechetDistance;
 pub mod geodesic_bearing;
 pub use geodesic_bearing::GeodesicBearing;
 
-/// Returns a new Point using a distance and bearing on a geodesic.
-pub mod geodesic_destination;
-#[allow(deprecated)]
-pub use geodesic_destination::GeodesicDestination;
-
-/// Calculate the Geodesic distance between two `Point`s.
-pub mod geodesic_distance;
-#[allow(deprecated)]
-pub use geodesic_distance::GeodesicDistance;
-
 /// Calculate the Geodesic area and perimeter of polygons.
 pub mod geodesic_area;
 pub use geodesic_area::GeodesicArea;
-
-/// Calculate a new `Point` lying on a Geodesic arc between two `Point`s.
-pub mod geodesic_intermediate;
-#[allow(deprecated)]
-pub use geodesic_intermediate::GeodesicIntermediate;
-
-/// Calculate the Geodesic length of a line.
-pub mod geodesic_length;
-#[allow(deprecated)]
-pub use geodesic_length::GeodesicLength;
 
 /// Calculate the Hausdorff distance between two geometries.
 pub mod hausdorff_distance;
@@ -183,7 +163,7 @@ pub mod lines_iter;
 pub use lines_iter::LinesIter;
 
 pub mod line_measures;
-pub use line_measures::metric_spaces::{Euclidean, Geodesic, Haversine, Rhumb};
+pub use line_measures::metric_spaces::{Euclidean, Haversine};
 pub use line_measures::{Bearing, Densify, Destination, Distance, InterpolatePoint, Length};
 
 /// Split a LineString into n segments
@@ -288,11 +268,6 @@ pub use outlier_detection::OutlierDetection;
 /// Monotonic polygon subdivision
 pub mod monotone;
 pub use monotone::{monotone_subdivision, MonoPoly, MonotonicPolygons};
-
-/// Rhumb-line-related algorithms and utils
-pub mod rhumb;
-#[allow(deprecated)]
-pub use rhumb::{RhumbBearing, RhumbDestination, RhumbDistance, RhumbIntermediate, RhumbLength};
 
 pub mod validation;
 pub use validation::Validation;

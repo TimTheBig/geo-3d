@@ -350,7 +350,7 @@ impl GeodesicArea<f64> for Geometry<f64> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::algorithm::line_measures::{Geodesic, Length};
+    use crate::algorithm::line_measures::Length;
     use crate::polygon;
 
     #[test]

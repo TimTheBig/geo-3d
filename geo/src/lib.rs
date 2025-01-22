@@ -33,8 +33,6 @@
 //!
 //! - **[`Euclidean`]**: The [Euclidean plane] measures distance with the pythagorean formula. Not suitable for lon/lat geometries.
 //! - **[`Haversine`]**: The [Haversine Formula] measures distance on a sphere. Only suitable for lon/lat geometries.
-//! - **[`Geodesic`]**: Geodesic methods based on [Karney (2013)] more accurately reflect the shape of the Earth, but are slower than Haversine. Only suitable for lon/lat geometries.
-//! - **[`Rhumb`]**: [Rhumb line] (a.k.a. loxodrome) measures can be useful for navigation applications where maintaining a constant bearing or direction is important. Only suitable for lon/lat geometries.
 //!
 //! ### Operations on Metric Spaces
 //!
@@ -49,8 +47,6 @@
 //! ### Misc measures
 //!
 //! - **[`HausdorffDistance`]**: Calculate "the maximum of the distances from a point in any of the sets to the nearest point in the other set." (Rote, 1991)
-//! - **[`VincentyDistance`]**: Calculate the minimum geodesic distance between geometries using Vincenty’s formula
-//! - **[`VincentyLength`]**: Calculate the geodesic length of a geometry using Vincenty’s formula
 //! - **[`FrechetDistance`]**: Calculate the similarity between [`LineString`]s using the Fréchet distance
 //!
 //! ## Area

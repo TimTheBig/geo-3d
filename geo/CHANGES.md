@@ -4,6 +4,7 @@
 
 - Drop int support
 - Make 3D
+- Drop rhumb and Geodesic support as those are 2d only, and intended for lon/lat
 
 ## Old
 
@@ -179,7 +180,7 @@
   implemented for `CoordsIter` without re-allocating (e.g., creating a `MultiPoint`).
 - Add `compose_many` method to `AffineOps`
   - <https://github.com/georust/geo/pull/1148>
-- Point in `Triangle` and `Rect` performance improvemnets
+- Point in `Triangle` and `Rect` performance improvements
   - <https://github.com/georust/geo/pull/1057>
 - Fix crashes in `BooleanOps`
   - <https://github.com/georust/geo/pull/1234>
