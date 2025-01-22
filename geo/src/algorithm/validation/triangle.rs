@@ -1,5 +1,5 @@
 use super::{utils, CoordIndex, Validation};
-use crate::{CoordFloat, Triangle};
+use crate::{CoordNum, Triangle};
 
 use std::fmt;
 
@@ -33,7 +33,7 @@ impl fmt::Display for InvalidTriangle {
 
 impl std::error::Error for InvalidTriangle {}
 
-impl<F: CoordFloat> Validation for Triangle<F> {
+impl<F: CoordNum> Validation for Triangle<F> {
     type Error = InvalidTriangle;
 
     fn visit_validation<T>(

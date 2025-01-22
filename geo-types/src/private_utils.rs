@@ -3,7 +3,7 @@
 // hidden module is public so the geo crate can reuse these algorithms to
 // prevent duplication. These functions are _not_ meant for public consumption.
 
-use crate::{Coord, CoordFloat, CoordNum, Line, LineString, Point, Rect};
+use crate::{Coord, CoordNum, Line, LineString, Point, Rect};
 
 pub fn line_string_bounding_rect<T>(line_string: &LineString<T>) -> Option<Rect<T>>
 where
@@ -64,7 +64,7 @@ fn get_min_max<T: PartialOrd>(p: T, min: T, max: T) -> (T, T) {
 
 pub fn line_segment_distance<T, C>(point: C, start: C, end: C) -> T
 where
-    T: CoordFloat,
+    T: CoordNum,
     C: Into<Coord<T>>,
 {
     let point = point.into();
@@ -108,14 +108,14 @@ where
 
 pub fn line_euclidean_length<T>(line: Line<T>) -> T
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     line.dx().hypot(line.dy()).hypot(line.dz())
 }
 
 pub fn point_line_string_euclidean_distance<T>(p: Point<T>, l: &LineString<T>) -> T
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     // No need to continue if the point is on the LineString, or it's empty
     if line_string_contains_point(l, p) || l.0.is_empty() {
@@ -128,7 +128,7 @@ where
 
 pub fn point_line_euclidean_distance<C, T>(p: C, l: Line<T>) -> T
 where
-    T: CoordFloat,
+    T: CoordNum,
     C: Into<Coord<T>>,
 {
     line_segment_distance(p.into(), l.start, l.end)
@@ -136,7 +136,7 @@ where
 
 pub fn point_contains_point<T>(p1: Point<T>, p2: Point<T>) -> bool
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     let distance = line_euclidean_length(Line::new(p1, p2)).to_f32().unwrap();
     approx::relative_eq!(distance, 0.0)
@@ -144,7 +144,7 @@ where
 
 pub fn line_string_contains_point<T>(line_string: &LineString<T>, point: Point<T>) -> bool
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     // LineString without points
     if line_string.0.is_empty() {

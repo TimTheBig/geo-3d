@@ -1,4 +1,3 @@
-use geo_types::CoordFloat;
 use num_traits::Zero;
 use std::cmp::Ordering;
 
@@ -27,7 +26,7 @@ impl Orientation {
 /// Kernel trait to provide predicates to operate on
 /// different scalar types.
 // todo make 3d
-pub trait Kernel<T: CoordFloat> {
+pub trait Kernel<T: CoordNum> {
     /// Gives the orientation of 3 2-dimensional points:
     /// ccw, cw or collinear (None)
     fn orient2d(p: Coord<T>, q: Coord<T>, r: Coord<T>) -> Orientation {

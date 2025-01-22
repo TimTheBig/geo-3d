@@ -3,7 +3,7 @@ use crate::coords_iter::CoordsIter;
 // rather than being Euclidean specific. Until the alternative is available, lets allow deprecations
 // so as not to change the method signature for existing users.
 #[allow(deprecated)]
-use crate::{CoordFloat, EuclideanLength, Line, LineString, Point};
+use crate::{CoordNum, EuclideanLength, Line, LineString, Point};
 use std::ops::AddAssign;
 
 /// Returns an option of the point that lies a given fraction along the line.
@@ -34,7 +34,7 @@ use std::ops::AddAssign;
 /// assert_eq!(linestring.line_interpolate_point(0.75), Some(point!(x: 0.0, y: 0.5)));
 /// assert_eq!(linestring.line_interpolate_point(2.0), Some(point!(x: 0.0, y: 1.0)));
 /// ```
-pub trait LineInterpolatePoint<F: CoordFloat> {
+pub trait LineInterpolatePoint<F: CoordNum> {
     type Output;
 
     fn line_interpolate_point(&self, fraction: F) -> Self::Output;
@@ -42,7 +42,7 @@ pub trait LineInterpolatePoint<F: CoordFloat> {
 
 impl<T> LineInterpolatePoint<T> for Line<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     type Output = Option<Point<T>>;
 
@@ -73,7 +73,7 @@ where
 #[allow(deprecated)]
 impl<T> LineInterpolatePoint<T> for LineString<T>
 where
-    T: CoordFloat + AddAssign + std::fmt::Debug,
+    T: CoordNum + AddAssign + std::fmt::Debug,
     Line<T>: EuclideanLength<T>,
     LineString<T>: EuclideanLength<T>,
 {

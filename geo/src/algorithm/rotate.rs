@@ -1,6 +1,6 @@
 use crate::algorithm::{AffineOps, AffineTransform, BoundingRect, Centroid};
 use crate::geometry::*;
-use crate::CoordFloat;
+use crate::CoordNum;
 
 /// Rotate a geometry around a point by an angle, in degrees.
 ///
@@ -12,7 +12,7 @@ use crate::CoordFloat;
 /// [`Skew`](crate::Skew), [`Translate`](crate::Translate) or [`Rotate`], it is more
 /// efficient to compose the transformations and apply them as a single operation using the
 /// [`AffineOps`] trait.
-pub trait Rotate<T: CoordFloat> {
+pub trait Rotate<T: CoordNum> {
     /// Rotate a geometry around its [centroid](Centroid) by an angle, in degrees
     ///
     /// Positive angles are counter-clockwise, and negative angles are clockwise rotations.
@@ -93,7 +93,7 @@ pub trait Rotate<T: CoordFloat> {
 
 impl<G, IP, IR, T> Rotate<T> for G
 where
-    T: CoordFloat,
+    T: CoordNum,
     IP: Into<Option<Point<T>>>,
     IR: Into<Option<Rect<T>>>,
     G: Clone + Centroid<Output = IP> + BoundingRect<T, Output = IR> + AffineOps<T>,

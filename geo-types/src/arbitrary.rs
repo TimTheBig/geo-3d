@@ -1,12 +1,12 @@
 use crate::{
-    Coord, CoordFloat, Geometry, GeometryCollection, LineString, MultiLineString, MultiPoint,
+    Coord, CoordNum, Geometry, GeometryCollection, LineString, MultiLineString, MultiPoint,
     MultiPolygon, Point, Polygon, Rect, Triangle,
 };
 use std::mem;
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Coord<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(coord! {
@@ -19,7 +19,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Point<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         u.arbitrary::<Coord<T>>().map(Self)
@@ -28,7 +28,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for LineString<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         let coords = u.arbitrary::<Vec<Coord<T>>>()?;
@@ -46,7 +46,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Polygon<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self::new(
@@ -58,7 +58,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for MultiPoint<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         u.arbitrary::<Vec<Point<T>>>().map(Self)
@@ -67,7 +67,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for MultiLineString<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         u.arbitrary::<Vec<LineString<T>>>().map(Self)
@@ -76,7 +76,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for MultiPolygon<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         u.arbitrary::<Vec<Polygon<T>>>().map(Self)
@@ -85,7 +85,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for GeometryCollection<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         u.arbitrary()
@@ -94,7 +94,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Rect<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self::new(
@@ -106,7 +106,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Triangle<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         Ok(Self(
@@ -119,7 +119,7 @@ where
 
 impl<'a, T> arbitrary::Arbitrary<'a> for Geometry<T>
 where
-    T: arbitrary::Arbitrary<'a> + CoordFloat,
+    T: arbitrary::Arbitrary<'a> + CoordNum,
 {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         let n = u.int_in_range(0..=8)?;

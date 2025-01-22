@@ -1,6 +1,6 @@
 use super::{Distance, InterpolatePoint};
 use crate::{
-    CoordFloat, CoordsIter, Line, LineString, MultiLineString, MultiPolygon, Point, Polygon, Rect,
+    CoordNum, CoordsIter, Line, LineString, MultiLineString, MultiPolygon, Point, Polygon, Rect,
     Triangle,
 };
 use num_traits::FromPrimitive;
@@ -56,7 +56,7 @@ use num_traits::FromPrimitive;
 /// assert_relative_eq!(densified, expected_output, epsilon = 1e-14);
 /// ```
 /// [metric space]: crate::line_measures::metric_spaces
-pub trait Densify<F: CoordFloat> {
+pub trait Densify<F: CoordNum> {
     type Output;
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
     where
@@ -69,7 +69,7 @@ pub(crate) fn densify_between<F, MetricSpace>(
     container: &mut Vec<Point<F>>,
     max_segment_length: F,
 ) where
-    F: CoordFloat + FromPrimitive,
+    F: CoordNum + FromPrimitive,
     MetricSpace: Distance<F, Point<F>, Point<F>> + InterpolatePoint<F>,
 {
     assert!(max_segment_length > F::zero());
@@ -93,7 +93,7 @@ pub(crate) fn densify_between<F, MetricSpace>(
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for Line<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for Line<F> {
     type Output = LineString<F>;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
@@ -112,7 +112,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for Line<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for LineString<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for LineString<F> {
     type Output = Self;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> LineString<F>
@@ -145,7 +145,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for LineString<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for MultiLineString<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for MultiLineString<F> {
     type Output = Self;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
@@ -160,7 +160,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for MultiLineString<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for Polygon<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for Polygon<F> {
     type Output = Self;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
@@ -177,7 +177,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for Polygon<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for MultiPolygon<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for MultiPolygon<F> {
     type Output = Self;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
@@ -192,7 +192,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for MultiPolygon<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for Rect<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for Rect<F> {
     type Output = Polygon<F>;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
@@ -203,7 +203,7 @@ impl<F: CoordFloat + FromPrimitive> Densify<F> for Rect<F> {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Densify<F> for Triangle<F> {
+impl<F: CoordNum + FromPrimitive> Densify<F> for Triangle<F> {
     type Output = Polygon<F>;
 
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output

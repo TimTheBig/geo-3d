@@ -1,4 +1,4 @@
-use crate::{point, Coord, CoordFloat, CoordNum};
+use crate::{point, Coord, CoordNum};
 
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
@@ -345,7 +345,7 @@ impl<T: CoordNum> Point<T> {
     }
 }
 
-impl<T: CoordFloat> Point<T> {
+impl<T: CoordNum> Point<T> {
     /// Converts the (x, y, z) components of Point to degrees
     ///
     /// # Example

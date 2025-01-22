@@ -1,4 +1,4 @@
-use crate::{CoordFloat, Haversine, InterpolatePoint, Point};
+use crate::{CoordNum, Haversine, InterpolatePoint, Point};
 use num_traits::FromPrimitive;
 
 #[deprecated(
@@ -6,7 +6,7 @@ use num_traits::FromPrimitive;
     note = "Please use the `InterpolatePoint` trait instead"
 )]
 /// Returns a new Point along a great circle route between two existing points
-pub trait HaversineIntermediate<T: CoordFloat> {
+pub trait HaversineIntermediate<T: CoordNum> {
     #[deprecated(
         since = "0.29.0",
         note = "Please use `Haversine::point_at_ratio_between` from the `InterpolatePoint` trait instead"
@@ -59,7 +59,7 @@ pub trait HaversineIntermediate<T: CoordFloat> {
 #[allow(deprecated)]
 impl<T> HaversineIntermediate<T> for Point<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn haversine_intermediate(&self, other: &Point<T>, ratio: T) -> Point<T> {
         Haversine::point_at_ratio_between(*self, *other, ratio)

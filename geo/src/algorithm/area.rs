@@ -1,5 +1,5 @@
 use crate::geometry::*;
-use crate::{CoordFloat, CoordNum};
+use crate::CoordNum;
 
 pub(crate) fn twice_signed_ring_area<T>(linestring: &LineString<T>) -> T
 where
@@ -77,7 +77,7 @@ where
 // Calculation of simple (no interior holes) Polygon area
 pub(crate) fn get_linestring_area<T>(linestring: &LineString<T>) -> T
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     twice_signed_ring_area(linestring) / (T::one() + T::one())
 }
@@ -126,7 +126,7 @@ where
 /// the output is the same as that of the exterior shell.
 impl<T> Area<T> for Polygon<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn signed_area(&self) -> T {
         let area = get_linestring_area(self.exterior());
@@ -185,7 +185,7 @@ where
 /// same.
 impl<T> Area<T> for MultiPolygon<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn signed_area(&self) -> T {
         self.0
@@ -216,7 +216,7 @@ where
 
 impl<T> Area<T> for Triangle<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn signed_area(&self) -> T {
         self.to_lines()
@@ -232,7 +232,7 @@ where
 
 impl<T> Area<T> for Geometry<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     crate::geometry_delegate_impl! {
         fn signed_area(&self) -> T;
@@ -242,7 +242,7 @@ where
 
 impl<T> Area<T> for GeometryCollection<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn signed_area(&self) -> T {
         self.0

@@ -1,4 +1,4 @@
-use crate::{CoordFloat, Distance, Haversine, Point};
+use crate::{CoordNum, Distance, Haversine, Point};
 use num_traits::FromPrimitive;
 
 #[deprecated(
@@ -47,7 +47,7 @@ pub trait HaversineDistance<T, Rhs = Self> {
 #[allow(deprecated)]
 impl<T> HaversineDistance<T, Point<T>> for Point<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn haversine_distance(&self, rhs: &Point<T>) -> T {
         Haversine::distance(*self, *rhs)

@@ -1,4 +1,4 @@
-use crate::{CoordFloat, Destination, Haversine, Point};
+use crate::{CoordNum, Destination, Haversine, Point};
 use num_traits::FromPrimitive;
 
 #[deprecated(
@@ -9,7 +9,7 @@ use num_traits::FromPrimitive;
 ///
 /// *Note*: this implementation uses a mean earth radius of 6371.088 km, based on the [recommendation of
 /// the IUGG](ftp://athena.fsv.cvut.cz/ZFG/grs80-Moritz.pdf)
-pub trait HaversineDestination<T: CoordFloat> {
+pub trait HaversineDestination<T: CoordNum> {
     /// Returns a new Point using distance to the existing Point and a bearing for the direction
     ///
     /// # Units
@@ -36,7 +36,7 @@ pub trait HaversineDestination<T: CoordFloat> {
 #[allow(deprecated)]
 impl<T> HaversineDestination<T> for Point<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn haversine_destination(&self, bearing: T, distance: T) -> Point<T> {
         Haversine::destination(*self, bearing, distance)

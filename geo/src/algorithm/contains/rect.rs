@@ -1,5 +1,3 @@
-use geo_types::CoordFloat;
-
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
 use crate::{geometry::*, Area, CoordsIter, HasDimensions, Intersects};
 use crate::{CoordNum, GeoFloat};
@@ -45,7 +43,7 @@ where
 
 impl<T> Contains<Polygon<T>> for Rect<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn contains(&self, rhs: &Polygon<T>) -> bool {
         // the polygon must not be empty

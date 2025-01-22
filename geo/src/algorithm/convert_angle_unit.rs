@@ -1,9 +1,9 @@
 use geo_types::Coord;
-use geo_types::CoordFloat;
+use geo_types::CoordNum;
 
 use crate::{MapCoords, MapCoordsInPlace};
 
-pub trait ToRadians<T: CoordFloat>:
+pub trait ToRadians<T: CoordNum>:
     Sized + MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>
 {
     fn to_radians(&self) -> Self {
@@ -22,9 +22,9 @@ pub trait ToRadians<T: CoordFloat>:
         })
     }
 }
-impl<T: CoordFloat, G: MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>> ToRadians<T> for G {}
+impl<T: CoordNum, G: MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>> ToRadians<T> for G {}
 
-pub trait ToDegrees<T: CoordFloat>:
+pub trait ToDegrees<T: CoordNum>:
     Sized + MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>
 {
     fn to_degrees(&self) -> Self {
@@ -43,7 +43,7 @@ pub trait ToDegrees<T: CoordFloat>:
         })
     }
 }
-impl<T: CoordFloat, G: MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>> ToDegrees<T> for G {}
+impl<T: CoordNum, G: MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>> ToDegrees<T> for G {}
 
 #[cfg(test)]
 mod tests {

@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::geometry::*;
-use crate::{coord, CoordNum};
+use crate::CoordNum;
 
 use std::{fmt, iter, marker, slice};
 

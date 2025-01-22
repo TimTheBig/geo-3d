@@ -1,9 +1,9 @@
-use crate::{coord, CoordFloat, CoordsIter, Polygon, Triangle};
+use crate::{coord, CoordNum, CoordsIter, Polygon, Triangle};
 
 /// Triangulate polygons using an [ear-cutting algorithm](https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf).
 ///
 /// Requires the `"earcutr"` feature, which is enabled by default.
-pub trait TriangulateEarcut<T: CoordFloat> {
+pub trait TriangulateEarcut<T: CoordNum> {
     /// # Examples
     ///
     /// ```
@@ -120,7 +120,7 @@ pub trait TriangulateEarcut<T: CoordFloat> {
     fn earcut_triangles_raw(&self) -> RawTriangulation<T>;
 }
 
-impl<T: CoordFloat> TriangulateEarcut<T> for Polygon<T> {
+impl<T: CoordNum> TriangulateEarcut<T> for Polygon<T> {
     fn earcut_triangles_raw(&self) -> RawTriangulation<T> {
         let input = polygon_to_earcutr_input(self);
         let triangle_indices =
@@ -134,7 +134,7 @@ impl<T: CoordFloat> TriangulateEarcut<T> for Polygon<T> {
 
 /// The raw result of triangulating a polygon from `earcutr`.
 #[derive(Debug, PartialEq, Clone)]
-pub struct RawTriangulation<T: CoordFloat> {
+pub struct RawTriangulation<T: CoordNum> {
     /// Flattened one-dimensional vector of polygon vertices (in XY order).
     pub vertices: Vec<T>,
 
@@ -143,9 +143,9 @@ pub struct RawTriangulation<T: CoordFloat> {
 }
 
 #[derive(Debug)]
-pub struct Iter<T: CoordFloat>(RawTriangulation<T>);
+pub struct Iter<T: CoordNum>(RawTriangulation<T>);
 
-impl<T: CoordFloat> Iterator for Iter<T> {
+impl<T: CoordNum> Iterator for Iter<T> {
     type Item = Triangle<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -160,7 +160,7 @@ impl<T: CoordFloat> Iterator for Iter<T> {
     }
 }
 
-impl<T: CoordFloat> Iter<T> {
+impl<T: CoordNum> Iter<T> {
     fn triangle_index_to_coord(&self, triangle_index: usize) -> crate::Coord<T> {
         coord! {
             x: self.0.vertices[triangle_index * 2],
@@ -170,12 +170,12 @@ impl<T: CoordFloat> Iter<T> {
     }
 }
 
-struct EarcutrInput<T: CoordFloat> {
+struct EarcutrInput<T: CoordNum> {
     pub vertices: Vec<T>,
     pub interior_indexes: Vec<usize>,
 }
 
-fn polygon_to_earcutr_input<T: CoordFloat>(polygon: &crate::Polygon<T>) -> EarcutrInput<T> {
+fn polygon_to_earcutr_input<T: CoordNum>(polygon: &crate::Polygon<T>) -> EarcutrInput<T> {
     let mut vertices = Vec::with_capacity(polygon.coords_count() * 2);
     let mut interior_indexes = Vec::with_capacity(polygon.interiors().len());
     debug_assert!(polygon.exterior().0.len() >= 4);
@@ -194,7 +194,7 @@ fn polygon_to_earcutr_input<T: CoordFloat>(polygon: &crate::Polygon<T>) -> Earcu
     }
 }
 
-fn flat_line_string_coords_3<T: CoordFloat>(
+fn flat_line_string_coords_3<T: CoordNum>(
     line_string: &crate::LineString<T>,
     vertices: &mut Vec<T>,
 ) {

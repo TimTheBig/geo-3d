@@ -1,8 +1,11 @@
+//! haversine is a 2D algorithm
+
+use std::f64::consts::PI;
 use num_traits::FromPrimitive;
 
 use super::super::{Bearing, Destination, Distance, InterpolatePoint};
 use crate::utils::normalize_longitude;
-use crate::{CoordFloat, Point, MEAN_EARTH_RADIUS};
+use crate::{CoordNum, Point, MEAN_EARTH_RADIUS};
 
 /// A spherical model of the earth using the [haversine formula].
 ///
@@ -17,7 +20,7 @@ use crate::{CoordFloat, Point, MEAN_EARTH_RADIUS};
 /// [great circle]: https://en.wikipedia.org/wiki/Great_circle
 pub struct Haversine;
 
-impl<F: CoordFloat + FromPrimitive> Bearing<F> for Haversine {
+impl<F: CoordNum + FromPrimitive> Bearing<F> for Haversine {
     /// Returns the bearing from `origin` to `destination` in degrees along a [great circle].
     ///
     /// # Units
@@ -59,7 +62,7 @@ impl<F: CoordFloat + FromPrimitive> Bearing<F> for Haversine {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Destination<F> for Haversine {
+impl<F: CoordNum + FromPrimitive> Destination<F> for Haversine {
     /// Returns a new point having travelled the `distance` along a [great circle]
     /// from the `origin` point with the given `bearing`.
     ///
@@ -106,7 +109,7 @@ impl<F: CoordFloat + FromPrimitive> Destination<F> for Haversine {
     }
 }
 
-impl<F: CoordFloat + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversine {
+impl<F: CoordNum + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversine {
     /// Determine the distance between two points using the [haversine formula].
     ///
     /// # Units
@@ -121,8 +124,8 @@ impl<F: CoordFloat + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversin
     /// use geo::{Haversine, Distance};
     /// use geo::Point;
     ///
-    /// let new_york_city = Point::new(-74.006f64, 40.7128f64);
-    /// let london = Point::new(-0.1278f64, 51.5074f64);
+    /// let new_york_city = Point::new(-74.006f64, 40.7128f64, 0.0);
+    /// let london = Point::new(-0.1278f64, 51.5074f64, 0.0);
     ///
     /// let distance = Haversine::distance(new_york_city, london);
     ///
@@ -142,11 +145,13 @@ impl<F: CoordFloat + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversin
         let two = F::one() + F::one();
         let theta1 = origin.y().to_radians();
         let theta2 = destination.y().to_radians();
+
         let delta_theta = (destination.y() - origin.y()).to_radians();
         let delta_lambda = (destination.x() - origin.x()).to_radians();
         let a = (delta_theta / two).sin().powi(2)
             + theta1.cos() * theta2.cos() * (delta_lambda / two).sin().powi(2);
         let c = two * a.sqrt().asin();
+
         F::from(MEAN_EARTH_RADIUS).unwrap() * c
     }
 }
@@ -154,7 +159,7 @@ impl<F: CoordFloat + FromPrimitive> Distance<F, Point<F>, Point<F>> for Haversin
 /// Interpolate Point(s) along a [great circle].
 ///
 /// [great circle]: https://en.wikipedia.org/wiki/Great_circle
-impl<F: CoordFloat + FromPrimitive> InterpolatePoint<F> for Haversine {
+impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Haversine {
     /// Returns a new Point along a [great circle] between two existing points.
     ///
     /// # Examples
@@ -274,7 +279,7 @@ struct HaversineIntermediateFillCalculation<T> {
     s: T,
 }
 
-impl<T: CoordFloat + FromPrimitive> HaversineIntermediateFillCalculation<T> {
+impl<T: CoordNum + FromPrimitive> HaversineIntermediateFillCalculation<T> {
     #[allow(clippy::many_single_char_names)]
     fn new(p1: Point<T>, p2: Point<T>) -> Self {
         let one = T::one();

@@ -1,4 +1,4 @@
-use crate::{CoordFloat, CoordNum, LineString, Point, Rect, Triangle};
+use crate::{CoordNum, LineString, Point, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
 use num_traits::{Float, Signed};
@@ -481,7 +481,7 @@ enum ListSign {
     Mixed,
 }
 
-impl<T: CoordFloat + Signed> Polygon<T> {
+impl<T: CoordNum + Signed> Polygon<T> {
     /// Determine whether a Polygon is convex
     // For each consecutive pair of edges of the polygon (each triplet of points),
     // compute the z-component of the cross product of the vectors defined by the

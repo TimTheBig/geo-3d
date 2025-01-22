@@ -106,31 +106,31 @@ mod test {
             (0.0, 1.0),
             (1.0, 0.0),
         ];
-        let initial = initial.iter().map(|e| Coord::from((e.0, e.1))).collect();
+        let initial = initial.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
         test_convexity(initial);
     }
 
     #[test]
     fn graham_hull_test1() {
-        let v: Vec<_> = vec![(0, 0), (4, 0), (4, 1), (1, 1), (1, 4), (0, 4), (0, 0)];
-        let initial = v.iter().map(|e| Coord::from((e.0, e.1))).collect();
+        let v: Vec<(f32, f32, f32)> = vec![(0., 0., 0.), (4., 0., -4.), (4., 1., -4.), (1., 1., 1.), (1., 4., -1.), (0., 4., 0.), (0., 0., 0.)];
+        let initial = v.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
         test_convexity(initial);
     }
 
     #[test]
     fn graham_hull_test2() {
         let v = [
-            (0, 10),
-            (1, 1),
-            (10, 0),
-            (1, -1),
-            (0, -10),
-            (-1, -1),
-            (-10, 0),
-            (-1, 1),
-            (0, 10),
+            (0., 10.),
+            (1., 1.),
+            (10., 0.),
+            (1., -1.),
+            (0., -10.),
+            (-1., -1.),
+            (-10., 0.),
+            (-1., 1.),
+            (0., 10.),
         ];
-        let initial = v.iter().map(|e| Coord::from((e.0, e.1))).collect();
+        let initial = v.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
         test_convexity(initial);
     }
 

@@ -2,7 +2,7 @@ use super::{Distance, Euclidean};
 use crate::algorithm::Intersects;
 use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
 use crate::geometry::*;
-use crate::{CoordFloat, GeoFloat, GeoNum};
+use crate::{CoordNum, GeoFloat, GeoNum};
 use num_traits::{Bounded, Float};
 use rstar::primitives::CachedEnvelope;
 use rstar::RTree;
@@ -25,14 +25,14 @@ macro_rules! symmetric_distance_impl {
 // │ Implementations for Coord │
 // └───────────────────────────┘
 
-impl<F: CoordFloat> Distance<F, Coord<F>, Coord<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, Coord<F>, Coord<F>> for Euclidean {
     // todo check z
     fn distance(origin: Coord<F>, destination: Coord<F>) -> F {
         let delta = origin - destination;
         delta.x.hypot(delta.y).hypot(delta.z)
     }
 }
-impl<F: CoordFloat> Distance<F, Coord<F>, &Line<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, Coord<F>, &Line<F>> for Euclidean {
     fn distance(coord: Coord<F>, line: &Line<F>) -> F {
         ::geo_types::private_utils::point_line_euclidean_distance(Point(coord), *line)
     }
@@ -43,7 +43,7 @@ impl<F: CoordFloat> Distance<F, Coord<F>, &Line<F>> for Euclidean {
 // └───────────────────────────┘
 
 /// Calculate the Euclidean distance (a.k.a. pythagorean distance) between two Points
-impl<F: CoordFloat> Distance<F, Point<F>, Point<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, Point<F>, Point<F>> for Euclidean {
     /// Calculate the Euclidean distance (a.k.a. pythagorean distance) between two Points
     ///
     /// # Units
@@ -76,19 +76,19 @@ impl<F: CoordFloat> Distance<F, Point<F>, Point<F>> for Euclidean {
     }
 }
 
-impl<F: CoordFloat> Distance<F, &Point<F>, &Point<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, &Point<F>, &Point<F>> for Euclidean {
     fn distance(origin: &Point<F>, destination: &Point<F>) -> F {
         Self::distance(*origin, *destination)
     }
 }
 
-impl<F: CoordFloat> Distance<F, &Point<F>, &Line<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, &Point<F>, &Line<F>> for Euclidean {
     fn distance(origin: &Point<F>, destination: &Line<F>) -> F {
         geo_types::private_utils::point_line_euclidean_distance(*origin, *destination)
     }
 }
 
-impl<F: CoordFloat> Distance<F, &Point<F>, &LineString<F>> for Euclidean {
+impl<F: CoordNum> Distance<F, &Point<F>, &LineString<F>> for Euclidean {
     fn distance(origin: &Point<F>, destination: &LineString<F>) -> F {
         geo_types::private_utils::point_line_string_euclidean_distance(*origin, destination)
     }
@@ -125,8 +125,8 @@ impl<F: GeoFloat> Distance<F, &Point<F>, &Polygon<F>> for Euclidean {
 // │ Implementations for Line │
 // └──────────────────────────┘
 
-symmetric_distance_impl!(CoordFloat, &Line<F>, Coord<F>);
-symmetric_distance_impl!(CoordFloat, &Line<F>, &Point<F>);
+symmetric_distance_impl!(CoordNum, &Line<F>, Coord<F>);
+symmetric_distance_impl!(CoordNum, &Line<F>, &Point<F>);
 
 impl<F: GeoFloat> Distance<F, &Line<F>, &Line<F>> for Euclidean {
     fn distance(line_a: &Line<F>, line_b: &Line<F>) -> F {
@@ -170,7 +170,7 @@ impl<F: GeoFloat> Distance<F, &Line<F>, &Polygon<F>> for Euclidean {
 // │ Implementations for LineString │
 // └────────────────────────────────┘
 
-symmetric_distance_impl!(CoordFloat, &LineString<F>, &Point<F>);
+symmetric_distance_impl!(CoordNum, &LineString<F>, &Point<F>);
 symmetric_distance_impl!(GeoFloat, &LineString<F>, &Line<F>);
 
 impl<F: GeoFloat> Distance<F, &LineString<F>, &LineString<F>> for Euclidean {

@@ -1,7 +1,7 @@
-use crate::{Coord, CoordFloat, GeoFloat, Intersects, LineString, RemoveRepeatedPoints};
+use crate::{Coord, CoordNum, GeoFloat, Intersects, LineString, RemoveRepeatedPoints};
 use robust::{orient2d, Coord as RobustCoord};
 
-pub(crate) fn check_coord_is_not_finite<T: CoordFloat>(geom: &Coord<T>) -> bool {
+pub(crate) fn check_coord_is_not_finite<T: CoordNum>(geom: &Coord<T>) -> bool {
     if geom.x.is_finite() && geom.y.is_finite() && geom.z.is_finite() {
         return false;
     }
@@ -9,7 +9,7 @@ pub(crate) fn check_coord_is_not_finite<T: CoordFloat>(geom: &Coord<T>) -> bool 
 }
 
 // todo make 3d if needed
-pub(crate) fn robust_check_points_are_collinear<T: CoordFloat>(
+pub(crate) fn robust_check_points_are_collinear<T: CoordNum>(
     p0: &Coord<T>,
     p1: &Coord<T>,
     p2: &Coord<T>,
@@ -33,7 +33,7 @@ pub(crate) fn robust_check_points_are_collinear<T: CoordFloat>(
     ) == 0.
 }
 
-pub(crate) fn check_too_few_points<T: CoordFloat>(geom: &LineString<T>, is_ring: bool) -> bool {
+pub(crate) fn check_too_few_points<T: CoordNum>(geom: &LineString<T>, is_ring: bool) -> bool {
     let n_pts = if is_ring { 4 } else { 2 };
     if geom.remove_repeated_points().0.len() < n_pts {
         return true;

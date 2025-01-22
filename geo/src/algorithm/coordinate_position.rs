@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 use std::ops::AddAssign;
-use geo_types::{coord, CoordFloat};
+use geo_types::{coord, CoordNum};
 // ! if this does not work use orient3d from kernels mod
 use ::robust::orient3d;
 
@@ -40,7 +40,7 @@ pub enum CoordPos {
 /// assert_eq!(square_poly.coordinate_position(&outside_coord), CoordPos::Outside);
 /// ```
 pub trait CoordinatePosition {
-    type Scalar: GeoNum + CoordFloat;
+    type Scalar: GeoNum;
     fn coordinate_position(&self, coord: &Coord<Self::Scalar>) -> CoordPos {
         let mut is_inside = false;
         let mut boundary_count = 0;
@@ -74,7 +74,7 @@ pub trait CoordinatePosition {
 
 impl<T> CoordinatePosition for Coord<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -91,7 +91,7 @@ where
 
 impl<T> CoordinatePosition for Point<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -108,7 +108,7 @@ where
 
 impl<T> CoordinatePosition for Line<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -134,7 +134,7 @@ where
 
 impl<T> CoordinatePosition for LineString<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -183,7 +183,7 @@ where
 
 impl<T> CoordinatePosition for Triangle<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -211,7 +211,7 @@ where
 
 impl<T> CoordinatePosition for Rect<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -268,7 +268,7 @@ where
 
 impl<T> CoordinatePosition for MultiPoint<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -285,7 +285,7 @@ where
 
 impl<T> CoordinatePosition for Polygon<T>
 where
-    T: CoordFloat + GeoNum,
+    T: CoordNum + GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -311,7 +311,7 @@ where
 
 impl<T> CoordinatePosition for MultiLineString<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -328,7 +328,7 @@ where
 
 impl<T> CoordinatePosition for MultiPolygon<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -345,7 +345,7 @@ where
 
 impl<T> CoordinatePosition for GeometryCollection<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     fn calculate_coordinate_position(
@@ -362,7 +362,7 @@ where
 
 impl<T> CoordinatePosition for Geometry<T>
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     type Scalar = T;
     crate::geometry_delegate_impl! {
@@ -374,7 +374,7 @@ where
     }
 }
 
-impl<T: GeoNum + CoordFloat> CoordinatePosition for GeometryCow<'_, T> {
+impl<T: GeoNum> CoordinatePosition for GeometryCow<'_, T> {
     type Scalar = T;
     crate::geometry_cow_delegate_impl! {
         fn calculate_coordinate_position(
@@ -385,7 +385,7 @@ impl<T: GeoNum + CoordFloat> CoordinatePosition for GeometryCow<'_, T> {
     }
 }
 
-fn inside<T: CoordFloat>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
+fn inside<T: CoordNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
     debug_assert!(poly.exterior().is_closed());
 
     for linestring in poly.rings() {
@@ -412,7 +412,7 @@ fn inside<T: CoordFloat>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut u
     }
 }
 
-fn intersect<T: CoordFloat>(segment: Line<T>, tri: Triangle<T>) -> bool {
+fn intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
     let s1 = super::kernels::robust::RobustKernel::orient3d(segment.start,tri.0,tri.1,tri.2);
     let s2 = super::kernels::robust::RobustKernel::orient3d(segment.end,tri.0,tri.1,tri.2);
     // Test whether the two extermities of the segment
@@ -436,7 +436,7 @@ fn intersect<T: CoordFloat>(segment: Line<T>, tri: Triangle<T>) -> bool {
 // todo add z
 pub fn coord_pos_relative_to_ring<T>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos
 where
-    T: GeoNum + CoordFloat,
+    T: GeoNum,
 {
     debug_assert!(linestring.is_closed());
 

@@ -28,7 +28,7 @@
 //!
 //! - **[`Coord`]**: A two-dimensional coordinate. All geometry types are composed of [`Coord`]s, though [`Coord`] itself is not a [`Geometry`] type. See [`Point`] for a single coordinate geometry.
 //!
-//! By default, coordinates are 64-bit floating point numbers, but this is generic, and you may specify any numeric type that implements [`CoordNum`] or [`CoordFloat`]. As well as [`f64`], this includes common numeric types like [`f32`], [`i32`], [`i64`], etc.
+//! By default, coordinates are 64-bit floating point numbers, but this is generic, and you may specify any numeric type that implements [`CoordNum`] or [`CoordNum`]. As well as [`f64`], this includes common numeric types like [`f32`], [`i32`], [`i64`], etc.
 //!
 //! ```rust
 //! use geo_types::Point;
@@ -95,25 +95,13 @@ extern crate serde;
 #[macro_use]
 extern crate approx;
 
-#[deprecated(since = "0.7.0", note = "use `CoordFloat` or `CoordNum` instead")]
-pub trait CoordinateType: Num + Copy + NumCast + PartialOrd + Debug {}
-#[allow(deprecated)]
-impl<T: Num + Copy + NumCast + PartialOrd + Debug> CoordinateType for T {}
-
-/// For algorithms which can use both integer **and** floating point `Point`s/`Coord`s
+/// For algorithms which can use floating point `Point`s/`Coord`s
 ///
-/// Floats (`f32` and `f64`) and Integers (`u8`, `i32` etc.) implement this.
-///
-/// For algorithms which only make sense for floating point, like area or length calculations,
-/// see [CoordFloat](trait.CoordFloat.html).
+/// Floats (`f32` and `f64`) implement this.
 #[allow(deprecated)]
-pub trait CoordNum: CoordinateType + Debug {}
+pub trait CoordNum: Num + Copy + NumCast + PartialOrd + Float + Debug {}
 #[allow(deprecated)]
-impl<T: CoordinateType + Debug> CoordNum for T {}
-
-/// For algorithms which can only use floating point `Point`s/`Coord`s, like area or length calculations
-pub trait CoordFloat: CoordNum + Float {}
-impl<T: CoordNum + Float> CoordFloat for T {}
+impl<T: Num + Copy + NumCast + PartialOrd + Float + Debug> CoordNum for T {}
 
 pub mod geometry;
 pub use geometry::*;
@@ -216,11 +204,11 @@ mod tests {
 
     #[test]
     fn test_coordinate_types() {
-        let p: Point<u8> = Point::new(0, 0, 0);
-        assert_eq!(p.x(), 0u8);
+        let p: Point<f32> = Point::new(0., 0., 0.);
+        assert_eq!(p.x(), 0f32);
 
-        let p: Point<i64> = Point::new(1_000_000, 0, 0);
-        assert_eq!(p.x(), 1_000_000i64);
+        let p: Point<f64> = Point::new(1_000_000., 0., 0.);
+        assert_eq!(p.x(), 1_000_000f64);
     }
 
     #[cfg(feature = "rstar_0_12")]

@@ -226,7 +226,7 @@ pub use crate::types::Closest;
 use std::cmp::Ordering;
 
 pub use crate::relate::PreparedGeometry;
-pub use geo_types::{coord, line_string, point, polygon, wkt, CoordFloat, CoordNum};
+pub use geo_types::{coord, line_string, point, polygon, wkt, CoordNum};
 
 pub mod geometry;
 pub use geometry::*;
@@ -314,8 +314,8 @@ impl<T> GeoFloat for T where
 {
 }
 
-/// A trait for methods which work for both integers **and** floating point
-pub trait GeoNum: CoordFloat {
+/// A trait for methods which work for floating point, using a Kernel
+pub trait GeoNum: CoordNum {
     type Ker: Kernel<Self>;
 
     /// Return the ordering between self and other.

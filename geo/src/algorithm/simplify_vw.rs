@@ -1,6 +1,6 @@
 use crate::prelude::*;
 use crate::{
-    Coord, CoordFloat, GeoFloat, Line, LineString, MultiLineString, MultiPolygon, Point, Polygon,
+    Coord, CoordNum, GeoFloat, Line, LineString, MultiLineString, MultiPolygon, Point, Polygon,
     Triangle,
 };
 use std::cmp::Ordering;
@@ -13,7 +13,7 @@ use rstar::{RTree, RTreeNum};
 #[derive(Debug)]
 struct VScore<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     left: usize,
     /// The current [Point] index in the original [LineString]: The candidate for removal
@@ -27,7 +27,7 @@ where
 // These impls give us a min-heap
 impl<T> Ord for VScore<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn cmp(&self, other: &VScore<T>) -> Ordering {
         other.area.partial_cmp(&self.area).unwrap()
@@ -36,22 +36,22 @@ where
 
 impl<T> PartialOrd for VScore<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn partial_cmp(&self, other: &VScore<T>) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<T> Eq for VScore<T> where T: CoordFloat {}
+impl<T> Eq for VScore<T> where T: CoordNum {}
 
 impl<T> PartialEq for VScore<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn eq(&self, other: &VScore<T>) -> bool
     where
-        T: CoordFloat,
+        T: CoordNum,
     {
         self.area == other.area
     }
@@ -74,7 +74,7 @@ where
 // https://github.com/huonw/isrustfastyet/blob/25e7a68ff26673a8556b170d3c9af52e1c818288/mem/line_simplify.rs
 fn visvalingam_indices<T>(orig: &LineString<T>, epsilon: &T) -> Vec<usize>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     // No need to continue without at least three points
     if orig.0.len() < 3 {
@@ -165,7 +165,7 @@ fn recompute_triangles<T>(
     max: usize,
     epsilon: &T,
 ) where
-    T: CoordFloat,
+    T: CoordNum,
 {
     let choices = [(ll, left, right), (left, right, rr)];
     for &(ai, current_point, bi) in &choices {
@@ -206,7 +206,7 @@ fn recompute_triangles<T>(
 // Wrapper for visvalingam_indices, mapping indices back to points
 fn visvalingam<T>(orig: &LineString<T>, epsilon: &T) -> Vec<Coord<T>>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     // Epsilon must be greater than zero for any meaningful simplification to happen
     if *epsilon <= T::zero() {
@@ -471,7 +471,7 @@ pub trait SimplifyVw<T, Epsilon = T> {
     /// ```
     fn simplify_vw(&self, epsilon: &T) -> Self
     where
-        T: CoordFloat;
+        T: CoordNum;
 }
 
 /// Simplifies a geometry, returning the retained _indices_ of the output
@@ -516,7 +516,7 @@ pub trait SimplifyVwIdx<T, Epsilon = T> {
     /// ```
     fn simplify_vw_idx(&self, epsilon: &T) -> Vec<usize>
     where
-        T: CoordFloat;
+        T: CoordNum;
 }
 
 /// Simplifies a geometry, attempting to preserve its topology by removing self-intersections
@@ -586,7 +586,7 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     /// ```
     fn simplify_vw_preserve(&self, epsilon: &T) -> Self
     where
-        T: CoordFloat + RTreeNum;
+        T: CoordNum + RTreeNum;
 }
 
 impl<T> SimplifyVwPreserve<T> for LineString<T>
@@ -643,7 +643,7 @@ where
 
 impl<T> SimplifyVw<T> for LineString<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn simplify_vw(&self, epsilon: &T) -> LineString<T> {
         LineString::from(visvalingam(self, epsilon))
@@ -652,7 +652,7 @@ where
 
 impl<T> SimplifyVwIdx<T> for LineString<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn simplify_vw_idx(&self, epsilon: &T) -> Vec<usize> {
         visvalingam_indices(self, epsilon)
@@ -661,7 +661,7 @@ where
 
 impl<T> SimplifyVw<T> for MultiLineString<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn simplify_vw(&self, epsilon: &T) -> MultiLineString<T> {
         MultiLineString::new(self.iter().map(|l| l.simplify_vw(epsilon)).collect())
@@ -670,7 +670,7 @@ where
 
 impl<T> SimplifyVw<T> for Polygon<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn simplify_vw(&self, epsilon: &T) -> Polygon<T> {
         Polygon::new(
@@ -685,7 +685,7 @@ where
 
 impl<T> SimplifyVw<T> for MultiPolygon<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn simplify_vw(&self, epsilon: &T) -> MultiPolygon<T> {
         MultiPolygon::new(self.iter().map(|p| p.simplify_vw(epsilon)).collect())

@@ -1,7 +1,7 @@
-use geo_types::{CoordFloat, Point};
+use geo_types::{CoordNum, Point};
 
 /// Calculate the bearing between two points.
-pub trait Bearing<F: CoordFloat> {
+pub trait Bearing<F: CoordNum> {
     /// Calculate the bearing from `origin` to `destination` in degrees.
     ///
     /// See [specific implementations](#implementors) for details.

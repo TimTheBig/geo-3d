@@ -2,7 +2,7 @@ use num_traits::Float;
 
 use crate::{
     algorithm::{centroid::Centroid, rotate::Rotate, BoundingRect, CoordsIter},
-    Area, ConvexHull, CoordFloat, GeoFloat, GeoNum, LinesIter, Polygon,
+    Area, ConvexHull, GeoFloat, GeoNum, LinesIter, Polygon,
 };
 /// Return the minimum bounding rectangle(MBR) of geometry
 /// reference: <https://en.wikipedia.org/wiki/Minimum_bounding_box>
@@ -35,7 +35,7 @@ pub trait MinimumRotatedRect<T> {
 
 impl<T, G> MinimumRotatedRect<T> for G
 where
-    T: CoordFloat + GeoFloat + GeoNum,
+    T: GeoFloat,
     G: CoordsIter<Scalar = T>,
 {
     type Scalar = T;

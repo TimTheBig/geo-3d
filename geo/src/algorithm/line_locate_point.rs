@@ -3,7 +3,7 @@
 // so as not to change the method signature for existing users.
 #[allow(deprecated)]
 use crate::{
-    CoordFloat, Line, LineString, Point,
+    CoordNum, Line, LineString, Point,
     {euclidean_distance::EuclideanDistance, euclidean_length::EuclideanLength},
 };
 use std::ops::AddAssign;
@@ -44,7 +44,7 @@ pub trait LineLocatePoint<T, Rhs> {
 
 impl<T> LineLocatePoint<T, Point<T>> for Line<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     type Output = Option<T>;
     type Rhs = Point<T>;
@@ -82,7 +82,7 @@ where
 #[allow(deprecated)]
 impl<T> LineLocatePoint<T, Point<T>> for LineString<T>
 where
-    T: CoordFloat + AddAssign,
+    T: CoordNum + AddAssign,
     Line<T>: EuclideanDistance<T, Point<T>> + EuclideanLength<T>,
     LineString<T>: EuclideanLength<T>,
 {

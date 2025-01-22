@@ -1,5 +1,5 @@
 use super::Distance;
-use crate::{CoordFloat, Line, LineString, MultiLineString, Point};
+use crate::{CoordNum, Line, LineString, MultiLineString, Point};
 
 /// Calculate the length of a `Line`, `LineString`, or `MultiLineString` in a given [metric space](crate::algorithm::line_measures::metric_spaces).
 ///
@@ -21,17 +21,17 @@ use crate::{CoordFloat, Line, LineString, MultiLineString, Point};
 /// ));
 /// assert_eq!(line_string_lon_lat.length::<Haversine>().round(), 3_474_956.0);
 /// ```
-pub trait Length<F: CoordFloat> {
+pub trait Length<F: CoordNum> {
     fn length<MetricSpace: Distance<F, Point<F>, Point<F>>>(&self) -> F;
 }
 
-impl<F: CoordFloat> Length<F> for Line<F> {
+impl<F: CoordNum> Length<F> for Line<F> {
     fn length<MetricSpace: Distance<F, Point<F>, Point<F>>>(&self) -> F {
         MetricSpace::distance(self.start_point(), self.end_point())
     }
 }
 
-impl<F: CoordFloat> Length<F> for LineString<F> {
+impl<F: CoordNum> Length<F> for LineString<F> {
     fn length<MetricSpace: Distance<F, Point<F>, Point<F>>>(&self) -> F {
         let mut length = F::zero();
         for line in self.lines() {
@@ -41,7 +41,7 @@ impl<F: CoordFloat> Length<F> for LineString<F> {
     }
 }
 
-impl<F: CoordFloat> Length<F> for MultiLineString<F> {
+impl<F: CoordNum> Length<F> for MultiLineString<F> {
     fn length<MetricSpace: Distance<F, Point<F>, Point<F>>>(&self) -> F {
         let mut length = F::zero();
         for line in self {

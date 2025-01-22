@@ -1,4 +1,4 @@
-use crate::{AffineOps, AffineTransform, BoundingRect, Coord, CoordFloat, CoordNum, Rect};
+use crate::{AffineOps, AffineTransform, BoundingRect, Coord, CoordNum, Rect};
 
 /// An affine transformation which skews a geometry, sheared by angles along x and y dimensions.
 ///
@@ -113,7 +113,7 @@ pub trait Skew<T: CoordNum> {
 
 impl<T, IR, G> Skew<T> for G
 where
-    T: CoordFloat,
+    T: CoordNum,
     IR: Into<Option<Rect<T>>>,
     G: Clone + AffineOps<T> + BoundingRect<T, Output = IR>,
 {

@@ -1,6 +1,6 @@
 use num_traits::ToPrimitive;
 
-use crate::{Coord, CoordFloat, CoordNum, MapCoords, MapCoordsInPlace};
+use crate::{Coord, CoordNum, MapCoords, MapCoordsInPlace};
 use std::{fmt, ops::Mul, ops::Neg};
 
 /// Apply an [`AffineTransform`] like [`scale`](AffineTransform::scale),
@@ -56,7 +56,7 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 ///
 /// Note that affine ops are **already implemented** on most `geo-types` primitives, using this module.
 ///
-/// Affine transforms using the same numeric type (e.g. [`CoordFloat`]) can be **composed**,
+/// Affine transforms using the same numeric type (e.g. [`CoordNum`]) can be **composed**,
 /// and the result can be applied to geometries using e.g. [`MapCoords`]. This allows the
 /// efficient application of transforms: an arbitrary number of operations can be chained.
 /// These are then composed, producing a final transformation matrix which is applied to the geometry coordinates.
@@ -513,7 +513,7 @@ impl<T: CoordNum> From<(T, T, T, T, T, T, T, T, T, T, T, T)> for AffineTransform
 }
 
 
-impl<U: CoordFloat> AffineTransform<U> {
+impl<U: CoordNum> AffineTransform<U> {
     /// **Create** an affine transform for 2D rotation, using an arbitrary point as its center.
     ///
     /// Note that this operation is only available for geometries with floating point coordinates.

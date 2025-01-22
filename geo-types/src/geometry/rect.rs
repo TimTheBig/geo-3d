@@ -1,4 +1,4 @@
-use crate::{coord, polygon, Coord, CoordFloat, CoordNum, Line, Polygon};
+use crate::{coord, polygon, Coord, CoordNum, Line, Polygon};
 
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
@@ -435,7 +435,7 @@ impl<T: CoordNum> Rect<T> {
     }
 }
 
-impl<T: CoordFloat> Rect<T> {
+impl<T: CoordNum> Rect<T> {
     /// Returns the center `Coord` of the `Rect`.
     ///
     /// # Examples

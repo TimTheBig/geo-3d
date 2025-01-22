@@ -1,6 +1,6 @@
 //! Internal utility functions, types, and data structures.
 
-use geo_types::{Coord, CoordFloat, CoordNum};
+use geo_types::{Coord, CoordNum};
 use num_traits::FromPrimitive;
 
 /// Partition a mutable slice in-place so that it contains all elements for
@@ -154,7 +154,7 @@ pub fn least_and_greatest_index<T: CoordNum>(pts: &[Coord<T>]) -> (usize, usize)
 }
 
 /// Normalize a longitude to coordinate to ensure it's within [-180,180]
-pub fn normalize_longitude<T: CoordFloat + FromPrimitive>(coord: T) -> T {
+pub fn normalize_longitude<T: CoordNum + FromPrimitive>(coord: T) -> T {
     let one_eighty = T::from(180.0f64).unwrap();
     let three_sixty = T::from(360.0f64).unwrap();
     let five_forty = T::from(540.0f64).unwrap();

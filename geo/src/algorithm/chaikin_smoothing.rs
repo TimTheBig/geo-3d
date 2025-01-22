@@ -3,7 +3,7 @@ use std::ops::Mul;
 use num_traits::FromPrimitive;
 
 use crate::{
-    coord, Coord, CoordFloat, Geometry, LineString, MultiLineString, MultiPolygon, Polygon,
+    coord, Coord, CoordNum, Geometry, LineString, MultiLineString, MultiPolygon, Polygon,
 };
 
 /// Smoothen `LineString`, `Polygon`, `MultiLineString` and `MultiPolygon` using Chaikins algorithm.
@@ -18,7 +18,7 @@ use crate::{
 /// smoothes the corner between start and end of a closed linestring.
 pub trait ChaikinSmoothing<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     /// create a new geometry with the Chaikin smoothing being
     /// applied `n_iterations` times.
@@ -27,7 +27,7 @@ where
 
 impl<T> ChaikinSmoothing<T> for LineString<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn chaikin_smoothing(&self, n_iterations: usize) -> Self {
         if n_iterations == 0 {
@@ -44,7 +44,7 @@ where
 
 impl<T> ChaikinSmoothing<T> for MultiLineString<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn chaikin_smoothing(&self, n_iterations: usize) -> Self {
         MultiLineString::new(
@@ -58,7 +58,7 @@ where
 
 impl<T> ChaikinSmoothing<T> for Polygon<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn chaikin_smoothing(&self, n_iterations: usize) -> Self {
         Polygon::new(
@@ -73,7 +73,7 @@ where
 
 impl<T> ChaikinSmoothing<T> for MultiPolygon<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn chaikin_smoothing(&self, n_iterations: usize) -> Self {
         MultiPolygon::new(
@@ -95,7 +95,7 @@ macro_rules! blanket_run_chaikin_smoothing {
 
 impl<T> ChaikinSmoothing<T> for Geometry<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
 {
     fn chaikin_smoothing(&self, n_iterations: usize) -> Geometry<T> {
         match self {
@@ -110,7 +110,7 @@ where
 
 fn smoothen_linestring<T>(linestring: &LineString<T>) -> LineString<T>
 where
-    T: CoordFloat + Mul<T> + FromPrimitive,
+    T: CoordNum + Mul<T> + FromPrimitive,
 {
     let mut out_coords: Vec<_> = Vec::with_capacity(linestring.0.len() * 2);
 
@@ -143,7 +143,7 @@ where
 
 fn smoothen_coordinates<T>(c0: Coord<T>, c1: Coord<T>) -> (Coord<T>, Coord<T>)
 where
-    T: CoordFloat + Mul<T> + FromPrimitive,
+    T: CoordNum + Mul<T> + FromPrimitive,
 {
     let q = coord! {
         x: (T::from(0.75).unwrap() * c0.x) + (T::from(0.25).unwrap() * c1.x),

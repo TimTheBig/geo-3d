@@ -1,7 +1,7 @@
-use geo_types::{CoordFloat, Point};
+use geo_types::{CoordNum, Point};
 
 /// Calculate the destination point from an origin point, given a bearing and a distance.
-pub trait Destination<F: CoordFloat> {
+pub trait Destination<F: CoordNum> {
     /// Returns a new point having travelled the `distance` along a line
     /// from the `origin` point with the given `bearing`.
     ///

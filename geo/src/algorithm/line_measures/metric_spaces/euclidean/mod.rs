@@ -2,7 +2,7 @@ mod distance;
 
 use super::super::{Distance, InterpolatePoint};
 use crate::line_measures::densify::densify_between;
-use crate::{CoordFloat, Point};
+use crate::{CoordNum, Point};
 use num_traits::FromPrimitive;
 
 /// Operations on the [Euclidean plane] measure distance with the pythagorean formula -
@@ -25,7 +25,7 @@ pub struct Euclidean;
 /// Interpolate Point(s) along a line on the [Euclidean plane].
 ///
 /// [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
-impl<F: CoordFloat + FromPrimitive> InterpolatePoint<F> for Euclidean {
+impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
     /// Returns the point at the given distance along the line between `start` and `end`.
     ///
     /// # Units

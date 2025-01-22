@@ -1,4 +1,4 @@
-use crate::{CoordFloat, Point};
+use crate::{CoordNum, Point};
 
 #[deprecated(
     since = "0.29.0",
@@ -8,7 +8,7 @@ use crate::{CoordFloat, Point};
 ///
 /// Bullock, R.: Great Circle Distances and Bearings Between Two Locations, 2007.
 /// (<https://dtcenter.org/met/users/docs/write_ups/gc_simple.pdf>)
-pub trait HaversineBearing<T: CoordFloat> {
+pub trait HaversineBearing<T: CoordNum> {
     /// Returns the bearing to another Point in degrees, where North is 0° and East is 90°.
     ///
     /// # Examples
@@ -31,7 +31,7 @@ pub trait HaversineBearing<T: CoordFloat> {
 #[allow(deprecated)]
 impl<T> HaversineBearing<T> for Point<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn haversine_bearing(&self, point: Point<T>) -> T {
         let (lng_a, lat_a) = (self.x().to_radians(), self.y().to_radians());

@@ -1,6 +1,6 @@
 use std::iter::Sum;
 
-use crate::{CoordFloat, Euclidean, Length, Line, LineString, MultiLineString};
+use crate::{CoordNum, Euclidean, Length, Line, LineString, MultiLineString};
 
 /// Calculation of the length
 #[deprecated(
@@ -32,7 +32,7 @@ pub trait EuclideanLength<T, RHS = Self> {
 #[allow(deprecated)]
 impl<T> EuclideanLength<T> for Line<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     fn euclidean_length(&self) -> T {
         self.length::<Euclidean>()
@@ -42,7 +42,7 @@ where
 #[allow(deprecated)]
 impl<T> EuclideanLength<T> for LineString<T>
 where
-    T: CoordFloat + Sum,
+    T: CoordNum + Sum,
 {
     fn euclidean_length(&self) -> T {
         self.length::<Euclidean>()
@@ -52,7 +52,7 @@ where
 #[allow(deprecated)]
 impl<T> EuclideanLength<T> for MultiLineString<T>
 where
-    T: CoordFloat + Sum,
+    T: CoordNum + Sum,
 {
     fn euclidean_length(&self) -> T {
         self.length::<Euclidean>()

@@ -5,7 +5,7 @@ use crate::line_measures::Haversine;
 #[allow(deprecated)]
 use crate::HaversineLength;
 use crate::{
-    CoordFloat, Densify, Line, LineString, MultiLineString, MultiPolygon, Polygon, Rect, Triangle,
+    CoordNum, Densify, Line, LineString, MultiLineString, MultiPolygon, Polygon, Rect, Triangle,
 };
 
 #[deprecated(
@@ -34,7 +34,7 @@ use crate::{
 /// let dense = line.densify_haversine(100000.0);
 /// assert_eq!(dense, output);
 ///```
-pub trait DensifyHaversine<F: CoordFloat> {
+pub trait DensifyHaversine<F: CoordNum> {
     type Output;
 
     fn densify_haversine(&self, max_distance: F) -> Self::Output;
@@ -43,7 +43,7 @@ pub trait DensifyHaversine<F: CoordFloat> {
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for MultiPolygon<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -57,7 +57,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for Polygon<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -71,7 +71,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for MultiLineString<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -85,7 +85,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for LineString<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -99,7 +99,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for Line<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -113,7 +113,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for Triangle<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {
@@ -127,7 +127,7 @@ where
 #[allow(deprecated)]
 impl<T> DensifyHaversine<T> for Rect<T>
 where
-    T: CoordFloat + FromPrimitive,
+    T: CoordNum + FromPrimitive,
     Line<T>: HaversineLength<T>,
     LineString<T>: HaversineLength<T>,
 {

@@ -1,7 +1,7 @@
-use crate::{CoordFloat, Point};
+use crate::{CoordNum, Point};
 
 /// Interpolate a `Point` along a line between two existing points
-pub trait InterpolatePoint<F: CoordFloat> {
+pub trait InterpolatePoint<F: CoordNum> {
     /// Returns a new Point along a line between two existing points.
     ///
     /// See [specific implementations](#implementors) for details.

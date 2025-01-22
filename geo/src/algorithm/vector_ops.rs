@@ -1,9 +1,9 @@
 //! This module defines the [Vector3DOps] trait and implements it for the
 //! [Coord] struct.
 
-use crate::{Coord, CoordFloat};
+use crate::{Coord, CoordNum};
 
-/// Defines vector operations for 3D coordinate types which implement CoordFloat
+/// Defines vector operations for 3D coordinate types which implement CoordNum
 ///
 /// This trait is intended for internal use within the geo crate as a way to
 /// bring together the various hand-crafted linear algebra operations used
@@ -12,7 +12,7 @@ pub trait Vector3DOps<Rhs = Self>
 where
     Self: Sized,
 {
-    type Scalar: CoordFloat;
+    type Scalar: CoordNum;
 
     /// The euclidean distance between this coordinate and the origin
     ///
@@ -129,7 +129,7 @@ where
 
 impl<T> Vector3DOps for Coord<T>
 where
-    T: CoordFloat,
+    T: CoordNum,
 {
     type Scalar = T;
 
