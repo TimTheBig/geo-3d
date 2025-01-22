@@ -180,6 +180,7 @@ impl<F: CoordNum + FromPrimitive> Densify<F> for Polygon<F> {
 impl<F: CoordNum + FromPrimitive> Densify<F> for MultiPolygon<F> {
     type Output = Self;
 
+    /// `max_segment_length` is the max distance between points
     fn densify<MetricSpace>(&self, max_segment_length: F) -> Self::Output
     where
         MetricSpace: Distance<F, Point<F>, Point<F>> + InterpolatePoint<F>,

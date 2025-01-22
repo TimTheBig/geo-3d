@@ -105,7 +105,10 @@ impl<F: CoordNum + FromPrimitive> Destination<F> for Haversine {
             .atan2(rad.cos() - center_lat.sin() * lat.sin())
             + center_lng;
 
-        Point::new(normalize_longitude(lng.to_degrees()), lat.to_degrees())
+        // ? maybe lat needs to be conterted to deg before the div by PI
+        let z_diff = (lat / F::from(PI).unwrap()).to_degrees();
+        // todo test z
+        Point::new(normalize_longitude(lng.to_degrees()), lat.to_degrees(), origin.z() - z_diff)
     }
 }
 
@@ -342,8 +345,8 @@ impl<T: CoordNum + FromPrimitive> HaversineIntermediateFillCalculation<T> {
         let lat = z.atan2(x.hypot(y));
         let lon = y.atan2(x);
 
-        // todo figure out what the lat/lon conversion is for
-        Point::new(lon.to_degrees(), lat.to_degrees())
+        // todo check z
+        Point::new(lon.to_degrees(), lat.to_degrees(), z)
     }
 }
 

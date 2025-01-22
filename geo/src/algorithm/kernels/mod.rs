@@ -53,13 +53,13 @@ pub trait Kernel<T: CoordNum> {
     /// Compute the sign of the dot product of `u` and `v` using
     /// robust predicates. The output is `CounterClockwise` if
     /// the sign is positive, `Clockwise` if negative, and
-    /// `Collinear` if zero.
-    // todo make 3d
-    fn dot_product_sign(u: Coord<T>, v: Coord<T>) -> Orientation {
+    /// `Collinear` if zero
+    fn dot_product_sign_2d(u: Coord<T>, v: Coord<T>) -> Orientation {
         let zero = Coord::zero();
         let vdash = coord! {
             x: T::zero() - v.y,
             y: v.x,
+            z: T::zero(),
         };
         Self::orient2d(zero, u, vdash)
     }

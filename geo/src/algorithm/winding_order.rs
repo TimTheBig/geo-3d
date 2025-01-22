@@ -237,9 +237,9 @@ mod test {
     #[test]
     fn robust_winding_float() {
         // 3 points forming a triangle
-        let a = Point::new(0., 0.);
-        let b = Point::new(2., 0.);
-        let c = Point::new(1., 2.);
+        let a = Point::new(0., 0., 0.);
+        let b = Point::new(2., 0., -2.);
+        let c = Point::new(1., 2., 1.);
 
         // Verify open linestrings return None
         let mut ls = LineString::from(vec![a.0, b.0, c.0]);
@@ -255,9 +255,9 @@ mod test {
     #[test]
     fn robust_winding_integer() {
         // 3 points forming a triangle
-        let a = Point::new(0i64, 0);
-        let b = Point::new(2, 0);
-        let c = Point::new(1, 2);
+        let a = Point::new(0f32, 0., 0.);
+        let b = Point::new(2., 0., -2.);
+        let c = Point::new(1., 2., 1.);
 
         // Verify open linestrings return None
         let mut ls = LineString::from(vec![a.0, b.0, c.0]);

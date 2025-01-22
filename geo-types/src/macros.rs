@@ -29,7 +29,10 @@
 #[macro_export]
 macro_rules! point {
     ( $($tag:tt : $val:expr),* $(,)? ) => {
-        $crate::point! ( $crate::coord! { $( $tag: $val , )* } )
+        $crate::point! ( $crate::coord!($( $tag: $val , )*) )
+    };
+    ($x:expr, $y:expr, $z:expr) => {
+        $crate::coord!($x, $y, $z)
     };
     ( $coord:expr $(,)? ) => {
         $crate::Point::from($coord)

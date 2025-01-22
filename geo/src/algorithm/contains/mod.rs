@@ -14,23 +14,23 @@
 /// use geo::{line_string, point, Polygon};
 ///
 /// let line_string = line_string![
-///     (x: 0., y: 0.),
-///     (x: 2., y: 0.),
-///     (x: 2., y: 2.),
-///     (x: 0., y: 2.),
-///     (x: 0., y: 0.),
+///     (x: 0., y: 0., z: 0.),
+///     (x: 2., y: 0., z: -2.),
+///     (x: 2., y: 2., z: 2.),
+///     (x: 0., y: 2., z: 0.),
+///     (x: 0., y: 0., z: 0.),
 /// ];
 ///
 /// let polygon = Polygon::new(line_string.clone(), vec![]);
 ///
 /// // Point in Point
-/// assert!(point!(x: 2., y: 0.).contains(&point!(x: 2., y: 0.)));
+/// assert!(point!(x: 2., y: 0., z: -2.).contains(&point!(x: 2., y: 0., z: -2.)));
 ///
 /// // Point in Linestring
-/// assert!(line_string.contains(&point!(x: 2., y: 0.)));
+/// assert!(line_string.contains(&point!(x: 2., y: 0., z: -2.)));
 ///
 /// // Point in Polygon
-/// assert!(polygon.contains(&point!(x: 1., y: 1.)));
+/// assert!(polygon.contains(&point!(x: 1., y: 1., z: 1.)));
 /// ```
 pub trait Contains<Rhs = Self> {
     fn contains(&self, rhs: &Rhs) -> bool;

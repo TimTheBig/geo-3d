@@ -76,9 +76,13 @@ where
     ///     point!(x: 0.3 , y: 0.4),
     ///     point!(x: 0.3 , y: 0.1),
     ///     point!(x: 0.3 , y: 0.2),
+    ///     // outlier
     ///     point!(x: 1.3 , y: 2.3),
+    ///     // outlier
     ///     point!(x: 1.7 , y: 0.2),
+    ///     // outlier
     ///     point!(x: 0.7 , y: -0.9),
+    ///     // outlier
     ///     point!(x: 0.21, y: 2.45),
     ///     point!(x: 0.8 , y: 0.7),
     ///     point!(x: 0.9 , y: 0.7),
@@ -354,10 +358,10 @@ mod tests {
     fn test_lof2() {
         // fourth point is an outlier
         let v = [
-            Point::new(0.0, 0.0),
-            Point::new(1.0, 0.0),
-            Point::new(1.0, 1.0),
-            Point::new(0.0, 3.0),
+            Point::new(0.0, 0.0, 0.0),
+            Point::new(1.0, 0.0, -1.0),
+            Point::new(1.0, 1.0, 1.0),
+            Point::new(0.0, 3.0, 0.0),
         ];
         let lofs = &v.outliers(3);
         assert_eq!(lofs[3], 3.3333333333333335);
@@ -366,10 +370,10 @@ mod tests {
     fn test_lof3() {
         // second point is an outlier, sort and reverse so scores are in descending order
         let v = [
-            Point::new(0.0, 0.0),
-            Point::new(0.0, 3.0),
-            Point::new(1.0, 0.0),
-            Point::new(1.0, 1.0),
+            Point::new(0.0, 0.0, 0.0),
+            Point::new(0.0, 3.0, 0.0),
+            Point::new(1.0, 0.0, 1.0),
+            Point::new(1.0, 1.0, 1.0),
         ];
         let lofs = &mut v.outliers(3);
         lofs.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -430,10 +434,10 @@ mod tests {
     fn test_lof5() {
         // third point is an outlier
         let v = [
-            Point::new(0.0, 0.0),
-            Point::new(0.0, 1.0),
-            Point::new(3.0, 0.0),
-            Point::new(1.0, 1.0),
+            Point::new(0.0, 0.0, 0.0),
+            Point::new(0.0, 1.0, 2.0),
+            Point::new(3.0, 0.0, -3.0),
+            Point::new(1.0, 1.0, 1.0),
         ];
 
         let prepared = &v.prepared_detector();
