@@ -62,11 +62,6 @@ pub use coordinate_position::CoordinatePosition;
 pub mod coords_iter;
 pub use coords_iter::CoordsIter;
 
-/// Densify spherical geometry components
-pub mod densify_haversine;
-#[allow(deprecated)]
-pub use densify_haversine::DensifyHaversine;
-
 /// Dimensionality of a geometry and its boundary, based on OGC-SFA.
 pub mod dimensions;
 pub use dimensions::HasDimensions;
@@ -89,10 +84,6 @@ pub use extremes::Extremes;
 pub mod frechet_distance;
 pub use frechet_distance::FrechetDistance;
 
-/// Calculate the bearing to another `Point` on a geodesic.
-pub mod geodesic_bearing;
-pub use geodesic_bearing::GeodesicBearing;
-
 /// Calculate the Geodesic area and perimeter of polygons.
 pub mod geodesic_area;
 pub use geodesic_area::GeodesicArea;
@@ -105,26 +96,6 @@ pub use hausdorff_distance::HausdorffDistance;
 pub mod haversine_bearing;
 #[allow(deprecated)]
 pub use haversine_bearing::HaversineBearing;
-
-/// Calculate a destination `Point`, given a distance and a bearing.
-pub mod haversine_destination;
-#[allow(deprecated)]
-pub use haversine_destination::HaversineDestination;
-
-/// Calculate the Haversine distance between two `Geometries`.
-pub mod haversine_distance;
-#[allow(deprecated)]
-pub use haversine_distance::HaversineDistance;
-
-/// Calculate a new `Point` lying on a Great Circle arc between two `Point`s.
-pub mod haversine_intermediate;
-#[allow(deprecated)]
-pub use haversine_intermediate::HaversineIntermediate;
-
-/// Calculate the Haversine length of a Line.
-pub mod haversine_length;
-#[allow(deprecated)]
-pub use haversine_length::HaversineLength;
 
 /// Calculate the closest point on a Great Circle arc geometry to a given point.
 pub mod haversine_closest_point;

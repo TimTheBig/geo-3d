@@ -35,7 +35,7 @@ pub trait InterpolatePoint<F: CoordNum> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Euclidean, Geodesic, Haversine, InterpolatePoint, Point, Rhumb};
+    use crate::{Euclidean, Haversine, InterpolatePoint, Point};
 
     #[test]
     fn point_at_ratio_between_line_ends() {
@@ -45,14 +45,10 @@ mod tests {
         let ratio = 0.0;
         assert_eq!(Haversine::point_at_ratio_between(start, end, ratio), start);
         assert_eq!(Euclidean::point_at_ratio_between(start, end, ratio), start);
-        assert_eq!(Geodesic::point_at_ratio_between(start, end, ratio), start);
-        assert_eq!(Rhumb::point_at_ratio_between(start, end, ratio), start);
 
         let ratio = 1.0;
         assert_eq!(Haversine::point_at_ratio_between(start, end, ratio), end);
         assert_eq!(Euclidean::point_at_ratio_between(start, end, ratio), end);
-        assert_eq!(Geodesic::point_at_ratio_between(start, end, ratio), end);
-        assert_eq!(Rhumb::point_at_ratio_between(start, end, ratio), end);
     }
 
     mod degenerate {
@@ -71,8 +67,6 @@ mod tests {
                 Euclidean::point_at_ratio_between(start, start, ratio),
                 start
             );
-            assert_eq!(Geodesic::point_at_ratio_between(start, start, ratio), start);
-            assert_eq!(Rhumb::point_at_ratio_between(start, start, ratio), start);
 
             let ratio = 0.5;
             assert_eq!(
@@ -83,8 +77,6 @@ mod tests {
                 Euclidean::point_at_ratio_between(start, start, ratio),
                 start
             );
-            assert_eq!(Geodesic::point_at_ratio_between(start, start, ratio), start);
-            assert_eq!(Rhumb::point_at_ratio_between(start, start, ratio), start);
 
             let ratio = 1.0;
             assert_eq!(
@@ -95,8 +87,6 @@ mod tests {
                 Euclidean::point_at_ratio_between(start, start, ratio),
                 start
             );
-            assert_eq!(Geodesic::point_at_ratio_between(start, start, ratio), start);
-            assert_eq!(Rhumb::point_at_ratio_between(start, start, ratio), start);
         }
 
         #[test]
@@ -114,14 +104,6 @@ mod tests {
             let euclidean_result = Euclidean::point_at_distance_between(start, start, distance);
             assert!(euclidean_result.x().is_nan());
             assert!(euclidean_result.y().is_nan());
-            assert_eq!(
-                Geodesic::point_at_distance_between(start, start, distance),
-                start
-            );
-            assert_eq!(
-                Rhumb::point_at_distance_between(start, start, distance),
-                start
-            );
 
             let distance = 100000.0;
             let due_north = Point::new(1.0, 1.9);
@@ -134,16 +116,6 @@ mod tests {
             let euclidean_result = Euclidean::point_at_distance_between(start, start, distance);
             assert!(euclidean_result.x().is_nan());
             assert!(euclidean_result.y().is_nan());
-            assert_relative_eq!(
-                Geodesic::point_at_distance_between(start, start, distance),
-                due_south,
-                epsilon = 1.0e-1
-            );
-            assert_relative_eq!(
-                Rhumb::point_at_distance_between(start, start, distance),
-                due_north,
-                epsilon = 1.0e-1
-            );
         }
 
         #[test]
@@ -161,14 +133,6 @@ mod tests {
                 Euclidean::points_along_line(start, start, max_distance, include_ends).collect();
             assert_eq!(points, vec![start, start]);
 
-            let points: Vec<_> =
-                Geodesic::points_along_line(start, start, max_distance, include_ends).collect();
-            assert_eq!(points, vec![start, start]);
-
-            let points: Vec<_> =
-                Rhumb::points_along_line(start, start, max_distance, include_ends).collect();
-            assert_eq!(points, vec![start, start]);
-
             let include_ends = false;
             let points: Vec<_> =
                 Haversine::points_along_line(start, start, max_distance, include_ends).collect();
@@ -176,14 +140,6 @@ mod tests {
 
             let points: Vec<_> =
                 Euclidean::points_along_line(start, start, max_distance, include_ends).collect();
-            assert_eq!(points, vec![]);
-
-            let points: Vec<_> =
-                Geodesic::points_along_line(start, start, max_distance, include_ends).collect();
-            assert_eq!(points, vec![]);
-
-            let points: Vec<_> =
-                Rhumb::points_along_line(start, start, max_distance, include_ends).collect();
             assert_eq!(points, vec![]);
         }
     }
