@@ -274,7 +274,7 @@ fn raw_line_intersection<F: GeoFloat>(p: Line<F>, q: Line<F>) -> Option<Coord<F>
     let y_int = yw / w;
 
     // check for parallel lines
-    if (x_int.is_nan() || x_int.is_infinite()) || (y_int.is_nan() || y_int.is_infinite()) {
+    if (x_int.is_nan() || x_int.is_infinite()) || (y_int.is_nan() || y_int.is_infinite()) || (z_int.is_nan() || z_int.is_infinite()) {
         None
     } else {
         // de-condition intersection point

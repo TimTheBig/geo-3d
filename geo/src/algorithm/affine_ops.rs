@@ -691,8 +691,8 @@ mod tests {
     // [0, 0, 0, 1]]
     #[test]
     fn matrix_multiply() {
-        let a = AffineTransform::new(1, 2, 6, 5, 3, 4, 9, 6, 4, 8, 7, 14);
-        let b = AffineTransform::new(7, 8, 3, 11, 9, 10, 2, 12, 3, 9, 4, 19);
+        let a = AffineTransform::new(1., 2., 6., 5., 3., 4., 9., 6., 4., 8., 7., 14.);
+        let b = AffineTransform::new(7., 8., 3., 11., 9., 10., 2., 12., 3., 9., 4., 19.);
         let composed = a.compose(&b);
 
         assert_eq!(composed.0[0][0], 43);

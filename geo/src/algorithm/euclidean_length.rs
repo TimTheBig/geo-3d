@@ -75,7 +75,7 @@ mod test {
     #[allow(deprecated)]
     #[test]
     fn linestring_one_point_test() {
-        let linestring = line_string![(x: 0., y: 0.)];
+        let linestring = line_string![(x: 0., y: 0., z: 0.)];
         assert_relative_eq!(0.0_f64, linestring.euclidean_length());
     }
     #[allow(deprecated)]

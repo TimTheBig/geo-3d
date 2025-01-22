@@ -238,23 +238,23 @@ mod test {
 
     #[test]
     fn test_cross_product() {
-        let a = coord! { x: 1f64, y: 0f64, z: -1. };
-        let b = coord! { x: 0f64, y: 1f64, z: 0. };
-        let c = coord! { x: 0f64, y: 1f64, z: 0. };
+        let a = coord! { x: 1., y: 0., z: -1. };
+        let b = coord! { x: 0., y: 1., z: 0. };
+        let c = coord! { x: 0., y: 1., z: 0. };
 
         assert_eq!(a.cross_product(b, c), 1f64);
         assert_eq!(b.cross_product(a, c), -1f64);
         assert_eq!(c.cross_product(a, b), -1f64);
 
-        let a = coord! { x: 1f64, y: 0f64 };
-        let b = coord! { x: 1f64, y: 1f64 };
+        let a = coord! { x: 1., y: 0., z: -1. };
+        let b = coord! { x: 1., y: 1., z: 1. };
 
         assert_eq!(a.cross_product(b), 1f64);
         // expect swapping will result in negative
         assert_eq!(b.cross_product(a), -1f64);
 
-        let a = coord! { x: 2f64, y: 2f64 };
-        let b = coord! { x: 1f64, y: 1f64 };
+        let a = coord! { x: 2., y: 2., z: 2. };
+        let b = coord! { x: 1., y: 1., z: 1. };
         assert_eq!(a.cross_product(b), 0f64);
     }
 

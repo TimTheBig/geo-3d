@@ -123,7 +123,8 @@ impl<T: CoordNum> MultiPolygon<T> {
         self.0.iter_mut()
     }
 
-    fn rings(&self) -> impl Iterator<Item = &LineString<T>> {
+    /// Returns an iterator of the polygons rings
+    pub fn rings(&self) -> impl Iterator<Item = &LineString<T>> {
         self.iter().flat_map(Polygon::rings)
     }
 }
@@ -237,8 +238,8 @@ mod test {
     #[test]
     fn test_iter() {
         let multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x: 0, y: 0, z: 0)],
-            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x: 0., y: 0., z: 0.)],
+            polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 11.), (x:10., y: 10., z: 10.)],
         ]);
 
         let mut first = true;
@@ -246,13 +247,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)]
+                    &polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x: 0., y: 0., z: 0.)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)]
+                    &polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 11.), (x: 10., y: 10., z: 10.)]
                 );
             }
         }
@@ -263,13 +264,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)]
+                    &polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x:0., y:0., z:0.)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 11), (x:10, y:10, z:10)]
+                    &polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 11.), (x:10., y:10., z:10.)]
                 );
             }
         }
@@ -279,12 +280,12 @@ mod test {
     #[test]
     fn test_par_iter() {
         let multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
-            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x:0., y:0., z:0.)],
+            polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 13.), (x:10., y:10., z:10.)],
         ]);
         let mut multimut = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
-            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x:0., y:0., z:0.)],
+            polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 13.), (x:10., y:10., z:10.)],
         ]);
         multi.par_iter().for_each(|_p| ());
         let _ = &multimut.par_iter_mut().for_each(|_p| ());
@@ -294,15 +295,16 @@ mod test {
     #[test]
     fn test_iter_mut() {
         let mut multi = MultiPolygon::new(vec![
-            polygon![(x: 0, y: 0, z: 0), (x: 2, y: 0, z: 2), (x: 1, y: 2, z: 3), (x:0, y:0, z:0)],
-            polygon![(x: 10, y: 10, z: 10), (x: 12, y: 10, z: 12), (x: 11, y: 12, z: 13), (x:10, y:10, z:10)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 2., y: 0., z: 2.), (x: 1., y: 2., z: 3.), (x:0., y:0., z:0.)],
+            polygon![(x: 10., y: 10., z: 10.), (x: 12., y: 10., z: 12.), (x: 11., y: 12., z: 13.), (x:10., y:10., z:10.)],
         ]);
 
         for poly in &mut multi {
             poly.exterior_mut(|exterior| {
                 for coord in exterior {
-                    coord.x += 1;
-                    coord.y += 1;
+                    coord.x += 1.0;
+                    coord.y += 1.0;
+                    coord.z += 1.0;
                 }
             });
         }
@@ -310,8 +312,9 @@ mod test {
         for poly in multi.iter_mut() {
             poly.exterior_mut(|exterior| {
                 for coord in exterior {
-                    coord.x += 1;
-                    coord.y += 1;
+                    coord.x += 1.0;
+                    coord.y += 1.0;
+                    coord.z += 1.0;
                 }
             });
         }
@@ -321,13 +324,13 @@ mod test {
             if first {
                 assert_eq!(
                     p,
-                    &polygon![(x: 2, y: 2, z: 2), (x: 4, y: 2, z: 4), (x: 3, y: 4, z: 5), (x:2, y:2, z:2)]
+                    &polygon![(x: 2., y: 2., z: 2.), (x: 4., y: 2., z: 4.), (x: 3., y: 4., z: 5.), (x:2., y:2., z:2.)]
                 );
                 first = false;
             } else {
                 assert_eq!(
                     p,
-                    &polygon![(x: 12, y: 12, z: 12), (x: 14, y: 12, z: 14), (x: 13, y: 14, z: 15), (x:12, y:12, z:12)]
+                    &polygon![(x: 12., y: 12., z: 12.), (x: 14., y: 12., z: 14.), (x: 13., y: 14., z: 15.), (x:12., y:12., z:12.)]
                 );
             }
         }

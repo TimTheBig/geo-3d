@@ -39,8 +39,8 @@ mod tests {
 
     #[test]
     fn point_at_ratio_between_line_ends() {
-        let start = Point::new(0.0, 0.0);
-        let end = Point::new(1.0, 1.0);
+        let start = Point::new(0.0, 0.0, 0.0);
+        let end = Point::new(1.0, 1.0, 1.0);
 
         let ratio = 0.0;
         assert_eq!(Haversine::point_at_ratio_between(start, end, ratio), start);
@@ -60,7 +60,7 @@ mod tests {
 
         #[test]
         fn point_at_ratio_between_collapsed_line() {
-            let start = Point::new(1.0, 1.0);
+            let start = Point::new(1.0, 1.0, 1.0);
 
             let ratio = 0.0;
             assert_eq!(
@@ -103,7 +103,7 @@ mod tests {
         fn point_at_distance_between_collapsed_line() {
             // This method just documents existing behavior. I don't think our current behavior
             // is especially useful, but we might consider handling it uniformly one day.
-            let start: Point = Point::new(1.0, 1.0);
+            let start: Point = Point::new(1.0, 1.0, 1.0);
 
             let distance = 0.0;
             assert_eq!(
@@ -148,7 +148,7 @@ mod tests {
 
         #[test]
         fn points_along_collapsed_line() {
-            let start = Point::new(1.0, 1.0);
+            let start = Point::new(1.0, 1.0, 1.0);
 
             let max_distance = 1.0;
 

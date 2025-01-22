@@ -175,9 +175,9 @@ mod test {
     #[test]
     fn test_rotate_multipoints() {
         let multi_points = MultiPoint::new(vec![
-            point!(x: 0., y: 0.),
-            point!(x: 1., y: 1.),
-            point!(x: 2., y: 1.),
+            point!(x: 0., y: 0., z: 0.),
+            point!(x: 1., y: 1., z: 1.),
+            point!(x: 2., y: 1., z: -1.),
         ]);
 
         // Results match shapely for `centroid`

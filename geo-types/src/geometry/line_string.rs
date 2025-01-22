@@ -609,14 +609,14 @@ mod test {
 
     #[test]
     fn should_be_built_from_line() {
-        let start = coord! { x: 0, y: 0, z: 0 };
-        let end = coord! { x: 10, y: 10, z: 10 };
+        let start = coord! { x: 0f32, y: 0., z: 0. };
+        let end = coord! { x: 10., y: 10., z: 10. };
         let line = Line::new(start, end);
         let expected = LineString::new(vec![start, end]);
 
         assert_eq!(expected, LineString::from(line));
 
-        let start = coord! { x: 10., y: 0.5, z: 5. };
+        let start = coord! { x: 10f64, y: 0.5, z: 5. };
         let end = coord! { x: 10000., y: 10.4, z: 10.6 };
         let line = Line::new(start, end);
         let expected = LineString::new(vec![start, end]);

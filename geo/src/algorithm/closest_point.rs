@@ -198,7 +198,7 @@ mod tests {
         ($name:ident, $p:expr => $should_be:expr) => {
             #[test]
             fn $name() {
-                let line: Line<f32> = Line::from([(0., 0.), (100.0, 100.0)]);
+                let line: Line<f32> = Line::from([(0., 0., 0.), (100.0, 100.0, 100.0)]);
                 let p: Point<f32> = $p.into();
                 let should_be: Closest<f32> = $should_be;
 
@@ -208,11 +208,11 @@ mod tests {
         };
     }
 
-    closest!(intersects: start_point, (0.0, 0.0));
-    closest!(intersects: end_point, (100.0, 100.0));
-    closest!(intersects: mid_point, (50.0, 50.0));
-    closest!(in_line_far_away, (1000.0, 1000.0) => Closest::SinglePoint(Point::new(100.0, 100.0, 100.0)));
-    closest!(perpendicular_from_50_50, (0.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0, 50.0)));
+    closest!(intersects: start_point, (0.0, 0.0, 0.0));
+    closest!(intersects: end_point, (100.0, 100.0, 100.0));
+    closest!(intersects: mid_point, (50.0, 50.0, 50.0));
+    closest!(in_line_far_away, (1000.0, 1000.0, 1000.0) => Closest::SinglePoint(Point::new(100.0, 100.0, 100.0)));
+    closest!(perpendicular_from_50_50, (0.0, 100.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0, 50.0)));
 
     fn a_square(width: f32) -> LineString<f32> {
         LineString::from(vec![
@@ -227,7 +227,7 @@ mod tests {
 
     #[test]
     fn zero_length_line_is_indeterminate() {
-        let line: Line<f32> = Line::from([(0.0, 0.0), (0.0, 0.0)]);
+        let line: Line<f32> = Line::from([(0.0, 0.0, 0.0), (0.0, 0.0, 0.0)]);
         let p: Point<f32> = Point::new(100.0, 100.0, 100.0);
         let should_be: Closest<f32> = Closest::Indeterminate;
 
@@ -272,8 +272,8 @@ mod tests {
     /// A polygon with 2 holes in it.
     fn holy_polygon() -> Polygon<f32> {
         let square: LineString<f32> = a_square(100.0);
-        let ring_1 = a_square(20.0).translate(10.0, 10.0);
-        let ring_2 = a_square(10.0).translate(70.0, 60.0);
+        let ring_1 = a_square(20.0).translate(10.0, 10.0, 10.0);
+        let ring_2 = a_square(10.0).translate(70.0, 60.0, 50.0);
         Polygon::new(square, vec![ring_1, ring_2])
     }
 
@@ -337,8 +337,8 @@ mod tests {
             (x: 0.0, y: 1.0, z: 1.0)
         ];
         use crate::Translate;
-        let square_10 = square_1.translate(10.0, 10.0);
-        let square_50 = square_1.translate(50.0, 50.0);
+        let square_10 = square_1.translate(10.0, 10.0, 10.0);
+        let square_50 = square_1.translate(50.0, 50.0, 50.0);
 
         let multi_polygon = MultiPolygon::new(vec![square_1, square_10, square_50]);
         let result = multi_polygon.closest_point(&point!(x: 8.0, y: 8.0, z: 8.0));
