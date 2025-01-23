@@ -31,8 +31,8 @@
     matcher.addListener(onUpdate);
     onUpdate();
 
-    lightSchemeIcons = document.querySelector('link.light-scheme-icon');
-    darkSchemeIcons = document.querySelector('link.dark-scheme-icon');
+    let lightSchemeIcons = document.querySelector('link.light-scheme-icon');
+    let darkSchemeIcons = document.querySelector('link.dark-scheme-icon');
 
     function onUpdate() {
       if (matcher.matches) {
