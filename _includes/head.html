@@ -15,8 +15,29 @@
   {% feed_meta %}
 
   <!-- Favicon -->
+  <link rel="icon" href="a.png" id="light-scheme-icon">
+  <link rel="icon" href="b.png" id="dark-scheme-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="/geo-3d/assets/images/favicon/favicon-32x32.png" id="light-scheme-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="/geo-3d/assets/images/favicon/dark/favicon-32x32.png" id="dark-scheme-icon">
+  <script>
+    matcher = window.matchMedia('(prefers-color-scheme: dark)');
+    matcher.addListener(onUpdate);
+    onUpdate();
+
+    lightSchemeIcon = document.querySelector('link#light-scheme-icon');
+    darkSchemeIcon = document.querySelector('link#dark-scheme-icon');
+
+    function onUpdate() {
+      if (matcher.matches) {
+        lightSchemeIcon.remove();
+        document.head.append(darkSchemeIcon);
+      } else {
+        document.head.append(lightSchemeIcon);
+        darkSchemeIcon.remove();
+      }
+    }
+  </script>
   <link rel="apple-touch-icon" sizes="180x180" href="/geo-3d/assets/images/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/geo-3d/assets/images/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/geo-3d/assets/images/favicon/favicon-16x16.png">
   <link rel="manifest" href="/geo-3d/assets/images/favicon/site.webmanifest">
   <link rel="mask-icon" href="/geo-3d/assets/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
