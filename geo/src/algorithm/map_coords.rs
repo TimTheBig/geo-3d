@@ -758,9 +758,9 @@ mod test {
         let rect = Rect::new((10f32, 10.0, 10.0), (20.0, 20.0, 20.0));
         let result = rect.try_map_coords(|Coord { x, y, z }| -> Result<_, &'static str> {
             Ok((
-                x.checked_add(10.0).ok_or("overflow")?,
-                y.checked_add(20.0).ok_or("overflow")?,
-                z.checked_add(30.0).ok_or("overflow")?,
+                x.add(10.0),
+                y.add(20.0),
+                z.add(30.0),
             )
                 .into())
         });

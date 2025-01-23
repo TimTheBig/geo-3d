@@ -9,12 +9,11 @@
 ## 3D Geospatial Primitives, Algorithms, and Utilities
 
 ### TODO
-- move all types to 3d
-- make all methuds work with 3d
-- fix doctests/tests
-- valume calculations
+- make all methods work with 3d
+- fix all doctests/tests
+- add volume calculation mod
 
-The `geo` crate provides geospatial primitive types such as `Point`, `LineString`, and `Polygon`, and provides algorithms and operations such as:
+The `geo-3d` crate provides geospatial primitive types such as `Point`, `LineString`, and `Polygon`, and provides algorithms and operations such as:
 - Area and centroid calculation
 - Simplification and convex hull operations
 - Euclidean and Haversine distance measurement
@@ -41,13 +40,13 @@ use geo::ConvexHull;
 
 // An L shape
 let poly = polygon![
-    (x: 0.0, y: 0.0),
-    (x: 4.0, y: 0.0),
-    (x: 4.0, y: 1.0),
-    (x: 1.0, y: 1.0),
-    (x: 1.0, y: 4.0),
-    (x: 0.0, y: 4.0),
-    (x: 0.0, y: 0.0),
+    (x: 0.0, y: 0.0, z: 0.0),
+    (x: 4.0, y: 0.0, z: 4.0),
+    (x: 4.0, y: 1.0, z: 2.5),
+    (x: 1.0, y: 1.0, z: 1.0),
+    (x: 1.0, y: 4.0, z: 7.0),
+    (x: 0.0, y: 4.0, z: 0.0),
+    (x: 0.0, y: 0.0, z: 0.0),
 ];
 
 // Calculate the polygon's convex hull

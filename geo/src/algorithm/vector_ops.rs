@@ -213,8 +213,8 @@ mod test {
     #[test]
     fn test_wedge_product() {
         // perpendicular unit length
-        let a = coord! { x: 1f64, y: 0f64 };
-        let b = coord! { x: 0f64, y: 1f64 };
+        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
+        let b = coord! { x: 0f64, y: 1f64, z: 0.0 };
 
         // expect the area of parallelogram
         assert_eq!(a.wedge_product(b), 1f64);
@@ -222,8 +222,8 @@ mod test {
         assert_eq!(b.wedge_product(a), -1f64);
 
         // Add skew; expect results should be the same
-        let a = coord! { x: 1f64, y: 0f64 };
-        let b = coord! { x: 1f64, y: 1f64 };
+        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
+        let b = coord! { x: 1f64, y: 1f64, z: 0.0 };
 
         // expect the area of parallelogram
         assert_eq!(a.wedge_product(b), 1f64);
@@ -285,13 +285,16 @@ mod test {
 
     #[test]
     fn test_magnitude() {
-        let a = coord! { x: 1f64, y: 0f64 };
+        let a = coord! { x: 1.0, y: 0.0, z: 0.0 };
         assert_eq!(a.magnitude(), 1f64);
 
-        let a = coord! { x: 0f64, y: 0f64 };
+        let a = coord! { x: 0.0, y: 0.0, z: 1.0 };
+        assert_eq!(a.magnitude(), 1f64);
+
+        let a = coord! { x: 0.0, y: 0.0, 0.0 };
         assert_eq!(a.magnitude(), 0f64);
 
-        let a = coord! { x: -3f64, y: 4f64 };
+        let a = coord! { x: -3.0, y: 4.0 };
         assert_eq!(a.magnitude(), 5f64);
     }
 
@@ -300,7 +303,7 @@ mod test {
         let a = coord! { x: 1f64, y: 0f64 };
         assert_eq!(a.magnitude_squared(), 1f64);
 
-        let a = coord! { x: 0f64, y: 0f64 };
+        let a = coord! { x: 0f64, y: 0f64, z: 0f64 };
         assert_eq!(a.magnitude_squared(), 0f64);
 
         let a = coord! { x: -3f64, y: 4f64 };
@@ -336,7 +339,7 @@ mod test {
         let clockwise_rotation_degrees = -counter_clockwise_rotation_degrees;
 
         let a: Point = coord! { x: 1.0, y: 0.0 }.into();
-        let origin: Point = coord! { x: 0.0, y: 0.0 }.into();
+        let origin: Point = coord! { x: 0.0, y: 0.0, z: 0.0 }.into();
 
         // left is anti-clockwise
         assert_relative_eq!(
@@ -427,15 +430,15 @@ mod test {
         // edge cases that can cause try_normalize to return None.
 
         // Zero vector - Normalize returns None
-        let a = coord! { x: 0.0, y: 0.0 };
+        let a = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
 
         // Where one of the components is NaN try_normalize returns None
-        let a = coord! { x: f64::NAN, y: 0.0 };
+        let a = coord! { x: f64::NAN, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
 
         // Where one of the components is Infinite try_normalize returns None
-        let a = coord! { x: f64::INFINITY, y: 0.0 };
+        let a = coord! { x: f64::INFINITY, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
     }
 }

@@ -361,29 +361,29 @@ mod tests {
 
         #[test]
         fn north() {
-            let origin = Point::new(0.0, 0.0);
-            let destination = Point::new(0.0, 1.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
+            let destination = Point::new(0.0, 1.0, 0.0);
             assert_relative_eq!(0.0, MetricSpace::bearing(origin, destination));
         }
 
         #[test]
         fn east() {
-            let origin = Point::new(0.0, 0.0);
-            let destination = Point::new(1.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
+            let destination = Point::new(1.0, 0.0, 0.0);
             assert_relative_eq!(90.0, MetricSpace::bearing(origin, destination));
         }
 
         #[test]
         fn south() {
-            let origin = Point::new(0.0, 0.0);
-            let destination = Point::new(0.0, -1.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
+            let destination = Point::new(0.0, -1.0, 0.0);
             assert_relative_eq!(180.0, MetricSpace::bearing(origin, destination));
         }
 
         #[test]
         fn west() {
-            let origin = Point::new(0.0, 0.0);
-            let destination = Point::new(-1.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
+            let destination = Point::new(-1.0, 0.0, 0.0);
             assert_relative_eq!(270.0, MetricSpace::bearing(origin, destination));
         }
     }
@@ -393,7 +393,7 @@ mod tests {
 
         #[test]
         fn north() {
-            let origin = Point::new(0.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
             let bearing = 0.0;
             assert_relative_eq!(
                 Point::new(0.0, 0.899320363724538),
@@ -403,7 +403,7 @@ mod tests {
 
         #[test]
         fn east() {
-            let origin = Point::new(0.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
             let bearing = 90.0;
             assert_relative_eq!(
                 Point::new(0.8993203637245415, 5.506522912913066e-17),
@@ -413,7 +413,7 @@ mod tests {
 
         #[test]
         fn south() {
-            let origin = Point::new(0.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
             let bearing = 180.0;
             assert_relative_eq!(
                 Point::new(0.0, -0.899320363724538),
@@ -423,7 +423,7 @@ mod tests {
 
         #[test]
         fn west() {
-            let origin = Point::new(0.0, 0.0);
+            let origin = Point::new(0.0, 0.0, 0.0);
             let bearing = 270.0;
             assert_relative_eq!(
                 Point::new(-0.8993203637245415, -1.6519568738739197e-16),

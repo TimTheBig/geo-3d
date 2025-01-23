@@ -614,8 +614,8 @@ impl IntersectionMatrix {
     /// use geo::geometry::Polygon;
     /// use wkt::TryFromWkt;
     ///
-    /// let a = Polygon::<f64>::try_from_wkt_str("POLYGON((0 0,4 0,4 4,0 4,0 0))").expect("valid WKT");
-    /// let b = Polygon::<f64>::try_from_wkt_str("POLYGON((1 1,4 0,4 4,0 4,1 1))").expect("valid WKT");
+    /// let a = Polygon::<f64>::try_from_wkt_str("POLYGON((0 0 0, 4 0 -4, 4 4 4, 0 4 8, 0 0 0))").expect("valid WKT");
+    /// let b = Polygon::<f64>::try_from_wkt_str("POLYGON((1 1 1, 4 0 -4, 4 4 4, 0 4 8, 1 1 1))").expect("valid WKT");
     /// let im = a.relate(&b);
     /// assert!(im.matches("212F11FF2").expect("valid DE-9IM spec"));
     /// assert!(im.matches("TTT***FF2").expect("valid DE-9IM spec"));

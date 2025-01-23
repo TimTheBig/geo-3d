@@ -630,7 +630,7 @@ impl<T: GeoFloat> CentroidOperation<T> {
 
         let accumulated_coord = ring.lines().fold(Coord::zero(), |accum, line| {
             use crate::MapCoords;
-            let line = line.map_coords(|coord!| c - shift);
+            let line = line.map_coords(|c| c - shift);
             let tmp = line.determinant();
             accum + (line.end + line.start) * tmp
         });

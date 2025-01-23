@@ -124,7 +124,7 @@ mod test {
         let point = Point::new(0.0, 1.0);
         assert_eq!(line.line_locate_point(&point), Some(0.5));
 
-        let point = Point::new(1.0, 1.0);
+        let point = Point::new(1.0, 1.0, 1.0);
         assert_eq!(line.line_locate_point(&point), Some(1.0));
 
         let point = Point::new(2.0, 1.0);
