@@ -1,6 +1,5 @@
 use crate::{CoordNum, Geometry};
 
-use alloc::vec;
 use alloc::vec::Vec;
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
@@ -84,18 +83,8 @@ impl<T: CoordNum> Default for GeometryCollection<T> {
 }
 
 impl<T: CoordNum> GeometryCollection<T> {
-    /// Return an empty GeometryCollection
-    #[deprecated(
-        note = "Will be replaced with a parametrized version in upcoming version. Use GeometryCollection::default() instead"
-    )]
-    pub fn new() -> Self {
-        GeometryCollection::default()
-    }
-
-    /// DO NOT USE!
-    /// This fn will be renamed to `new` in the upcoming version.
-    /// This fn is not marked as deprecated because it would require extensive refactoring of the geo code.
-    pub fn new_from(value: Vec<Geometry<T>>) -> Self {
+    /// Returns a new GeometryCollection with the given `Vec`
+    pub fn new(value: Vec<Geometry<T>>) -> Self {
         Self(value)
     }
 
@@ -107,15 +96,6 @@ impl<T: CoordNum> GeometryCollection<T> {
     /// Is this GeometryCollection empty
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
-    }
-}
-
-/// **DO NOT USE!** Deprecated since 0.7.5.
-///
-/// Use `GeometryCollection::from(vec![geom])` instead.
-impl<T: CoordNum, IG: Into<Geometry<T>>> From<IG> for GeometryCollection<T> {
-    fn from(x: IG) -> Self {
-        Self(vec![x.into()])
     }
 }
 
@@ -331,8 +311,8 @@ mod tests {
 
     #[test]
     fn from_vec() {
-        let gc = GeometryCollection::from(vec![Point::new(1i32, 2, 3)]);
+        let gc = GeometryCollection::from(vec![Point::new(1f32, 2., 3.)]);
         let p = Point::try_from(gc[0].clone()).unwrap();
-        assert_eq!(p.y(), 2);
+        assert_eq!(p.y(), 2.);
     }
 }

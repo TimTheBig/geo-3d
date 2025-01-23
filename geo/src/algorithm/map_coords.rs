@@ -584,14 +584,14 @@ impl<T: CoordNum, NT: CoordNum> MapCoords<T, NT> for GeometryCollection<T> {
     type Output = GeometryCollection<NT>;
 
     fn map_coords(&self, func: impl Fn(Coord<T>) -> Coord<NT> + Copy) -> Self::Output {
-        GeometryCollection::new_from(self.iter().map(|g| g.map_coords(func)).collect())
+        GeometryCollection::new(self.iter().map(|g| g.map_coords(func)).collect())
     }
 
     fn try_map_coords<E>(
         &self,
         func: impl Fn(Coord<T>) -> Result<Coord<NT>, E> + Copy,
     ) -> Result<Self::Output, E> {
-        Ok(GeometryCollection::new_from(
+        Ok(GeometryCollection::new(
             self.0
                 .iter()
                 .map(|g| g.try_map_coords(func))
@@ -693,6 +693,7 @@ impl<T: CoordNum> MapCoordsInPlace<T> for Triangle<T> {
 
 #[cfg(test)]
 mod test {
+    use std::ops::Add;
     use super::{MapCoords, MapCoordsInPlace};
     use crate::{
         coord, polygon, Coord, Geometry, GeometryCollection, Line, LineString, MultiLineString,
@@ -926,11 +927,11 @@ mod test {
         let p1 = Geometry::Point(Point::new(10., 10.));
         let line1 = Geometry::LineString(LineString::from(vec![(0., 0.), (1., 2.)]));
 
-        let gc = GeometryCollection::new_from(vec![p1, line1]);
+        let gc = GeometryCollection::new(vec![p1, line1]);
 
         assert_eq!(
             gc.map_coords(|Coord { x, y, z }| (x + 10., y + 100.).into()),
-            GeometryCollection::new_from(vec![
+            GeometryCollection::new(vec![
                 Geometry::Point(Point::new(20., 110.)),
                 Geometry::LineString(LineString::from(vec![(10., 100.), (11., 102.)])),
             ])

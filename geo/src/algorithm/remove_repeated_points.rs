@@ -138,7 +138,7 @@ impl<T: CoordNum> RemoveRepeatedPoints<T> for GeometryCollection<T> {
     /// Create a GeometryCollection with (consecutive) repeated points
     /// of its geometries removed.
     fn remove_repeated_points(&self) -> Self {
-        GeometryCollection::new_from(self.0.iter().map(|g| g.remove_repeated_points()).collect())
+        GeometryCollection::new(self.0.iter().map(|g| g.remove_repeated_points()).collect())
     }
 
     /// Remove (consecutive) repeated points of its geometries from a GeometryCollection inplace.
@@ -387,13 +387,13 @@ mod test {
 
     #[test]
     fn test_remove_repeated_points_geometrycollection() {
-        let gc = GeometryCollection::new_from(vec![
+        let gc = GeometryCollection::new(vec![
             make_test_mp1().into(),
             make_test_line1().into(),
             make_test_poly1().into(),
         ]);
 
-        let expected = GeometryCollection::new_from(vec![
+        let expected = GeometryCollection::new(vec![
             make_result_mp1().into(),
             make_result_line1().into(),
             make_result_poly1().into(),
@@ -458,14 +458,14 @@ mod test {
 
     #[test]
     fn test_remove_repeated_points_mut_geometrycollection() {
-        let mut gc = GeometryCollection::new_from(vec![
+        let mut gc = GeometryCollection::new(vec![
             make_test_mp1().into(),
             make_test_line1().into(),
             make_test_poly1().into(),
         ]);
         gc.remove_repeated_points_mut();
 
-        let expected = GeometryCollection::new_from(vec![
+        let expected = GeometryCollection::new(vec![
             make_result_mp1().into(),
             make_result_line1().into(),
             make_result_poly1().into(),
