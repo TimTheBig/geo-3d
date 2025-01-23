@@ -37,9 +37,9 @@
     function onUpdate() {
       if (matcher.matches) {
         lightSchemeIcon.remove();
-        document.head.append(darkSchemeIcon);
+        document.head.append(darkSchemeIcons);
       } else {
-        document.head.append(lightSchemeIcon);
+        document.head.append(lightSchemeIcons);
         darkSchemeIcon.remove();
       }
     }
