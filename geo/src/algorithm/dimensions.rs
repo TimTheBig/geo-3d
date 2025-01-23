@@ -12,8 +12,8 @@ use crate::{CoordNum, GeoNum, GeometryCow};
 /// use geo::dimensions::{HasDimensions, Dimensions};
 ///
 /// let point = Point::new(0.0, 5.0);
-/// let line_string = line_string![(x: 0.0, y: 0.0), (x: 5.0, y: 5.0), (x: 0.0, y: 5.0)];
-/// let rect = Rect::new((0.0, 0.0), (10.0, 10.0));
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 5.0, y: 5.0, z: 5.0), (x: 0.0, y: 5.0)];
+/// let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
 /// assert_eq!(Dimensions::ZeroDimensional, point.dimensions());
 /// assert_eq!(Dimensions::OneDimensional, line_string.dimensions());
 /// assert_eq!(Dimensions::TwoDimensional, rect.dimensions());
@@ -32,6 +32,8 @@ pub enum Dimensions {
     OneDimensional,
     /// Dimension of a surface
     TwoDimensional,
+    /// Dimension of a geometry
+    ThreeDimensional,
 }
 
 /// Operate on the dimensionality of geometries.
@@ -207,10 +209,10 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
     /// use geo_types::line_string;
     /// use geo::dimensions::{HasDimensions, Dimensions};
     ///
-    /// let ls = line_string![(x: 0.,  y: 0.), (x: 0., y: 1.), (x: 1., y: 1.)];
+    /// let ls = line_string![(x: 0.,  y: 0., z: 0.), (x: 0., y: 1., z: 0.), (x: 1., y: 1., z: 1.)];
     /// assert_eq!(Dimensions::ZeroDimensional, ls.boundary_dimensions());
     ///
-    /// let ls = line_string![(x: 0.,  y: 0.), (x: 0., y: 1.), (x: 1., y: 1.), (x: 0., y: 0.)];
+    /// let ls = line_string![(x: 0.,  y: 0., z:0.), (x: 0., y: 1.), (x: 1., y: 1., z:1.), (x: 0., y: 0., z: 0.)];
     /// assert_eq!(Dimensions::Empty, ls.boundary_dimensions());
     ///```
     fn boundary_dimensions(&self) -> Dimensions {
@@ -222,6 +224,7 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => unreachable!("line_string cannot be 2 dimensional"),
+            Dimensions::ThreeDimensional => unreachable!("line_string cannot be 3 dimensional"),
         }
     }
 }
@@ -233,6 +236,7 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
 
     fn dimensions(&self) -> Dimensions {
         use crate::CoordsIter;
+
         let mut coords = self.exterior_coords_iter();
 
         let Some(first) = coords.next() else {
@@ -250,7 +254,20 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
             return Dimensions::OneDimensional;
         };
 
-        Dimensions::TwoDimensional
+        // Check if all points lie on the same plane or axis
+        let has_varying_x = self
+            .rings().flatten()
+            .any(|c| c.x != first.x || c.y != first.y);
+
+        let has_varying_z = self
+            .rings().flatten()
+            .any(|c| c.z != first.z);
+
+        if has_varying_x && has_varying_z {
+            Dimensions::ThreeDimensional
+        } else {
+            Dimensions::TwoDimensional
+        }
     }
 
     fn boundary_dimensions(&self) -> Dimensions {
@@ -258,6 +275,7 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
+            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional
         }
     }
 }
@@ -297,6 +315,7 @@ impl<C: CoordNum> HasDimensions for MultiLineString<C> {
                     return Dimensions::OneDimensional;
                 }
                 Dimensions::TwoDimensional => unreachable!("MultiLineString cannot be 2d"),
+                Dimensions::ThreeDimensional => unreachable!("MultiLineString cannot be 3d"),
             }
         }
         max
@@ -311,6 +330,7 @@ impl<C: CoordNum> HasDimensions for MultiLineString<C> {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => unreachable!("line_string cannot be 2 dimensional"),
+            Dimensions::ThreeDimensional => unreachable!("MultiLineString cannot be 3d"),
         }
     }
 }
@@ -324,12 +344,13 @@ impl<C: CoordNum> HasDimensions for MultiPolygon<C> {
         let mut max = Dimensions::Empty;
         for geom in self {
             let dimensions = geom.dimensions();
-            if dimensions == Dimensions::TwoDimensional {
+            if dimensions == Dimensions::ThreeDimensional {
                 // short-circuit since we know none can be larger
-                return Dimensions::TwoDimensional;
+                return Dimensions::ThreeDimensional;
             }
             max = max.max(dimensions)
         }
+
         max
     }
 
@@ -338,6 +359,7 @@ impl<C: CoordNum> HasDimensions for MultiPolygon<C> {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
+            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional,
         }
     }
 }
@@ -355,12 +377,13 @@ impl<C: GeoNum> HasDimensions for GeometryCollection<C> {
         let mut max = Dimensions::Empty;
         for geom in self {
             let dimensions = geom.dimensions();
-            if dimensions == Dimensions::TwoDimensional {
+            if dimensions == Dimensions::ThreeDimensional {
                 // short-circuit since we know none can be larger
-                return Dimensions::TwoDimensional;
+                return Dimensions::ThreeDimensional;
             }
             max = max.max(dimensions)
         }
+
         max
     }
 
@@ -388,11 +411,17 @@ impl<C: CoordNum> HasDimensions for Rect<C> {
         if self.min() == self.max() {
             // degenerate rectangle is a point
             Dimensions::ZeroDimensional
-        } else if self.min().x == self.max().x || self.min().y == self.max().y {
+        } else if (self.min().x == self.max().x && self.min().y == self.max().y)
+            || (self.min().x == self.max().x && self.min().z == self.max().z)
+            || (self.min().y == self.max().y && self.min().z == self.max().z)
+        {
             // degenerate rectangle is a line
             Dimensions::OneDimensional
-        } else {
+        } else if self.min().x == self.max().x || self.min().y == self.max().y || self.min().z == self.max().z {
+            // only two dimensions are used
             Dimensions::TwoDimensional
+        } else {
+            Dimensions::ThreeDimensional
         }
     }
 
@@ -404,6 +433,7 @@ impl<C: CoordNum> HasDimensions for Rect<C> {
             Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
+            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional,
         }
     }
 }
@@ -415,17 +445,28 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
 
     fn dimensions(&self) -> Dimensions {
         use crate::Kernel;
-        if Collinear == C::Ker::orient2d(self.0, self.1, self.2) {
-            if self.0 == self.1 && self.1 == self.2 {
-                // degenerate triangle is a point
-                Dimensions::ZeroDimensional
-            } else {
-                // degenerate triangle is a line
-                Dimensions::OneDimensional
-            }
-        } else {
-            Dimensions::TwoDimensional
+
+        // Check if all points are identical
+        if self.0 == self.1 && self.1 == self.2 {
+            return Dimensions::ZeroDimensional; // Triangle collapses to a single point
         }
+
+        let cross_product = (self.1 - self.0).cross(self.2 - self.0);
+
+        // Check if the triangle is degenerate and lies on a single line
+        if C::Ker::orient2d(self.0, self.1, self.2) == Collinear {
+            // Check if the third point is collinear in 3D space (all points lie on the same line)
+            if cross_product.magnitude_squared() == C::zero() {
+                return Dimensions::OneDimensional; // Degenerate triangle is a line
+            }
+        }
+
+        // Check if all points lie in the same plane
+        if cross_product.magnitude_squared() == C::zero() {
+            return Dimensions::TwoDimensional; // Triangle lies in a plane
+        }
+
+        Dimensions::ThreeDimensional // Triangle is truly 3D
     }
 
     fn boundary_dimensions(&self) -> Dimensions {
@@ -436,6 +477,7 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
             Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
+            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional,
         }
     }
 }
@@ -444,14 +486,14 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
 mod tests {
     use super::*;
 
-    const ONE: Coord = crate::coord!(x: 1.0, y: 1.0);
+    const ONE: Coord = crate::coord!(x: 1.0, y: 1.0, z: 1.0);
     use crate::wkt;
 
     #[test]
     fn point() {
         assert_eq!(
             Dimensions::ZeroDimensional,
-            wkt!(POINT(1.0 1.0)).dimensions()
+            wkt!(POINT(1.0 1.0 1.0)).dimensions()
         );
     }
 
@@ -459,7 +501,7 @@ mod tests {
     fn line_string() {
         assert_eq!(
             Dimensions::OneDimensional,
-            wkt!(LINESTRING(1.0 1.0,2.0 2.0,3.0 3.0)).dimensions()
+            wkt!(LINESTRING(1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0)).dimensions()
         );
     }
 
@@ -467,7 +509,7 @@ mod tests {
     fn polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
-            wkt!(POLYGON((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0))).dimensions()
+            wkt!(POLYGON((1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0, 1.0 1.0 1.0))).dimensions()
         );
     }
 
@@ -475,7 +517,7 @@ mod tests {
     fn multi_point() {
         assert_eq!(
             Dimensions::ZeroDimensional,
-            wkt!(MULTIPOINT(1.0 1.0)).dimensions()
+            wkt!(MULTIPOINT(1.0 1.0 1.0)).dimensions()
         );
     }
 
@@ -483,7 +525,7 @@ mod tests {
     fn multi_line_string() {
         assert_eq!(
             Dimensions::OneDimensional,
-            wkt!(MULTILINESTRING((1.0 1.0,2.0 2.0,3.0 3.0))).dimensions()
+            wkt!(MULTILINESTRING((1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0))).dimensions()
         );
     }
 
@@ -491,7 +533,7 @@ mod tests {
     fn multi_polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
-            wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0)))).dimensions()
+            wkt!(MULTIPOLYGON(((1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0, 1.0 1.0 1.0)))).dimensions()
         );
     }
 
@@ -567,11 +609,11 @@ mod tests {
         fn line_string_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(LINESTRING(1.0 1.0)).dimensions()
+                wkt!(LINESTRING(1.0 1.0 1.0)).dimensions()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(LINESTRING(1.0 1.0,1.0 1.0)).dimensions()
+                wkt!(LINESTRING(1.0 1.0 1.0, 1.0 1.0 1.0)).dimensions()
             );
         }
 
@@ -579,11 +621,11 @@ mod tests {
         fn polygon_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(POLYGON((1.0 1.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0 1.0))).dimensions()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(POLYGON((1.0 1.0,1.0 1.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0 1.0, 1.0 1.0 1.0))).dimensions()
             );
         }
 
@@ -591,7 +633,7 @@ mod tests {
         fn polygon_collapsed_to_line() {
             assert_eq!(
                 Dimensions::OneDimensional,
-                wkt!(POLYGON((1.0 1.0,2.0 2.0))).dimensions()
+                wkt!(POLYGON((1.0 1.0 1.0, 2.0 2.0 2.0))).dimensions()
             );
         }
 
@@ -599,15 +641,15 @@ mod tests {
         fn multi_line_string_with_line_string_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0 1.0))).dimensions()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0,1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0 1.0, 1.0 1.0 1.0))).dimensions()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTILINESTRING((1.0 1.0),(1.0 1.0))).dimensions()
+                wkt!(MULTILINESTRING((1.0 1.0 1.0), (1.0 1.0 1.0))).dimensions()
             );
         }
 
@@ -615,11 +657,11 @@ mod tests {
         fn multi_polygon_with_polygon_collapsed_to_point() {
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0 1.0)))).dimensions()
             );
             assert_eq!(
                 Dimensions::ZeroDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0,1.0 1.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0 1.0, 1.0 1.0 1.0)))).dimensions()
             );
         }
 
@@ -627,7 +669,7 @@ mod tests {
         fn multi_polygon_with_polygon_collapsed_to_line() {
             assert_eq!(
                 Dimensions::OneDimensional,
-                wkt!(MULTIPOLYGON(((1.0 1.0,2.0 2.0)))).dimensions()
+                wkt!(MULTIPOLYGON(((1.0 1.0 1.0, 2.0 2.0 2.0)))).dimensions()
             );
         }
     }
