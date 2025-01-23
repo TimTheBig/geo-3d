@@ -16,7 +16,7 @@
 title: Geospatial Primitives & Algorithms
 description: Reference materials, and additional documentation
 github_username: georust
-favicon: "./logo.png" # relative path to site's favicon
+favicon: "./geo-3d/logo.png" # relative path to site's favicon
 
 # Build settings
 remote_theme: abhinavs/moonwalk
