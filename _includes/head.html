@@ -31,16 +31,16 @@
     matcher.addListener(onUpdate);
     onUpdate();
 
-    lightSchemeIcons = document.querySelector('link.light-scheme-icon');
-    darkSchemeIcons = document.querySelector('link.dark-scheme-icon');
+    const lightSchemeIcons = document.querySelector('link.light-scheme-icon');
+    const darkSchemeIcons = document.querySelector('link.dark-scheme-icon');
 
     function onUpdate() {
       if (matcher.matches) {
-        lightSchemeIcon.remove();
+        lightSchemeIcons.remove();
         document.head.append(darkSchemeIcons);
       } else {
         document.head.append(lightSchemeIcons);
-        darkSchemeIcon.remove();
+        darkSchemeIcons.remove();
       }
     }
   </script>
