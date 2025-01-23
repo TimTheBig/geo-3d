@@ -13,7 +13,7 @@ use crate::{
 
 /// Convert any coordinate to a [`Coord`].
 ///
-/// Only the first two dimensions will be kept.
+/// Only the first three dimensions will be kept.
 pub trait ToGeoCoord<T: CoordNum> {
     /// Convert to a geo_types [`Coord`].
     fn to_coord(&self) -> Coord<T>;
@@ -24,6 +24,7 @@ impl<T: CoordNum, G: CoordTrait<T = T>> ToGeoCoord<T> for G {
         Coord {
             x: self.x(),
             y: self.y(),
+            z: self.z(),
         }
     }
 }
@@ -228,7 +229,7 @@ pub trait ToGeoGeometry<T: CoordNum> {
 
     /// Convert to a geo_types [`Geometry`].
     ///
-    /// Empty Geometrys will return `None`.
+    /// Empty Geometries will return `None`.
     fn try_to_geometry(&self) -> Option<Geometry<T>>;
 }
 
@@ -284,6 +285,6 @@ impl<T: CoordNum, G: GeometryCollectionTrait<T = T>> ToGeoGeometryCollection<T> 
                 return None;
             }
         }
-        Some(GeometryCollection::new_from(geo_geometries))
+        Some(GeometryCollection::from(geo_geometries))
     }
 }
