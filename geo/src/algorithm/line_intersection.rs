@@ -227,56 +227,74 @@ fn nearest_endpoint<F: GeoFloat>(p: Line<F>, q: Line<F>) -> Coord<F> {
     nearest_pt
 }
 
+/// Computes a segment intersection using homogeneous coordinates in 3D.
+/// Round-off error can cause the raw computation to fail,
+/// (usually due to the segments being approximately parallel).
 fn raw_line_intersection<F: GeoFloat>(p: Line<F>, q: Line<F>) -> Option<Coord<F>> {
     let p_min_x = p.start.x.min(p.end.x);
     let p_min_y = p.start.y.min(p.end.y);
+    let p_min_z = p.start.z.min(p.end.z);
     let p_max_x = p.start.x.max(p.end.x);
     let p_max_y = p.start.y.max(p.end.y);
+    let p_max_z = p.start.z.max(p.end.z);
 
     let q_min_x = q.start.x.min(q.end.x);
     let q_min_y = q.start.y.min(q.end.y);
+    let q_min_z = q.start.z.min(q.end.z);
     let q_max_x = q.start.x.max(q.end.x);
     let q_max_y = q.start.y.max(q.end.y);
+    let q_max_z = q.start.z.max(q.end.z);
 
     let int_min_x = p_min_x.max(q_min_x);
     let int_max_x = p_max_x.min(q_max_x);
     let int_min_y = p_min_y.max(q_min_y);
     let int_max_y = p_max_y.min(q_max_y);
+    let int_min_z = p_min_z.max(q_min_z);
+    let int_max_z = p_max_z.min(q_max_z);
 
     let two = F::one() + F::one();
     let mid_x = (int_min_x + int_max_x) / two;
     let mid_y = (int_min_y + int_max_y) / two;
+    let mid_z = (int_min_z + int_max_z) / two;
 
     // condition ordinate values by subtracting midpoint
     let p1x = p.start.x - mid_x;
     let p1y = p.start.y - mid_y;
+    let p1z = p.start.z - mid_z;
     let p2x = p.end.x - mid_x;
     let p2y = p.end.y - mid_y;
+    let p2z = p.end.z - mid_z;
     let q1x = q.start.x - mid_x;
     let q1y = q.start.y - mid_y;
+    let q1z = q.start.z - mid_z;
     let q2x = q.end.x - mid_x;
     let q2y = q.end.y - mid_y;
+    let q2z = q.end.z - mid_z;
 
     // unrolled computation using homogeneous coordinates eqn
-    let px = p1y - p2y;
-    let py = p2x - p1x;
-    let pw = p1x * p2y - p2x * p1y;
+    let px = p1y * p2z - p1z * p2y;
+    let py = p1z * p2x - p1x * p2z;
+    let pz = p1x * p2y - p1y * p2x;
+    let pw = -(p1x * (p2y * p2z) - p1y * (p2x * p2z) + p1z * (p2x * p2y));
 
-    let qx = q1y - q2y;
-    let qy = q2x - q1x;
-    let qw = q1x * q2y - q2x * q1y;
+    let qx = q1y * q2z - q1z * q2y;
+    let qy = q1z * q2x - q1x * q2z;
+    let qz = q1x * q2y - q1y * q2x;
+    let qw = -(q1x * (q2y * q2z) - q1y * (q2x * q2z) + q1z * (q2x * q2y));
 
     let xw = py * qw - qy * pw;
-    let yw = qx * pw - px * qw;
+    let yw = qz * pw - pz * qw;
+    let zw = px * qy - qx * py;
     let w = px * qy - qx * py;
 
-    let x_int = xw / w;
-    let y_int = yw / w;
-
     // check for parallel lines
-    if (x_int.is_nan() || x_int.is_infinite()) || (y_int.is_nan() || y_int.is_infinite()) || (z_int.is_nan() || z_int.is_infinite()) {
+    if w.is_zero() || xw.is_nan() || yw.is_nan() || zw.is_nan() || w.is_nan() {
         None
     } else {
+        let x_int = xw / w;
+        let y_int = yw / w;
+        let z_int = zw / w;
+
         // de-condition intersection point
         Some(coord! {
             x: x_int + mid_x,
