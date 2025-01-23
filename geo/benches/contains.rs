@@ -19,12 +19,12 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("point outside simple polygon", |bencher| {
         let polygon = polygon![
-            (x: 0.0f64, y: 0.0),
+            (x: 0.0f64, y: 0.0, z: 0.0),
             (x: 1.0, y: 0.0),
             (x: 1.0, y: 1.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0, y: 0.0, z: 0.0),
         ];
-        let point = Point::new(2.0, 2.0);
+        let point = Point::new(2.0, 2.0, 2.0);
         bencher.iter(|| {
             assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&point)));
         });
@@ -66,22 +66,22 @@ fn criterion_benchmark(c: &mut Criterion) {
             // comb teeth -> |\/\/\/\/\/\/|      *  <---point
             //               |____________|
             let polygon = polygon!(
-                (x: 0 ,y: 0),
-                (x: 0 ,y: 10),
-                (x: 1 ,y: 5),
-                (x: 2 ,y: 10),
-                (x: 3 ,y: 5),
-                (x: 4 ,y: 10),
-                (x: 5 ,y: 5),
-                (x: 6 ,y: 10),
-                (x: 7 ,y: 5),
-                (x: 8 ,y: 10),
-                (x: 9 ,y: 10),
-                (x: 10,y:  10),
-                (x: 10,y:  0),
-                (x: 0 ,y: 0)
+                (x: 0., y: 0., z: 0.),
+                (x: 0., y: 10., z: ),
+                (x: 1., y: 5., z:),
+                (x: 2., y: 10., z:),
+                (x: 3., y: 5., z:),
+                (x: 4., y: 10., z:),
+                (x: 5., y: 5., z:),
+                (x: 6., y: 10., z:),
+                (x: 7., y: 5., z:),
+                (x: 8., y: 10., z:),
+                (x: 9., y: 10., z:),
+                (x: 10.,y: 10., z:),
+                (x: 10.,y: 0., z:),
+                (x: 0., y: 0., z:)
             );
-            let point = point!(x: 20, y: 7);
+            let point = point!(x: 20, y: 7, z:);
 
             bencher.iter(|| {
                 assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&point)));
@@ -113,8 +113,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle contains point", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (5., 10.)]);
-        let point = Point::new(5., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0.), (5., 10.)]);
+        let point = Point::new(5., 5., 5.);
 
         bencher.iter(|| {
             assert!(criterion::black_box(&triangle).contains(criterion::black_box(&point)));
@@ -122,7 +122,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle contains point on edge", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (6., 10.)]);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0.), (6., 10.)]);
         let point = Point::new(3., 5.);
 
         bencher.iter(|| {

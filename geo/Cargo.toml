@@ -71,10 +71,6 @@ name = "vincenty_distance"
 harness = false
 
 [[bench]]
-name = "geodesic_distance"
-harness = false
-
-[[bench]]
 name = "extremes"
 harness = false
 

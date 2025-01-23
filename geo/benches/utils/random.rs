@@ -15,11 +15,12 @@ use rand_distr::{Distribution, Normal, Standard};
 
 #[inline]
 pub fn uniform_point<R: Rng>(rng: &mut R, bounds: Rect<f64>) -> Coord<f64> {
-    let coords: [f64; 2] = rng.sample(Standard);
+    let coords: [f64; 3] = rng.sample(Standard);
     let dims = bounds.max() - bounds.min();
     Coord {
         x: bounds.min().x + dims.x * coords[0],
         y: bounds.min().y + dims.y * coords[1],
+        z: bounds.min().z + dims.z * coords[2],
     }
 }
 
@@ -31,21 +32,22 @@ pub fn uniform_line<R: Rng>(rng: &mut R, bounds: Rect<f64>) -> Line<f64> {
 #[inline]
 pub fn uniform_line_with_length<R: Rng>(rng: &mut R, bounds: Rect<f64>, length: f64) -> Line<f64> {
     let start = uniform_point(rng, bounds);
-    let line = Line::new(start, start + (length, 0.).into());
+    let line = Line::new(start, start + (length, 0., 0.).into());
     let angle = rng.sample::<f64, _>(Standard) * 2. * PI;
     line.rotate_around_point(angle, start.into())
 }
 
 pub fn scaled_generator(dims: Coord<f64>, scale: usize) -> impl Fn() -> Line<f64> {
     let scaling: f64 = (1 << scale) as f64;
-    let bounds = Rect::new([0., 0.].into(), dims / scaling);
-    let shift_bounds = Rect::new([0., 0.].into(), dims - (dims / scaling));
+    let bounds = Rect::new([0., 0., 0.].into(), dims / scaling);
+    let shift_bounds = Rect::new([0., 0., 0.].into(), dims - (dims / scaling));
 
     move || {
         let shift = uniform_point(&mut thread_rng(), shift_bounds);
         uniform_line(&mut thread_rng(), bounds).map_coords(|mut c| {
             c.x += shift.x;
             c.y += shift.y;
+            c.z += shift.z;
             c
         })
     }
@@ -65,7 +67,7 @@ pub fn circular_polygon<R: Rng>(mut rng: R, steps: usize) -> Polygon<f64> {
         // angle += ang_nudge;
 
         let (sin, cos) = angle.sin_cos();
-        ring.push((r * cos, r * sin).into());
+        ring.push((r * cos, r * sin, r * cos).into());
 
         angle += ang_step;
     });
@@ -107,14 +109,20 @@ pub fn normalize_polygon(poly: Polygon<f64>) -> Polygon<f64> {
     let dims = bounds.max() - bounds.min();
     let x_scale = 2. / dims.x;
     let y_scale = 2. / dims.y;
+    let z_scale = 2. / dims.z;
 
     let x_shift = -bounds.min().x * x_scale - 1.;
     let y_shift = -bounds.min().y * y_scale - 1.;
+    let z_shift = -bounds.min().z * z_scale - 1.;
     poly.map_coords(|mut c| {
         c.x *= x_scale;
         c.x += x_shift;
+
         c.y *= y_scale;
         c.y += y_shift;
+
+        c.z *= z_scale;
+        c.z += z_shift;
         c
     })
 }
