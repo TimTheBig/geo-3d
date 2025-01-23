@@ -29,10 +29,11 @@
   <script>
     matcher = window.matchMedia('(prefers-color-scheme: dark)');
     matcher.addListener(onUpdate);
-    onUpdate();
 
     let lightSchemeIcons = document.querySelector('link.light-scheme-icon');
     let darkSchemeIcons = document.querySelector('link.dark-scheme-icon');
+
+    onUpdate();
 
     function onUpdate() {
       if (matcher.matches) {
