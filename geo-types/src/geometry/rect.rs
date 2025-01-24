@@ -245,6 +245,7 @@ impl<T: CoordNum> Rect<T> {
         ]
     }
 
+    // Returns the spatial representation of the `Rect`
     pub fn to_coords(self) -> [Coord<T>; 8] {
         [
             // top
@@ -553,23 +554,23 @@ mod test {
 
     #[test]
     fn rect() {
-        let rect = Rect::new((10, 10, 10), (20, 20, 20));
-        assert_eq!(rect.min, coord! { x: 10, y: 10, z: 10 });
-        assert_eq!(rect.max, coord! { x: 20, y: 20, z: 20 });
+        let rect = Rect::new((10., 10., 10.), (20., 20., 20.));
+        assert_eq!(rect.min, coord! { x: 10., y: 10., z: 10. });
+        assert_eq!(rect.max, coord! { x: 20., y: 20., z: 20. });
 
-        let rect = Rect::new((20, 20, 20), (10, 10, 10));
-        assert_eq!(rect.min, coord! { x: 10, y: 10, z: 10 });
-        assert_eq!(rect.max, coord! { x: 20, y: 20, z: 20 });
+        let rect = Rect::new((20., 20., 20.), (10., 10., 10.));
+        assert_eq!(rect.min, coord! { x: 10., y: 10., z: 10. });
+        assert_eq!(rect.max, coord! { x: 20., y: 20., z: 20. });
 
-        let rect = Rect::new((10, 20, 20), (20, 10, 10));
-        assert_eq!(rect.min, coord! { x: 10, y: 10, z: 10 });
-        assert_eq!(rect.max, coord! { x: 20, y: 20, z: 20 });
+        let rect = Rect::new((10., 20., 20.), (20., 10., 10.));
+        assert_eq!(rect.min, coord! { x: 10., y: 10., z: 10. });
+        assert_eq!(rect.max, coord! { x: 20., y: 20., z: 20. });
     }
 
     #[test]
     fn rect_width() {
-        let rect = Rect::new((10, 10, 10), (20, 20, 20));
-        assert_eq!(rect.width(), 10);
+        let rect = Rect::new((10., 10., 10.), (20., 20., 20.));
+        assert_eq!(rect.width(), 10.);
     }
 
     #[test]

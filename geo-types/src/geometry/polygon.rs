@@ -1,4 +1,4 @@
-use crate::{CoordNum, LineString, Point, Rect, Triangle};
+use crate::{coord, CoordNum, LineString, Point, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
 use num_traits::{Float, Signed};
@@ -469,6 +469,17 @@ impl<T: CoordNum> Polygon<T> {
     /// ```
     pub fn num_interior_rings(&self) -> usize {
         self.interiors.len()
+    }
+
+    /// Makes a `Polygon` from a 2D shape, with a copy of the shape at the start and end heights
+    pub fn from_2d_with_height(shape: &[(T, T)], start_height: T, end_height: T) -> Self {
+        let exterior =
+            // start height
+            shape.iter().map(|p| coord!(p.0, p.1, start_height))
+            // end height
+            .chain(shape.iter().map(|p| coord!(p.0, p.1, end_height)))
+            .collect();
+        Polygon::new(exterior, vec![])
     }
 }
 
