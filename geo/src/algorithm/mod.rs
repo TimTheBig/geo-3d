@@ -242,3 +242,7 @@ pub use monotone::{monotone_subdivision, MonoPoly, MonotonicPolygons};
 
 pub mod validation;
 pub use validation::Validation;
+
+/// Volume of geometry
+pub mod volume;
+pub use volume::Volume;

@@ -335,6 +335,11 @@ impl<T: CoordNum> LineString<T> {
     pub fn is_closed(&self) -> bool {
         self.0.first() == self.0.last()
     }
+
+    /// The 3D eqlivelent of `is_closed`, this is required to calculate volume
+    pub fn is_enclosed(&self) -> bool {
+        todo!("requawer two connections per point for polygon")
+    }
 }
 
 /// Turn a [`Vec`] of [`Point`]-like objects into a [`LineString`].

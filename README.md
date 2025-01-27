@@ -1,8 +1,8 @@
-[![geo](https://avatars1.githubusercontent.com/u/10320338?v=4&s=50)](https://github.com/georust)
+[![geo](https://avatars1.githubusercontent.com/u/10320338?v=4&s=50)](https://github.com/TimTheBig)
 
 <!-- todo update -->
 [![Coverage Status](https://img.shields.io/coverallsCoverage/github/georust/geo.svg)](https://coveralls.io/github/georust/geo?branch=trying)
-[![Documentation](https://img.shields.io/docsrs/geo/latest.svg)](https://docs.rs/geo)
+[![Documentation](https://img.shields.io/docsrs/geo-3d/latest.svg)](https://docs.rs/geo-3d)
 
 # geo 3D
 
@@ -11,10 +11,10 @@
 ### TODO
 - make all methods work with 3d
 - fix all doctests/tests
-- add volume calculation mod
+- add test/benchs for the volume calculation mod
 
 The `geo-3d` crate provides geospatial primitive types such as `Point`, `LineString`, and `Polygon`, and provides algorithms and operations such as:
-- Area and centroid calculation
+- Volume, Area and centroid calculation
 - Simplification and convex hull operations
 - Euclidean and Haversine distance measurement
 - Intersection checks
