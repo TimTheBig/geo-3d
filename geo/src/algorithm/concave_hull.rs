@@ -48,7 +48,7 @@ pub trait ConcaveHull {
 
 impl<T> ConcaveHull for Polygon<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
@@ -59,7 +59,7 @@ where
 
 impl<T> ConcaveHull for MultiPolygon<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
@@ -74,7 +74,7 @@ where
 
 impl<T> ConcaveHull for LineString<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
@@ -84,7 +84,7 @@ where
 
 impl<T> ConcaveHull for MultiLineString<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: T) -> Polygon<T> {
@@ -95,7 +95,7 @@ where
 
 impl<T> ConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: T) -> Polygon<T> {
@@ -192,7 +192,7 @@ where
 // https://github.com/mapbox/concaveman/blob/54838e1/index.js#L11
 fn concave_hull<T>(coords: &mut [Coord<T>], concavity: T) -> LineString<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     let hull = qhull::quick_hull(coords);
 

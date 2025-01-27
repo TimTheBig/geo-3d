@@ -40,7 +40,7 @@ pub trait KNearestConcaveHull {
 
 impl<T> KNearestConcaveHull for Vec<Point<T>>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -50,7 +50,7 @@ where
 
 impl<T> KNearestConcaveHull for [Point<T>]
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -60,7 +60,7 @@ where
 
 impl<T> KNearestConcaveHull for Vec<Coord<T>>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -70,7 +70,7 @@ where
 
 impl<T> KNearestConcaveHull for [Coord<T>]
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -80,7 +80,7 @@ where
 
 impl<T> KNearestConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -90,7 +90,7 @@ where
 
 fn concave_hull<'a, T>(coords: impl Iterator<Item = &'a Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: 'a + GeoFloat + RTreeNum,
+    T: 'a + GeoFloat + RTreeNum + Into<f64>,
 {
     let dataset = prepare_dataset(coords);
     concave_hull_inner(dataset, k)
@@ -154,7 +154,7 @@ where
 
 fn concave_hull_inner<T>(original_dataset: rstar::RTree<Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     let set_length = original_dataset.size();
     if set_length <= 3 {
@@ -214,7 +214,7 @@ where
 
 fn fall_back_hull<T>(dataset: &rstar::RTree<Coord<T>>) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoFloat + RTreeNum + Into<f64>,
 {
     let multipoint = MultiPoint::from(dataset.iter().cloned().collect::<Vec<Coord<T>>>());
     multipoint.convex_hull()
@@ -336,8 +336,8 @@ mod tests {
 
         let mut coords_mapped: Vec<&Coord<f32>> = coords.iter().collect();
 
-        let center = coord!(x: 0.0, y: 0.0);
-        let prev_coord = coord!(x: 1.0, y: 1.0);
+        let center = coord!(x: 0.0, y: 0.0, z: 0.0);
+        let prev_coord = coord!(x: 1.0, y: 1.0, z: 1.0);
 
         let expected = vec![&coords[3], &coords[1], &coords[2], &coords[0]];
 
