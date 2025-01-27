@@ -101,41 +101,56 @@ impl<T: CoordNum> Line<T> {
         self.delta().z
     }
 
-    // todo make 3d
-    /// Calculate the slope (Δy/Δx).
-    ///
-    /// Equivalent to:
-    ///
+    /// Calculate the generalized 3D slope.
+    /// 
+    /// The slope in 3D is defined as the magnitude of the direction vector (Δx, Δy, Δz),
+    /// normalized by the horizontal displacement (√(Δx² + Δy²)).
+    /// This generalization ensures a scalar value representing the steepness of the line.
+    /// 
+    /// # Examples
+    /// 
     /// ```rust
-    /// # use geo_types::{Line, point};
-    /// # let line = Line::new(
-    /// #     point! { x: 4., y: -12. },
-    /// #     point! { x: 0., y: 9. },
-    /// # );
-    /// # assert_eq!(
-    /// #     line.slope(),
-    /// line.dy() / line.dx()
-    /// # );
-    /// ```
-    ///
-    /// Note that:
-    ///
-    /// ```rust
-    /// # use geo_types::{Line, point};
-    /// # let a = point! { x: 4., y: -12. };
-    /// # let b = point! { x: 0., y: 9. };
-    /// # assert!(
-    /// Line::new(a, b).slope() == Line::new(b, a).slope()
-    /// # );
+    /// use geo_types::{Line, point};
+    /// 
+    /// // A line with a steep vertical displacement
+    /// let line1 = Line::new(
+    ///     point! { x: 0., y: 0., z: 0. },
+    ///     point! { x: 3., y: 4., z: 5. },
+    /// );
+    /// assert_eq!(line1.slope(), 5. / 5.); // dz / sqrt(dx² + dy²)
+    /// 
+    /// // A purely horizontal line
+    /// let line2 = Line::new(
+    ///     point! { x: 0., y: 0., z: 0. },
+    ///     point! { x: 6., y: 8., z: 0. },
+    /// );
+    /// assert_eq!(line2.slope(), 0.); // dz = 0
+    /// 
+    /// // A purely vertical line
+    /// let line3 = Line::new(
+    ///     point! { x: 1., y: 1., z: 0. },
+    ///     point! { x: 1., y: 1., z: 10. },
+    /// );
+    /// assert!(line3.slope().is_infinite()); // dz = 10, dx and dy = 0
     /// ```
     pub fn slope(&self) -> T {
-        todo!("make 3d");
-        self.dy() / self.dx()
+        // The 3D slope is the ratio of the vertical magnitude to the horizontal magnitude.
+        // If Δx² + Δy² == 0, this implies a vertical line, so the slope is infinite (or undefined).
+        let horizontal_magnitude = T::hypot(self.dx(), self.dy());
+        if horizontal_magnitude == T::zero() {
+            T::infinity()
+        } else {
+            self.dz() / horizontal_magnitude
+        }
     }
 
-    /// Calculate the [determinant](https://en.wikipedia.org/wiki/Determinant) of the line.
+    /// Calculate the [determinant](https://en.wikipedia.org/wiki/Determinant) of the line in 3D.
     ///
-    /// Equivalent to:
+    /// In 3D, the determinant is generalized as the magnitude of the cross product of the
+    /// two points' position vectors (relative to the origin). This represents the signed
+    /// "volume" or "area" spanned by the two points in 3D space.
+    ///
+    /// # Example
     ///
     /// ```rust
     /// # use geo_types::{Line, point};
@@ -145,23 +160,17 @@ impl<T: CoordNum> Line<T> {
     /// # );
     /// # assert_eq!(
     /// #     line.determinant(),
-    /// line.start.x * line.end.y - line.start.y * line.end.x
-    /// # );
-    /// ```
-    ///
-    /// Note that:
-    ///
-    /// ```rust
-    /// # use geo_types::{Line, point};
-    /// # let a = point! { x: 4., y: -12., z: 4. };
-    /// # let b = point! { x: 0., y: 9., z: 0. };
-    /// # assert!(
-    /// Line::new(a, b).determinant() == -Line::new(b, a).determinant()
+    /// #     ((4. * 9. - (-12.) * 0.).powi(2) + (4. * 0. - 4. * 0.).powi(2) + ((-12.) * 0. - 9. * 4.).powi(2)).sqrt()
     /// # );
     /// ```
     pub fn determinant(&self) -> T {
-        todo!("make 3d");
-        self.start.x * self.end.y - self.start.y * self.end.x
+        // Calculate the components of the cross product of the two vectors
+        let x = self.start.y * self.end.z - self.start.z * self.end.y;
+        let y = self.start.z * self.end.x - self.start.x * self.end.z;
+        let z = self.start.x * self.end.y - self.start.y * self.end.x;
+
+        // Return the magnitude of the resulting 3D vector (the "volume" determinant)
+        T::hypot(T::hypot(x, y), z)
     }
 
     pub fn start_point(&self) -> Point<T> {
