@@ -26,7 +26,6 @@ Please refer to [the documentation](https://docs.rs/geo-3d) for a complete list.
 The primitive types also provide the basis for other functionality in the `Geo` ecosystem, including:
 
 - [Coordinate transformation and projection](https://github.com/georust/proj)
-- Serialization to and from [GeoJSON](https://github.com/georust/geojson) and [WKT](https://github.com/georust/wkt)
 
 ## Example
 

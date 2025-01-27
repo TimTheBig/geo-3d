@@ -165,7 +165,7 @@ impl<T: CoordNum> Coord<T> {
     }
 
     /// Returns the dot product of the two coords:
-    /// `dot = x1 * x2 + y1 * y2`
+    /// `dot = x1 * x2 + y1 * y2 + z1 * z2`
     ///
     /// # Examples
     ///
