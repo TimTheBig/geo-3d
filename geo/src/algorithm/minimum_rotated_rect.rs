@@ -40,6 +40,7 @@ where
 {
     type Scalar = T;
 
+    /// this is 2d
     fn minimum_rotated_rect(&self) -> Option<Polygon<Self::Scalar>> {
         let convex_poly = ConvexHull::convex_hull(self);
         let mut min_area: T = Float::max_value();
@@ -48,7 +49,6 @@ where
         let rotate_point = convex_poly.centroid();
         for line in convex_poly.exterior().lines_iter() {
             let (ci, cii) = line.points();
-            todo!("make 3d")
             let angle = (cii.y() - ci.y()).atan2(cii.x() - ci.x()).to_degrees();
             let rotated_poly = Rotate::rotate_around_point(&convex_poly, -angle, rotate_point?);
             let tmp_poly = rotated_poly.bounding_rect()?.to_polygon();
@@ -71,31 +71,31 @@ mod test {
 
     #[test]
     fn returns_polygon_mbr() {
-        let poly: Polygon<f64> = polygon![(x: 3.3, y: 30.4), (x: 1.7, y: 24.6), (x: 13.4, y: 25.1), (x: 14.4, y: 31.0),(x:3.3,y:30.4)];
+        let poly: Polygon<f64> = polygon![(x: 3.3, y: 30.4, z: 0.), (x: 1.7, y: 24.6, z: 0.), (x: 13.4, y: 25.1, z: 0.), (x: 14.4, y: 31.0, z: 0.),(x: 3.3, y: 30.4, z: 0.)];
         let mbr = MinimumRotatedRect::minimum_rotated_rect(&poly).unwrap();
         assert_eq!(
             mbr.exterior(),
             &LineString::from(vec![
-                (1.7000000000000006, 24.6),
-                (1.4501458363715918, 30.446587428904767),
-                (14.4, 31.0),
-                (14.649854163628408, 25.153412571095235),
-                (1.7000000000000006, 24.6),
+                (1.7000000000000006, 24.6, 0.0),
+                (1.4501458363715918, 30.446587428904767, 0.0),
+                (14.4, 31.0, 0.0),
+                (14.649854163628408, 25.153412571095235, 0.0),
+                (1.7000000000000006, 24.6, 0.0),
             ])
         );
     }
     #[test]
     fn returns_linestring_mbr() {
-        let poly: LineString<f64> = line_string![(x: 3.3, y: 30.4), (x: 1.7, y: 24.6), (x: 13.4, y: 25.1), (x: 14.4, y: 31.0)];
+        let poly: LineString<f64> = line_string![(x: 3.3, y: 30.4, z: 0.), (x: 1.7, y: 24.6, z: 0.), (x: 13.4, y: 25.1, z: 0.), (x: 14.4, y: 31.0, z: 0.)];
         let mbr = MinimumRotatedRect::minimum_rotated_rect(&poly).unwrap();
         assert_eq!(
             mbr.exterior(),
             &LineString::from(vec![
-                (1.7000000000000006, 24.6),
-                (1.4501458363715918, 30.446587428904767),
-                (14.4, 31.0),
-                (14.649854163628408, 25.153412571095235),
-                (1.7000000000000006, 24.6),
+                (1.7000000000000006, 24.6, 0.0),
+                (1.4501458363715918, 30.446587428904767, 0.0),
+                (14.4, 31.0, 0.0),
+                (14.649854163628408, 25.153412571095235, 0.0),
+                (1.7000000000000006, 24.6, 0.0),
             ])
         );
     }
