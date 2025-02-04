@@ -60,7 +60,7 @@ impl<T: CoordNum> MultiLineStringTrait for MultiLineString<T> {
         Self: 'a;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_line_strings(&self) -> usize {
@@ -81,7 +81,7 @@ impl<'a, T: CoordNum> MultiLineStringTrait for &'a MultiLineString<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_line_strings(&self) -> usize {

@@ -175,7 +175,7 @@ impl<T: CoordNum> GeometryTrait for Geometry<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn as_type(
@@ -253,7 +253,7 @@ impl<'a, T: CoordNum + 'a> GeometryTrait for &'a Geometry<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn as_type(
@@ -335,7 +335,7 @@ macro_rules! impl_specialization {
                 Self: 'b;
 
             fn dim(&self) -> Dimensions {
-                Dimensions::Xy
+                Dimensions::Xyz
             }
 
             fn as_type(
@@ -402,7 +402,7 @@ macro_rules! impl_specialization {
                 Self: 'b;
 
             fn dim(&self) -> Dimensions {
-                Dimensions::Xy
+                Dimensions::Xyz
             }
 
             fn as_type(

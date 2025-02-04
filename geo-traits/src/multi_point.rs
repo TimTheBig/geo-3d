@@ -57,7 +57,7 @@ impl<T: CoordNum> MultiPointTrait for MultiPoint<T> {
         Self: 'a;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_points(&self) -> usize {
@@ -78,7 +78,7 @@ impl<'a, T: CoordNum> MultiPointTrait for &'a MultiPoint<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_points(&self) -> usize {

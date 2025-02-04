@@ -59,7 +59,7 @@ impl<T: CoordNum> LineStringTrait for LineString<T> {
         Self: 'a;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_coords(&self) -> usize {
@@ -80,7 +80,7 @@ impl<'a, T: CoordNum> LineStringTrait for &'a LineString<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn num_coords(&self) -> usize {

@@ -37,7 +37,7 @@ impl<T: CoordNum> RectTrait for Rect<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn min(&self) -> Self::CoordType<'_> {
@@ -58,7 +58,7 @@ impl<'a, T: CoordNum + 'a> RectTrait for &'a Rect<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn min(&self) -> Self::CoordType<'_> {

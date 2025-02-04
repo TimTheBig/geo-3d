@@ -42,7 +42,7 @@ impl<T: CoordNum> LineTrait for Line<T> {
         Self: 'a;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn start(&self) -> Self::CoordType<'_> {
@@ -63,7 +63,7 @@ impl<'a, T: CoordNum> LineTrait for &'a Line<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn start(&self) -> Self::CoordType<'_> {

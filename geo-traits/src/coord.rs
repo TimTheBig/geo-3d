@@ -147,7 +147,7 @@ impl<T: Copy> CoordTrait for (T, T, T) {
     }
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn x(&self) -> Self::T {

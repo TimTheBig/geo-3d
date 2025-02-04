@@ -45,7 +45,7 @@ impl<T: CoordNum> TriangleTrait for Triangle<T> {
         Self: 'a;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn first(&self) -> Self::CoordType<'_> {
@@ -70,7 +70,7 @@ impl<'a, T: CoordNum> TriangleTrait for &'a Triangle<T> {
         Self: 'b;
 
     fn dim(&self) -> Dimensions {
-        Dimensions::Xy
+        Dimensions::Xyz
     }
 
     fn first(&self) -> Self::CoordType<'_> {
