@@ -261,12 +261,12 @@ mod test {
 
     #[test]
     fn area_one_point_polygon_test() {
-        let poly = wkt! { POLYGON((1. 0.)) };
+        let poly = wkt! { POLYGON((1. 0. -1.)) };
         assert_relative_eq!(poly.signed_area(), 0.);
     }
     #[test]
     fn area_polygon_test() {
-        let polygon = wkt! { POLYGON((0. 0.,5. 0.,5. 6.,0. 6.,0. 0.)) };
+        let polygon = wkt! { POLYGON((0. 0. 0.,5. 0. 5.,5. 6. 5.,0. 6. 0.,0. 0. 0.)) };
         assert_relative_eq!(polygon.signed_area(), 30.);
     }
     #[test]
@@ -283,6 +283,7 @@ mod test {
                         coord! {
                             x: angle.cos(),
                             y: angle.sin(),
+                            z: angle.cos(),
                         }
                     })
                     .collect::<Vec<_>>()
@@ -293,7 +294,7 @@ mod test {
 
         let area = polygon.signed_area();
 
-        let shift = coord! { x: 1.5e8, y: 1.5e8 };
+        let shift = coord! { x: 1.5e8, y: 1.5e8, z: 1.5e8 };
 
         use crate::map_coords::MapCoords;
         let polygon = polygon.map_coords(|c| c + shift);

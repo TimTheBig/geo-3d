@@ -222,15 +222,15 @@ mod test {
 
     #[test]
     fn test_iter() {
-        let multi = wkt! { MULTIPOINT(0 0 0, 10 10 10) };
+        let multi = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10.) };
 
         let mut first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 0, y: 0, z: 0]);
+                assert_eq!(p, &point![x: 0.0, y: 0.0, z: 0.0]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 10, y: 10, z: 10]);
+                assert_eq!(p, &point![x: 10.0, y: 10.0, z: 10.0]);
             }
         }
 
@@ -238,35 +238,37 @@ mod test {
         first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 0, y: 0, z: 0]);
+                assert_eq!(p, &point![x: 0.0, y: 0.0, z: 0.0]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 10, y: 10, z: 10]);
+                assert_eq!(p, &point![x: 10.0, y: 10.0, z: 10.0]);
             }
         }
     }
 
     #[test]
     fn test_iter_mut() {
-        let mut multi = wkt! { MULTIPOINT(0 0 0, 10 10 10) };
+        let mut multi = wkt! { MULTIPOINT(0. 0. 0., 10. 10. 10.) };
 
         for point in &mut multi {
-            point.0.x += 1;
-            point.0.y += 1;
+            point.0.x += 1.0;
+            point.0.y += 1.0;
+            point.0.z += 1.0;
         }
 
         for point in multi.iter_mut() {
-            point.0.x += 1;
-            point.0.y += 1;
+            point.0.x += 1.0;
+            point.0.y += 1.0;
+            point.0.z += 1.0;
         }
 
         let mut first = true;
         for p in &multi {
             if first {
-                assert_eq!(p, &point![x: 2, y: 2, z: 2]);
+                assert_eq!(p, &point![x: 2.0, y: 2.0, z: 2.0]);
                 first = false;
             } else {
-                assert_eq!(p, &point![x: 12, y: 12, z: 12]);
+                assert_eq!(p, &point![x: 12.0, y: 12.0, z: 12.0]);
             }
         }
     }

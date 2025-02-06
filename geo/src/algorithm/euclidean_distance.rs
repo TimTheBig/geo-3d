@@ -814,7 +814,7 @@ mod test {
     }
     #[test]
     fn distance_line_test() {
-        let line0 = Line::from([(0., 0.), (5., 0.)]);
+        let line0 = Line::from([(0., 0., 0.), (5., 0.)]);
         let p0 = Point::new(2., 3.);
         let p1 = Point::new(3., 0.);
         let p2 = Point::new(6., 0.);
@@ -829,7 +829,7 @@ mod test {
     }
     #[test]
     fn distance_line_line_test() {
-        let line0 = Line::from([(0., 0.), (5., 0.)]);
+        let line0 = Line::from([(0., 0., 0.), (5., 0.)]);
         let line1 = Line::from([(2., 1.), (7., 2.)]);
         assert_relative_eq!(line0.euclidean_distance(&line1), 1.);
         assert_relative_eq!(line1.euclidean_distance(&line0), 1.);
@@ -1002,7 +1002,7 @@ mod test {
     #[test]
     // Line-Polygon test: closest point on Polygon is NOT nearest to a Line end-point
     fn test_line_polygon_simple() {
-        let line = Line::from([(0.0, 0.0), (0.0, 3.0)]);
+        let line = Line::from([(0.0, 0.0, 0.0), (0.0, 3.0)]);
         let v = vec![(5.0, 1.0), (5.0, 2.0), (0.25, 1.5), (5.0, 1.0)];
         let poly = Polygon::new(v.into(), vec![]);
         assert_relative_eq!(line.euclidean_distance(&poly), 0.25);
@@ -1027,7 +1027,7 @@ mod test {
     #[test]
     // LineString-Line test
     fn test_linestring_line_distance() {
-        let line = Line::from([(0.0, 0.0), (0.0, 2.0)]);
+        let line = Line::from([(0.0, 0.0, 0.0), (0.0, 2.0)]);
         let ls: LineString<_> = vec![(3.0, 0.0), (1.0, 1.0), (3.0, 2.0)].into();
         assert_relative_eq!(ls.euclidean_distance(&line), 1.0);
     }
@@ -1035,32 +1035,32 @@ mod test {
     #[test]
     // Triangle-Point test: point on vertex
     fn test_triangle_point_on_vertex_distance() {
-        let triangle = Triangle::from([(0.0, 0.0), (2.0, 0.0), (2.0, 2.0)]);
-        let point = Point::new(0.0, 0.0);
+        let triangle = Triangle::from([(0.0, 0.0, 0.0), (2.0, 0.0, -2.0), (2.0, 2.0)]);
+        let point = Point::new(0.0, 0.0, 0.0);
         assert_relative_eq!(triangle.euclidean_distance(&point), 0.0);
     }
 
     #[test]
     // Triangle-Point test: point on edge
     fn test_triangle_point_on_edge_distance() {
-        let triangle = Triangle::from([(0.0, 0.0), (2.0, 0.0), (2.0, 2.0)]);
-        let point = Point::new(1.5, 0.0);
+        let triangle = Triangle::from([(0.0, 0.0, 0.0), (2.0, 0.0, -2.0), (2.0, 2.0, 2.0)]);
+        let point = Point::new(1.5, 0.0, -1.5);
         assert_relative_eq!(triangle.euclidean_distance(&point), 0.0);
     }
 
     #[test]
     // Triangle-Point test
     fn test_triangle_point_distance() {
-        let triangle = Triangle::from([(0.0, 0.0), (2.0, 0.0), (2.0, 2.0)]);
-        let point = Point::new(2.0, 3.0);
+        let triangle = Triangle::from([(0.0, 0.0, 0.0), (2.0, 0.0, -2.0), (2.0, 2.0, 2.0)]);
+        let point = Point::new(2.0, 3.0, 4.0);
         assert_relative_eq!(triangle.euclidean_distance(&point), 1.0);
     }
 
     #[test]
     // Triangle-Point test: point within triangle
     fn test_triangle_point_inside_distance() {
-        let triangle = Triangle::from([(0.0, 0.0), (2.0, 0.0), (2.0, 2.0)]);
-        let point = Point::new(1.0, 0.5);
+        let triangle = Triangle::from([(0.0, 0.0, 0.0), (2.0, 0.0, -2.0), (2.0, 2.0, 2.0)]);
+        let point = Point::new(1.0, 0.5, 0.0);
         assert_relative_eq!(triangle.euclidean_distance(&point), 0.0);
     }
 
@@ -1094,7 +1094,7 @@ mod test {
     fn fast_path_regression() {
         // this test will fail if the fast path algorithm is reintroduced without being fixed
         let p1 = polygon!(
-            (x: 0_f64, y: 0_f64),
+            (x: 0_f64, y: 0_f64, z: 0_f64),
             (x: 300_f64, y: 0_f64),
             (x: 300_f64, y: 100_f64),
             (x: 0_f64, y: 100_f64),
@@ -1107,7 +1107,7 @@ mod test {
         )
         .orient(Direction::Default);
         let p3 = polygon!(
-            (x: 0_f64, y: 0_f64),
+            (x: 0_f64, y: 0_f64, z: 0_f64),
             (x: 300_f64, y: 0_f64),
             (x: 300_f64, y: 100_f64),
             (x: 0_f64, y: 100_f64),
@@ -1126,17 +1126,17 @@ mod test {
     }
     #[test]
     fn all_types_geometry_collection_test() {
-        let p = Point::new(0.0, 0.0);
+        let p = Point::new(0.0, 0.0, 0.0);
         let line = Line::from([(-1.0, -1.0), (-2.0, -2.0)]);
-        let ls = LineString::from(vec![(0.0, 0.0), (1.0, 10.0), (2.0, 0.0)]);
+        let ls = LineString::from(vec![(0.0, 0.0, 0.0), (1.0, 10.0), (2.0, 0.0)]);
         let poly = Polygon::new(
-            LineString::from(vec![(0.0, 0.0), (1.0, 10.0), (2.0, 0.0), (0.0, 0.0)]),
+            LineString::from(vec![(0.0, 0.0, 0.0), (1.0, 10.0), (2.0, 0.0), (0.0, 0.0, 0.0)]),
             vec![],
         );
-        let tri = Triangle::from([(0.0, 0.0), (1.0, 10.0), (2.0, 0.0)]);
-        let rect = Rect::new((0.0, 0.0), (-1.0, -1.0));
+        let tri = Triangle::from([(0.0, 0.0, 0.0), (1.0, 10.0, 100.0), (2.0, 0.0)]);
+        let rect = Rect::new((0.0, 0.0, 0.0), (-1.0, -1.0));
 
-        let ls1 = LineString::from(vec![(0.0, 0.0), (1.0, 10.0), (2.0, 0.0), (0.0, 0.0)]);
+        let ls1 = LineString::from(vec![(0.0, 0.0, 0.0), (1.0, 10.0), (2.0, 0.0), (0.0, 0.0, 0.0)]);
         let ls2 = LineString::from(vec![(3.0, 0.0), (4.0, 10.0), (5.0, 0.0), (3.0, 0.0)]);
         let p1 = Polygon::new(ls1, vec![]);
         let p2 = Polygon::new(ls2, vec![]);
@@ -1155,8 +1155,8 @@ mod test {
         ];
         let mpoint = MultiPoint::new(v);
 
-        let v1 = LineString::from(vec![(0.0, 0.0), (1.0, 10.0)]);
-        let v2 = LineString::from(vec![(1.0, 10.0), (2.0, 0.0), (3.0, 1.0)]);
+        let v1 = LineString::from(vec![(0.0, 0.0, 0.0), (1.0, 10.0)]);
+        let v2 = LineString::from(vec![(1.0, 10.0, 100.0), (2.0, 0.0), (3.0, 1.0)]);
         let mls = MultiLineString::new(vec![v1, v2]);
 
         let gc = GeometryCollection(vec![
@@ -1171,16 +1171,16 @@ mod test {
             Geometry::Rect(rect),
         ]);
 
-        let test_p = Point::new(50., 50.);
+        let test_p = Point::new(50., 50., 50.);
         assert_relative_eq!(test_p.euclidean_distance(&gc), 60.959002616512684);
 
         let test_multipoint = MultiPoint::new(vec![test_p]);
         assert_relative_eq!(test_multipoint.euclidean_distance(&gc), 60.959002616512684);
 
-        let test_line = Line::from([(50., 50.), (60., 60.)]);
+        let test_line = Line::from([(50., 50., 50.), (60., 60., 60.)]);
         assert_relative_eq!(test_line.euclidean_distance(&gc), 60.959002616512684);
 
-        let test_ls = LineString::from(vec![(50., 50.), (60., 60.), (70., 70.)]);
+        let test_ls = LineString::from(vec![(50., 50., 50.), (60., 60., 60.), (70., 70., 70.)]);
         assert_relative_eq!(test_ls.euclidean_distance(&gc), 60.959002616512684);
 
         let test_mls = MultiLineString::new(vec![test_ls]);
@@ -1188,11 +1188,11 @@ mod test {
 
         let test_poly = Polygon::new(
             LineString::from(vec![
-                (50., 50.),
-                (60., 50.),
-                (60., 60.),
-                (55., 55.),
-                (50., 50.),
+                (50., 50., 50.),
+                (60., 50., 60.),
+                (60., 60., 60.),
+                (55., 55., 55.),
+                (50., 50., 50.),
             ]),
             vec![],
         );
@@ -1201,10 +1201,10 @@ mod test {
         let test_multipoly = MultiPolygon::new(vec![test_poly]);
         assert_relative_eq!(test_multipoly.euclidean_distance(&gc), 60.959002616512684);
 
-        let test_tri = Triangle::from([(50., 50.), (60., 50.), (55., 55.)]);
+        let test_tri = Triangle::from([(50., 50., 50.), (60., 50., 60.), (55., 55., 55.)]);
         assert_relative_eq!(test_tri.euclidean_distance(&gc), 60.959002616512684);
 
-        let test_rect = Rect::new(coord! { x: 50., y: 50. }, coord! { x: 60., y: 60. });
+        let test_rect = Rect::new(coord! { x: 50., y: 50., z: 50. }, coord! { x: 60., y: 60., z: 60. });
         assert_relative_eq!(test_rect.euclidean_distance(&gc), 60.959002616512684);
 
         let test_gc = GeometryCollection(vec![Geometry::Rect(test_rect)]);

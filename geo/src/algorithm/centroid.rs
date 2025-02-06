@@ -724,13 +724,13 @@ mod test {
     fn linestring_test() {
         let linestring = line_string![
             (x: 1., y: 1., z: 1.),
-            (x: 7., y: 1.),
-            (x: 8., y: 1.),
-            (x: 9., y: 1.),
-            (x: 10., y: 1.),
-            (x: 11., y: 1.)
+            (x: 7., y: 1., z: -7.),
+            (x: 8., y: 1., z: -8.),
+            (x: 9., y: 1., z: -9.),
+            (x: 10., y: 1., z: -10.),
+            (x: 11., y: 1., z: -11.)
         ];
-        assert_eq!(linestring.centroid(), Some(point!(x: 6., y: 1. )));
+        assert_eq!(linestring.centroid(), Some(point!(x: 6., y: 1., z: -6.)));
     }
     #[test]
     fn linestring_with_repeated_point_test() {
@@ -770,7 +770,7 @@ mod test {
     #[test]
     fn multilinestring_one_line_test() {
         let linestring = line_string![
-            (x: 1., y: 1.),
+            (x: 1., y: 1., z: 1.),
             (x: 7., y: 1.),
             (x: 8., y: 1.),
             (x: 9., y: 1.),
@@ -784,7 +784,7 @@ mod test {
     fn multilinestring_test() {
         let mls = wkt! {
             MULTILINESTRING(
-                (0.0 0.0,1.0 10.0),
+                (0.0 0.0 0.0,1.0 10.0 100.0),
                 (1.0 10.0,2.0 0.0,3.0 1.0),
                 (-12.0 -100.0,7.0 8.0)
             )
@@ -802,7 +802,7 @@ mod test {
     }
     #[test]
     fn polygon_one_point_test() {
-        let p = point![ x: 2., y: 1. ];
+        let p = point![ x: 2., y: 1., z: 0. ];
         let poly = polygon![p.0];
         assert_relative_eq!(poly.centroid().unwrap(), p);
     }
@@ -831,7 +831,7 @@ mod test {
 
         let centroid = polygon.centroid().unwrap();
 
-        let shift = coord! { x: 1.5e8, y: 1.5e8 };
+        let shift = coord! { x: 1.5e8, y: 1.5e8, z: 1.5e8 };
 
         use crate::map_coords::MapCoords;
         let polygon = polygon.map_coords(|c| c + shift);
@@ -841,18 +841,19 @@ mod test {
         debug!("new_centroid {:?}", new_centroid.0);
         assert_relative_eq!(centroid.0.x, new_centroid.0.x, max_relative = 0.0001);
         assert_relative_eq!(centroid.0.y, new_centroid.0.y, max_relative = 0.0001);
+        assert_relative_eq!(centroid.0.z, new_centroid.0.z, max_relative = 0.0001);
     }
 
     #[test]
     fn polygon_test() {
         let poly = polygon![
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
             (x: 2., y: 0.),
             (x: 2., y: 2.),
             (x: 0., y: 2.),
-            (x: 0., y: 0.)
+            (x: 0., y: 0., z: 0.)
         ];
-        assert_relative_eq!(poly.centroid().unwrap(), point![x:1., y:1.]);
+        assert_relative_eq!(poly.centroid().unwrap(), point![x: 1., y: 1., z: 1.]);
     }
     #[test]
     fn polygon_hole_test() {
@@ -867,22 +868,22 @@ mod test {
     }
     #[test]
     fn flat_polygon_test() {
-        let poly = wkt! { POLYGON((0. 1.,1. 1.,0. 1.)) };
-        assert_eq!(poly.centroid(), Some(point!(0.5, 1.)));
+        let poly = wkt! { POLYGON((0. 1. 2.,1. 1. 1.,0. 1. 2.)) };
+        assert_eq!(poly.centroid(), Some(point!(0.5, 1., 1.5)));
     }
     #[test]
     fn multi_poly_with_flat_polygon_test() {
-        let multipoly = wkt! { MULTIPOLYGON(((0. 0.,1. 0.,0. 0.))) };
-        assert_eq!(multipoly.centroid(), Some(point!(0.5, 0.)));
+        let multipoly = wkt! { MULTIPOLYGON(((0. 0. 0.,1. 0. -1.,0. 0. 0.))) };
+        assert_eq!(multipoly.centroid(), Some(point!(0.5, 0. -0.5)));
     }
     #[test]
     fn multi_poly_with_multiple_flat_polygon_test() {
         let multipoly = wkt! { MULTIPOLYGON(
-            ((1. 1.,1. 3.,1. 1.)),
-            ((2. 2.,6. 2.,2. 2.))
+            ((1. 1. 1.,1. 3. 5.,1. 1. 1.)),
+            ((2. 2. 2.,6. 2. -6.,2. 2. 2.))
         )};
 
-        assert_eq!(multipoly.centroid(), Some(point!(3., 2.)));
+        assert_eq!(multipoly.centroid(), Some(point!(3., 2., 1.)));
     }
     #[test]
     fn multi_poly_with_only_points_test() {
@@ -901,11 +902,11 @@ mod test {
         // and a ring (a polygon with a null area)
         // the centroid of the multipolygon is the centroid of the 'normal' polygon
         let normal = Polygon::new(
-            LineString::from(vec![point!(1., 1.), point!(1., 3.), point!(3., 1.), point!(1., 1.)]),
+            LineString::from(vec![point!(1., 1., 1.), point!(1., 3., -1.), point!(3., 1., -3.), point!(1., 1., 1.)]),
             vec![],
         );
         let flat = Polygon::new(
-            LineString::from(vec![point!(2., 2., 2.), point!(6., 2.), point!(2., 2., .2)]),
+            LineString::from(vec![point!(2., 2., 2.), point!(6., 2., -6.), point!(2., 2., 2.)]),
             vec![],
         );
         let multipoly = MultiPolygon::new(vec![normal.clone(), flat]);
@@ -914,8 +915,8 @@ mod test {
     #[test]
     fn polygon_flat_interior_test() {
         let poly = Polygon::new(
-            LineString::from(vec![point!(0., 0., 0.), point!(0., 1.), point!(1., 1., 1.), point!(1., 0.), point!(0., 0., 0.)]),
-            vec![LineString::from(vec![point!(0., 0., 0.), point!(0., 1.), point!(0., 0., 0.)])],
+            LineString::from(vec![point!(0., 0., 0.), point!(0., 1., 2.), point!(1., 1., 1.), point!(1., 0., -1.), point!(0., 0., 0.)]),
+            vec![LineString::from(vec![point!(0., 0., 0.), point!(0., 1., 2.), point!(0., 0., 0.)])],
         );
         assert_eq!(poly.centroid(), Some(point!(0.5, 0.5, 0.5)));
     }
@@ -959,7 +960,7 @@ mod test {
     #[test]
     fn multipolygon_two_polygons_test() {
         let linestring =
-            LineString::from(vec![point!(2., 1.), point!(5., 1.), point!(5., 3.), point!(2., 3.), point!(2., 1.)]);
+            LineString::from(vec![point!(2., 1., -2.), point!(5., 1., -5.), point!(5., 3., -5.), point!(2., 3., 4.), point!(2., 1., -2.)]);
         let poly1 = Polygon::new(linestring, Vec::new());
         let linestring =
             LineString::from(vec![point!(7., 1.), point!(8., 1.), point!(8., 2.), point!(7., 2.), point!(7., 1.)]);
@@ -972,13 +973,13 @@ mod test {
     }
     #[test]
     fn multipolygon_two_polygons_of_opposite_clockwise_test() {
-        let linestring = LineString::from(vec![(0., 0.), (2., 0.), (2., 2.), (0., 2.), (0., 0.)]);
+        let linestring = LineString::from(vec![(0., 0., 0.), (2., 0.), (2., 2., 2.), (0., 2.), (0., 0., 0.)]);
         let poly1 = Polygon::new(linestring, Vec::new());
-        let linestring = LineString::from(vec![(0., 0.), (-2., 0.), (-2., 2.), (0., 2.), (0., 0.)]);
+        let linestring = LineString::from(vec![(0., 0., 0.), (-2., 0.), (-2., 2.), (0., 2.), (0., 0., 0.)]);
         let poly2 = Polygon::new(linestring, Vec::new());
         assert_relative_eq!(
             MultiPolygon::new(vec![poly1, poly2]).centroid().unwrap(),
-            point![x: 0., y: 1.]
+            point![x: 0., y: 1., z: 2.]
         );
     }
     #[test]
@@ -989,63 +990,63 @@ mod test {
     }
     #[test]
     fn line_test() {
-        let line1 = Line::new(coord!(0., 1.), coord!(1., 3.));
+        let line1 = Line::new(coord!(0., 1., 2.), coord!(1., 3.));
         assert_eq!(line1.centroid(), point![x: 0.5, y: 2.]);
     }
     #[test]
     fn collection_weighting() {
-        let p0 = point!(x: 0.0, y: 0.0);
+        let p0 = point!(x: 0.0, y: 0.0, z: 0.0);
         let p1 = point!(x: 2.0, y: 0.0);
         let p2 = point!(x: 2.0, y: 2.0);
         let p3 = point!(x: 0.0, y: 2.0);
 
         let multi_point = MultiPoint::new(vec![p0, p1, p2, p3]);
-        assert_eq!(multi_point.centroid().unwrap(), point!(x: 1.0, y: 1.0));
+        assert_eq!(multi_point.centroid().unwrap(), point!(x: 1.0, y: 1.0, z: 1.0));
 
         let collection =
             GeometryCollection::new(vec![MultiPoint::new(vec![p1, p2, p3]).into(), p0.into()]);
 
-        assert_eq!(collection.centroid().unwrap(), point!(x: 1.0, y: 1.0));
+        assert_eq!(collection.centroid().unwrap(), point!(x: 1.0, y: 1.0, z: 1.0));
     }
     #[test]
     fn triangles() {
         // boring triangle
         assert_eq!(
-            Triangle::new(coord!(0., 0.), coord!(3., 0.), coord!(1.5, 3.)).centroid(),
-            point!(x: 1.5, y: 1.0)
+            Triangle::new(coord!(0., 0., 0.), coord!(3., 0., -3.), coord!(1.5, 3., -1.5)).centroid(),
+            point!(x: 1.5, y: 1.0, z: -1.5)
         );
 
         // flat triangle
         assert_eq!(
-            Triangle::new(coord!(0., 0.), coord!(3., 0.), coord!(1., 0.)).centroid(),
-            point!(x: 1.5, y: 0.0)
+            Triangle::new(coord!(0., 0., 0.), coord!(3., 0., -3.), coord!(1., 0., -1.)).centroid(),
+            point!(x: 1.5, y: 0.0, z: -1.5)
         );
 
         // flat triangle that's not axis-aligned
         assert_eq!(
-            Triangle::new(coord!(0., 0.), coord!(3., 3.), coord!(1., 1.)).centroid(),
-            point!(x: 1.5, y: 1.5)
+            Triangle::new(coord!(0., 0., 0.), coord!(3., 3., 3.), coord!(1., 1., 1.)).centroid(),
+            point!(x: 1.5, y: 1.5, z: 1.5)
         );
 
         // triangle with some repeated points
         assert_eq!(
-            Triangle::new(coord!(0., 0.), coord!(0., 0.), coord!(1., 0.)).centroid(),
-            point!(x: 0.5, y: 0.0)
+            Triangle::new(coord!(0., 0., 0.), coord!(0., 0., 0.), coord!(1., 0., -1.)).centroid(),
+            point!(x: 0.5, y: 0.0, z: -0.5)
         );
 
         // triangle with all repeated points
         assert_eq!(
-            Triangle::new(coord!(0., 0.5), coord!(0., 0.5), coord!(0., 0.5)).centroid(),
-            point!(x: 0., y: 0.5)
+            Triangle::new(coord!(0.0, 0.5, 1.0), coord!(0.0, 0.5, 1.0), coord!(0.0, 0.5, 1.0)).centroid(),
+            point!(x: 0., y: 0.5, z: 1.0)
         )
     }
 
     #[test]
     fn degenerate_triangle_like_ring() {
-        let triangle = Triangle::new(coord!(0., 0.), coord!(1., 1.), coord!(2., 2.));
+        let triangle = Triangle::new(coord!(0., 0., 0.), coord!(1., 1., 1.), coord!(2., 2., 2.));
         let poly: Polygon<_> = triangle.into();
 
-        let line = Line::new(coord!(0., 1.), coord!(1., 3.));
+        let line = Line::new(coord!(0., 1., 2.), coord!(1., 3., 5.));
 
         let g1 = GeometryCollection::new(vec![triangle.into(), line.into()]);
         let g2 = GeometryCollection::new(vec![poly.into(), line.into()]);
@@ -1054,10 +1055,10 @@ mod test {
 
     #[test]
     fn degenerate_rect_like_ring() {
-        let rect = Rect::new(coord!(0., 0.), coord!(0., 4.));
+        let rect = Rect::new(coord!(0., 0., 0.), coord!(0., 4., 0.));
         let poly: Polygon<_> = rect.into();
 
-        let line = Line::new(coord!(0., 1.), coord!(1., 3.));
+        let line = Line::new(coord!(0., 1., 2.), coord!(1., 3., 5.));
 
         let g1 = GeometryCollection::new(vec![rect.into(), line.into()]);
         let g2 = GeometryCollection::new(vec![poly.into(), line.into()]);
@@ -1069,13 +1070,13 @@ mod test {
         // boring rect
         assert_eq!(
             Rect::new(coord!(0., 0., 0.), coord!(4., 4., 4.)).centroid(),
-            point!(x: 2.0, y: 2.0)
+            point!(x: 2.0, y: 2.0, z: 2.0)
         );
 
         // flat rect
         assert_eq!(
-            Rect::new(coord!(0., 0., 0.), coord!(4., 0.)).centroid(),
-            point!(x: 2.0, y: 0.0)
+            Rect::new(coord!(0., 0., 0.), coord!(4., 0., 8.)).centroid(),
+            point!(x: 2.0, y: 0.0, z: 4.0)
         );
 
         // rect with all repeated points
@@ -1091,11 +1092,11 @@ mod test {
             point!(6., 6., 6.).into(),
         ]);
         // sanity check
-        assert_eq!(collection.centroid().unwrap(), point!(x: 4., y: 2.));
+        assert_eq!(collection.centroid().unwrap(), point!(x: 4., y: 2., z: 0.));
 
         // 0-d rect treated like point
-        collection.0.push(Rect::new(coord!(0., 6.), coord!(0., 6.)).into());
-        assert_eq!(collection.centroid().unwrap(), point!(x: 3., y: 3.));
+        collection.0.push(Rect::new(coord!(0., 6., 0.), coord!(0., 6., 0.)).into());
+        assert_eq!(collection.centroid().unwrap(), point!(x: 3., y: 3., z: 3.));
 
         // 1-d rect treated like line. Since a line has higher dimensions than the rest of the
         // collection, its centroid clobbers everything else in the collection.
@@ -1103,6 +1104,13 @@ mod test {
         assert_eq!(collection.centroid().unwrap(), point!(x: 0., y: 1., z: 2.));
 
         // 2-d has higher dimensions than the rest of the collection, so its centroid clobbers
+        // everything else in the collection.
+        collection
+            .0
+            .push(Rect::new(coord!(10., 10., 0.), coord!(11., 11., 0.)).into());
+        assert_eq!(collection.centroid().unwrap(), point!(x: 10.5, y: 10.5, z: 0.0));
+
+        // 3-d has higher dimensions than the rest of the collection, so its centroid clobbers
         // everything else in the collection.
         collection
             .0

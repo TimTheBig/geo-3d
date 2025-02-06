@@ -461,7 +461,7 @@ impl<T: CoordNum> Rect<T> {
     }
 }
 
-static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y value must be smaller or equal to the 'max' x/y value";
+static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y/z value must be smaller or equal to the 'max' x/y/z value";
 
 #[cfg(any(feature = "approx", test))]
 impl<T> RelativeEq for Rect<T>

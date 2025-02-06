@@ -173,40 +173,40 @@ mod test {
         assert_eq!(
             ls_out,
             LineString::from(vec![
-                (3.0, 0.0),
-                (3.75, 0.75),
-                (5.25, 2.25),
+                (3.0, 0.0, -3.0),
+                (3.75, 0.75, -3.25),
+                (5.25, 2.25, -5.25),
                 (5.25, 3.75),
                 (3.75, 5.25),
                 (2.25, 5.25),
                 (0.75, 3.75),
-                (0.0, 3.0),
+                (0.0, 3.0, 0.0),
             ])
         );
 
         // Test unimplemented geometry
-        let pt = Point::from((3.0, 0.0));
+        let pt = Point::from((3.0, 0.0, -3.0));
         let pt_geo: Geometry = pt.into();
         let pt_geo_out = pt_geo.chaikin_smoothing(1);
         let pt_out: Point = pt_geo_out.try_into().unwrap();
-        assert_eq!(pt_out, Point::from((3.0, 0.0)));
+        assert_eq!(pt_out, Point::from((3.0, 0.0, -3.0)));
     }
 
     #[test]
     fn linestring_open() {
-        let ls = LineString::from(vec![(3.0, 0.0), (6.0, 3.0), (3.0, 6.0), (0.0, 3.0)]);
+        let ls = LineString::from(vec![(3.0, 0.0, -3.0), (6.0, 3.0), (3.0, 6.0), (0.0, 3.0, 0.0)]);
         let ls_out = ls.chaikin_smoothing(1);
         assert_eq!(
             ls_out,
             LineString::from(vec![
-                (3.0, 0.0),
+                (3.0, 0.0, -3.0),
                 (3.75, 0.75),
                 (5.25, 2.25),
                 (5.25, 3.75),
                 (3.75, 5.25),
                 (2.25, 5.25),
                 (0.75, 3.75),
-                (0.0, 3.0),
+                (0.0, 3.0, 0.0),
             ])
         );
     }

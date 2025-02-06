@@ -454,7 +454,7 @@ mod polygon_stitching_tests {
     fn poly_inside_a_donut() {
         _ = pretty_env_logger::try_init();
         let zero = Coord::zero();
-        let one = Point::new(1.0, 1.0).0;
+        let one = Point::new(1.0, 1.0, 1.0).0;
         let outer_outer = Rect::new(zero, one * 5.0);
         let inner_outer = Rect::new(one, one * 4.0);
         let outer = Polygon::new(
@@ -476,15 +476,15 @@ mod polygon_stitching_tests {
     fn stitch_independent_of_orientation() {
         _ = pretty_env_logger::try_init();
         let mut tri1 = Triangle::from([
-            Coord { x: 0.0, y: 0.0 },
-            Coord { x: 1.0, y: 0.0 },
-            Coord { x: 0.0, y: 1.0 },
+            Coord { x: 0.0, y: 0.0, z: 0.0 },
+            Coord { x: 1.0, y: 0.0, z: 5.0 },
+            Coord { x: 0.0, y: 1.0, z: 7.0 },
         ])
         .to_polygon();
         let mut tri2 = Triangle::from([
-            Coord { x: 1.0, y: 1.0 },
-            Coord { x: 1.0, y: 0.0 },
-            Coord { x: 0.0, y: 1.0 },
+            Coord { x: 1.0, y: 1.0, z: 1.0 },
+            Coord { x: 1.0, y: 0.0, z: 7.0 },
+            Coord { x: 0.0, y: 1.0, z: 5.0 },
         ])
         .to_polygon();
 

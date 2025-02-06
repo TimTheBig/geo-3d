@@ -217,7 +217,7 @@ mod test {
     #[test]
     fn test_vincenty_distance_equatorial() {
         let a = Point::new(0.0, 0.0, 0.0);
-        let b = Point::new(100.0, 0.0);
+        let b = Point::new(100.0, 0.0, 0.0);
         assert_relative_eq!(
             a.vincenty_distance(&b).unwrap(),
             11131949.079,
@@ -227,15 +227,15 @@ mod test {
 
     #[test]
     fn test_vincenty_distance_coincident() {
-        let a = Point::new(12.3, 4.56);
-        let b = Point::new(12.3, 4.56);
+        let a = Point::new(12.3, 4.56, 5.09);
+        let b = Point::new(12.3, 4.56, 5.09);
         assert_relative_eq!(a.vincenty_distance(&b).unwrap(), 0.0, epsilon = 1.0e-3);
     }
 
     #[test]
     fn test_vincenty_distance_antipodal() {
         let a = Point::new(2.0, 4.0, 6.0);
-        let b = Point::new(-178.0, -4.0);
+        let b = Point::new(-178.0, -4.0, -359.8);
         assert_eq!(a.vincenty_distance(&b), Err(FailedToConvergeError))
     }
 }

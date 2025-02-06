@@ -17,9 +17,9 @@ pub trait Translate<T: CoordNum> {
     /// use geo::line_string;
     ///
     /// let ls = line_string![
-    ///     (x: 0.0, y: 0.0),
-    ///     (x: 5.0, y: 5.0),
-    ///     (x: 10.0, y: 10.0),
+    ///     (x: 0.0, y: 0.0, z: 0.0),
+    ///     (x: 5.0, y: 5.0, z: 5.0),
+    ///     (x: 10.0, y: 10.0, z: 10.0),
     /// ];
     ///
     /// let translated = ls.translate(1.5, 3.5);
@@ -118,37 +118,37 @@ mod test {
     #[test]
     fn test_rotate_polygon_holes() {
         let ls1 = LineString::from(vec![
-            (5.0, 1.0),
-            (4.0, 2.0),
-            (4.0, 3.0),
-            (5.0, 4.0),
-            (6.0, 4.0),
-            (7.0, 3.0),
-            (7.0, 2.0),
-            (6.0, 1.0),
-            (5.0, 1.0),
+            (5.0, 1.0, 1.0),
+            (4.0, 2.0, 6.5),
+            (4.0, 3.0, 2.9),
+            (5.0, 4.0, 3.0),
+            (6.0, 4.0, 4.0),
+            (7.0, 3.0, 8.7),
+            (7.0, 2.0, 5.0),
+            (6.0, 1.0, 0.0),
+            (5.0, 1.0, 9.8),
         ]);
 
-        let ls2 = LineString::from(vec![(5.0, 1.3), (5.5, 2.0), (6.0, 1.3), (5.0, 1.3)]);
+        let ls2 = LineString::from(vec![(5.0, 1.3, 6.5), (5.5, 2.0, 4.3), (6.0, 1.3, 8.4), (5.0, 1.3, 2.2)]);
 
         let poly1 = Polygon::new(ls1, vec![ls2]);
-        let rotated = poly1.translate(17.0, 18.0);
+        let rotated = poly1.translate(17.0, 18.0, 19.0);
         let correct_outside = vec![
-            Coord::from((22.0, 19.0)),
-            Coord::from((21.0, 20.0)),
-            Coord::from((21.0, 21.0)),
-            Coord::from((22.0, 22.0)),
-            Coord::from((23.0, 22.0)),
-            Coord::from((24.0, 21.0)),
-            Coord::from((24.0, 20.0)),
-            Coord::from((23.0, 19.0)),
-            Coord::from((22.0, 19.0)),
+            Coord::from((22.0, 19.0, 20.0)),
+            Coord::from((21.0, 20.0, 25.5)),
+            Coord::from((21.0, 21.0, 21.9)),
+            Coord::from((22.0, 22.0, 22.0)),
+            Coord::from((23.0, 22.0, 23.0)),
+            Coord::from((24.0, 21.0, 27.7)),
+            Coord::from((24.0, 20.0, 24.0)),
+            Coord::from((23.0, 19.0, 19.0)),
+            Coord::from((22.0, 19.0, 29.8)),
         ];
         let correct_inside = vec![
-            Coord::from((22.0, 19.3)),
-            Coord::from((22.5, 20.0)),
-            Coord::from((23.0, 19.3)),
-            Coord::from((22.0, 19.3)),
+            Coord::from((22.0, 19.3, 25.5)),
+            Coord::from((22.5, 20.0, 23.3)),
+            Coord::from((23.0, 19.3, 27.4)),
+            Coord::from((22.0, 19.3, 21.2)),
         ];
         assert_eq!(rotated.exterior().0, correct_outside);
         assert_eq!(rotated.interiors()[0].0, correct_inside);

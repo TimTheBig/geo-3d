@@ -695,20 +695,20 @@ mod tests {
         let b = AffineTransform::new(7., 8., 3., 11., 9., 10., 2., 12., 3., 9., 4., 19.);
         let composed = a.compose(&b);
 
-        assert_eq!(composed.0[0][0], 43);
-        assert_eq!(composed.0[0][1], 82);
-        assert_eq!(composed.0[0][2], 31);
-        assert_eq!(composed.0[0][3], 154);
+        assert_eq!(composed.0[0][0], 43.);
+        assert_eq!(composed.0[0][1], 82.);
+        assert_eq!(composed.0[0][2], 31.);
+        assert_eq!(composed.0[0][3], 154.);
     
-        assert_eq!(composed.0[1][0], 84);
-        assert_eq!(composed.0[1][1], 145);
-        assert_eq!(composed.0[1][2], 53);
-        assert_eq!(composed.0[1][3], 258);
+        assert_eq!(composed.0[1][0], 84.);
+        assert_eq!(composed.0[1][1], 145.);
+        assert_eq!(composed.0[1][2], 53.);
+        assert_eq!(composed.0[1][3], 258.);
     
-        assert_eq!(composed.0[2][0], 121);
-        assert_eq!(composed.0[2][1], 175);
-        assert_eq!(composed.0[2][2], 56);
-        assert_eq!(composed.0[2][3], 287);
+        assert_eq!(composed.0[2][0], 121.);
+        assert_eq!(composed.0[2][1], 175.);
+        assert_eq!(composed.0[2][2], 56.);
+        assert_eq!(composed.0[2][3], 287.);
     }
     #[test]
     fn test_transform_composition() {
