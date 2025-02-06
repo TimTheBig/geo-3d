@@ -156,10 +156,6 @@ pub use rotate::Rotate;
 pub mod scale;
 pub use scale::Scale;
 
-/// Skew a `Geometry` by shearing it at angles along the x and y dimensions
-pub mod skew;
-pub use skew::Skew;
-
 /// Composable affine operations such as rotate, scale, skew, and translate
 pub mod affine_ops;
 pub use affine_ops::{AffineOps, AffineTransform};
@@ -171,11 +167,6 @@ pub use simplify::{Simplify, SimplifyIdx};
 /// Simplify `Geometries` using the Visvalingam-Whyatt algorithm. Includes a topology-preserving variant.
 pub mod simplify_vw;
 pub use simplify_vw::{SimplifyVw, SimplifyVwIdx, SimplifyVwPreserve};
-
-/// Stitch together triangles with adjacent sides. Alternative to unioning triangles via BooleanOps.
-#[allow(dead_code)]
-pub(crate) mod stitch;
-pub use stitch::StitchTriangles;
 
 /// Transform a geometry using PROJ.
 #[cfg(feature = "use-proj")]
