@@ -45,10 +45,7 @@
 //! let f32_point: Point<f32> = Point::new(1.0, 2.0);
 //! assert_eq!(std::mem::size_of::<Point<f32>>(), 32 * 2 / 8);
 //!
-//! // Integer geometries are supported too, though not all
-//! // algorithms will be implemented for all numeric types.
-//! let i32_point: Point<i32> = Point::new(1, 2);
-//! assert_eq!(std::mem::size_of::<Point<i32>>(), 32 * 2 / 8);
+//! // Integer geometries are not supported
 //! ```
 //!
 //! # Semantics

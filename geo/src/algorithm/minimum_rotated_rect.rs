@@ -1,9 +1,10 @@
+use std::iter::Sum;
 use num_traits::Float;
-
 use crate::{
     algorithm::{centroid::Centroid, rotate::Rotate, BoundingRect, CoordsIter},
     Area, ConvexHull, GeoFloat, GeoNum, LinesIter, Polygon,
 };
+
 /// Return the minimum bounding rectangle(MBR) of geometry
 /// reference: <https://en.wikipedia.org/wiki/Minimum_bounding_box>
 /// minimum rotated rect is the rectangle that can enclose all points given
@@ -35,7 +36,7 @@ pub trait MinimumRotatedRect<T> {
 
 impl<T, G> MinimumRotatedRect<T> for G
 where
-    T: GeoFloat + Into<f64>,
+    T: GeoFloat + Into<f64> + Sum,
     G: CoordsIter<Scalar = T>,
 {
     type Scalar = T;
