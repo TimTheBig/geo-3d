@@ -1,7 +1,7 @@
 use std::{fs, iter::FromIterator, path::PathBuf, str::FromStr};
 
 use geo_types::{LineString, MultiPolygon, Point, Polygon};
-use wkt::{Geometry, Wkt, WktFloat};
+use wkt::{Wkt, WktFloat};
 
 pub fn louisiana<T>() -> LineString<T>
 where
@@ -147,8 +147,8 @@ where
     T: WktFloat + Default + FromStr,
 {
     let wkt = Wkt::from_str(&file(name)).unwrap();
-    match wkt.item {
-        Geometry::LineString(line_string) => wkt_line_string_to_geo(&line_string),
+    match wkt {
+        Wkt::LineString(line_string) => wkt_line_string_to_geo(&line_string),
         _ => unreachable!(),
     }
 }
@@ -158,8 +158,8 @@ where
     T: WktFloat + Default + FromStr,
 {
     let wkt = Wkt::from_str(&file(name)).unwrap();
-    match wkt.item {
-        Geometry::Polygon(wkt_polygon) => wkt_polygon_to_geo(&wkt_polygon),
+    match wkt {
+        Wkt::Polygon(wkt_polygon) => wkt_polygon_to_geo(&wkt_polygon),
         _ => unreachable!(),
     }
 }
@@ -169,8 +169,8 @@ where
     T: WktFloat + Default + FromStr,
 {
     let wkt = Wkt::from_str(&file(name)).unwrap();
-    match wkt.item {
-        Geometry::MultiPolygon(multi_polygon) => wkt_multi_polygon_to_geo(&multi_polygon),
+    match wkt {
+        Wkt::MultiPolygon(multi_polygon) => wkt_multi_polygon_to_geo(&multi_polygon),
         _ => unreachable!(),
     }
 }
@@ -179,7 +179,7 @@ fn wkt_line_string_to_geo<T>(line_string: &wkt::types::LineString<T>) -> LineStr
 where
     T: WktFloat + Default + FromStr,
 {
-    LineString::from_iter(line_string.0.iter().map(|coord| (coord.x, coord.y, coord.z.expect("Z should be there"))))
+    LineString::from_iter(line_string.0.iter().map(|coord| (coord.x, coord.y, coord.z)))
 }
 
 fn wkt_polygon_to_geo<T>(polygon: &wkt::types::Polygon<T>) -> Polygon<T>
