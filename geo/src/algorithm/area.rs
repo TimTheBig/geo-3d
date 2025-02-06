@@ -1,5 +1,7 @@
+use std::iter::Sum;
 use crate::geometry::*;
 use crate::CoordNum;
+use super::TriangulateEarcut;
 
 pub(crate) fn twice_signed_ring_area<T>(linestring: &LineString<T>) -> T
 where
@@ -126,28 +128,14 @@ where
 /// the output is the same as that of the exterior shell.
 impl<T> Area<T> for Polygon<T>
 where
-    T: CoordNum,
+    T: CoordNum + Sum<T>,
 {
     fn signed_area(&self) -> T {
-        let area = get_linestring_area(self.exterior());
-
-        // We could use winding order here, but that would
-        // result in computing the shoelace formula twice.
-        let is_negative = area < T::zero();
-
-        let area = self.interiors().iter().fold(area.abs(), |total, next| {
-            total - get_linestring_area(next).abs()
-        });
-
-        if is_negative {
-            -area
-        } else {
-            area
-        }
+        self.earcut_triangles_iter().map(|tri| tri.signed_area()).sum()
     }
 
     fn unsigned_area(&self) -> T {
-        self.signed_area().abs()
+        self.earcut_triangles_iter().map(|tri| tri.unsigned_area()).sum()
     }
 }
 
@@ -185,7 +173,7 @@ where
 /// same.
 impl<T> Area<T> for MultiPolygon<T>
 where
-    T: CoordNum,
+    T: CoordNum + Sum<T>,
 {
     fn signed_area(&self) -> T {
         self.0
@@ -232,7 +220,7 @@ where
 
 impl<T> Area<T> for Geometry<T>
 where
-    T: CoordNum,
+    T: CoordNum + Sum<T>,
 {
     crate::geometry_delegate_impl! {
         fn signed_area(&self) -> T;
@@ -242,7 +230,7 @@ where
 
 impl<T> Area<T> for GeometryCollection<T>
 where
-    T: CoordNum,
+    T: CoordNum + Sum<T>,
 {
     fn signed_area(&self) -> T {
         self.0

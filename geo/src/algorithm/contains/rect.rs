@@ -1,3 +1,4 @@
+use std::iter::Sum;
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
 use crate::{geometry::*, Area, CoordsIter, HasDimensions, Intersects};
 use crate::{CoordNum, GeoFloat};
@@ -43,7 +44,7 @@ where
 
 impl<T> Contains<Polygon<T>> for Rect<T>
 where
-    T: CoordNum,
+    T: CoordNum + Sum<T>,
 {
     fn contains(&self, rhs: &Polygon<T>) -> bool {
         // the polygon must not be empty
