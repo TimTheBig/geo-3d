@@ -77,14 +77,14 @@ mod test {
 
     #[test]
     fn hd_mpnt_mpnt() {
-        let p1: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
-        let p2: MultiPoint<_> = vec![(2., 3.), (1., 2.)].into();
+        let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
+        let p2: MultiPoint<_> = vec![(2., 3., 4.), (1., 2., 3.)].into();
         assert_relative_eq!(p1.hausdorff_distance(&p2), 2.236068, epsilon = 1.0e-6);
     }
 
     #[test]
     fn hd_mpnt_poly() {
-        let p1: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
+        let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let poly = polygon![
         (x: 1., y: -3.1), (x: 3.7, y: 2.7),
         (x: 0.9, y: 7.6), (x: -4.8, y: 6.7),
@@ -97,7 +97,7 @@ mod test {
 
     #[test]
     fn hd_mpnt_lns() {
-        let p1: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
+        let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let lns = line_string![
         (x: 1., y: -3.1), (x: 3.7, y: 2.7),
         (x: 0.9, y: 7.6), (x: -4.8, y: 6.7),
@@ -110,7 +110,7 @@ mod test {
 
     #[test]
     fn hd_mpnt_mply() {
-        let p1: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
+        let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let multi_polygon = MultiPolygon::new(vec![
             polygon![
               (x: 0.0f32, y: 0.0),

@@ -882,7 +882,7 @@ mod test {
         ];
         let points = points_raw
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly1 = Polygon::new(LineString::from(points), vec![]);
 
@@ -897,7 +897,7 @@ mod test {
         ];
         let points2 = points_raw_2
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly2 = Polygon::new(LineString::from(points2), vec![]);
         let dist = nearest_neighbour_distance(poly1.exterior(), poly2.exterior());
@@ -915,7 +915,7 @@ mod test {
         ];
         let points = points_raw
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly1 = Polygon::new(LineString::from(points), vec![]);
 
@@ -928,7 +928,7 @@ mod test {
         ];
         let points2 = points_raw_2
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly2 = Polygon::new(LineString::from(points2), vec![]);
         let dist = nearest_neighbour_distance(poly1.exterior(), poly2.exterior());
@@ -946,7 +946,7 @@ mod test {
         ];
         let points = points_raw
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly1 = Polygon::new(LineString::from(points), vec![]);
 
@@ -959,7 +959,7 @@ mod test {
         ];
         let points2 = points_raw_2
             .iter()
-            .map(|e| Point::new(e.0, e.1))
+            .map(|e| Point::new(e.0, e.1, e.2))
             .collect::<Vec<_>>();
         let poly2 = Polygon::new(LineString::from(points2), vec![]);
         let dist = nearest_neighbour_distance(poly1.exterior(), poly2.exterior());

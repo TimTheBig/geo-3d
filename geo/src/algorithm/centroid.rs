@@ -411,12 +411,12 @@ where
     ///
     /// let triangle_geometry = Geometry::from(Triangle::new(
     ///     coord!(x: 0.0f32, y: -1.0),
-    ///     coord!(x: 3.0, y: 0.0),
-    ///     coord!(x: 0.0, y: 1.0),
+    ///     coord!(x: 3.0, y: 0.0, z: -2.0),
+    ///     coord!(x: 0.0, y: 1.0, z: 2.0),
     /// ));
     ///
     /// let point_geometry = Geometry::from(
-    ///   point!(x: 12351.0, y: 129815.0)
+    ///   point!(x: 12351.0, y: 129815.0, z: 0.23597)
     /// );
     ///
     /// let geometry_collection = GeometryCollection::new(
@@ -428,7 +428,7 @@ where
     /// );
     ///
     /// assert_eq!(
-    ///     Some(point!(x: 0.875, y: 0.125)),
+    ///     Some(point!(x: 0.875, y: 0.125, z: 0.5)),
     ///     geometry_collection.centroid(),
     /// );
     /// ```

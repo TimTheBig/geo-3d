@@ -120,75 +120,78 @@ mod test {
     #[test]
     fn test_line_locate_point_line() {
         // Some finite examples
-        let line = Line::new(coord! { x: -1.0, y: 0.0 }, coord! { x: 1.0, y: 0.0 });
-        let point = Point::new(0.0, 1.0);
+        let line = Line::new(coord! { x: -1.0, y: 0.0, z: -2.0 }, coord! { x: 1.0, y: 0.0, z: 2.0 });
+        let point = Point::new(0.0, 1.0, 2.0);
         assert_eq!(line.line_locate_point(&point), Some(0.5));
 
         let point = Point::new(1.0, 1.0, 1.0);
         assert_eq!(line.line_locate_point(&point), Some(1.0));
 
-        let point = Point::new(2.0, 1.0);
+        let point = Point::new(2.0, 1.0, 0.0);
         assert_eq!(line.line_locate_point(&point), Some(1.0));
 
-        let point = Point::new(-1.0, 1.0);
+        let point = Point::new(-1.0, 1.0, 0.0);
         assert_eq!(line.line_locate_point(&point), Some(0.0));
 
-        let point = Point::new(-2.0, 1.0);
+        let point = Point::new(-2.0, 1.0, 2.0);
         assert_eq!(line.line_locate_point(&point), Some(0.0));
 
         // point contains inf or nan
-        let point = Point::new(Float::nan(), 1.0);
+        let point = Point::new(Float::nan(), 1.0, 1.0);
         assert_eq!(line.line_locate_point(&point), None);
 
-        let point = Point::new(Float::infinity(), 1.0);
+        let point = Point::new(1.0, Float::infinity(), 1.0);
         assert_eq!(line.line_locate_point(&point), None);
 
-        let point = Point::new(Float::neg_infinity(), 1.0);
+        let point = Point::new(1.0, 1.0, Float::neg_infinity());
         assert_eq!(line.line_locate_point(&point), None);
 
         // line contains inf or nan
         let line = Line::new(
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! {
                 x: Float::infinity(),
                 y: 0.0,
+                z: 0.0,
             },
         );
-        let point = Point::new(1000.0, 1000.0);
+        let point = Point::new(1000.0, 1000.0, 1000.0);
         assert_eq!(line.line_locate_point(&point), None);
 
         let line = Line::new(
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! {
                 x: Float::neg_infinity(),
                 y: 0.0,
+                z: 0.0,
             },
         );
-        let point = Point::new(1000.0, 1000.0);
+        let point = Point::new(1000.0, 1000.0, 1000.0);
         assert_eq!(line.line_locate_point(&point), None);
 
         let line = Line::new(
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! {
                 x: Float::nan(),
                 y: 0.0,
+                z: 0.0,
             },
         );
-        let point = Point::new(1000.0, 1000.0);
+        let point = Point::new(1000.0, 1000.0, 1000.0);
         assert_eq!(line.line_locate_point(&point), None);
 
         // zero length line
-        let line: Line = Line::new(coord! { x: 1.0, y: 1.0 }, coord! { x: 1.0, y: 1.0 });
-        let pt = point!(x: 2.0, y: 2.0);
+        let line: Line = Line::new(coord! { x: 1.0, y: 1.0, z: 1.0 }, coord! { x: 1.0, y: 1.0, z: 1.0 });
+        let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), Some(0.0));
 
         // another concrete example
-        let line: Line = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 10.0, y: 0.0 });
-        let pt = Point::new(555.0, 555.0);
+        let line: Line = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 10.0, y: 0.0, z: 0.0 });
+        let pt = Point::new(555.0, 555.0, 555.0);
         assert_eq!(line.line_locate_point(&pt), Some(1.0));
-        let pt = Point::new(10.0000001, 0.0);
+        let pt = Point::new(10.0000001, 0.0, 4.0);
         assert_eq!(line.line_locate_point(&pt), Some(1.0));
-        let pt = Point::new(9.0, 0.001);
+        let pt = Point::new(9.0, 0.001, 0.1);
         assert_eq!(line.line_locate_point(&pt), Some(0.9));
     }
 
@@ -196,33 +199,33 @@ mod test {
     fn test_line_locate_point_linestring() {
         // finite example using the ring
         let ring: LineString = geo_test_fixtures::ring::<f64>();
-        let pt = point!(x: 10.0, y: 1.0);
+        let pt = point!(x: 10.0, y: 1.0, z: -10.0);
         assert_eq!(ring.line_locate_point(&pt), Some(0.0));
 
-        let pt = point!(x: 10.0, y: 1.0000000000000742);
+        let pt = point!(x: 10.0, y: 1.0000000000000742, z: 1.424245);
         assert_eq!(ring.line_locate_point(&pt), Some(0.9999999999999988));
 
-        let pt = point!(x: 10.0, y: 1.0);
+        let pt = point!(x: 10.0, y: 1.0, z: -10.0);
         assert_eq!(ring.line_locate_point(&pt), Some(0.0));
 
         // point contains inf or nan
-        let pt = point!(x: Float::nan(), y: 1.0);
+        let pt = point!(x: Float::nan(), y: 1.0, z: 1.0);
         assert_eq!(ring.line_locate_point(&pt), None);
 
-        let pt = point!(x: Float::infinity(), y: 1.0);
+        let pt = point!(x: 1.0, y: Float::infinity(), z: 1.0);
         assert_eq!(ring.line_locate_point(&pt), None);
 
-        let pt = point!(x: Float::neg_infinity(), y: 1.0);
+        let pt = point!(x: 1.0, y: 1.0, z: Float::neg_infinity());
         assert_eq!(ring.line_locate_point(&pt), None);
 
         // point is equidistant to two line segments - return the fraction from the first closest
         let line: LineString = LineString::new(vec![
-            (0.0, 0.0).into(),
-            (1.0, 0.0).into(),
-            (1.0, 1.0).into(),
-            (0.0, 1.0).into(),
+            (0.0, 0.0, 0.0).into(),
+            (1.0, 0.0, 1.0).into(),
+            (1.0, 1.0, 1.0).into(),
+            (0.0, 1.0, 0.0).into(),
         ]);
-        let pt = point!(x: 0.0, y: 0.5);
+        let pt = point!(x: 0.0, y: 0.5, z: 0.5);
         assert_eq!(line.line_locate_point(&pt), Some(0.0));
 
         let line: LineString = LineString::new(vec![
@@ -230,40 +233,43 @@ mod test {
             (1.0, 1.0).into(),
             (1.0, 1.0).into(),
         ]);
-        let pt = point!(x: 2.0, y: 2.0);
+        let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), Some(0.0));
 
         // line contains inf or nan
         let line: LineString = LineString::new(vec![
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
             coord! {
                 x: Float::nan(),
                 y: 1.0,
+                z: 1.0,
             },
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
         ]);
-        let pt = point!(x: 2.0, y: 2.0);
+        let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), None);
 
         let line: LineString = LineString::new(vec![
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
             coord! {
                 x: Float::infinity(),
                 y: 1.0,
+                z: 1.0,
             },
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
         ]);
-        let pt = point!(x: 2.0, y: 2.0);
+        let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), None);
         let line: LineString = LineString::new(vec![
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
             coord! {
                 x: Float::neg_infinity(),
                 y: 1.0,
+                z: 1.0,
             },
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
         ]);
-        let pt = point!(x: 2.0, y: 2.0);
+        let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), None);
     }
 }

@@ -66,7 +66,7 @@ macro_rules! impl_contains_geometry_for {
     ($geom_type: ty) => {
         impl<T> Contains<Geometry<T>> for $geom_type
         where
-            T: GeoFloat,
+            T: GeoFloat + std::iter::Sum,
         {
             fn contains(&self, geometry: &Geometry<T>) -> bool {
                 match geometry {
@@ -393,19 +393,19 @@ mod test {
     }
     #[test]
     fn linestring_in_line_test() {
-        let line = Line::from([(0, 10, 0), (30, 40, 30)]);
+        let line = Line::from([(0., 10., 0.), (30., 40., 30.)]);
         // linestring0 in line
-        let linestring0 = LineString::from(vec![(1, 11, 1), (10, 20, 10), (15, 25, 15)]);
+        let linestring0 = LineString::from(vec![(1., 11., 1.), (10., 20., 10.), (15., 25., 15.)]);
         // linestring1 starts and ends in line, but wanders in the middle
-        let linestring1 = LineString::from(vec![(1, 11, 1), (20, 20, 20), (15, 25, 15)]);
+        let linestring1 = LineString::from(vec![(1., 11., 1.), (20., 20., 20.), (15., 25., 15.)]);
         // linestring2 is co-linear, but extends beyond line
-        let linestring2 = LineString::from(vec![(1, 11, 1), (10, 20, 30), (40, 50, 60)]);
+        let linestring2 = LineString::from(vec![(1., 11., 1.), (10., 20., 30.), (40., 50., 60.)]);
         // no part of linestring3 is contained in line
-        let linestring3 = LineString::from(vec![(11, 11, 11), (20, 20, 20), (25, 25, 25)]);
+        let linestring3 = LineString::from(vec![(11., 11., 11.), (20., 20., 20.), (25., 25., 25.)]);
         // a linestring with singleton interior on the boundary of the line
-        let linestring4 = LineString::from(vec![(0, 10, 0), (0, 10, 20), (0, 10, 0)]);
+        let linestring4 = LineString::from(vec![(0., 10., 0.), (0., 10., 20.), (0., 10., 0.)]);
         // a linestring with singleton interior that is contained in the line
-        let linestring5 = LineString::from(vec![(1, 11, 111), (1, 11, 1), (1, 11, 111)]);
+        let linestring5 = LineString::from(vec![(1., 11., 111.), (1., 11., 1.), (1., 11., 111.)]);
         assert!(line.contains(&linestring0));
         assert!(!line.contains(&linestring1));
         assert!(!line.contains(&linestring2));
@@ -457,11 +457,11 @@ mod test {
     #[test]
     fn line_in_linestring_edgecases() {
         use crate::line_string;
-        let mut ls = line_string![coord!(0, 0, 0), coord!(1, 0, 1), coord!(0, 1, 0), coord!(-1, 0, -1)];
-        assert!(!ls.contains(&Line::from([(0, 0, 0), (0, 0, 0)])));
+        let mut ls = line_string![coord!(0., 0., 0.), coord!(1., 0., 1.), coord!(0., 1., 0.), coord!(-1., 0., -1.)];
+        assert!(!ls.contains(&Line::from([(0., 0., 0.), (0., 0., 0.)])));
         ls.close();
-        assert!(ls.contains(&Line::from([(0, 0, 0), (0, 0, 0)])));
-        assert!(ls.contains(&Line::from([(-1, 0, -1), (1, 0, 1)])));
+        assert!(ls.contains(&Line::from([(0., 0., 0.), (0., 0., 0.)])));
+        assert!(ls.contains(&Line::from([(-1., 0., -1.), (1., 0., 1.)])));
     }
     #[test]
     fn line_in_linestring_test() {
@@ -491,14 +491,14 @@ mod test {
     }
 
     #[test]
-    fn integer_bounding_rects() {
-        let p: Point<i32> = Point::new(10, 20, 30);
-        let bounding_rect: Rect<i32> = Rect::new(Coord::zero(), coord! { x: 100, y: 100, z: 100 });
+    fn f32_bounding_rects() {
+        let p: Point<f32> = Point::new(10., 20., 30.);
+        let bounding_rect: Rect<f32> = Rect::new(Coord::zero(), coord! { x: 100., y: 100., z: 100. });
         assert!(bounding_rect.contains(&p));
-        assert!(!bounding_rect.contains(&Point::new(-10, -10, -10)));
+        assert!(!bounding_rect.contains(&Point::new(-10., -10., -10.)));
 
-        let smaller_bounding_rect: Rect<i32> =
-            Rect::new(coord! { x: 10, y: 10, z: 10 }, coord! { x: 20, y: 20, z: 20 });
+        let smaller_bounding_rect: Rect<f32> =
+            Rect::new(coord! { x: 10., y: 10., z: 10. }, coord! { x: 20., y: 20., z: 20. });
         assert!(bounding_rect.contains(&smaller_bounding_rect));
     }
 

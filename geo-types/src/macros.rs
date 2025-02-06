@@ -365,38 +365,38 @@ mod test {
     #[test]
     fn test_polygon() {
         let p = polygon!(
-            exterior: [(x: 1, y: 2, z: 3)],
-            interiors: [[(x: 3, y: 4, z: 5)]]
+            exterior: [(x: 1., y: 2., z: 3.)],
+            interiors: [[(x: 3., y: 4., z: 5.)]]
         );
-        assert_eq!(p.exterior()[0], coord! { x: 1, y: 2, z: 3 });
-        assert_eq!(p.interiors()[0][0], coord! { x: 3, y: 4, z: 5 });
+        assert_eq!(p.exterior()[0], coord! { x: 1., y: 2., z: 3. });
+        assert_eq!(p.interiors()[0][0], coord! { x: 3., y: 4., z: 5. });
 
         let p = polygon!(
-            exterior: [(x: 1, y: 2, z: 3)],
-            interiors: [[(x: 3, y: 4, z: 5)]],
+            exterior: [(x: 1., y: 2., z: 3.)],
+            interiors: [[(x: 3., y: 4., z: 5.)]],
         );
-        assert_eq!(p.exterior()[0], coord! { x: 1, y: 2, z: 3 });
-        assert_eq!(p.interiors()[0][0], coord! { x: 3, y: 4, z: 5 });
+        assert_eq!(p.exterior()[0], coord! { x: 1., y: 2., z: 3. });
+        assert_eq!(p.interiors()[0][0], coord! { x: 3., y: 4., z: 5. });
 
         let p = polygon!(
-            exterior: [(x: 1, y: 2, z: 3, )],
-            interiors: [[(x: 3, y: 4, z: 5, )]],
+            exterior: [(x: 1., y: 2., z: 3., )],
+            interiors: [[(x: 3., y: 4., z: 5., )]],
         );
-        assert_eq!(p.exterior()[0], coord! { x: 1, y: 2, z: 3 });
-        assert_eq!(p.interiors()[0][0], coord! { x: 3, y: 4, z: 5 });
+        assert_eq!(p.exterior()[0], coord! { x: 1., y: 2., z: 3. });
+        assert_eq!(p.interiors()[0][0], coord! { x: 3., y: 4., z: 5. });
 
         let p = polygon!(
-            exterior: [(x: 1, y: 2, z: 3, ), ],
-            interiors: [[(x: 3, y: 4, z: 5, ), ]],
+            exterior: [(x: 1., y: 2., z: 3., ), ],
+            interiors: [[(x: 3., y: 4., z: 5., ), ]],
         );
-        assert_eq!(p.exterior()[0], coord! { x: 1, y: 2, z: 3 });
-        assert_eq!(p.interiors()[0][0], coord! { x: 3, y: 4, z: 5 });
+        assert_eq!(p.exterior()[0], coord! { x: 1., y: 2., z: 3. });
+        assert_eq!(p.interiors()[0][0], coord! { x: 3., y: 4., z: 5. });
 
         let p = polygon!(
-            exterior: [(x: 1, y: 2, z: 3, ), ],
-            interiors: [[(x: 3, y: 4, z: 5, ), ], ],
+            exterior: [(x: 1., y: 2., z: 3., ), ],
+            interiors: [[(x: 3., y: 4., z: 5., ), ], ],
         );
-        assert_eq!(p.exterior()[0], coord! { x: 1, y: 2, z: 3 });
-        assert_eq!(p.interiors()[0][0], coord! { x: 3, y: 4, z: 5 });
+        assert_eq!(p.exterior()[0], coord! { x: 1., y: 2., z: 3. });
+        assert_eq!(p.interiors()[0][0], coord! { x: 3., y: 4., z: 5. });
     }
 }

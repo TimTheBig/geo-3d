@@ -110,8 +110,8 @@ pub trait TriangulateEarcut<T: CoordNum> {
     ///             0., 0., // SW
     ///         ],
     ///         triangle_indices: vec![
-    ///             3, 0, 1, // NW-SW-SE
-    ///             1, 2, 3, // SE-NE-NW
+    ///             3., 0., 1., // NW-SW-SE
+    ///             1., 2., 3., // SE-NE-NW
     ///         ],
     ///     },
     ///     triangles_raw,

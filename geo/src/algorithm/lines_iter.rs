@@ -184,22 +184,22 @@ mod test {
 
     #[test]
     fn test_open_line_string() {
-        let ls = line_string![(x: 0., y: 0.), (x: 1., y: 1.), (x:2., y: 2.)];
+        let ls = line_string![(x: 0., y: 0., z: 0.), (x: 1., y: 1., z: 1.), (x: 2., y: 2., z: 2.)];
         let want = vec![
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. }),
-            Line::new(coord! { x: 1., y: 1. }, coord! { x: 2., y: 2. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. }),
+            Line::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 2., y: 2., z: 2. }),
         ];
         assert_eq!(want, ls.lines_iter().collect::<Vec<_>>());
     }
 
     #[test]
     fn test_closed_line_string() {
-        let mut ls = line_string![(x: 0., y: 0.), (x: 1., y: 1.), (x:2., y: 2.)];
+        let mut ls = line_string![(x: 0., y: 0., z: 0.), (x: 1., y: 1., z: 1.), (x: 2., y: 2., z: 2.)];
         ls.close();
         let want = vec![
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. }),
-            Line::new(coord! { x: 1., y: 1. }, coord! { x: 2., y: 2. }),
-            Line::new(coord! { x: 2., y: 2. }, coord! { x: 0., y: 0. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. }),
+            Line::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 2., y: 2., z: 2. }),
+            Line::new(coord! { x: 2., y: 2., z: 2. }, coord! { x: 0., y: 0., z: 0. }),
         ];
         assert_eq!(want, ls.lines_iter().collect::<Vec<_>>());
     }
@@ -208,13 +208,13 @@ mod test {
     fn test_multi_line_string() {
         let mls = MultiLineString::new(vec![
             line_string![],
-            line_string![(x: 0., y: 0.), (x: 1., y: 1.)],
-            line_string![(x: 0., y: 0.), (x: 1., y: 1.), (x:2., y: 2.)],
+            line_string![(x: 0., y: 0., z: 0.), (x: 1., y: 1., z: 1.)],
+            line_string![(x: 0., y: 0., z: 0.), (x: 1., y: 1., z: 1.), (x: 2., y: 2., z: 2.)],
         ]);
         let want = vec![
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. }),
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. }),
-            Line::new(coord! { x: 1., y: 1. }, coord! { x: 2., y: 2. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. }),
+            Line::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 2., y: 2., z: 2. }),
         ];
         assert_eq!(want, mls.lines_iter().collect::<Vec<_>>());
     }
@@ -222,28 +222,28 @@ mod test {
     #[test]
     fn test_polygon() {
         let p = polygon!(
-            exterior: [(x: 0., y: 0.), (x: 0., y: 10.), (x: 10., y: 10.), (x: 10., y: 0.)],
+            exterior: [(x: 0., y: 0., z: 0.), (x: 0., y: 10., z: 0.), (x: 10., y: 10., z: 10.), (x: 10., y: 0., z: 10.)],
             interiors: [
-                [(x: 1., y: 1.), (x: 1., y: 2.), (x: 2., y: 2.), (x: 2., y: 1.)],
-                [(x: 3., y: 3.), (x: 5., y: 3.), (x: 5., y: 5.), (x: 3., y: 5.)],
+                [(x: 1., y: 1., z: 1.), (x: 1., y: 2., z: -1.), (x: 2., y: 2., z: 2.), (x: 2., y: 1., z: -2.)],
+                [(x: 3., y: 3., z: 3.), (x: 5., y: 3., z: -5.), (x: 5., y: 5., z: 5.), (x: 3., y: 5., z: -3.)],
             ],
         );
         let want = vec![
             // exterior ring
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 0., y: 10. }),
-            Line::new(coord! { x: 0., y: 10. }, coord! { x: 10., y: 10. }),
-            Line::new(coord! { x: 10., y: 10. }, coord! { x: 10., y: 0. }),
-            Line::new(coord! { x: 10., y: 0. }, coord! { x: 0., y: 0. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 0., y: 10., z: 0. }),
+            Line::new(coord! { x: 0., y: 10., z: 0. }, coord! { x: 10., y: 10., z: 10. }),
+            Line::new(coord! { x: 10., y: 10., z: 10. }, coord! { x: 10., y: 0., z: -10. }),
+            Line::new(coord! { x: 10., y: 0., z: -10. }, coord! { x: 0., y: 0., z: 0. }),
             // first interior ring
-            Line::new(coord! { x: 1., y: 1. }, coord! { x: 1., y: 2. }),
-            Line::new(coord! { x: 1., y: 2. }, coord! { x: 2., y: 2. }),
-            Line::new(coord! { x: 2., y: 2. }, coord! { x: 2., y: 1. }),
-            Line::new(coord! { x: 2., y: 1. }, coord! { x: 1., y: 1. }),
+            Line::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 1., y: 2., z: -1. }),
+            Line::new(coord! { x: 1., y: 2., z: -1. }, coord! { x: 2., y: 2., z: 2. }),
+            Line::new(coord! { x: 2., y: 2., z: 2. }, coord! { x: 2., y: 1., z: -2. }),
+            Line::new(coord! { x: 2., y: 1., z: -2. }, coord! { x: 1., y: 1., z: 1. }),
             // second interior ring
-            Line::new(coord! { x: 3., y: 3. }, coord! { x: 5., y: 3. }),
-            Line::new(coord! { x: 5., y: 3. }, coord! { x: 5., y: 5. }),
-            Line::new(coord! { x: 5., y: 5. }, coord! { x: 3., y: 5. }),
-            Line::new(coord! { x: 3., y: 5. }, coord! { x: 3., y: 3. }),
+            Line::new(coord! { x: 3., y: 3., z: 3. }, coord! { x: 5., y: 3., z: -5. }),
+            Line::new(coord! { x: 5., y: 3., z: -5. }, coord! { x: 5., y: 5., z: 5. }),
+            Line::new(coord! { x: 5., y: 5., z: 5. }, coord! { x: 3., y: 5., z: -3. }),
+            Line::new(coord! { x: 3., y: 5., z: -3. }, coord! { x: 3., y: 3., z: 3. }),
         ];
         assert_eq!(want, p.lines_iter().collect::<Vec<_>>());
     }
@@ -252,37 +252,37 @@ mod test {
     fn test_multi_polygon() {
         let mp = MultiPolygon::new(vec![
             polygon!(
-                exterior: [(x: 0., y: 0.), (x: 0., y: 10.), (x: 10., y: 10.), (x: 10., y: 0.)],
-                interiors: [[(x: 1., y: 1.), (x: 1., y: 2.), (x: 2., y: 2.), (x: 2., y: 1.)]],
+                exterior: [(x: 0., y: 0., z: 0.), (x: 0., y: 10., z: 0.), (x: 10., y: 10., z: 10.), (x: 10., y: 0., z: -10.)],
+                interiors: [[(x: 1., y: 1., z: 1.), (x: 1., y: 2., z: -1.), (x: 2., y: 2., z: 2.), (x: 2., y: 1., z: -2.)]],
             ),
             polygon!(
-                exterior: [(x: 3., y: 3.), (x: 5., y: 3.), (x: 5., y: 5.), (x: 3., y: 5.)],
+                exterior: [(x: 3., y: 3., z: 3.), (x: 5., y: 3., z: -5.), (x: 5., y: 5., z: 5.), (x: 3., y: 5., z: -3.)],
                 interiors: [],
             ),
         ]);
         let want = vec![
             // first polygon - exterior ring
-            Line::new(coord! { x: 0., y: 0. }, coord! { x: 0., y: 10. }),
-            Line::new(coord! { x: 0., y: 10. }, coord! { x: 10., y: 10. }),
-            Line::new(coord! { x: 10., y: 10. }, coord! { x: 10., y: 0. }),
-            Line::new(coord! { x: 10., y: 0. }, coord! { x: 0., y: 0. }),
+            Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 0., y: 10., z: 0. }),
+            Line::new(coord! { x: 0., y: 10., z: 0. }, coord! { x: 10., y: 10., z: 10. }),
+            Line::new(coord! { x: 10., y: 10., z: 10. }, coord! { x: 10., y: 0., z: -10. }),
+            Line::new(coord! { x: 10., y: 0., z: -10. }, coord! { x: 0., y: 0., z: 0. }),
             // first polygon - interior ring
-            Line::new(coord! { x: 1., y: 1. }, coord! { x: 1., y: 2. }),
-            Line::new(coord! { x: 1., y: 2. }, coord! { x: 2., y: 2. }),
-            Line::new(coord! { x: 2., y: 2. }, coord! { x: 2., y: 1. }),
-            Line::new(coord! { x: 2., y: 1. }, coord! { x: 1., y: 1. }),
+            Line::new(coord! { x: 1., y: 1., z: 1. }, coord! { x: 1., y: 2., z: -1. }),
+            Line::new(coord! { x: 1., y: 2., z: -1. }, coord! { x: 2., y: 2., z: 2. }),
+            Line::new(coord! { x: 2., y: 2., z: 2. }, coord! { x: 2., y: 1., z: -2. }),
+            Line::new(coord! { x: 2., y: 1., z: -2. }, coord! { x: 1., y: 1., z: 1. }),
             // second polygon - exterior ring
-            Line::new(coord! { x: 3., y: 3. }, coord! { x: 5., y: 3. }),
-            Line::new(coord! { x: 5., y: 3. }, coord! { x: 5., y: 5. }),
-            Line::new(coord! { x: 5., y: 5. }, coord! { x: 3., y: 5. }),
-            Line::new(coord! { x: 3., y: 5. }, coord! { x: 3., y: 3. }),
+            Line::new(coord! { x: 3., y: 3., z: 3. }, coord! { x: 5., y: 3., z: -5. }),
+            Line::new(coord! { x: 5., y: 3., z: -5. }, coord! { x: 5., y: 5., z: 5. }),
+            Line::new(coord! { x: 5., y: 5., z: 5. }, coord! { x: 3., y: 5., z: -3. }),
+            Line::new(coord! { x: 3., y: 5., z: -3. }, coord! { x: 3., y: 3., z: 3. }),
         ];
         assert_eq!(want, mp.lines_iter().collect::<Vec<_>>());
     }
 
     #[test]
     fn test_rect() {
-        let rect = Rect::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 2. });
+        let rect = Rect::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 2., z: -1. });
         let want = rect.to_polygon().lines_iter().collect::<Vec<_>>();
         assert_eq!(want, rect.lines_iter().collect::<Vec<_>>());
     }
@@ -290,9 +290,9 @@ mod test {
     #[test]
     fn test_triangle() {
         let triangle = Triangle::new(
-            coord! { x: 0., y: 0. },
-            coord! { x: 1., y: 2. },
-            coord! { x: 2., y: 3. },
+            coord! { x: 0., y: 0., z: 0. },
+            coord! { x: 1., y: 2., z: 3. },
+            coord! { x: 2., y: 3., z: 4. },
         );
         let want = triangle.to_polygon().lines_iter().collect::<Vec<_>>();
         assert_eq!(want, triangle.lines_iter().collect::<Vec<_>>());

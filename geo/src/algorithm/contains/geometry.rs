@@ -1,3 +1,4 @@
+use std::iter::Sum;
 use super::Contains;
 use crate::geometry::*;
 use crate::geometry_delegate_impl;
@@ -41,7 +42,7 @@ where
 
 impl<T> Contains<Polygon<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoFloat + Sum,
 {
     geometry_delegate_impl! {
         fn contains(&self, polygon: &Polygon<T>) -> bool;
@@ -77,7 +78,7 @@ where
 
 impl<T> Contains<GeometryCollection<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoFloat + Sum,
 {
     geometry_delegate_impl! {
         fn contains(&self, geometry_collection: &GeometryCollection<T>) -> bool;
@@ -104,7 +105,7 @@ where
 
 impl<T> Contains<Geometry<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoFloat + Sum,
 {
     fn contains(&self, other: &Geometry<T>) -> bool {
         match other {

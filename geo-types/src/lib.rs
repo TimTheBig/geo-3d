@@ -34,15 +34,15 @@
 //! use geo_types::Point;
 //!
 //! // Geometries are f64 by default
-//! let point: Point = Point::new(1.0, 2.0);
+//! let point: Point = Point::new(1.0, 2.0, 3.0);
 //! assert_eq!(std::mem::size_of::<Point>(), 64 * 2 / 8);
 //!
 //! // You can be explicit about the numeric type.
-//! let f64_point: Point<f64> = Point::new(1.0, 2.0);
+//! let f64_point: Point<f64> = Point::new(1.0, 2.0, 3.0);
 //! assert_eq!(std::mem::size_of::<Point<f64>>(), 64 * 2 / 8);
 //!
 //! // Or specify some non-default numeric type
-//! let f32_point: Point<f32> = Point::new(1.0, 2.0);
+//! let f32_point: Point<f32> = Point::new(1.0, 2.0, 3.0);
 //! assert_eq!(std::mem::size_of::<Point<f32>>(), 32 * 2 / 8);
 //!
 //! // Integer geometries are not supported

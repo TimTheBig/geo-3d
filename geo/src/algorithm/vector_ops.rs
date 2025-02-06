@@ -291,7 +291,7 @@ mod test {
         let a = coord! { x: 0.0, y: 0.0, z: 1.0 };
         assert_eq!(a.magnitude(), 1f64);
 
-        let a = coord! { x: 0.0, y: 0.0, 0.0 };
+        let a = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(a.magnitude(), 0f64);
 
         let a = coord! { x: -3.0, y: 4.0 };
@@ -313,7 +313,7 @@ mod test {
     #[test]
     fn test_left_right() {
         let a = coord! { x: 1f64, y: 0f64 };
-        let a_left = coord! { x: 0f64, y: 1f64 };
+        let a_left = coord! { x: 0f64, y: 1f64, z: 2.0 };
         let a_right = coord! { x: 0f64, y: -1f64 };
 
         assert_eq!(a.left(), a_left);
@@ -338,7 +338,7 @@ mod test {
         let counter_clockwise_rotation_degrees = 90.0;
         let clockwise_rotation_degrees = -counter_clockwise_rotation_degrees;
 
-        let a: Point = coord! { x: 1.0, y: 0.0 }.into();
+        let a: Point = coord! { x: 1.0, y: 0.0, z: 0.0 }.into();
         let origin: Point = coord! { x: 0.0, y: 0.0, z: 0.0 }.into();
 
         // left is anti-clockwise
