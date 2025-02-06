@@ -84,22 +84,9 @@ pub use extremes::Extremes;
 pub mod frechet_distance;
 pub use frechet_distance::FrechetDistance;
 
-/// Calculate the Geodesic area and perimeter of polygons.
-pub mod geodesic_area;
-pub use geodesic_area::GeodesicArea;
-
 /// Calculate the Hausdorff distance between two geometries.
 pub mod hausdorff_distance;
 pub use hausdorff_distance::HausdorffDistance;
-
-/// Calculate the bearing to another `Point`, in degrees.
-pub mod haversine_bearing;
-#[allow(deprecated)]
-pub use haversine_bearing::HaversineBearing;
-
-/// Calculate the closest point on a Great Circle arc geometry to a given point.
-pub mod haversine_closest_point;
-pub use haversine_closest_point::HaversineClosestPoint;
 
 /// Calculate a representative `Point` inside a `Geometry`
 pub mod interior_point;
