@@ -419,7 +419,7 @@ where
     ///   point!(x: 12351.0, y: 129815.0)
     /// );
     ///
-    /// let geometry_collection = GeometryCollection::new_from(
+    /// let geometry_collection = GeometryCollection::new(
     ///   vec![
     ///     rect_geometry,
     ///     triangle_geometry,
