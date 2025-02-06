@@ -5,6 +5,7 @@
 ## 0.8.0
 
 - BREAKING: Move types to 3d
+- rstar 0.12 is now the only supported version
 
 ## 0.7.14
 

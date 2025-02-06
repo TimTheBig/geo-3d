@@ -209,26 +209,19 @@ where
     }
 }
 
-#[cfg(feature = "rstar_0_12")]
-macro_rules! impl_rstar_multi_polygon {
-    ($rstar:ident) => {
-        impl<T> $rstar::RTreeObject for MultiPolygon<T>
-        where
-            T: ::num_traits::Float + ::$rstar::RTreeNum,
-        {
-            type Envelope = ::$rstar::AABB<$crate::Point<T>>;
-            fn envelope(&self) -> Self::Envelope {
-                use ::$rstar::Envelope;
-                self.iter()
-                    .map(|p| p.envelope())
-                    .fold(::$rstar::AABB::new_empty(), |a, b| a.merged(&b))
-            }
-        }
-    };
-}
+#[cfg(feature = "rstar")]
+impl<T> rstar::RTreeObject for MultiPolygon<T>
+    where T: num_traits::Float + rstar::RTreeNum
+{
+    type Envelope = rstar::AABB<crate::Point<T>>;
 
-#[cfg(feature = "rstar_0_12")]
-impl_rstar_multi_polygon!(rstar_0_12);
+    fn envelope(&self) -> Self::Envelope {
+        use rstar::Envelope;
+        self.iter()
+            .map(|p|p.envelope())
+            .fold(rstar::AABB::new_empty(), |a,b|a.merged(&b))
+    }
+}
 
 #[cfg(test)]
 mod test {

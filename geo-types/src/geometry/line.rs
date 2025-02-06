@@ -252,35 +252,27 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Line<T> {
     }
 }
 
-#[cfg(feature = "rstar_0_12")]
-macro_rules! impl_rstar_line {
-    ($rstar:ident) => {
-        impl<T> ::$rstar::RTreeObject for Line<T>
-        where
-            T: ::num_traits::Float + ::$rstar::RTreeNum,
-        {
-            type Envelope = ::$rstar::AABB<Point<T>>;
+#[cfg(feature = "rstar")]
+impl <T> rstar::RTreeObject for Line<T>
+    where T: num_traits::Float + rstar::RTreeNum
+{
+    type Envelope = rstar::AABB<Point<T>>;
 
-            fn envelope(&self) -> Self::Envelope {
-                let bounding_rect = crate::private_utils::line_bounding_rect(*self);
-                ::$rstar::AABB::from_corners(bounding_rect.min().into(), bounding_rect.max().into())
-            }
-        }
-
-        impl<T> ::$rstar::PointDistance for Line<T>
-        where
-            T: ::num_traits::Float + ::$rstar::RTreeNum,
-        {
-            fn distance_2(&self, point: &Point<T>) -> T {
-                let d = crate::private_utils::point_line_euclidean_distance(*point, *self);
-                d.powi(2)
-            }
-        }
-    };
+    fn envelope(&self) -> Self::Envelope {
+        let bounding_rect = crate::private_utils::line_bounding_rect(*self);
+        rstar::AABB::from_corners(bounding_rect.min().into(), bounding_rect.max().into())
+    }
 }
 
-#[cfg(feature = "rstar_0_12")]
-impl_rstar_line!(rstar_0_12);
+#[cfg(feature = "rstar")]
+impl <T> rstar::PointDistance for Line<T>
+    where T: num_traits::Float + rstar::RTreeNum
+{
+    fn distance_2(&self, point: &Point<T>) -> T {
+        let d = crate::private_utils::point_line_euclidean_distance(*point, *self);
+        d.powi(2)
+    }
+}
 
 #[cfg(test)]
 mod test {

@@ -67,10 +67,10 @@
 //! - `approx`: Allows geometry types to be checked for approximate equality with [approx]
 //! - `arbitrary`: Allows geometry types to be created from unstructured input with [arbitrary]
 //! - `serde`: Allows geometry types to be serialized and deserialized with [Serde]
-//! - `use-rstar_0_12`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.12`)
+//! - `use-rstar`: Allows geometry types to be inserted into [rstar] R*-trees (`rstar v0.12`)
 //!
 //! This library can be used in `#![no_std]` environments if the default `std` feature is disabled. At
-//! the moment, the `arbitrary` and `use-rstar_0_8` features require `std`. This may change in a
+//! the moment, the `arbitrary` feature require `std`. This may change in a
 //! future release.
 //!
 //! [approx]: https://github.com/brendanzab/approx
@@ -120,7 +120,7 @@ mod wkt_macro;
 #[cfg(feature = "arbitrary")]
 mod arbitrary;
 
-#[cfg(feature = "rstar_0_12")]
+#[cfg(feature = "rstar")]
 #[doc(hidden)]
 pub mod private_utils;
 
@@ -211,12 +211,12 @@ mod tests {
         assert_eq!(p.x(), 1_000_000f64);
     }
 
-    #[cfg(feature = "rstar_0_12")]
+    #[cfg(feature = "rstar")]
     #[test]
     /// ensure Line's SpatialObject impl is correct
-    fn line_test_0_12() {
-        use rstar_0_12::primitives::Line as RStarLine;
-        use rstar_0_12::{PointDistance, RTreeObject};
+    fn line_test_rstar() {
+        use rstar::primitives::Line as RStarLine;
+        use rstar::{PointDistance, RTreeObject};
 
         let rl = RStarLine::new(Point::new(0.0, 0.0, 0.0), Point::new(5.0, 5.0, 5.0));
         let l = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5., y: 5., z: 5. });
