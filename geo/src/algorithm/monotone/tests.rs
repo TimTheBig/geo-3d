@@ -56,11 +56,11 @@ fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + Relati
             // This branch is for debugging
             // It will never be reached unless assertions elsewhere are commented.
             error!("Got an unclosed line string");
-            error!("{}", top.to_wkt());
+            error!("{}", top.into().to_wkt());
         } else {
             let poly = Polygon::new(top, vec![]);
             sub_area = sub_area + twice_polygon_area(&poly);
-            info!("{}", poly.to_wkt());
+            info!("{}", poly.into().to_wkt());
 
             let im = poly.relate(&input);
             assert!(im.is_within());
@@ -71,19 +71,19 @@ fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + Relati
 
 #[test]
 fn test_monotone_subdivision_simple() {
-    let input = "POLYGON((0 0,5 5,3 0,5 -5,0 0))";
+    let input = "POLYGON Z((0 0 0,5 5 5,3 0 -3,5 -5 5,0 0 0))";
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_monotone_subdivision_merge_split() {
-    let input = "POLYGON((-5 -5, -3 0, -5 5, 5 5,3 0,5 -5))";
+    let input = "POLYGON Z((-5 -5, -3 0, -5 5, 5 5,3 0,5 -5))";
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_complex() {
-    let input = "POLYGON ((140 300, 140 100, 140 70, 340 220, 187 235, 191 285, 140 300), 
+    let input = "POLYGON Z((140 300, 140 100, 140 70, 340 220, 187 235, 191 285, 140 300), 
         (140 100, 150 100, 150 110, 140 100))";
     check_monotone_subdivision::<f64>(input);
 }

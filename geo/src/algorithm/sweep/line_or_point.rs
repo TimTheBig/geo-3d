@@ -385,8 +385,8 @@ mod tests {
         );
         let l87 = LineString::new(vec![pt_8, pt_16, pt_7]);
         let lo = LineString::new(vec![pt_14, pt_16, pt_13]);
-        eprintln!("l1: {}", l87.to_wkt());
-        eprintln!("lo: {}", lo.to_wkt());
+        eprintln!("l1: {}", l87.into().to_wkt());
+        eprintln!("lo: {}", lo.into().to_wkt());
 
         eprintln!(
             "pred: {:?}",

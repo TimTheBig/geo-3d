@@ -32,7 +32,7 @@ macro_rules! point {
         $crate::point! ( $crate::coord!($( $tag: $val , )*) )
     };
     ($x:expr, $y:expr, $z:expr) => {
-        $crate::coord!($x, $y, $z)
+        $crate::point! ( $crate::coord!($x, $y, $z) )
     };
     ( $coord:expr $(,)? ) => {
         $crate::Point::from($coord)

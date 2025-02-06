@@ -316,15 +316,15 @@ mod test {
 
     #[test]
     fn other_numeric_types() {
-        let point: Point<i32> = wkt!(POINT(1 2 3));
-        assert_eq!(point.x(), 1i32);
-        assert_eq!(point.y(), 2i32);
-        assert_eq!(point.z(), 3i32);
+        let point: Point<f32> = wkt!(POINT(1.0 2.0 3.0));
+        assert_eq!(point.x(), 1f32);
+        assert_eq!(point.y(), 2f32);
+        assert_eq!(point.z(), 3f32);
 
-        let point: Point<u64> = wkt!(POINT(1 2 3));
-        assert_eq!(point.x(), 1u64);
-        assert_eq!(point.y(), 2u64);
-        assert_eq!(point.z(), 3u64);
+        let point: Point<f64> = wkt!(POINT(1. 2. 3.));
+        assert_eq!(point.x(), 1f64);
+        assert_eq!(point.y(), 2f64);
+        assert_eq!(point.z(), 3f64);
 
         let point: Point<f32> = wkt!(POINT(1.0 2.0 3.0));
         assert_eq!(point.x(), 1.0f32);
