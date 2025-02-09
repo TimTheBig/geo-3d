@@ -728,17 +728,16 @@ mod test {
 
     #[test]
     fn visvalingam_test() {
-        // this is the PostGIS example
         let ls = line_string![
-            (x: 5.0, y: 2.0),
-            (x: 3.0, y: 8.0),
-            (x: 6.0, y: 20.0),
-            (x: 7.0, y: 25.0),
-            (x: 10.0, y: 10.0)
+            (x: 5.0, y: 2.0, z: 6.0),
+            (x: 3.0, y: 8.0, z: 7.0),
+            (x: 6.0, y: 20.0, z: 8.8),
+            (x: 7.0, y: 25.0, z: 8.0),
+            (x: 10.0, y: 10.0, z: 10.0)
         ];
 
-        let correct = [(5.0, 2.0), (7.0, 25.0), (10.0, 10.0)];
-        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1))).collect();
+        let correct = [(5.0, 2.0, 6.0), (7.0, 25.0, 8.0), (10.0, 10.0, 10.0)];
+        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1, e/2))).collect();
 
         let simplified = visvalingam(&ls, &30.);
         assert_eq!(simplified, correct_ls);
@@ -863,8 +862,8 @@ mod test {
     }
     #[test]
     fn visvalingam_test_two_point_linestring() {
-        let vec = vec![Point::new(0.0, 0.0), Point::new(27.8, 0.1)];
-        let compare = vec![Coord::from((0.0, 0.0)), Coord::from((27.8, 0.1))];
+        let vec = vec![Point::new(0.0, 0.0, 0.0), Point::new(27.8, 0.1, 4.9)];
+        let compare = vec![Coord::from((0.0, 0.0, 0.0)), Coord::from((27.8, 0.1, 4.9))];
         let simplified = visvalingam(&LineString::from(vec), &1.0);
         assert_eq!(simplified, compare);
     }
@@ -879,10 +878,10 @@ mod test {
             (7.0, 25.0),
             (10.0, 10.0),
         ];
-        let points_ls: Vec<_> = points.iter().map(|e| Point::new(e.0, e.1)).collect();
+        let points_ls: Vec<_> = points.iter().map(|e| Point::new(e.0, e.1, e.2)).collect();
 
-        let correct = [(5.0, 2.0), (7.0, 25.0), (10.0, 10.0)];
-        let correct_ls: Vec<_> = correct.iter().map(|e| Point::new(e.0, e.1)).collect();
+        let correct = [(5.0, 2.0), (7.0, 25.0), (10.0, 10.0, 10.0)];
+        let correct_ls: Vec<_> = correct.iter().map(|e| Point::new(e.0, e.1, e.2)).collect();
 
         let mline = MultiLineString::new(vec![LineString::from(points_ls)]);
         assert_relative_eq!(
@@ -922,12 +921,12 @@ mod test {
     fn multipolygon() {
         let mpoly = MultiPolygon::new(vec![Polygon::new(
             LineString::from(vec![
-                (0., 0.),
-                (0., 10.),
-                (5., 11.),
-                (10., 10.),
-                (10., 0.),
-                (0., 0.),
+                (0., 0., 0.),
+                (0., 10., 0.),
+                (5., 11., 3.),
+                (10., 10., 10.),
+                (10., 0., 10.),
+                (0., 0., 0.),
             ]),
             vec![],
         )]);
@@ -937,7 +936,7 @@ mod test {
         assert_relative_eq!(
             mpoly2,
             MultiPolygon::new(vec![Polygon::new(
-                LineString::from(vec![(0., 0.), (0., 10.), (10., 10.), (10., 0.), (0., 0.)]),
+                LineString::from(vec![(0., 0., 0.), (0., 10., 0.), (10., 10., 10.), (10., 0., 10.), (0., 0., 0.)]),
                 vec![],
             )]),
             epsilon = 1e-6

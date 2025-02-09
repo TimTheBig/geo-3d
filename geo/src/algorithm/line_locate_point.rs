@@ -24,16 +24,16 @@ use std::ops::AddAssign;
 /// use geo::LineLocatePoint;
 ///
 /// let linestring: LineString = vec![
-///     [-1.0, 0.0],
-///     [0.0, 0.0],
-///     [0.0, 1.0]
+///     [-1.0, 0.0, 1.0],
+///     [0.0, 0.0, 0.0],
+///     [0.0, 1.0, 0.0]
 /// ].into();
 ///
 /// assert_eq!(linestring.line_locate_point(&point!(x: -1.0, y: 0.0)), Some(0.0));
 /// assert_eq!(linestring.line_locate_point(&point!(x: -0.5, y: 0.0)), Some(0.25));
 /// assert_eq!(linestring.line_locate_point(&point!(x: 0.0, y: 0.0)), Some(0.5));
 /// assert_eq!(linestring.line_locate_point(&point!(x: 0.0, y: 0.5)), Some(0.75));
-/// assert_eq!(linestring.line_locate_point(&point!(x: 0.0, y: 1.0)), Some(1.0));
+/// assert_eq!(linestring.line_locate_point(&point!(x: 0.0, y: 1.0, z: 0.0)), Some(1.0));
 /// ```
 pub trait LineLocatePoint<T, Rhs> {
     type Output;

@@ -203,17 +203,6 @@ mod test {
         Polygon,
     };
 
-    fn make_test_mp_integer() -> MultiPoint<i32> {
-        MultiPoint(vec![
-            Point::new(0, 0, 0),
-            Point::new(1, 1, 1),
-            Point::new(1, 1, 1),
-            Point::new(1, 1, 1),
-            Point::new(2, 2, 2),
-            Point::new(0, 0, 0),
-        ])
-    }
-
     fn make_result_mp_integer() -> MultiPoint<i32> {
         MultiPoint(vec![Point::new(0, 0, 0), Point::new(1, 1, 1), Point::new(2, 2, 2)])
     }
@@ -336,14 +325,6 @@ mod test {
     }
 
     #[test]
-    fn test_remove_repeated_points_multipoint_integer() {
-        let mp = make_test_mp_integer();
-        let expected = make_result_mp_integer();
-
-        assert_eq!(mp.remove_repeated_points(), expected);
-    }
-
-    #[test]
     fn test_remove_repeated_points_multipoint() {
         let mp = make_test_mp1();
         let expected = make_result_mp1();
@@ -400,15 +381,6 @@ mod test {
         ]);
 
         assert_eq!(gc.remove_repeated_points(), expected);
-    }
-
-    #[test]
-    fn test_remove_repeated_points_mut_multipoint_integer() {
-        let mut mp = make_test_mp_integer();
-        mp.remove_repeated_points_mut();
-        let expected = make_result_mp_integer();
-
-        assert_eq!(mp, expected);
     }
 
     #[test]

@@ -851,8 +851,8 @@ mod test {
         assert_relative_eq!(
             mline2,
             MultiLineString::new(vec![
-                LineString::from(vec![(10., -100.), (11., -98.)]),
-                LineString::from(vec![(9., -100.), (10., -100.), (11., -98.)]),
+                LineString::from(vec![(10., -100., 1.), (11., -98., 4.)]),
+                LineString::from(vec![(9., -100., 2.), (10., -100., 1.), (11., -98., 4.)]),
             ]),
             epsilon = 1e-6
         );
@@ -861,27 +861,27 @@ mod test {
     #[test]
     fn multipolygon() {
         let poly1 = polygon![
-            (x: 0., y: 0.),
-            (x: 10., y: 0.),
-            (x: 10., y: 10.),
-            (x: 0., y: 10.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 10., y: 0., z: 10.),
+            (x: 10., y: 10., z: 10.),
+            (x: 0., y: 10., z: 0.),
+            (x: 0., y: 0., z: 0.),
         ];
         let poly2 = polygon![
             exterior: [
-                (x: 11., y: 11.),
-                (x: 20., y: 11.),
-                (x: 20., y: 20.),
-                (x: 11., y: 20.),
-                (x: 11., y: 11.),
+                (x: 11., y: 11., z: 11.),
+                (x: 20., y: 11., z: 20.),
+                (x: 20., y: 20., z: 20.),
+                (x: 11., y: 20., z: 11.),
+                (x: 11., y: 11., z: 11.),
             ],
             interiors: [
                 [
-                    (x: 13., y: 13.),
-                    (x: 13., y: 17.),
-                    (x: 17., y: 17.),
-                    (x: 17., y: 13.),
-                    (x: 13., y: 13.),
+                    (x: 13., y: 13., z: 13.),
+                    (x: 13., y: 17., z: 13.),
+                    (x: 17., y: 17., z: 17.),
+                    (x: 17., y: 13., z: 17.),
+                    (x: 13., y: 13., z: 13.),
                 ]
             ],
         ];
@@ -924,26 +924,27 @@ mod test {
 
     #[test]
     fn geometrycollection() {
-        let p1 = Geometry::Point(Point::new(10., 10.));
-        let line1 = Geometry::LineString(LineString::from(vec![(0., 0.), (1., 2.)]));
+        let p1 = Geometry::Point(Point::new(10., 10., 10.));
+        let line1 = Geometry::LineString(LineString::from(vec![(0., 0., 0.), (1., 2., 3.)]));
 
         let gc = GeometryCollection::new(vec![p1, line1]);
 
         assert_eq!(
-            gc.map_coords(|Coord { x, y, z }| (x + 10., y + 100.).into()),
+            gc.map_coords(|Coord { x, y, z }| (x + 10., y + 100., z - 10.).into()),
             GeometryCollection::new(vec![
-                Geometry::Point(Point::new(20., 110.)),
-                Geometry::LineString(LineString::from(vec![(10., 100.), (11., 102.)])),
+                Geometry::Point(Point::new(20., 110., 0.)),
+                Geometry::LineString(LineString::from(vec![(10., 100., -10.), (11., 102., 7.)])),
             ])
         );
     }
 
     #[test]
     fn convert_type() {
-        let p1: Point<f64> = Point::new(1., 2.);
-        let p2: Point<f32> = p1.map_coords(|Coord { x, y, z }| (x as f32, y as f32).into());
+        let p1: Point<f64> = Point::new(1., 2., 3.);
+        let p2: Point<f32> = p1.map_coords(|Coord { x, y, z }| (x as f32, y as f32,  z as f32).into());
         assert_relative_eq!(p2.x(), 1f32);
         assert_relative_eq!(p2.y(), 2f32);
+        assert_relative_eq!(p2.z(), 3f32);
     }
 
     #[cfg(feature = "use-proj")]
@@ -959,7 +960,7 @@ mod test {
             Ok(shifted)
         };
         // 👽
-        let usa_m = Point::new(-115.797615, 37.2647978);
+        let usa_m = Point::new(-115.797615, 37.2647978, 58.22244978);
         let usa_ft = usa_m.try_map_coords(f).unwrap();
         assert_relative_eq!(6693625.67217475, usa_ft.x(), epsilon = 1e-6);
         assert_relative_eq!(3497301.5918027186, usa_ft.y(), epsilon = 1e-6);
@@ -969,23 +970,23 @@ mod test {
     fn test_fallible() {
         let f = |Coord { x, y, z }| -> Result<_, &'static str> {
             if relative_ne!(x, 2.0) {
-                Ok((x * 2., y + 100.).into())
+                Ok((x * 2., y + 100., z - 1.).into())
             } else {
                 Err("Ugh")
             }
         };
         // this should produce an error
         let bad_ls: LineString<_> = vec![
-            Point::new(1.0, 1.0),
-            Point::new(2.0, 2.0),
-            Point::new(3.0, 3.0),
+            Point::new(1.0, 1.0, 1.0),
+            Point::new(2.0, 2.0, 2.0),
+            Point::new(3.0, 3.0, 3.0),
         ]
         .into();
         // this should be fine
         let good_ls: LineString<_> = vec![
-            Point::new(1.0, 1.0),
-            Point::new(2.1, 2.0),
-            Point::new(3.0, 3.0),
+            Point::new(1.0, 1.0, 1.0),
+            Point::new(2.1, 2.0, 2.0),
+            Point::new(3.0, 3.0, 3.0),
         ]
         .into();
         let bad = bad_ls.try_map_coords(f);
@@ -995,9 +996,9 @@ mod test {
         assert_relative_eq!(
             good.unwrap(),
             vec![
-                Point::new(2., 101.),
-                Point::new(4.2, 102.),
-                Point::new(6.0, 103.),
+                Point::new(2., 101., 0.0),
+                Point::new(4.2, 102., 1.0),
+                Point::new(6.0, 103., 2.0),
             ]
             .into()
         );
@@ -1005,10 +1006,10 @@ mod test {
 
     #[test]
     fn rect_map_invert_coords() {
-        let rect = Rect::new(coord! { x: 0., y: 0. }, coord! { x: 1., y: 1. });
+        let rect = Rect::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. });
 
         // This call should not panic even though Rect::new
         // constructor panics if min coords > max coords
-        rect.map_coords(|Coord { x, y, z }| (-x, -y).into());
+        rect.map_coords(|Coord { x, y, z }| (-x, -y, -z).into());
     }
 }

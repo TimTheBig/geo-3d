@@ -10,9 +10,9 @@ use crate::algorithm::Contains;
 /// use geo::{point, line_string};
 /// use geo::algorithm::Within;
 ///
-/// let line_string = line_string![(x: 0.0, y: 0.0), (x: 2.0, y: 4.0)];
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 4.0, z: 6.0)];
 ///
-/// assert!(point!(x: 1.0, y: 2.0).is_within(&line_string));
+/// assert!(point!(x: 1.0, y: 2.0, z: 3.0).is_within(&line_string));
 ///
 /// // Note that a geometry on only the *boundary* of another geometry is not considered to
 /// // be _within_ that geometry. See [`Relate`] for more information.
@@ -25,8 +25,8 @@ use crate::algorithm::Contains;
 /// use geo::{point, line_string};
 /// use geo::algorithm::{Contains, Within};
 ///
-/// let line_string = line_string![(x: 0.0, y: 0.0), (x: 2.0, y: 4.0)];
-/// let point = point!(x: 1.0, y: 2.0);
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 4.0, z: 6.0)];
+/// let point = point!(x: 1.0, y: 2.0, z: 3.0);
 ///
 /// // These two comparisons are completely equivalent
 /// assert!(point.is_within(&line_string));

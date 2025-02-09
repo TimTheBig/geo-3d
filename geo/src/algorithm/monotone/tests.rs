@@ -31,7 +31,7 @@ fn twice_polygon_area<T: GeoNum + Signed>(poly: &Polygon<T>) -> T {
 fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + RelativeEq>(wkt: &str) {
     init_log();
     eprintln!("input: {wkt}");
-    let input = Polygon::<T>::try_from_wkt_str(wkt).unwrap();
+    let input: Polygon<T> = wkt::Wkt::from_str(wkt).unwrap().to_geo_types();
     let area = twice_polygon_area(&input);
     let subdivisions = monotone_subdivision([input.clone()]);
     eprintln!("Got {} subdivisions", subdivisions.len());
@@ -90,8 +90,8 @@ fn test_complex() {
 
 #[test]
 fn test_complex2() {
-    let input = "POLYGON ((100 100, 200 150, 100 200, 200 250, 100 300, 400 300,
-       300 200, 400 100, 100 100))";
+    let input = "POLYGON Z((100 100 100, 200 150 200, 100 200 300, 200 250 300, 100 300 100, 400 300 400,
+       300 200 300, 400 100 400, 100 100 100))";
     check_monotone_subdivision::<f64>(input);
 }
 
@@ -108,7 +108,7 @@ fn test_complex3() {
 
 #[test]
 fn test_tangent() {
-    let input = "POLYGON ((60 60, 60 200, 240 200, 240 60, 60 60), 
-    (60 140, 110 170, 110 100, 80 100, 60 140))";
+    let input = "POLYGON ((60 60 60, 60 200 60, 240 200 240, 240 60 240, 60 60 60), 
+    (60 140 60, 110 170 110, 110 100 110, 80 100 80, 60 140 60))";
     check_monotone_subdivision::<f64>(input);
 }

@@ -329,8 +329,8 @@ pub(super) mod tests {
     #[test]
     fn simple_iter() {
         let input = vec![
-            Rc::from(Line::from([(1., 0.), (0., 1.)])),
-            Line::from([(0., 0.), (1., 1.)]).into(),
+            Rc::from(Line::from([(1., 0., 1.), (0., 1., 0.)])),
+            Line::from([(0., 0., 0.), (1., 1., 1.)]).into(),
         ];
         let iter: CrossingsIter<_> = input.into_iter().collect();
         assert_eq!(iter.count(), 5);
@@ -385,9 +385,9 @@ pub(super) mod tests {
 
         let input = vec![
             Line::from([(0., 0., 0.), (1., 1., 1.)]),
-            [(1., 0.), (0., 1.)].into(),
-            [(0., 0.5), (1., 0.5)].into(),
-            [(-1., 0.5), (0.5, 0.5)].into(),
+            [(1., 0., 1.), (0., 1., 0.)].into(),
+            [(0., 0.5, 0.), (1., 0.5, 1.)].into(),
+            [(-1., 0.5, -1.), (0.5, 0.5, 0.5)].into(),
             [(0.5, 0.5, 0.5), (0.5, 0.5, 0.5)].into(),
             [(0., 0., 0.), (0., 0., 0.)].into(),
         ];

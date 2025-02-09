@@ -1,10 +1,9 @@
 use crate::algorithm::{Densify, Length, LineInterpolatePoint, LinesIter};
 use crate::geometry::{Coord, LineString, MultiLineString};
-use crate::line_measures::{Euclidean, Haversine};
+use crate::line_measures::Euclidean;
 
 /// Segments a LineString into `segment_count` equal length LineStrings as a MultiLineString
-/// using Euclidean distance calculations.  See `LineStringSegmentizeHaversine`
-/// if you are dealing with geographic coordinates (lat/lon).
+/// using Euclidean distance calculations.
 ///
 /// `None` will be returned when `segment_count` is equal to 0 or when a point
 /// cannot be interpolated on a `Line` segment.
@@ -13,7 +12,7 @@ use crate::line_measures::{Euclidean, Haversine};
 /// ```
 /// use geo::{LineString, MultiLineString, LineStringSegmentize};
 /// // Create a simple line string
-/// let lns: LineString<f64> = vec![[0.0, 0.0], [1.0, 2.0], [3.0, 6.0]].into();
+/// let lns: LineString<f64> = vec![[0.0, 0.0, 0.0], [1.0, 2.0, 3.0], [3.0, 6.0, 3.0]].into();
 /// // Segment it into 6 LineStrings inside of a MultiLineString
 /// let segmentized = lns.line_segmentize(6).unwrap();
 /// // Compare the number of elements
@@ -21,27 +20,6 @@ use crate::line_measures::{Euclidean, Haversine};
 ///```
 pub trait LineStringSegmentize {
     fn line_segmentize(&self, segment_count: usize) -> Option<MultiLineString>;
-}
-
-/// Segments a LineString into `segment_count` equal length LineStrings as a MultiLineString
-/// using Haversine distance calculations. Use this over `LineStringSegmentize`
-/// when using data from a geographic coordinate system.
-///
-/// `None` will be returned when `segment_count` is equal to 0 or when a point
-/// cannot be interpolated on a `Line` segment.
-///
-/// # Examples
-/// ```
-/// use geo::{LineString, MultiLineString, LineStringSegmentizeHaversine};
-/// // Create a simple line string
-/// let lns: LineString<f64> = vec![[0.0, 0.0], [1.0, 2.0], [3.0, 6.0]].into();
-/// // Segment it into 6 LineStrings inside of a MultiLineString
-/// let segmentized = lns.line_segmentize_haversine(6).unwrap();
-/// // Compare the number of elements
-/// assert_eq!(6, segmentized.0.len());
-///```
-pub trait LineStringSegmentizeHaversine {
-    fn line_segmentize_haversine(&self, segment_count: usize) -> Option<MultiLineString>;
 }
 
 macro_rules! implement_segmentize {
@@ -111,11 +89,6 @@ macro_rules! implement_segmentize {
 }
 
 implement_segmentize!(LineStringSegmentize, line_segmentize, Euclidean);
-implement_segmentize!(
-    LineStringSegmentizeHaversine,
-    line_segmentize_haversine,
-    Haversine
-);
 
 #[cfg(test)]
 mod test {
@@ -230,14 +203,14 @@ mod test {
     #[test]
     // that 0 returns None and that usize::MAX returns None
     fn n_is_zero() {
-        let linestring: LineString = vec![[-1.0, 0.0], [0.5, 1.0], [1.0, 2.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, -1.0], [0.5, 1.0, 0.5], [1.0, 2.0, 3.0]].into();
         let segments = linestring.line_segmentize(0);
         assert!(segments.is_none())
     }
 
     #[test]
     fn n_is_max() {
-        let linestring: LineString = vec![[-1.0, 0.0], [0.5, 1.0], [1.0, 2.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, -2.0], [0.5, 1.0, 0.5], [1.0, 2.0, 3.0]].into();
         let segments = linestring.line_segmentize(usize::MAX);
         assert!(segments.is_none())
     }
@@ -266,7 +239,7 @@ mod test {
     #[test]
     // test the cumulative length is the same
     fn cumul_length() {
-        let linestring: LineString = vec![[0.0, 0.0], [1.0, 1.0], [1.0, 2.0], [3.0, 3.0]].into();
+        let linestring: LineString = vec![[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [1.0, 2.0, 3.0], [3.0, 3.0, 3.0]].into();
         let segments = linestring.line_segmentize(2).unwrap();
 
         assert_relative_eq!(
@@ -278,7 +251,7 @@ mod test {
 
     #[test]
     fn n_elems() {
-        let linestring: LineString = vec![[0.0, 0.0], [1.0, 1.0], [1.0, 2.0], [3.0, 3.0]].into();
+        let linestring: LineString = vec![[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [1.0, 2.0, 3.0], [3.0, 3.0, 3.0]].into();
         let segments = linestring.line_segmentize(2).unwrap();
         assert_eq!(segments.0.len(), 2)
     }
@@ -297,65 +270,5 @@ mod test {
         let n = 8;
         let segments = linestring.line_segmentize(n).unwrap();
         assert_eq!(segments.0.len(), n)
-    }
-
-    #[test]
-    fn haversine_n_elems() {
-        let linestring: LineString = vec![
-            [-3.19416, 55.95524],
-            [-3.19352, 55.95535],
-            [-3.19288, 55.95546],
-        ]
-        .into();
-
-        let n = 8;
-
-        let segments = linestring.line_segmentize_haversine(n).unwrap();
-        assert_eq!(n, segments.0.len());
-    }
-
-    #[test]
-    fn haversine_segment_length() {
-        let linestring: LineString = vec![
-            [-3.19416, 55.95524],
-            [-3.19352, 55.95535],
-            [-3.19288, 55.95546],
-        ]
-        .into();
-
-        let n = 8;
-
-        let segments = linestring.line_segmentize_haversine(n).unwrap();
-        let lens = segments
-            .0
-            .iter()
-            .map(|li| li.length::<Haversine>())
-            .collect::<Vec<_>>();
-
-        let epsilon = 1e-6; // 6th decimal place which is micrometers
-        assert!(lens.iter().all(|&x| (x - lens[0]).abs() < epsilon));
-    }
-
-    #[test]
-    fn haversine_total_length() {
-        let linestring: LineString = vec![
-            [-3.19416, 55.95524],
-            [-3.19352, 55.95535],
-            [-3.19288, 55.95546],
-        ]
-        .into();
-
-        assert_relative_eq!(linestring.length::<Haversine>(), 83.3523000093029);
-
-        let n = 8;
-
-        let segments = linestring.line_segmentize_haversine(n).unwrap();
-
-        // different at 12th decimal which is a picometer
-        assert_relative_eq!(
-            linestring.length::<Haversine>(),
-            segments.length::<Haversine>(),
-            epsilon = 1e-11
-        );
     }
 }

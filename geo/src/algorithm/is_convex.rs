@@ -216,7 +216,7 @@ mod tests {
         assert!(!empty.is_convex());
         assert!(!empty.is_strictly_ccw_convex());
 
-        let one = line_string![(x: 0., y: 0.)];
+        let one = line_string![(x: 0., y: 0., z: 0.)];
         assert!(one.is_collinear());
         assert!(one.is_convex());
         assert!(one.is_cw_convex());
@@ -225,7 +225,7 @@ mod tests {
         assert!(!one.is_strictly_ccw_convex());
         assert!(!one.is_strictly_cw_convex());
 
-        let one_rep = line_string![(x: 0, y: 0), (x: 0, y: 0)];
+        let one_rep = line_string![(x: 0., y: 0., z: 0.), (x: 0., y: 0., z: 0.)];
         assert!(one_rep.is_collinear());
         assert!(one_rep.is_convex());
         assert!(one_rep.is_cw_convex());
@@ -234,7 +234,7 @@ mod tests {
         assert!(!one_rep.is_strictly_ccw_convex());
         assert!(!one_rep.is_strictly_cw_convex());
 
-        let mut two = line_string![(x: 0, y: 0), (x: 1, y: 1)];
+        let mut two = line_string![(x: 0., y: 0., z: 0.), (x: 1., y: 1., z: 1.)];
         assert!(two.is_collinear());
         assert!(!two.is_convex());
 
