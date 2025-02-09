@@ -22,10 +22,6 @@ pub use centroid::Centroid;
 pub mod chaikin_smoothing;
 pub use chaikin_smoothing::ChaikinSmoothing;
 
-/// Calculate the signed approximate geodesic area of a `Geometry`.
-pub mod chamberlain_duquette_area;
-pub use chamberlain_duquette_area::ChamberlainDuquetteArea;
-
 /// Calculate the closest `Point` between a `Geometry` and an input `Point`.
 pub mod closest_point;
 pub use closest_point::ClosestPoint;
