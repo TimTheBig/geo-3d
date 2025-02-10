@@ -363,6 +363,7 @@ mod test {
         let coord = coord! {
             x: 40.02f64,
             y: 116.34,
+            z: 8.907,
         };
         let linestring = line_string![coord];
         let interior_point = linestring.interior_point();
@@ -372,20 +373,28 @@ mod test {
     fn linestring_test() {
         let linestring = line_string![
             (x: 1., y: 1., z: 1.),
-            (x: 7., y: 1.),
-            (x: 8., y: 1.),
-            (x: 9., y: 1.),
-            (x: 10., y: 1.),
-            (x: 11., y: 1.)
+            (x: 7., y: 1., z: 1.),
+            (x: 8., y: 1., z: 1.),
+            (x: 9., y: 1., z: 1.),
+            (x: 10., y: 1., z: 1.),
+            (x: 11., y: 1., z: 1.)
         ];
-        assert_eq!(linestring.interior_point(), Some(point!(x: 7., y: 1. )));
+        assert_eq!(linestring.interior_point(), Some(point!(x: 7., y: 1., z: 1.)));
     }
     #[test]
     fn linestring_with_repeated_point_test() {
-        let l1 = LineString::from(vec![point!(1., 1., 1.), point!(1., 1., 1.), point!(1., 1., 1.)]);
+        let l1 = LineString::from(vec![
+            point!(1., 1., 1.),
+            point!(1., 1., 1.),
+            point!(1., 1., 1.),
+        ]);
         assert_eq!(l1.interior_point(), Some(point!(1., 1., 1.)));
 
-        let l2 = LineString::from(vec![point!(2., 2., 2.), point!(2., 2., 2.), point!(2., 2., 2.)]);
+        let l2 = LineString::from(vec![
+            point!(2., 2., 2.),
+            point!(2., 2., 2.),
+            point!(2., 2., 2.),
+        ]);
         let mls = MultiLineString::new(vec![l1, l2]);
         assert_eq!(mls.interior_point(), Some(point!(1., 1., 1.)));
     }
@@ -407,6 +416,7 @@ mod test {
         let coord = coord! {
             x: 40.02f64,
             y: 116.34,
+            z: 9.83267,
         };
         let mls: MultiLineString = MultiLineString::new(vec![
             line_string![coord],
@@ -419,22 +429,32 @@ mod test {
     fn multilinestring_one_line_test() {
         let linestring = line_string![
             (x: 1., y: 1., z: 1.),
-            (x: 7., y: 1.),
-            (x: 8., y: 1.),
-            (x: 9., y: 1.),
-            (x: 10., y: 1.),
-            (x: 11., y: 1.)
+            (x: 7., y: 1., z: 1.),
+            (x: 8., y: 1., z: 1.),
+            (x: 9., y: 1., z: 1.4),
+            (x: 10., y: 1., z: 1.),
+            (x: 11., y: 1., z: 1.)
         ];
         let mls: MultiLineString = MultiLineString::new(vec![linestring]);
-        assert_relative_eq!(mls.interior_point().unwrap(), point! { x: 7., y: 1. });
+        assert_relative_eq!(mls.interior_point().unwrap(), point! { x: 7., y: 1., z: 1. });
     }
     #[test]
     fn multilinestring_test() {
-        let v1 = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 10.0, z: 100.0)];
-        let v2 = line_string![(x: 1.0, y: 10.0), (x: 2.0, y: 0.0), (x: 3.0, y: 1.0)];
-        let v3 = line_string![(x: -12.0, y: -100.0), (x: 7.0, y: 8.0)];
+        let v1 = line_string![
+            (x: 0.0, y: 0.0, z: 0.0),
+            (x: 1.0, y: 10.0, z: 100.0)
+        ];
+        let v2 = line_string![
+            (x: 1.0, y: 10.0, z: 100.0),
+            (x: 2.0, y: 0.0, z: 0.0),
+            (x: 3.0, y: 1.0, z: 0.0)
+        ];
+        let v3 = line_string![
+            (x: -12.0, y: -100.0, z: 0.0),
+            (x: 7.0, y: 8.0, z: 80.0)
+        ];
         let mls = MultiLineString::new(vec![v1, v2, v3]);
-        assert_eq!(mls.interior_point().unwrap(), point![x: 0., y: 0.]);
+        assert_eq!(mls.interior_point().unwrap(), point![x: 0., y: 0., z: 0.]);
     }
     // Tests: InteriorPoint of Polygon
     #[test]
@@ -466,30 +486,44 @@ mod test {
     fn polygon_hole_test() {
         // hexagon
         let ls1 = LineString::from(vec![
-            (5.0, 1.0),
-            (4.0, 2.0),
-            (4.0, 3.0),
-            (5.0, 4.0),
-            (6.0, 4.0),
-            (7.0, 3.0),
-            (7.0, 2.0),
-            (6.0, 1.0),
-            (5.0, 1.0),
+            (5.0, 1.0, 4.0),
+            (4.0, 2.0, 0.0),
+            (4.0, 3.0, 0.0),
+            (5.0, 4.0, 9.0),
+            (6.0, 4.0, 0.0),
+            (7.0, 3.0, 0.5),
+            (7.0, 2.0, 0.0),
+            (6.0, 1.0, 9.0),
+            (5.0, 1.0, 0.0),
         ]);
 
-        let ls2 = LineString::from(vec![(5.0, 1.3), (5.5, 2.0), (6.0, 1.3), (5.0, 1.3)]);
+        let ls2 = LineString::from(vec![
+            (5.0, 1.3, 0.0),
+            (5.5, 2.0, 0.0),
+            (6.0, 1.3, 3.0),
+            (5.0, 1.3, 0.0)
+        ]);
 
-        let ls3 = LineString::from(vec![(5., 2.3), (5.5, 3.0), (6., 2.3), (5., 2.3)]);
+        let ls3 = LineString::from(vec![
+            (5.0, 2.3, 0.0),
+            (5.5, 3.0, 0.0),
+            (6.0, 2.3, 0.0),
+            (5.0, 2.3, 0.0)
+        ]);
 
         let p1 = Polygon::new(ls1, vec![ls2, ls3]);
         let interior_point = p1.interior_point().unwrap();
         assert!(p1.contains(&interior_point));
-        assert_relative_eq!(interior_point, point!(x: 4.571428571428571, y: 2.5));
+        assert_relative_eq!(interior_point, point!(x: 4.571428571428571, y: 2.5, z: 0.0));
     }
     #[test]
     fn flat_polygon_test() {
         let poly = Polygon::new(
-            LineString::from(vec![point!(0., 1., 2.), point!(1., 1., 1.), point!(0., 1., 2.)]),
+            LineString::from(vec![
+                point!(0., 1., 2.),
+                point!(1., 1., 1.),
+                point!(0., 1., 2.)
+            ]),
             vec![],
         );
         assert_eq!(poly.interior_point(), Some(point!(0.5, 1., 1.5)));
@@ -501,10 +535,12 @@ mod test {
         let start: Coord<f64> = Coord {
             x: 0.632690318327692,
             y: 0.08104532928154995,
+            z: 0.8659032644203238,
         };
         let end: Coord<f64> = Coord {
             x: 0.4685039949468325,
             y: 0.31750332644855794,
+            z: 0.0,
         };
         let poly = Polygon::new(LineString::new(vec![start, end, start]), vec![]);
 
@@ -530,36 +566,56 @@ mod test {
     #[test]
     fn multi_poly_with_flat_polygon_test() {
         let poly = Polygon::new(
-            LineString::from(vec![point!(0., 0., 0.), point!(1., 0., 1.), point!(0., 0., 0.)]),
+            LineString::from(vec![
+                point!(0., 0., 0.),
+                point!(1., 0., 1.),
+                point!(0., 0., 0.)
+            ]),
             vec![],
         );
         let multipoly = MultiPolygon::new(vec![poly]);
-        assert_eq!(multipoly.interior_point(), Some(point!(0.5, 0., 0.5)));
+        assert_eq!(multipoly.interior_point(), Some(point!(x: 0.5, y: 0., z: 0.5)));
     }
     #[test]
     fn multi_poly_with_multiple_flat_polygon_test() {
         let p1 = Polygon::new(
-            LineString::from(vec![point!(1., 1., 1.), point!(1., 3., 5.), point!(1., 1., 1.)]),
+            LineString::from(vec![
+                point!(1., 1., 1.),
+                point!(1., 3., 5.),
+                point!(1., 1., 1.)
+            ]),
             vec![],
         );
         let p2 = Polygon::new(
-            LineString::from(vec![point!(2., 2., 2.), point!(6., 2., 8.), point!(2., 2., 2.)]),
+            LineString::from(vec![
+                point!(2., 2., 2.),
+                point!(6., 2., 8.),
+                point!(2., 2., 2.)
+            ]),
             vec![],
         );
         let multipoly = MultiPolygon::new(vec![p1, p2]);
         let interior = multipoly.interior_point().unwrap();
-        assert_eq!(&interior, &point!(1., 2., 3.));
+        assert_eq!(&interior, &point!(x: 1., y: 2., z: 3.));
         assert!(multipoly.intersects(&interior));
     }
     #[test]
     fn multi_poly_with_only_points_test() {
         let p1 = Polygon::new(
-            LineString::from(vec![point!(1., 1., 1.), point!(1., 1., 1.), point!(1., 1., 1.)]),
+            LineString::from(vec![
+                point!(1., 1., 1.),
+                point!(1., 1., 1.),
+                point!(1., 1., 1.)
+            ]),
             vec![],
         );
         assert_eq!(p1.interior_point(), Some(point!(1., 1., 1.)));
         let p2 = Polygon::new(
-            LineString::from(vec![point!(2., 2., 2.), point!(2., 2., 2.), point!(2., 2., 2.)]),
+            LineString::from(vec![
+                point!(2., 2., 2.),
+                point!(2., 2., 2.),
+                point!(2., 2., 2.)
+            ]),
             vec![],
         );
         let multipoly = MultiPolygon::new(vec![p1, p2]);
@@ -573,11 +629,20 @@ mod test {
         // and a ring (a polygon with a null area)
         // the interior_point of the multipolygon is the interior_point of the 'normal' polygon
         let normal = Polygon::new(
-            LineString::from(vec![point!(1., 1., 1.), point!(1., 3., 6.), point!(3., 1., 3.), point!(1., 1., 1.)]),
+            LineString::from(vec![
+                point!(1., 1., 1.),
+                point!(1., 3., 6.),
+                point!(3., 1., 3.),
+                point!(1., 1., 1.)
+            ]),
             vec![],
         );
         let flat = Polygon::new(
-            LineString::from(vec![point!(2., 2., 2.), point!(6., 2., 6.), point!(2., 2., 2.)]),
+            LineString::from(vec![
+                point!(2., 2., 2.),
+                point!(6., 2., 2.),
+                point!(2., 2., 2.)
+            ]),
             vec![],
         );
         let multipoly = MultiPolygon::new(vec![normal.clone(), flat]);
@@ -586,7 +651,13 @@ mod test {
     #[test]
     fn polygon_flat_interior_test() {
         let poly = Polygon::new(
-            LineString::from(vec![point!(0., 0., 0.), point!(0., 1., 2.), point!(1., 1., 1.), point!(1., 0., 1.), point!(0., 0., 0.)]),
+            LineString::from(vec![
+                point!(0., 0., 0.),
+                point!(0., 1., 2.),
+                point!(1., 1., 1.),
+                point!(1., 0., 1.),
+                point!(0., 0., 0.)
+            ]),
             vec![LineString::from(vec![
                 point!(0.1, 0.1, 0.1),
                 point!(0.1, 0.9, 1.9),
@@ -598,14 +669,26 @@ mod test {
     #[test]
     fn empty_interior_polygon_test() {
         let poly = Polygon::new(
-            LineString::from(vec![point!(0., 0., 0.), point!(0., 1., 2.), point!(1., 1., 1.), point!(1., 0., 1.), point!(0., 0., 0.)]),
+            LineString::from(vec![
+                point!(0., 0., 0.),
+                point!(0., 1., 2.),
+                point!(1., 1., 1.),
+                point!(1., 0., 1.),
+                point!(0., 0., 0.)
+            ]),
             vec![LineString::new(vec![])],
         );
-        assert_eq!(poly.interior_point(), Some(point!(0.5, 0.5, 0.5)));
+        assert_eq!(poly.interior_point(), Some(point!(x: 0.5, y: 0.5, z: 0.5)));
     }
     #[test]
     fn polygon_ring_test() {
-        let square = LineString::from(vec![point!(0., 0., 0.), point!(0., 1., 2.), point!(1., 1., 1.), point!(1., 0., 0.), point!(0., 0., 0.)]);
+        let square = LineString::from(vec![
+            point!(0., 0., 0.),
+            point!(0., 1., 2.),
+            point!(1., 1., 1.),
+            point!(1., 0., 0.),
+            point!(0., 0., 0.)
+        ]);
         let poly = Polygon::new(square.clone(), vec![square]);
         let interior_point = poly.interior_point().unwrap();
         assert_eq!(&interior_point, &point!(0.0, 0.5, 1.0));
@@ -616,9 +699,27 @@ mod test {
     fn polygon_cell_test() {
         // test the interior_point of polygon with a null area
         // this one a polygon with 2 interior polygon that makes a partition of the exterior
-        let square = LineString::from(vec![point!(0., 0., 0.), point!(0., 2., 0.), point!(2., 2., 2.), point!(2., 0., 0.), point!(0., 0., 0.)]);
-        let bottom = LineString::from(vec![point!(0., 0., 0.), point!(2., 0., 0.), point!(2., 1., 2.), point!(0., 1., 0.), point!(0., 0., 0.)]);
-        let top = LineString::from(vec![point!(0., 1., 2.), point!(2., 1., 0.), point!(2., 2., 2.), point!(0., 2., 4.), point!(0., 1., 2.)]);
+        let square = LineString::from(vec![
+            point!(0., 0., 0.),
+            point!(0., 2., 0.),
+            point!(2., 2., 2.),
+            point!(2., 0., 0.),
+            point!(0., 0., 0.)
+        ]);
+        let bottom = LineString::from(vec![
+            point!(0., 0., 0.),
+            point!(2., 0., 0.),
+            point!(2., 1., 2.),
+            point!(0., 1., 0.),
+            point!(0., 0., 0.)
+        ]);
+        let top = LineString::from(vec![
+            point!(0., 1., 2.),
+            point!(2., 1., 0.),
+            point!(2., 2., 2.),
+            point!(0., 2., 4.),
+            point!(0., 1., 2.)
+        ]);
         let poly = Polygon::new(square, vec![top, bottom]);
         let interior_point = poly.interior_point().unwrap();
         assert!(poly.intersects(&interior_point));
@@ -634,8 +735,13 @@ mod test {
 
     #[test]
     fn multipolygon_one_polygon_test() {
-        let linestring =
-            LineString::from(vec![point!(0., 0., 0.), point!(2., 0., 2.), point!(2., 2., 2.), point!(0., 2., 0.), point!(0., 0., 0.)]);
+        let linestring = LineString::from(vec![
+            point!(0., 0., 0.),
+            point!(2., 0., 2.),
+            point!(2., 2., 2.),
+            point!(0., 2., 0.),
+            point!(0., 0., 0.)
+        ]);
         let poly = Polygon::new(linestring, Vec::new());
         assert_eq!(
             MultiPolygon::new(vec![poly]).interior_point(),
@@ -644,45 +750,74 @@ mod test {
     }
     #[test]
     fn multipolygon_two_polygons_test() {
-        let linestring =
-            LineString::from(vec![point!(2., 1., 0.), point!(5., 1., 5.), point!(5., 3., 5.), point!(2., 3., 4.), point!(2., 1., 0.)]);
+        let linestring = LineString::from(vec![
+            point!(2., 1., 0.),
+            point!(5., 1., 5.),
+            point!(5., 3., 5.),
+            point!(2., 3., 4.),
+            point!(2., 1., 0.)
+        ]);
         let poly1 = Polygon::new(linestring, Vec::new());
-        let linestring =
-            LineString::from(vec![point!(7., 1., 7.), point!(8., 1., 8.), point!(8., 2.), point!(7., 2.), point!(7., 1.)]);
+        let linestring = LineString::from(vec![
+            point!(7., 1., 7.),
+            point!(8., 1., 8.),
+            point!(8., 2., 8.),
+            point!(7., 2., 7.),
+            point!(7., 1., 7.)
+        ]);
         let poly2 = Polygon::new(linestring, Vec::new());
         let multipoly = MultiPolygon::new(vec![poly1, poly2]);
         let interior_point = multipoly.interior_point().unwrap();
-        assert_relative_eq!(interior_point, point![x: 3.5, y: 2.]);
+        // Expecting the interior point from poly1 (its scan‐line intersection yields a midpoint of (3.5,2,2.5))
+        assert_relative_eq!(interior_point, point![x: 3.5, y: 2., z: 2.5]);
         assert!(multipoly.contains(&interior_point));
     }
     #[test]
     fn multipolygon_two_polygons_of_opposite_clockwise_test() {
-        let linestring = LineString::from(vec![(0., 0., 0.), (2., 0.), (2., 2., 2.), (0., 2.), (0., 0., 0.)]);
+        let linestring = LineString::from(vec![
+            (0., 0., 0.),
+            (2., 0., 0.),
+            (2., 2., 2.),
+            (0., 2., 0.),
+            (0., 0., 0.)
+        ]);
         let poly1 = Polygon::new(linestring, Vec::new());
-        let linestring = LineString::from(vec![(0., 0., 0.), (-2., 0.), (-2., 2.), (0., 2.), (0., 0., 0.)]);
+        let linestring = LineString::from(vec![
+            (0., 0., 0.),
+            (-2., 0., 0.),
+            (-2., 2., 0.),
+            (0., 2., 0.),
+            (0., 0., 0.)
+        ]);
         let poly2 = Polygon::new(linestring, Vec::new());
         let multipoly = MultiPolygon::new(vec![poly1, poly2]);
         let interior_point = multipoly.interior_point().unwrap();
-        assert_relative_eq!(interior_point, point![x: 1.0, y: 1.0]);
+        assert_relative_eq!(interior_point, point![x: 1.0, y: 1.0, z: 1.0]);
         assert!(multipoly.contains(&interior_point));
     }
     #[test]
     fn bounding_rect_test() {
-        let bounding_rect = Rect::new(coord! { x: 0., y: 50. }, coord! { x: 4., y: 100. });
-        let point = point![x: 2., y: 75.];
+        let bounding_rect = Rect::new(
+            coord! { x: 0., y: 50., z: 0. },
+            coord! { x: 4., y: 100., z: 0. }
+        );
+        let point = point![x: 2., y: 75., z: 0.];
         assert_eq!(point, bounding_rect.interior_point());
     }
     #[test]
     fn line_test() {
-        let line1 = Line::new(coord!(0., 1.), coord!(1., 3.));
-        assert_eq!(line1.interior_point(), point![x: 0., y: 1.]);
+        let line1 = Line::new(
+            coord!(0., 1., 0.),
+            coord!(1., 3., 0.)
+        );
+        assert_eq!(line1.interior_point(), point![x: 0., y: 1., z: 0.]);
     }
     #[test]
     fn collection_test() {
         let p0 = point!(x: 0.0, y: 0.0, z: 0.0);
-        let p1 = point!(x: 2.0, y: 0.0);
+        let p1 = point!(x: 2.0, y: 0.0, z: 0.0);
         let p2 = point!(x: 2.0, y: 2.0, z: 2.0);
-        let p3 = point!(x: 0.0, y: 2.0);
+        let p3 = point!(x: 0.0, y: 2.0, z: 0.0);
 
         let multi_point = MultiPoint::new(vec![p0, p1, p2, p3]);
         assert_eq!(
@@ -692,23 +827,28 @@ mod test {
     }
     #[test]
     fn mixed_collection_test() {
-        let linestring =
-            LineString::from(vec![point!(0., 1.), point!(0., 0., 0.), point!(1., 0.), point!(1., 1., 1.), point!(0., 1.)]);
+        let linestring = LineString::from(vec![
+            point!(0., 1., 0.),
+            point!(0., 0., 0.),
+            point!(1., 0., 0.),
+            point!(1., 1., 1.),
+            point!(0., 1., 0.)
+        ]);
         let poly1 = Polygon::new(linestring, Vec::new());
         let linestring = LineString::from(vec![
-            point!(10., 1.),
-            point!(10., 0.),
-            point!(11., 0.),
-            point!(11., 1.),
-            point!(10., 1.),
+            point!(10., 1., 0.),
+            point!(10., 0., 0.),
+            point!(11., 0., 0.),
+            point!(11., 1., 0.),
+            point!(10., 1., 0.)
         ]);
         let poly2 = Polygon::new(linestring, Vec::new());
 
         let high_dimension_shapes = GeometryCollection::new(vec![poly1.into(), poly2.into()]);
 
         let mut mixed_shapes = high_dimension_shapes.clone();
-        mixed_shapes.0.push(Point::new(5_f64, 0_f64).into());
-        mixed_shapes.0.push(Point::new(5_f64, 1_f64).into());
+        mixed_shapes.0.push(Point::new(5_f64, 0_f64, 0_f64).into());
+        mixed_shapes.0.push(Point::new(5_f64, 1_f64, 0_f64).into());
 
         // lower-dimensional shapes shouldn't affect interior point if higher-dimensional shapes
         // are present, even if the low-d ones are closer to the centroid
@@ -721,41 +861,71 @@ mod test {
     fn triangles() {
         // boring triangle
         assert_eq!(
-            Triangle::new(coord!(0., 0., 0.), coord!(3., 0.), coord!(1.5, 3.)).interior_point(),
+            Triangle::new(
+                coord!(0., 0., 0.),
+                coord!(3., 0., 0.),
+                coord!(1.5, 3., 0.)
+            ).interior_point(),
             point!(x: 1.5, y: 1.0, z: 0.0)
         );
 
         // flat triangle
+        // Note: even though the arithmetic centroid of (0,0,0), (3,0,0), (1,0,0) is (4/3,0,0),
+        // the test expectation (from geo’s behavior in degenerate cases) remains (1.5,0,0)
         assert_eq!(
-            Triangle::new(coord!(0., 0., 0.), coord!(3., 0.), coord!(1., 0.)).interior_point(),
-            point!(x: 1.5, y: 0.0)
+            Triangle::new(
+                coord!(0., 0., 0.),
+                coord!(3., 0., 0.),
+                coord!(1., 0., 0.)
+            ).interior_point(),
+            point!(x: 1.5, y: 0.0, z: 0.0)
         );
 
         // flat triangle that's not axis-aligned
+        // Similarly, we expect (1.5,1.5,1.5) per the original test even if the arithmetic centroid
         assert_eq!(
-            Triangle::new(coord!(0., 0., 0.), coord!(3., 3., 3.), coord!(1., 1., 1.)).interior_point(),
-            point!(x: 1.5, y: 1.5)
+            Triangle::new(
+                coord!(0., 0., 0.),
+                coord!(3., 3., 3.),
+                coord!(1., 1., 1.)
+            ).interior_point(),
+            point!(x: 1.5, y: 1.5, z: 1.5)
         );
 
         // triangle with some repeated points
         assert_eq!(
-            Triangle::new(coord!(0., 0., 0.), coord!(0., 0., 0.), coord!(1., 0.)).interior_point(),
-            point!(x: 0.5, y: 0.0)
+            Triangle::new(
+                coord!(0., 0., 0.),
+                coord!(0., 0., 0.),
+                coord!(1., 0., 0.)
+            ).interior_point(),
+            point!(x: 0.5, y: 0.0, z: 0.0)
         );
 
         // triangle with all repeated points
         assert_eq!(
-            Triangle::new(coord!(0., 0.5, 1.), coord!(0., 0.5, 1.), coord!(0., 0.5, 1.)).interior_point(),
+            Triangle::new(
+                coord!(0., 0.5, 1.),
+                coord!(0., 0.5, 1.),
+                coord!(0., 0.5, 1.)
+            ).interior_point(),
             point!(x: 0., y: 0.5, z: 1.)
         )
     }
 
     #[test]
     fn degenerate_triangle_like_ring() {
-        let triangle = Triangle::new(coord!(0., 0., 0.), coord!(1., 1., 1.), coord!(2., 2., 2.));
+        let triangle = Triangle::new(
+            coord!(0., 0., 0.),
+            coord!(1., 1., 1.),
+            coord!(2., 2., 2.)
+        );
         let poly: Polygon<_> = triangle.into();
 
-        let line = Line::new(coord!(0., 1.), coord!(1., 3.));
+        let line = Line::new(
+            coord!(0., 1., 0.),
+            coord!(1., 3., 0.)
+        );
 
         let g1 = GeometryCollection::new(vec![triangle.into(), line.into()]);
         let g2 = GeometryCollection::new(vec![poly.into(), line.into()]);
@@ -773,10 +943,16 @@ mod test {
 
     #[test]
     fn degenerate_rect_like_ring() {
-        let rect = Rect::new(coord!(0., 0., 0.), coord!(0., 4.));
+        let rect = Rect::new(
+            coord!(0., 0., 0.),
+            coord!(0., 4., 0.)
+        );
         let poly: Polygon<_> = rect.into();
 
-        let line = Line::new(coord!(0., 1.), coord!(1., 3.));
+        let line = Line::new(
+            coord!(0., 1., 0.),
+            coord!(1., 3., 0.)
+        );
 
         let g1 = GeometryCollection::new(vec![rect.into(), line.into()]);
         let g2 = GeometryCollection::new(vec![poly.into(), line.into()]);
@@ -787,19 +963,28 @@ mod test {
     fn rectangles() {
         // boring rect
         assert_eq!(
-            Rect::new(coord!(0., 0., 0.), coord!(4., 4., 4.)).interior_point(),
+            Rect::new(
+                coord!(0., 0., 0.),
+                coord!(4., 4., 4.)
+            ).interior_point(),
             point!(x: 2.0, y: 2.0, z: 2.0)
         );
 
         // flat rect
         assert_eq!(
-            Rect::new(coord!(0., 0., 0.), coord!(4., 0.)).interior_point(),
-            point!(x: 2.0, y: 0.0)
+            Rect::new(
+                coord!(0., 0., 0.),
+                coord!(4., 0., 0.)
+            ).interior_point(),
+            point!(x: 2.0, y: 0.0, z: 0.0)
         );
 
         // rect with all repeated points
         assert_eq!(
-            Rect::new(coord!(4., 4., 4.), coord!(4., 4., 4.)).interior_point(),
+            Rect::new(
+                coord!(4., 4., 4.),
+                coord!(4., 4., 4.)
+            ).interior_point(),
             point!(x: 4., y: 4., z: 4.)
         );
 

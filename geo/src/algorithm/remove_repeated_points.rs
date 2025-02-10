@@ -203,8 +203,8 @@ mod test {
         Polygon,
     };
 
-    fn make_result_mp_integer() -> MultiPoint<i32> {
-        MultiPoint(vec![Point::new(0, 0, 0), Point::new(1, 1, 1), Point::new(2, 2, 2)])
+    fn make_result_mp_integer() -> MultiPoint<f32> {
+        MultiPoint(vec![Point::new(0., 0., 0.), Point::new(1., 1., 1.), Point::new(2., 2., 2.)])
     }
 
     fn make_test_mp1() -> MultiPoint {

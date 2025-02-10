@@ -71,9 +71,9 @@ mod test {
 
     #[test]
     fn cross_track_distance_to_line_passing_through_point() {
-        let p = Point::new(0., 0.);
-        let line_point_a = Point::new(1., 0.);
-        let line_point_b = Point::new(2., 0.);
+        let p = Point::new(0., 0., 0.);
+        let line_point_a = Point::new(1., 0., -1.);
+        let line_point_b = Point::new(2., 0., -2.);
 
         assert_relative_eq!(
             p.cross_track_distance(&line_point_a, &line_point_b),
@@ -84,19 +84,19 @@ mod test {
 
     #[test]
     fn cross_track_distance_to_line_orthogonal_to_point() {
-        let p = Point::new(0., 0.);
-        let line_point_a = Point::new(1., -1.);
-        let line_point_b = Point::new(1., 1.);
+        let p = Point::new(0., 0., 0.);
+        let line_point_a = Point::new(1., -1., 1.);
+        let line_point_b = Point::new(1., 1., 1.);
 
         assert_relative_eq!(
             p.cross_track_distance(&line_point_a, &line_point_b),
-            Haversine::distance(p, Point::new(1., 0.)),
+            Haversine::distance(p, Point::new(1., 0., -1.)),
             epsilon = 1.0e-6
         );
 
         assert_relative_eq!(
             p.cross_track_distance(&line_point_b, &line_point_a),
-            Haversine::distance(p, Point::new(1., 0.)),
+            Haversine::distance(p, Point::new(1., 0., -1.)),
             epsilon = 1.0e-6
         );
     }

@@ -19,17 +19,17 @@ pub trait FrechetDistance<T, Rhs = Self> {
     /// use geo::line_string;
     ///
     /// let line_string_a = line_string![
-    ///     (x: 1., y: 1.),
-    ///     (x: 2., y: 1.),
-    ///     (x: 2., y: 2.),
-    ///     (x: 3., y: 3.)
+    ///     (x: 1., y: 1., z: 1.),
+    ///     (x: 2., y: 1., z: 0.),
+    ///     (x: 2., y: 2., z: 2.),
+    ///     (x: 3., y: 3., z: 3.)
     /// ];
     ///
     /// let line_string_b = line_string![
-    ///     (x: 2., y: 2.),
-    ///     (x: 0., y: 1.),
-    ///     (x: 2., y: 4.),
-    ///     (x: 3., y: 4.)
+    ///     (x: 2., y: 2., z: 2.),
+    ///     (x: 0., y: 1., z: 0.),
+    ///     (x: 2., y: 4., z: 6.),
+    ///     (x: 3., y: 4., z: 5.)
     /// ];
     ///
     /// let distance = line_string_a.frechet_distance(&line_string_b);
@@ -102,8 +102,8 @@ mod test {
 
     #[test]
     fn test_single_point_in_linestring() {
-        let ls_a = LineString::from(vec![(1., 1.)]);
-        let ls_b = LineString::from(vec![(0., 2.)]);
+        let ls_a = LineString::from(vec![(1., 1., 1.)]);
+        let ls_b = LineString::from(vec![(0., 2., 0.)]);
         assert_relative_eq!(
             Euclidean::distance(ls_a.0[0], ls_b.0[0]),
             ls_a.frechet_distance(&ls_b)
@@ -112,29 +112,29 @@ mod test {
 
     #[test]
     fn test_identical_linestrings() {
-        let ls_a = LineString::from(vec![(1., 1.), (2., 1.), (2., 2.)]);
-        let ls_b = LineString::from(vec![(1., 1.), (2., 1.), (2., 2.)]);
+        let ls_a = LineString::from(vec![(1., 1., 1.), (2., 1., 2.), (2., 2., 2.)]);
+        let ls_b = LineString::from(vec![(1., 1., 1.), (2., 1., 2.), (2., 2., 2.)]);
         assert_relative_eq!(0., ls_a.frechet_distance(&ls_b));
     }
 
     #[test]
     fn different_dimensions_linestrings() {
-        let ls_a = LineString::from(vec![(1., 1.)]);
-        let ls_b = LineString::from(vec![(2., 2.), (0., 1.)]);
+        let ls_a = LineString::from(vec![(1., 1. , 1.)]);
+        let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 0.)]);
         assert_relative_eq!(2f64.sqrt(), ls_a.frechet_distance(&ls_b));
     }
 
     #[test]
     fn test_frechet_1() {
-        let ls_a = LineString::from(vec![(1., 1.), (2., 1.)]);
-        let ls_b = LineString::from(vec![(2., 2.), (2., 3.)]);
+        let ls_a = LineString::from(vec![(1., 1., 1.), (2., 1., 2.)]);
+        let ls_b = LineString::from(vec![(2., 2., 2.), (2., 3., 4.)]);
         assert_relative_eq!(2., ls_a.frechet_distance(&ls_b));
     }
 
     #[test]
     fn test_frechet_2() {
-        let ls_a = LineString::from(vec![(1., 1.), (2., 1.), (2., 2.)]);
-        let ls_b = LineString::from(vec![(2., 2.), (0., 1.), (2., 4.)]);
+        let ls_a = LineString::from(vec![(1., 1., 1.), (2., 1., 2.), (2., 2., 2.)]);
+        let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 2.), (2., 4., 6.)]);
         assert_relative_eq!(2., ls_a.frechet_distance(&ls_b));
     }
 
@@ -143,10 +143,10 @@ mod test {
         let ls: LineString = {
             let delta = 0.01;
 
-            let mut ls = vec![(0.0, 0.0); 10_000];
+            let mut ls = vec![(0.0, 0.0, 0.0); 10_000];
             for i in 1..ls.len() {
-                let (lat, lon) = ls[i - 1];
-                ls[i] = (lat - delta, lon + delta);
+                let (lat, lon, z) = ls[i - 1];
+                ls[i] = (lat - delta, lon + delta, z + (-delta * delta));
             }
 
             ls.into()

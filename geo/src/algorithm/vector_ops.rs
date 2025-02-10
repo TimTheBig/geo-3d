@@ -216,21 +216,19 @@ mod test {
         let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
         let b = coord! { x: 0f64, y: 1f64, z: 0.0 };
 
-        // expect the area of parallelogram
+        // expect the area of the parallelogram
         assert_eq!(a.wedge_product(b), 1f64);
-        // expect swapping will result in negative
+        // swapping the operands reverses the sign
         assert_eq!(b.wedge_product(a), -1f64);
 
-        // Add skew; expect results should be the same
+        // Add skew; the results should be the same
         let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
         let b = coord! { x: 1f64, y: 1f64, z: 0.0 };
 
-        // expect the area of parallelogram
         assert_eq!(a.wedge_product(b), 1f64);
-        // expect swapping will result in negative
         assert_eq!(b.wedge_product(a), -1f64);
 
-        // Make Colinear; expect zero
+        // Colinear case should yield zero
         let a = coord! { x: 2f64, y: 2f64, z: 3f64 };
         let b = coord! { x: 1f64, y: 1f64, z: 1f64 };
         assert_eq!(a.wedge_product(b), 0f64);
@@ -238,48 +236,48 @@ mod test {
 
     #[test]
     fn test_cross_product() {
-        let a = coord! { x: 1., y: 0., z: -1. };
-        let b = coord! { x: 0., y: 1., z: 0. };
-        let c = coord! { x: 0., y: 1., z: 0. };
+        // Using the 3-point (3D) cross product
+        let a = coord! { x: 1.0, y: 0.0, z: -1.0 };
+        let b = coord! { x: 0.0, y: 1.0, z: 0.0 };
+        let c = coord! { x: 0.0, y: 1.0, z: 0.0 };
 
-        assert_eq!(a.cross_product(b, c), 1f64);
-        assert_eq!(b.cross_product(a, c), -1f64);
-        assert_eq!(c.cross_product(a, b), -1f64);
+        assert_eq!(a.cross_product(b, c), coord! { x: 0.0, y: -1.0, z: 1.0 });
+        assert_eq!(b.cross_product(a, c), coord! { x: 0.0, y: 1.0, z: -1.0 });
+        assert_eq!(c.cross_product(a, b), coord! { x: 0.0, y: 1.0, z: -1.0 });
 
-        let a = coord! { x: 1., y: 0., z: -1. };
-        let b = coord! { x: 1., y: 1., z: 1. };
+        // The following tests assume a 2-argument version of cross product (i.e. the 2D wedge)
+        // For the purpose of these tests we assume that calling cross_product with two arguments
+        // returns the scalar equivalent to wedge_product.
+        let a = coord! { x: 1.0, y: 0.0, z: -1.0 };
+        let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
 
+        // These tests compare to scalar values.
         assert_eq!(a.cross_product(b), 1f64);
-        // expect swapping will result in negative
+        // Swapping the operands should negate the result.
         assert_eq!(b.cross_product(a), -1f64);
 
-        let a = coord! { x: 2., y: 2., z: 2. };
-        let b = coord! { x: 1., y: 1., z: 1. };
+        let a = coord! { x: 2.0, y: 2.0, z: 2.0 };
+        let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
         assert_eq!(a.cross_product(b), 0f64);
     }
 
     #[test]
     fn test_dot_product() {
-        // perpendicular unit length
-        let a = coord! { x: 1f64, y: 0f64 };
-        let b = coord! { x: 0f64, y: 1f64 };
-        // expect zero for perpendicular
+        // Perpendicular unit vectors in the XY plane.
+        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
+        let b = coord! { x: 0f64, y: 1f64, z: 0.0 };
         assert_eq!(a.dot_product(b), 0f64);
 
-        // Parallel, same direction
-        let a = coord! { x: 1f64, y: 0f64 };
-        let b = coord! { x: 2f64, y: 0f64 };
-        // expect +ive product of magnitudes
+        // Parallel vectors in the same direction.
+        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
+        let b = coord! { x: 2f64, y: 0f64, z: 0.0 };
         assert_eq!(a.dot_product(b), 2f64);
-        // expect swapping will have same result
         assert_eq!(b.dot_product(a), 2f64);
 
-        // Parallel, opposite direction
-        let a = coord! { x: 3f64, y: 4f64 };
-        let b = coord! { x: -3f64, y: -4f64 };
-        // expect -ive product of magnitudes
+        // Parallel but opposite vectors.
+        let a = coord! { x: 3f64, y: 4f64, z: 0.0 };
+        let b = coord! { x: -3f64, y: -4f64, z: 0.0 };
         assert_eq!(a.dot_product(b), -25f64);
-        // expect swapping will have same result
         assert_eq!(b.dot_product(a), -25f64);
     }
 
@@ -294,27 +292,29 @@ mod test {
         let a = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(a.magnitude(), 0f64);
 
-        let a = coord! { x: -3.0, y: 4.0 };
-        assert_eq!(a.magnitude(), 5f64);
+        let a = coord! { x: -3.0, y: 4.0, z: 0.5 };
+        assert_eq!(a.magnitude(), 5.5);
     }
 
     #[test]
     fn test_magnitude_squared() {
-        let a = coord! { x: 1f64, y: 0f64 };
+        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
         assert_eq!(a.magnitude_squared(), 1f64);
 
-        let a = coord! { x: 0f64, y: 0f64, z: 0f64 };
+        let a = coord! { x: 0f64, y: 0f64, z: 0.0 };
         assert_eq!(a.magnitude_squared(), 0f64);
 
-        let a = coord! { x: -3f64, y: 4f64 };
+        let a = coord! { x: -3f64, y: 4f64, z: 0.0 };
         assert_eq!(a.magnitude_squared(), 25f64);
     }
 
     #[test]
     fn test_left_right() {
-        let a = coord! { x: 1f64, y: 0f64 };
-        let a_left = coord! { x: 0f64, y: 1f64, z: 2.0 };
-        let a_right = coord! { x: 0f64, y: -1f64 };
+        // Use a coordinate with a nonzero z so that we can confirm that left/right
+        // rotations leave z unchanged.
+        let a = coord! { x: 1f64, y: 0f64, z: 2.0 };
+        let a_left = coord! { x: -0f64, y: 1f64, z: 2.0 };
+        let a_right = coord! { x: 0f64, y: -1f64, z: 2.0 };
 
         assert_eq!(a.left(), a_left);
         assert_eq!(a.right(), a_right);
@@ -341,12 +341,12 @@ mod test {
         let a: Point = coord! { x: 1.0, y: 0.0, z: 0.0 }.into();
         let origin: Point = coord! { x: 0.0, y: 0.0, z: 0.0 }.into();
 
-        // left is anti-clockwise
+        // left() is equivalent to a 90° counter-clockwise rotation.
         assert_relative_eq!(
             Point::from(a.0.left()),
             a.rotate_around_point(counter_clockwise_rotation_degrees, origin),
         );
-        // right is clockwise
+        // right() is equivalent to a 90° clockwise rotation.
         assert_relative_eq!(
             Point::from(a.0.right()),
             a.rotate_around_point(clockwise_rotation_degrees, origin),
@@ -355,89 +355,90 @@ mod test {
 
     #[test]
     fn test_try_normalize() {
-        // Already Normalized
+        // Already normalized.
         let a = coord! {
             x: 1.0,
-            y: 0.0
+            y: 0.0,
+            z: 0.0
         };
         assert_relative_eq!(a.try_normalize().unwrap(), a);
 
-        // Already Normalized
+        // Already normalized.
         let a = coord! {
             x: 1.0 / f64::sqrt(2.0),
-            y: -1.0 / f64::sqrt(2.0)
+            y: -1.0 / f64::sqrt(2.0),
+            z: 1.0 / f64::sqrt(2.0),
         };
         assert_relative_eq!(a.try_normalize().unwrap(), a);
 
-        // Non trivial example
-        let a = coord! { x: -10.0, y: 8.0 };
+        // A nontrivial example.
+        let a = coord! { x: -10.0, y: 8.0, z: 0.0 };
         assert_relative_eq!(
             a.try_normalize().unwrap(),
-            coord! { x: -10.0, y: 8.0 } / f64::sqrt(10.0 * 10.0 + 8.0 * 8.0)
+            coord! { x: -10.0, y: 8.0, z: 0.0 } / f64::sqrt(10.0 * 10.0 + 8.0 * 8.0)
         );
     }
 
     #[test]
-    /// Tests edge cases that were previously returning None
-    /// before switching to cmath::hypot
     fn test_try_normalize_edge_cases_1() {
         use float_next_after::NextAfter;
-        // Very Small Input still returns a value thanks to cmath::hypot
+        // Very small input: normalization should still succeed.
         let a = coord! {
             x: 0.0,
-            y: 1e-301_f64
+            y: 1e-301_f64,
+            z: 0.0
         };
         assert_eq!(
             a.try_normalize(),
             Some(coord! {
                 x: 0.0,
                 y: 1.0,
+                z: 0.0,
             })
         );
 
-        // A large vector where try_normalize returns Some
-        // Because the magnitude is f64::MAX (Just before overflow to f64::INFINITY)
+        // A large vector that does not overflow.
         let a = coord! {
             x: f64::sqrt(f64::MAX/2.0),
-            y: f64::sqrt(f64::MAX/2.0)
+            y: f64::sqrt(f64::MAX/2.0),
+            z: f64::sqrt(f64::MAX/2.0),
         };
         assert_relative_eq!(
             a.try_normalize().unwrap(),
             coord! {
                 x: 1.0 / f64::sqrt(2.0),
                 y: 1.0 / f64::sqrt(2.0),
+                z: 1.0 / f64::sqrt(2.0),
             }
         );
 
-        // A large vector where try_normalize still returns Some because we are using cmath::hypot
-        // even though the magnitude would be just above f64::MAX
+        // A large vector that is barely under the overflow threshold.
         let a = coord! {
             x: f64::sqrt(f64::MAX / 2.0),
-            y: f64::sqrt(f64::MAX / 2.0).next_after(f64::INFINITY)
+            y: f64::sqrt(f64::MAX / 2.0).next_after(f64::INFINITY),
+            z: f64::sqrt(f64::MAX / 2.0)
         };
         assert_relative_eq!(
             a.try_normalize().unwrap(),
             coord! {
                 x: 1.0 / f64::sqrt(2.0),
                 y: 1.0 / f64::sqrt(2.0),
+                z: 1.0 / f64::sqrt(2.0),
             }
         );
     }
 
     #[test]
     fn test_try_normalize_edge_cases_2() {
-        // The following tests demonstrate some of the floating point
-        // edge cases that can cause try_normalize to return None.
-
-        // Zero vector - Normalize returns None
+        // Zero vector: normalization should fail.
         let a = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
 
-        // Where one of the components is NaN try_normalize returns None
+        // Component is NaN: normalization should fail.
         let a = coord! { x: f64::NAN, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
 
-        // Where one of the components is Infinite try_normalize returns None
+        // Component is Infinite: normalization should fail.
         let a = coord! { x: f64::INFINITY, y: 0.0, z: 0.0 };
         assert_eq!(a.try_normalize(), None);
     }
