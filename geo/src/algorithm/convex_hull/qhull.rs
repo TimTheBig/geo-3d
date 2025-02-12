@@ -22,18 +22,20 @@ where
     ).is_sign_positive()
 }
 
-// todo check and doc
+// todo check
+/// Return the convex_hull of point set `points` as a `Linestring`
 pub fn quick_hull<T>(mut points: &mut [Coord<T>]) -> LineString<T>
 where
     T: GeoNum + Into<f64>,
 {
+    use crate::utils::least_and_greatest_index;
+
     // Can't build a hull from fewer than four points
     if points.len() < 4 {
         return trivial_hull(points, false);
     }
     let mut hull = vec![];
 
-    use crate::utils::least_and_greatest_index;
     let (min, max) = {
         let (min_idx, mut max_idx) = least_and_greatest_index(points);
         let min = swap_with_first_and_remove(&mut points, min_idx);
