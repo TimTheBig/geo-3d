@@ -61,7 +61,7 @@ where
 }
 
 pub mod qhull;
-pub use qhull::quick_hull;
+pub use qhull::{quick_hull, ConvexQHull};
 
 pub mod graham;
 pub use graham::graham_hull;

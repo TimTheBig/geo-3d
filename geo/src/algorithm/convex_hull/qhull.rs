@@ -1,141 +1,79 @@
-use robust::orient3d;
-use super::{swap_with_first_and_remove, trivial_hull};
-use crate::kernels::{Kernel, Orientation};
-use crate::utils::partition_slice;
-use crate::{coord, Coord, GeoNum, LineString};
+use geo_types::{coord, Coord, CoordNum, LineString};
+use glam::DVec3;
+pub use quickhull::{ErrorKind, ConvexHull};
+use super::trivial_hull;
 
-// Determines if `p_c` lies on the positive side of the
-// segment `p_a` to `p_b`. In other words, whether segment
-// `p_a` to `p_c` is a counter-clockwise rotation from the
-// segment. We use kernels to ensure this predicate is
-// exact.
-#[inline]
-fn is_ccw<T>(p_a: Coord<T>, p_b: Coord<T>, p_c: Coord<T>, p_d: Coord<T>) -> bool
-where
-    T: GeoNum + Into<f64>,
-{
-    orient3d(
-        robust::Coord3D { x: p_a.z, y: p_a.z, z: p_a.z },
-        robust::Coord3D { x: p_b.x, y: p_b.y, z: p_b.z },
-        robust::Coord3D { x: p_c.x, y: p_c.y, z: p_c.z },
-        robust::Coord3D { x: p_d.x, y: p_d.y, z: p_d.z },
-    ).is_sign_positive()
+/// A container to make using [quickhull](https://github.com/TimTheBig/quickhull) with geo simpler
+/// 
+/// # Example
+/// ```
+/// use super::{coord, Coord, ConvexQHull};
+/// 
+/// ConvexQHull::try_new(
+///     &[
+///     coord!(5.0, 5.0, 6.0),
+///     coord!(6.0, 5.0, 5.0),
+///     coord!(2.0, 3.0, 4.0)
+///     ]).expect("this is valid")
+/// ```
+pub struct ConvexQHull(ConvexHull);
+
+impl ConvexQHull {
+    /// Attempts to compute a [`ConvexQHull`] for the given set of points.
+    pub fn try_new<T: CoordNum + Into<f64>>(points: &[Coord<T>]) -> Result<Self, ErrorKind> {
+        match ConvexHull::try_new(
+            &(points.iter().map(|c| glam_vec3_from_geo(c.into()))).collect::<Vec<_>>(),
+            None
+        ) {
+            Ok(ch) => Ok(ConvexQHull(ch)),
+            Err(e) => Err(e),
+        }
+    }
+
+    /// Gets the points of the convex hull.
+    pub fn points<T: CoordNum + From<f64>>(&self) -> Vec<Coord<T>> {
+        self.0.points.iter().map(|v3| coord!(v3.x.into(), v3.y.into(), v3.z.into())).collect::<Vec<_>>()
+    }
+
+    /// Gets the points of the convex hull without collecting an iterator.
+    pub fn points_iter<'a, T: CoordNum + From<f64>>(&self) -> impl Iterator<Item = Coord<T>> + '_ {
+        self.0.points.iter().map(|v3| coord!(v3.x.into(), v3.y.into(), v3.z.into()))
+    }
+
+    /// Adds the given points to the point set, attempting to update the convex hull.
+    pub fn add_points<T: CoordNum + Into<f64>>(&mut self, points: &[Coord<T>]) -> Result<(), ErrorKind> {
+        self.0.add_iter_points(&mut points.iter().map(|c| glam_vec3_from_geo(c)))
+    }
 }
 
-// todo check
-/// Return the convex_hull of point set `points` as a `Linestring`
-pub fn quick_hull<T>(mut points: &mut [Coord<T>]) -> LineString<T>
-where
-    T: GeoNum + Into<f64>,
-{
-    use crate::utils::least_and_greatest_index;
+const fn glam_vec3_from_geo(coord: &Coord) -> DVec3 {
+    DVec3::new(coord.x, coord.y, coord.z)
+}
 
+/// Return the convex_hull of point set `points` as a `Linestring`
+pub fn quick_hull<T: CoordNum + Into<f64>>(mut points: &mut [Coord<T>]) -> Result<LineString<T>, ErrorKind> {
     // Can't build a hull from fewer than four points
     if points.len() < 4 {
-        return trivial_hull(points, false);
-    }
-    let mut hull = vec![];
-
-    let (min, max) = {
-        let (min_idx, mut max_idx) = least_and_greatest_index(points);
-        let min = swap_with_first_and_remove(&mut points, min_idx);
-
-        // Two special cases to consider:
-        // (1) max_idx = 0, and got swapped
-        if max_idx == 0 {
-            max_idx = min_idx;
-        }
-
-        // (2) max_idx = min_idx: then any point could be chosen as max.
-        // But from case (1), it could now be 0, and we should not decrement it.
-        max_idx = max_idx.saturating_sub(1);
-
-        let max = swap_with_first_and_remove(&mut points, max_idx);
-        (min, max)
-    };
-
-    {
-        // Use the `orient3d` function to determine which points are above/below
-        // the plane formed by `max`, `min`, and a reference point `p_d`.
-        // For simplicity, we'll pick the first remaining point as `p_d`.
-        let p_d = points.get(0).copied().unwrap_or_else(|| *min);
-
-        // Points above the plane
-        let (points, _) = partition_slice(points, |p| is_ccw(*max, *min, *p, p_d));
-        hull_set(*max, *min, points, &mut hull, p_d);
-    }
-    hull.push(*max);
-
-    {
-        let p_d = points.get(0).copied().unwrap_or_else(|| *max);
-
-        // Points below the plane
-        let (points, _) = partition_slice(points, |p| is_ccw(*min, *max, *p, p_d));
-        hull_set(*min, *max, points, &mut hull, p_d);
-    }
-    hull.push(*min);
-
-    // Close the polygon
-    let mut hull: LineString<_> = hull.into();
-    hull.close();
-    hull
-}
-
-/// Recursively calculate the convex hull of a subset of points in 3D space
-fn hull_set<T>(p_a: Coord<T>, p_b: Coord<T>, mut set: &mut [Coord<T>], hull: &mut Vec<Coord<T>>, p_d: Coord<T>)
-where
-    T: GeoNum + Into<f64>,
-{
-    if set.is_empty() {
-        return;
-    }
-    if set.len() == 1 {
-        hull.push(set[0]);
-        return;
+        return Ok(trivial_hull(points, false));
     }
 
-    // Construct orthogonal vector to `p_b - p_a` in 3D
-    let p_orth = coord! {
-        x: (p_a.y - p_b.y) * (p_a.z + p_b.z) - (p_a.z - p_b.z) * (p_a.y + p_b.y),
-        y: (p_a.z - p_b.z) * (p_a.x + p_b.x) - (p_a.x - p_b.x) * (p_a.z + p_b.z),
-        z: (p_a.x - p_b.x) * (p_a.y + p_b.y) - (p_a.y - p_b.y) * (p_a.x + p_b.x),
-    };
-
-    let furthest_idx = set
-        .iter()
-        .map(|pt| {
-            // Calculate the vector difference from `p_a` to the current point
-            let p_diff = coord! {
-                x: pt.x - p_a.x,
-                y: pt.y - p_a.y,
-                z: pt.z - p_a.z,
-            };
-            p_orth.dot(p_diff)
-        })
-        .enumerate()
-        .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-        .unwrap()
-        .0;
-
-    // Move the point at `furthest_idx` from the set into the hull
-    let furthest_point = swap_with_first_and_remove(&mut set, furthest_idx);
-
-    // Recurse for points on one side of the plane (above or below)
-    {
-        let (points, _) = partition_slice(set, |p| is_ccw(*furthest_point, p_b, *p, p_d));
-        hull_set(*furthest_point, p_b, points, hull, p_d);
+    match ConvexQHull::try_new(points) {
+        Ok(ps) => Ok(LineString(ps.points())),
+        Err(e) => Err(e),
     }
-    hull.push(*furthest_point);
-
-    // Recurse for points on the other side of the plane
-    let (points, _) = partition_slice(set, |p| is_ccw(p_a, *furthest_point, *p, p_d));
-    hull_set(p_a, *furthest_point, points, hull, p_d);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
     use crate::IsConvex;
+
+    #[test]
+    fn sphere_test() {
+        let (_v, _i) = ConvexQHull::try_new(&geo_test_fixtures::ring().0)
+            .unwrap()
+            .vertices_indices();
+    }
 
     #[test]
     fn quick_hull_test1() {
@@ -155,22 +93,22 @@ mod test {
     #[test]
     fn quick_hull_test2() {
         let mut v = vec![
-            coord! { x: 0, y: 10 },
-            coord! { x: 1, y: 1 },
-            coord! { x: 10, y: 0 },
-            coord! { x: 1, y: -1 },
-            coord! { x: 0, y: -10 },
+            coord! { x: 0., y: 10 },
+            coord! { x: 1., y: 1 },
+            coord! { x: 10., y: 0 },
+            coord! { x: 1., y: -1 },
+            coord! { x: 0., y: -10 },
             coord! { x: -1, y: -1 },
             coord! { x: -10, y: 0 },
             coord! { x: -1, y: 1 },
             coord! { x: 0, y: 10 },
         ];
         let correct = vec![
-            coord! { x: 0, y: -10 },
-            coord! { x: 10, y: 0 },
-            coord! { x: 0, y: 10 },
-            coord! { x: -10, y: 0 },
-            coord! { x: 0, y: -10 },
+            coord! { x: 0., y: -10., z: 0. },
+            coord! { x: 10., y: 0., z: 10. },
+            coord! { x: 0., y: 10., z: 0. },
+            coord! { x: -10., y: 0., z: -10. },
+            coord! { x: 0., y: -10., z: 0. },
         ];
         let res = quick_hull(&mut v);
         assert_eq!(res.0, correct);
@@ -180,35 +118,38 @@ mod test {
     // test whether output is ccw
     fn quick_hull_test_ccw() {
         let initial = [
-            (1.0, 0.0),
-            (2.0, 1.0),
-            (1.75, 1.1),
-            (1.0, 2.0),
-            (0.0, 1.0),
-            (1.0, 0.0),
-        ];
-        let mut v: Vec<_> = initial.iter().map(|e| coord! { x: e.0, y: e.1, z: e.2 }).collect();
-        let correct = [(1.0, 0.0), (2.0, 1.0), (1.0, 2.0), (0.0, 1.0), (1.0, 0.0)];
-        let v_correct: Vec<_> = correct.iter().map(|e| coord! { x: e.0, y: e.1, z: e.2 }).collect();
-        let res = quick_hull(&mut v);
-        assert_eq!(res.0, v_correct);
+            coord!(1.0, 0.0, 1.0),
+            coord!(2.0, 1.0, 2.0),
+            coord!(1.75, 1.1, 1.2),
+            coord!(1.0, 2.0, 1.0),
+            coord!(0.0, 1.0, 0.0),
+            coord!(1.0, 0.0, 1.0),
+        ].to_vec();
+        let correct = [
+            coord!(1.0, 0.0, 1.0),
+            coord!(2.0, 1.0, 2.0),
+            coord!(1.0, 2.0, 1.0),
+            coord!(0.0, 1.0, 0.0),
+            coord!(1.0, 0.0, 1.0)
+        ].to_vec();
+        let res = quick_hull(&mut initial);
+        assert_eq!(res.0, correct);
     }
 
     #[test]
     fn quick_hull_test_ccw_maintain() {
         // initial input begins at min y, is oriented ccw
         let initial = [
-            (0., 0.),
-            (2., 0.),
-            (2.5, 1.75),
-            (2.3, 1.7),
-            (1.75, 2.5),
-            (1.3, 2.),
-            (0., 2.),
-            (0., 0.),
-        ];
-        let mut v: Vec<_> = initial.iter().map(|e| coord! { x: e.0, y: e.1, z: e.2 }).collect();
-        let res = quick_hull(&mut v);
+            coord!(0., 0., 0.),
+            coord!(2., 0., 2.),
+            coord!(2.5, 1.75),
+            coord!(2.3, 1.7),
+            coord!(1.75, 2.5),
+            coord!(1.3, 2.),
+            coord!(0., 2., 0.),
+            coord!(0., 0., 0.),
+        ].to_vec();
+        let res = quick_hull(&mut initial);
         assert!(res.is_strictly_ccw_convex());
     }
 
@@ -234,18 +175,17 @@ mod test {
         // There are three points with same x.
         // Output should not contain the middle point.
         let initial = [
-            (-1., 0.),
-            (-1., -1.),
-            (-1., 1.),
-            (0., 0.),
-            (0., -1.),
-            (0., 1.),
-            (1., 0.),
-            (1., -1.),
-            (1., 1.),
-        ];
-        let mut v: Vec<_> = initial.iter().map(|e| coord! { x: e.0, y: e.1 }).collect();
-        let res = quick_hull(&mut v);
+            coord!(-1., 0., -1.),
+            coord!(-1., -1., -1.),
+            coord!(-1., 1., -1.),
+            coord!(0., 0., 0.),
+            coord!(0., -1., 0.),
+            coord!(0., 1., 0.),
+            coord!(1., 0., 1.),
+            coord!(1., -1., 1.),
+            coord!(1., 1., 1.),
+        ].to_vec();
+        let res = quick_hull(&mut initial);
         assert!(res.is_strictly_ccw_convex());
     }
 }
