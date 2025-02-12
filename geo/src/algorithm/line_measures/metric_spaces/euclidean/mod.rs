@@ -8,17 +8,12 @@ use num_traits::FromPrimitive;
 /// Operations on the [Euclidean plane] measure distance with the pythagorean formula -
 /// what you'd measure with a ruler.
 ///
-/// If you have lon/lat points, use the [`Haversine`], [`Geodesic`], or other [metric spaces] -
-/// Euclidean methods will give nonsense results.
-///
 /// If you wish to use Euclidean operations with lon/lat, the coordinates must first be transformed
 /// using the [`Transform::transform`](crate::Transform::transform) / [`Transform::transform_crs_to_crs`](crate::Transform::transform_crs_to_crs) methods or their
 /// immutable variants. Use of these requires the proj feature
 ///
 /// [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
 /// [`Transform`]: crate::Transform
-/// [`Haversine`]: super::Haversine
-/// [`Geodesic`]: super::Geodesic
 /// [metric spaces]: super
 pub struct Euclidean;
 
@@ -32,11 +27,8 @@ impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
     /// - `distance`: Measured in whatever units your `start` and `end` points use.
     ///
     ///   `distance` and your `start` and `end` points should have non-angular
-    ///   units, like meters or miles, **not** lon/lat.
-    ///   For lon/lat points, use the [`Haversine`] or [`Geodesic`] [metric spaces].
+    ///   units, like meters or miles.
     ///
-    /// [`Haversine`]: crate::line_measures::Haversine
-    /// [`Geodesic`]: crate::line_measures::Geodesic
     /// [metric spaces]: crate::line_measures::metric_spaces
     fn point_at_distance_between(
         start: Point<F>,
@@ -55,11 +47,8 @@ impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
     /// - `distance`: Measured in whatever units your `start` and `end` points use.
     ///
     ///   `distance` and your `start` and `end` points should have non-angular
-    ///   units, like meters or miles, **not** lon/lat.
-    ///   For lon/lat points, use the [`Haversine`] or [`Geodesic`] [metric spaces].
+    ///   units, like meters or miles.
     ///
-    /// [`Haversine`]: crate::line_measures::Haversine
-    /// [`Geodesic`]: crate::line_measures::Geodesic
     /// [metric spaces]: crate::line_measures::metric_spaces
     fn point_at_ratio_between(start: Point<F>, end: Point<F>, ratio_from_start: F) -> Point<F> {
         let diff = end - start;
@@ -78,11 +67,8 @@ impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
     /// - `max_distance`: Measured in whatever units your `start` and `end` points use.
     ///
     ///   `max_distance` and your `start` and `end` points should have non-angular
-    ///   units, like meters or miles, **not** lon/lat.
-    ///   For lon/lat points, use the [`Haversine`] or [`Geodesic`] [metric spaces].
+    ///   units, like meters or miles.
     ///
-    /// [`Haversine`]: crate::line_measures::Haversine
-    /// [`Geodesic`]: crate::line_measures::Geodesic
     /// [metric spaces]: crate::line_measures::metric_spaces
     fn points_along_line(
         start: Point<F>,

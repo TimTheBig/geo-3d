@@ -40,6 +40,7 @@ impl<T: CoordNum> Line<T> {
     }
 
     /// Calculate the difference in coordinates (Δx, Δy, Δz).
+    /// Equivalent to `self.end - self.start`
     pub fn delta(&self) -> Coord<T> {
         self.end - self.start
     }

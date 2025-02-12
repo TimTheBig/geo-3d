@@ -6,7 +6,7 @@ pub trait Distance<F, Origin, Destination> {
     ///
     /// # Units
     ///
-    /// - `origin`, `destination`: geometry where the units of x/y depend on the trait implementation.
+    /// - `origin`, `destination`: geometry where the units of x/y/z depend on the trait implementation.
     /// - returns: depends on the trait implementation.
     fn distance(origin: Origin, destination: Destination) -> F;
 }

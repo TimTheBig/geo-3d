@@ -95,9 +95,8 @@ extern crate approx;
 /// For algorithms which can use floating point `Point`s/`Coord`s
 ///
 /// Floats (`f32` and `f64`) implement this.
-#[allow(deprecated)]
 pub trait CoordNum: Num + Copy + NumCast + PartialOrd + Float + Debug {}
-#[allow(deprecated)]
+
 impl<T: Num + Copy + NumCast + PartialOrd + Float + Debug> CoordNum for T {}
 
 pub mod geometry;

@@ -8,8 +8,10 @@ where
     fn intersects(&self, rhs: &Coord<T>) -> bool {
         rhs.x >= self.min().x
             && rhs.y >= self.min().y
+            && rhs.z >= self.min().z
             && rhs.x <= self.max().x
             && rhs.y <= self.max().y
+            && rhs.z <= self.max().z
     }
 }
 symmetric_intersects_impl!(Coord<T>, Rect<T>);
@@ -21,19 +23,11 @@ where
     T: CoordNum,
 {
     fn intersects(&self, other: &Rect<T>) -> bool {
-        if self.max().x < other.min().x {
+        if self.max().x < other.min().x || self.max().y < other.min().y || self.max().z < other.min().z {
             return false;
         }
 
-        if self.max().y < other.min().y {
-            return false;
-        }
-
-        if self.min().x > other.max().x {
-            return false;
-        }
-
-        if self.min().y > other.max().y {
+        if self.min().x > other.max().x || self.min().y > other.max().y || self.min().z > other.max().z {
             return false;
         }
 

@@ -194,11 +194,11 @@ where
     T: CoordNum,
 {
     fn signed_area(&self) -> T {
-        self.width() * self.height()
+        self.width() * self.depth() * T::max(T::one(), self.height())
     }
 
     fn unsigned_area(&self) -> T {
-        self.width() * self.height()
+        self.width() * self.depth() * T::max(T::one(), self.height())
     }
 }
 

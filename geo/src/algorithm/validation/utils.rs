@@ -2,13 +2,10 @@ use crate::{Coord, CoordNum, GeoFloat, Intersects, LineString, RemoveRepeatedPoi
 use robust::{orient2d, Coord as RobustCoord};
 
 pub(crate) fn check_coord_is_not_finite<T: CoordNum>(geom: &Coord<T>) -> bool {
-    if geom.x.is_finite() && geom.y.is_finite() && geom.z.is_finite() {
-        return false;
-    }
-    true
+    !(geom.x.is_finite() && geom.y.is_finite() && geom.z.is_finite())
 }
 
-// todo make 3d if needed
+/// This only checks x and y there for is 2d only
 pub(crate) fn robust_check_points_are_collinear<T: CoordNum>(
     p0: &Coord<T>,
     p1: &Coord<T>,

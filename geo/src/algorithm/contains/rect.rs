@@ -16,6 +16,8 @@ where
             && coord.x < self.max().x
             && coord.y > self.min().y
             && coord.y < self.max().y
+            && coord.z > self.min().z
+            && coord.z < self.max().z
     }
 }
 
@@ -39,6 +41,8 @@ where
             && self.max().x >= other.max().x
             && self.min().y <= other.min().y
             && self.max().y >= other.max().y
+            && self.min().z <= other.min().z
+            && self.max().z >= other.max().z
     }
 }
 

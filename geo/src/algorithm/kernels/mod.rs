@@ -67,6 +67,3 @@ pub trait Kernel<T: CoordNum> {
 
 pub mod robust;
 pub use self::robust::RobustKernel;
-
-pub mod simple;
-pub use self::simple::SimpleKernel;

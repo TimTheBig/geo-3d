@@ -11,7 +11,7 @@ def main():
     pts = {}
 
     float_regex = r"[-+]?(?:\d*\.\d+|\d+)"
-    coord_regex = f"({float_regex}),? ({float_regex})"
+    coord_regex = f"({float_regex}),? ({float_regex}),? ({float_regex})"
     regex = re.compile(coord_regex)
 
     line = sys.stdin.readline()
@@ -22,7 +22,7 @@ def main():
         while m:
             st = m.start()
             print(line[:st], end='')
-            sig = m.expand(r"\1#\2")
+            sig = m.expand(r"\1#\2#\3")
             if sig not in pts:
                 pts[sig] = len(pts)
             idx = pts[sig]
@@ -37,8 +37,8 @@ def main():
     print("end of input")
     print("points:")
     for sig in pts:
-        x,y = sig.split('#')
+        x,y,z = sig.split('#')
         idx = pts[sig]
-        print(f"\t{idx}: Pt({x} {y})")
+        print(f"\t{idx}: Pt({x} {y} {z})")
 if __name__ == "__main__":
     main()
