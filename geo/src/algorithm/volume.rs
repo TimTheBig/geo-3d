@@ -137,3 +137,25 @@ impl<T: CoordNum + Sum> TryVolume<T> for MultiPolygon<T> {
         self.iter().map(|ls| ls.try_volume()).sum()
     }
 }
+
+#[cfg(test)]
+mod test {
+    use geo_types::coord;
+
+    use crate::ConvexHull;
+
+    use super::*;
+
+    #[test]
+    fn rect_hull_volume() {
+        assert_eq!(
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).try_volume().unwrap(),
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap(),
+        );
+        // this tests to make sure the volume of a convex_hull is cons
+        assert_eq!(
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap(),
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).convex_hull().try_volume().unwrap(),
+        )
+    }
+}
