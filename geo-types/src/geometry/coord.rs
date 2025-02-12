@@ -27,11 +27,15 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 pub struct Coord<T: CoordNum = f64> {
     pub x: T,
     pub y: T,
+    #[cfg_attr(feature = "serde", serde(default = "T::zero"), serde(skip_serializing_if = "not_serializable"))]
     pub z: T,
 }
 
-#[deprecated(note = "Renamed to `geo_types::Coord` (or `geo::Coord`)")]
-pub type Coordinate<T = f64> = Coord<T>;
+/// This help serde to see if the z should be serialized, courntly this only skips zero
+#[cfg(feature = "serde")]
+fn not_serializable<T: CoordNum>(num: &T) -> bool {
+    !num.is_zero()
+}
 
 impl<T: CoordNum> From<(T, T, T)> for Coord<T> {
     #[inline]
