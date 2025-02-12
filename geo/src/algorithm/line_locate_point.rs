@@ -1,12 +1,7 @@
-// This algorithm will be deprecated in the future, replaced by a unified implementation
-// rather than being Euclidean specific. Until the alternative is available, lets allow deprecations
-// so as not to change the method signature for existing users.
-#[allow(deprecated)]
-use crate::{
-    CoordNum, Line, LineString, Point,
-    {euclidean_distance::EuclideanDistance, euclidean_length::EuclideanLength},
-};
+use crate::{CoordNum, Line, LineString, Point, Length};
 use std::ops::AddAssign;
+use super::Distance;
+use geo_types::Coord;
 
 /// Returns a (option of the) fraction of the line's total length
 /// representing the location of the closest point on the line to
@@ -79,18 +74,17 @@ where
     }
 }
 
-#[allow(deprecated)]
-impl<T> LineLocatePoint<T, Point<T>> for LineString<T>
+impl<T: CoordNum> LineLocatePoint<T, Point<T>> for LineString<T>
 where
     T: CoordNum + AddAssign,
-    Line<T>: EuclideanDistance<T, Point<T>> + EuclideanLength<T>,
-    LineString<T>: EuclideanLength<T>,
+    Line<T>: Distance<T, Coord<T>> + Length<T>,
+    LineString<T>: Length<T>,
 {
     type Output = Option<T>;
     type Rhs = Point<T>;
 
     fn line_locate_point(&self, p: &Self::Rhs) -> Self::Output {
-        let total_length = (*self).euclidean_length();
+        let total_length = (*self).length();
         if total_length == T::zero() {
             return Some(T::zero());
         }
@@ -98,8 +92,8 @@ where
         let mut closest_dist_to_point = T::infinity();
         let mut fraction = T::zero();
         for segment in self.lines() {
-            let segment_distance_to_point = segment.euclidean_distance(p);
-            let segment_length = segment.euclidean_length();
+            let segment_distance_to_point = (&segment).distance(p);
+            let segment_length = segment.length();
             let segment_fraction = segment.line_locate_point(p)?; // if any segment has a None fraction, return None
             if segment_distance_to_point < closest_dist_to_point {
                 closest_dist_to_point = segment_distance_to_point;
@@ -229,9 +223,9 @@ mod test {
         assert_eq!(line.line_locate_point(&pt), Some(0.0));
 
         let line: LineString = LineString::new(vec![
-            (1.0, 1.0).into(),
-            (1.0, 1.0).into(),
-            (1.0, 1.0).into(),
+            (1.0, 1.0, 1.0).into(),
+            (1.0, 1.0, 1.0).into(),
+            (1.0, 1.0, 1.0).into(),
         ]);
         let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), Some(0.0));

@@ -1,7 +1,7 @@
 use crate::convex_hull::qhull;
 use crate::utils::partial_min;
 use crate::{
-    coord, Centroid, Coord, CoordNum, Distance, Euclidean, GeoFloat, Length, Line, LineString,
+    coord, Centroid, Coord, CoordNum, Distance, GeoFloat, Length, Line, LineString,
     MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,
 };
 use rstar::{RTree, RTreeNum};
@@ -116,7 +116,7 @@ where
     T: GeoFloat + RTreeNum,
 {
     let h = max_dist + max_dist;
-    let w = line.length::<Euclidean>() + h;
+    let w = line.length() + h;
     let two = T::one() + T::one();
 
     let search_dist = T::div(T::sqrt(T::powi(w, 2) + T::powi(h, 2)), two);
@@ -136,8 +136,8 @@ where
             let closest_point =
                 candidates.fold(Point::new(point.x, point.y, point.z), |acc_point, candidate| {
                     let candidate_point = Point::new(candidate.x, candidate.y, candidate.z);
-                    if Euclidean::distance(&line, &acc_point)
-                        > Euclidean::distance(&line, &candidate_point)
+                    if (&line).distance(&acc_point)
+                        > (&line).distance(&candidate_point)
                     {
                         candidate_point
                     } else {
@@ -156,8 +156,8 @@ where
             let closest_edge_option = match peeked_edge {
                 None => None,
                 Some(&edge) => Some(edges_nearby_point.fold(*edge, |acc, candidate| {
-                    if Euclidean::distance(&closest_point, &acc)
-                        > Euclidean::distance(&closest_point, candidate)
+                    if (&closest_point).distance(&acc)
+                        > (&closest_point).distance(candidate)
                     {
                         *candidate
                     } else {
@@ -166,8 +166,8 @@ where
                 })),
             };
             let decision_distance = partial_min(
-                Euclidean::distance(&closest_point, &line.start_point()),
-                Euclidean::distance(&closest_point, &line.end_point()),
+                (&closest_point).distance(&line.start_point()),
+                (&closest_point).distance(&line.end_point()),
             );
             if let Some(closest_edge) = closest_edge_option {
                 let far_enough = edge_length / decision_distance > concavity;
@@ -200,7 +200,7 @@ where
         return hull;
     }
 
-    //Get points in overall dataset that aren't on the exterior linestring of the hull
+    // Get points in overall dataset that aren't on the exterior linestring of the hull
     let hull_tree: RTree<Coord<T>> = RTree::bulk_load(hull.clone().0);
 
     let interior_coords: Vec<Coord<T>> = coords
@@ -220,7 +220,7 @@ where
         line_tree.insert(line);
     }
     while let Some(line) = line_queue.pop_front() {
-        let edge_length = line.length::<Euclidean>();
+        let edge_length = line.length();
         let dist = edge_length / concavity;
         let possible_closest_point = find_point_closest_to_line(
             &interior_points_tree,
@@ -283,17 +283,17 @@ mod test {
     fn square_test() {
         let mut square = vec![
             coord! { x: 0.0, y: 0.0, z: 0.0 },
-            coord! { x: 4.0, y: 0.0 },
-            coord! { x: 4.0, y: 4.0 },
-            coord! { x: 0.0, y: 4.0 },
+            coord! { x: 4.0, y: 0.0, z: 4.0 },
+            coord! { x: 4.0, y: 4.0, z: 4.0 },
+            coord! { x: 0.0, y: 4.0, z: 0.0 },
         ];
 
         let correct = line_string![
-            (x: 4.0, y: 0.0),
-            (x: 4.0, y: 4.0),
-            (x: 0.0, y: 4.0),
+            (x: 4.0, y: 0.0, z: 4.0),
+            (x: 4.0, y: 4.0, z: 4.0),
+            (x: 0.0, y: 4.0, z: 0.0),
             (x: 0.0, y: 0.0, z: 0.0),
-            (x: 4.0, y: 0.0),
+            (x: 4.0, y: 0.0, z: 4.0),
         ];
 
         let concavity = 2.0;
@@ -305,18 +305,18 @@ mod test {
     fn one_flex_test() {
         let mut v = vec![
             coord! { x: 0.0, y: 0.0, z: 0.0 },
-            coord! { x: 2.0, y: 1.0 },
-            coord! { x: 4.0, y: 0.0 },
-            coord! { x: 4.0, y: 4.0 },
-            coord! { x: 0.0, y: 4.0 },
+            coord! { x: 2.0, y: 1.0, z: 0.0 },
+            coord! { x: 4.0, y: 0.0, z: -4.0 },
+            coord! { x: 4.0, y: 4.0, z: 4.0 },
+            coord! { x: 0.0, y: 4.0, z: 0.0 },
         ];
         let correct = line_string![
-            (x: 4.0, y: 0.0),
-            (x: 4.0, y: 4.0),
-            (x: 0.0, y: 4.0),
+            (x: 4.0, y: 0.0, z: 4.0),
+            (x: 4.0, y: 4.0, z: 4.0),
+            (x: 0.0, y: 4.0, z: 0.0),
             (x: 0.0, y: 0.0, z: 0.0),
-            (x: 2.0, y: 1.0),
-            (x: 4.0, y: 0.0),
+            (x: 2.0, y: 1.0, z: 2.0),
+            (x: 4.0, y: 0.0, z: 4.0),
         ];
         let concavity = 1.0;
         let res = concave_hull(&mut v, concavity);
@@ -327,24 +327,24 @@ mod test {
     fn four_flex_test() {
         let mut v = vec![
             coord! { x: 0.0, y: 0.0, z: 0.0 },
-            coord! { x: 2.0, y: 1.0 },
-            coord! { x: 4.0, y: 0.0 },
-            coord! { x: 3.0, y: 2.0 },
-            coord! { x: 4.0, y: 4.0 },
-            coord! { x: 2.0, y: 3.0 },
-            coord! { x: 0.0, y: 4.0 },
-            coord! { x: 1.0, y: 2.0 },
+            coord! { x: 2.0, y: 1.0, z: 0.0 },
+            coord! { x: 4.0, y: 0.0, z: 4.0 },
+            coord! { x: 3.0, y: 2.0, z: 3.0 },
+            coord! { x: 4.0, y: 4.0, z: 4.0 },
+            coord! { x: 2.0, y: 3.0, z: 4.0 },
+            coord! { x: 0.0, y: 4.0, z: 0.0 },
+            coord! { x: 1.0, y: 2.0, z: 3.0 },
         ];
         let correct = line_string![
-            (x: 4.0, y: 0.0),
-            (x: 3.0, y: 2.0),
-            (x: 4.0, y: 4.0),
-            (x: 2.0, y: 3.0),
-            (x: 0.0, y: 4.0),
-            (x: 1.0, y: 2.0),
+            (x: 4.0, y: 0.0, z: 4.0),
+            (x: 3.0, y: 2.0, z: 1.0),
+            (x: 4.0, y: 4.0, z: 4.0),
+            (x: 2.0, y: 3.0, z: 4.0),
+            (x: 0.0, y: 4.0, z: 0.0),
+            (x: 1.0, y: 2.0, z: 3.0),
             (x: 0.0, y: 0.0, z: 0.0),
-            (x: 2.0, y: 1.0),
-            (x: 4.0, y: 0.0),
+            (x: 2.0, y: 1.0, z: 0.0),
+            (x: 4.0, y: 0.0, z: 4.0),
         ];
         let concavity = 1.7;
         let res = concave_hull(&mut v, concavity);
@@ -355,18 +355,18 @@ mod test {
     fn consecutive_flex_test() {
         let mut v = vec![
             coord! { x: 0.0, y: 0.0, z: 0.0 },
-            coord! { x: 4.0, y: 0.0 },
-            coord! { x: 4.0, y: 4.0 },
-            coord! { x: 3.0, y: 1.0 },
-            coord! { x: 3.0, y: 2.0 },
+            coord! { x: 4.0, y: 0.0, z: 4.0 },
+            coord! { x: 4.0, y: 4.0, z: 4.0 },
+            coord! { x: 3.0, y: 1.0, z: 3.0 },
+            coord! { x: 3.0, y: 2.0, z: -3.0 },
         ];
         let correct = line_string![
-            (x: 4.0, y: 0.0),
-            (x: 4.0, y: 4.0),
-            (x: 3.0, y: 2.0),
-            (x: 3.0, y: 1.0),
+            (x: 4.0, y: 0.0, z: 4.0),
+            (x: 4.0, y: 4.0, z: 4.0),
+            (x: 3.0, y: 2.0, z: 3.0),
+            (x: 3.0, y: 1.0, z: 3.0),
             (x: 0.0, y: 0.0, z: 0.0),
-            (x: 4.0, y: 0.0),
+            (x: 4.0, y: 0.0, z: 4.0),
         ];
         let concavity = 2.0;
         let res = concave_hull(&mut v, concavity);
@@ -385,19 +385,19 @@ mod test {
     fn concave_hull_linestring_test() {
         let linestring = line_string![
             (x: 0.0, y: 0.0, z: 0.0),
-            (x: 4.0, y: 0.0),
-            (x: 4.0, y: 4.0),
-            (x: 3.0, y: 1.0),
-            (x: 3.0, y: 2.0)
+            (x: 4.0, y: 0.0, z: -4.0),
+            (x: 4.0, y: 4.0, z: 4.0),
+            (x: 3.0, y: 1.0, z: -3.0),
+            (x: 3.0, y: 2.0, z: -3.0)
         ];
         let concave = linestring.concave_hull(2.0);
         let correct = vec![
-            Coord::from((4.0, 0.0)),
-            Coord::from((4.0, 4.0)),
-            Coord::from((3.0, 2.0)),
-            Coord::from((3.0, 1.0)),
-            Coord::from((0.0, 0.0, z: 0.0)),
-            Coord::from((4.0, 0.0)),
+            Coord::from((4.0, 0.0, -4.0)),
+            Coord::from((4.0, 4.0, 4.0)),
+            Coord::from((3.0, 2.0, 1.0)),
+            Coord::from((3.0, 1.0, -3.0)),
+            Coord::from((0.0, 0.0, 0.0)),
+            Coord::from((4.0, 0.0, -4.0)),
         ];
         assert_eq!(concave.exterior().0, correct);
     }
@@ -430,22 +430,22 @@ mod test {
     fn concave_hull_multipolygon_test() {
         let v1 = polygon![
              (x: 0.0, y: 0.0, z: 0.0),
-             (x: 4.0, y: 0.0)
+             (x: 4.0, y: 0.0, z: -4.0)
         ];
         let v2 = polygon![
-             (x: 4.0, y: 4.0),
-             (x: 3.0, y: 1.0),
-             (x: 3.0, y: 2.0)
+             (x: 4.0, y: 4.0, z: 4.0),
+             (x: 3.0, y: 1.0, z: -3.0),
+             (x: 3.0, y: 2.0, z: 1.0)
         ];
         let multipolygon = MultiPolygon::new(vec![v1, v2]);
         let res = multipolygon.concave_hull(2.0);
         let correct = vec![
-            Coord::from((4.0, 0.0)),
-            Coord::from((4.0, 4.0)),
-            Coord::from((3.0, 2.0)),
-            Coord::from((3.0, 1.0)),
+            Coord::from((4.0, 0.0, 4.0)),
+            Coord::from((4.0, 4.0, 4.0)),
+            Coord::from((3.0, 2.0, 1.0)),
+            Coord::from((3.0, 1.0, -3.0)),
             Coord::from((0.0, 0.0, 0.0)),
-            Coord::from((4.0, 0.0)),
+            Coord::from((4.0, 0.0, 4.0)),
         ];
         assert_eq!(res.exterior().0, correct);
     }
