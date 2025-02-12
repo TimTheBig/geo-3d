@@ -65,7 +65,7 @@ macro_rules! symmetric_intersects_impl {
 }
 
 mod collections;
-mod coordinate;
+mod coord;
 mod line;
 mod line_string;
 mod point;
@@ -75,7 +75,7 @@ mod triangle;
 
 // Helper function to check value lies between min and max.
 // Only makes sense if min <= max (or always false)
-#[inline]
+#[inline(always)]
 fn value_in_range<T>(value: T, min: T, max: T) -> bool
 where
     T: std::cmp::PartialOrd,
@@ -124,6 +124,7 @@ where
             }
         }
     }
+
     disjoint_bbox
 }
 
