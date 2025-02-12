@@ -1,26 +1,17 @@
 use super::{point_in_rect, Intersects};
 use crate::*;
 
-impl<T> Intersects<Coord<T>> for Line<T>
-where
-    T: GeoNum,
-{
-    // todo make 3d
+// todo check
+impl<T: CoordNum> Intersects<Coord<T>> for Line<T> {
     fn intersects(&self, rhs: &Coord<T>) -> bool {
-        // First we check if the point is collinear with the line.
-        T::Ker::orient2d(self.start, self.end, *rhs) == Orientation::Collinear
-        // In addition, the point must have _both_ coordinates
-        // within the start and end bounds.
-            && point_in_rect(*rhs, self.start, self.end)
+        let dist = Euclidean::distance(*rhs, self);
+        dist > T::zero() - T::epsilon() && dist < T::zero() + T::epsilon()
     }
 }
 symmetric_intersects_impl!(Coord<T>, Line<T>);
 symmetric_intersects_impl!(Line<T>, Point<T>);
 
-impl<T> Intersects<Line<T>> for Line<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Intersects<Line<T>> for Line<T> {
     fn intersects(&self, line: &Line<T>) -> bool {
         // Special case: self is equiv. to a point.
         if self.start == self.end {
@@ -68,13 +59,3 @@ where
         }
     }
 }
-
-impl<T> Intersects<Triangle<T>> for Line<T>
-where
-    T: GeoNum,
-{
-    fn intersects(&self, rhs: &Triangle<T>) -> bool {
-        self.intersects(&rhs.to_polygon())
-    }
-}
-symmetric_intersects_impl!(Triangle<T>, Line<T>);
