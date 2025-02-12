@@ -23,9 +23,9 @@ use std::ops::AddAssign;
 /// use geo::LineInterpolatePoint;
 ///
 /// let linestring: LineString = vec![
-///     [-1.0, 0.0],
-///     [0.0, 0.0],
-///     [0.0, 1.0]
+///     [-1.0, 0.0, 1.0],
+///     [0.0, 0.0, 0.0],
+///     [0.0, 1.0, 0.0]
 /// ].into();
 ///
 /// assert_eq!(linestring.line_interpolate_point(-1.0), Some(point!(x: -1.0, y: 0.0)));
@@ -113,7 +113,6 @@ where
 
 #[cfg(test)]
 mod test {
-
     use super::*;
     use crate::{coord, point};
     use crate::{ClosestPoint, LineLocatePoint};
@@ -121,31 +120,31 @@ mod test {
 
     #[test]
     fn test_line_interpolate_point_line() {
-        let line = Line::new(coord! { x: -1.0, y: 0.0 }, coord! { x: 1.0, y: 0.0 });
+        let line = Line::new(coord! { x: -1.0, y: 0.0, z: 1.0 }, coord! { x: 1.0, y: 0.0, z: -1.0 });
         // some finite examples
         assert_eq!(
             line.line_interpolate_point(-1.0),
-            Some(point!(x: -1.0, y: 0.0))
+            Some(point!(x: -1.0, y: 0.0, z: 1.0))
         );
         assert_eq!(
             line.line_interpolate_point(0.5),
-            Some(point!(x: 0.0, y: 0.0))
+            Some(point!(x: 0.0, y: 0.0, z: 0.0))
         );
         assert_eq!(
             line.line_interpolate_point(0.75),
-            Some(point!(x: 0.5, y: 0.0))
+            Some(point!(x: 0.5, y: 0.0, z: -0.5))
         );
         assert_eq!(
             line.line_interpolate_point(0.0),
-            Some(point!(x: -1.0, y: 0.0))
+            Some(point!(x: -1.0, y: 0.0, z: 1.0))
         );
         assert_eq!(
             line.line_interpolate_point(1.0),
-            Some(point!(x: 1.0, y: 0.0))
+            Some(point!(x: 1.0, y: 0.0, z: -1.0))
         );
         assert_eq!(
             line.line_interpolate_point(2.0),
-            Some(point!(x: 1.0, y: 0.0))
+            Some(point!(x: 1.0, y: 0.0, z: -1.0))
         );
 
         // fraction is nan or inf
@@ -159,10 +158,10 @@ mod test {
             Some(line.start_point())
         );
 
-        let line = Line::new(coord! { x: 0.0, y: 0.0 }, coord! { x: 1.0, y: 1.0 });
+        let line = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 1.0, y: 1.0, z: 1.0 });
         assert_eq!(
             line.line_interpolate_point(0.5),
-            Some(point!(x: 0.5, y: 0.5))
+            Some(point!(x: 0.5, y: 0.5, z: 0.5))
         );
 
         // line contains nans or infs
@@ -170,8 +169,9 @@ mod test {
             coord! {
                 x: Float::nan(),
                 y: 0.0,
+                z: 0.0
             },
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
         );
         assert_eq!(line.line_interpolate_point(0.5), None);
 
@@ -179,16 +179,18 @@ mod test {
             coord! {
                 x: Float::infinity(),
                 y: 0.0,
+                z: 1.0
             },
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
         );
         assert_eq!(line.line_interpolate_point(0.5), None);
 
         let line = Line::new(
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! {
                 x: 1.0,
                 y: Float::infinity(),
+                z: 1.0,
             },
         );
         assert_eq!(line.line_interpolate_point(0.5), None);
@@ -197,16 +199,18 @@ mod test {
             coord! {
                 x: Float::neg_infinity(),
                 y: 0.0,
+                z: 0.0,
             },
-            coord! { x: 1.0, y: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
         );
         assert_eq!(line.line_interpolate_point(0.5), None);
 
         let line = Line::new(
-            coord! { x: 0.0, y: 0.0 },
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! {
                 x: 1.0,
                 y: Float::neg_infinity(),
+                z: 0.0,
             },
         );
         assert_eq!(line.line_interpolate_point(0.5), None);
@@ -215,18 +219,18 @@ mod test {
     #[test]
     fn test_line_interpolate_point_linestring() {
         // some finite examples
-        let linestring: LineString = vec![[-1.0, 0.0], [0.0, 0.0], [1.0, 0.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, 1.0], [0.0, 0.0, 0.0], [1.0, 0.0, -1.0]].into();
         assert_eq!(
             linestring.line_interpolate_point(0.0),
-            Some(point!(x: -1.0, y: 0.0))
+            Some(point!(x: -1.0, y: 0.0, z: 1.0))
         );
         assert_eq!(
             linestring.line_interpolate_point(0.5),
-            Some(point!(x: 0.0, y: 0.0))
+            Some(point!(x: 0.0, y: 0.0, z: 0.0))
         );
         assert_eq!(
             linestring.line_interpolate_point(1.0),
-            Some(point!(x: 1.0, y: 0.0))
+            Some(point!(x: 1.0, y: 0.0, z: -1.0))
         );
         assert_eq!(
             linestring.line_interpolate_point(1.0),
@@ -248,29 +252,29 @@ mod test {
         );
         assert_eq!(linestring.line_interpolate_point(Float::nan()), None);
 
-        let linestring: LineString = vec![[-1.0, 0.0], [0.0, 0.0], [0.0, 1.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, 1.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]].into();
         assert_eq!(
             linestring.line_interpolate_point(0.5),
             Some(point!(x: 0.0, y: 0.0, z: 0.0))
         );
         assert_eq!(
             linestring.line_interpolate_point(1.5),
-            Some(point!(x: 0.0, y: 1.0))
+            Some(point!(x: 0.0, y: 1.0, z: 0.0))
         );
 
         // linestrings with nans/infs
-        let linestring: LineString = vec![[-1.0, 0.0], [0.0, Float::nan()], [0.0, 1.0, 2.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, 1.0], [0.0, Float::nan(), 0.0], [0.0, 1.0, 2.0]].into();
         assert_eq!(linestring.line_interpolate_point(0.5), None);
         assert_eq!(linestring.line_interpolate_point(1.5), None);
         assert_eq!(linestring.line_interpolate_point(-1.0), None);
 
-        let linestring: LineString = vec![[-1.0, 0.0], [0.0, Float::infinity()], [0.0, 1.0, 2.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, 1.0], [0.0, Float::infinity(), 0.0], [0.0, 1.0, 2.0]].into();
         assert_eq!(linestring.line_interpolate_point(0.5), None);
         assert_eq!(linestring.line_interpolate_point(1.5), None);
         assert_eq!(linestring.line_interpolate_point(-1.0), None);
 
         let linestring: LineString =
-            vec![[-1.0, 0.0], [0.0, Float::neg_infinity()], [0.0, 1.0]].into();
+            vec![[-1.0, 0.0, 1.0], [0.0, Float::neg_infinity(), 0.0], [0.0, 1.0, 2.0]].into();
         assert_eq!(linestring.line_interpolate_point(0.5), None);
         assert_eq!(linestring.line_interpolate_point(1.5), None);
         assert_eq!(linestring.line_interpolate_point(-1.0), None);

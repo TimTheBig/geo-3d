@@ -87,6 +87,7 @@ where
 
 #[cfg(test)]
 mod test {
+    use geo_types::coord;
     use super::*;
     use crate::IsConvex;
     fn test_convexity<T: GeoNum>(mut initial: Vec<Coord<T>>) {
@@ -99,15 +100,14 @@ mod test {
     #[test]
     fn test_graham_hull_ccw() {
         let initial = [
-            (1.0, 0.0),
-            (2.0, 1.0),
-            (1.75, 1.1),
-            (1.0, 2.0),
-            (0.0, 1.0),
-            (1.0, 0.0),
+            coord!(1.0, 0.0, 1.0),
+            coord!(2.0, 1.0, 0.0),
+            coord!(1.75, 1.1, 2.8),
+            coord!(1.0, 2.0, 3.0),
+            coord!(0.0, 1.0, 2.0),
+            coord!(1.0, 0.0, 1.0),
         ];
-        let initial = initial.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
-        test_convexity(initial);
+        test_convexity(initial.to_vec());
     }
 
     #[test]
@@ -119,19 +119,18 @@ mod test {
 
     #[test]
     fn graham_hull_test2() {
-        let v = [
-            (0., 10.),
-            (1., 1.),
-            (10., 0.),
-            (1., -1.),
-            (0., -10.),
-            (-1., -1.),
-            (-10., 0.),
-            (-1., 1.),
-            (0., 10.),
+        let initial = [
+            coord!(0., 10., 0.),
+            coord!(1., 1. ,1.),
+            coord!(10., 0., 10.),
+            coord!(1., -1., 1.),
+            coord!(0., -10., 0.),
+            coord!(-1., -1., -1.),
+            coord!(-10., 0., -10.),
+            coord!(-1., 1., -1.),
+            coord!(0., 10., 0.),
         ];
-        let initial = v.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
-        test_convexity(initial);
+        test_convexity(initial.to_vec());
     }
 
     #[test]

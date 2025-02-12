@@ -1,6 +1,5 @@
-use geo::ConcaveHull;
-use geo::ConvexHull;
-use geo::{Coord, Point};
+use geo_3d::{ConcaveHull, ConvexHull};
+use geo_3d::{Coord, Point};
 use geo_types::MultiPoint;
 use std::fs::File;
 use std::io::Write;
@@ -33,13 +32,14 @@ fn produce_file_content(start_str: &str, mid_str: &str) -> String {
     overall_string
 }
 
-//Move the points such that they're clustered around the center of the image
+// Move the points such that they're clustered around the center of the image
 fn move_points_in_viewbox(width: f64, height: f64, points: Vec<Point>) -> Vec<Point> {
     let mut new_points = vec![];
     for point in points {
         new_points.push(Point::new(
             point.0.x + width / 2.0,
             point.0.y + height / 2.0,
+            0.0
         ));
     }
     new_points
@@ -63,7 +63,7 @@ fn main() -> std::io::Result<()> {
     let v: Vec<_> = norway
         .0
         .into_iter()
-        .map(|coord| Point::new(coord.x, coord.y))
+        .map(|coord| Point::new(coord.x, coord.y, coord.z))
         .collect();
     let moved_v = move_points_in_viewbox(width as f64, height as f64, v);
     let multipoint = MultiPoint::from(moved_v);
