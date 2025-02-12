@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::ConcaveHull;
-use geo::{Coord, CoordNum};
+use geo_3d::ConcaveHull;
+use geo_3d::{Coord, CoordNum};
 
 use num_traits::Signed;
 use rand::distributions::uniform::SampleUniform;

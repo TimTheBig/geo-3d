@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::algorithm::{Contains, Convert, Relate};
-use geo::geometry::*;
-use geo::{coord, point, polygon};
+use geo_3d::algorithm::{Contains, Convert, Relate};
+use geo_3d::geometry::*;
+use geo_3d::{coord, point, polygon};
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("point in simple polygon", |bencher| {
@@ -11,7 +11,7 @@ fn criterion_benchmark(c: &mut Criterion) {
             (x: 1.0, y: 1.0),
             (x: 0.0, y: 0.0),
         ];
-        let point = Point::new(0.5, 0.1);
+        let point = Point::new(0.5, 0.1, 0.5);
         bencher.iter(|| {
             assert!(criterion::black_box(&polygon).contains(criterion::black_box(&point)));
         });

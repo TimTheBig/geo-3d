@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::Area;
+use geo_3d::Area;
 use geo::Polygon;
 
 fn criterion_benchmark(c: &mut Criterion) {
