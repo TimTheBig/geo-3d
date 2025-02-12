@@ -1,7 +1,7 @@
 use super::Distance;
-use crate::{CoordNum, Line, LineString, MultiLineString, Point};
+use crate::{CoordNum, Line, LineString, MultiLineString};
 
-/// Calculate the length of a `Line`, `LineString`, or `MultiLineString` in a given [metric space](crate::algorithm::line_measures::metric_spaces).
+/// Calculate the length of a `Line`, `LineString`, or `MultiLineString`s in euclidean space.
 ///
 /// # Examples
 /// ```
@@ -15,30 +15,30 @@ use crate::{CoordNum, Line, LineString, MultiLineString, Point};
 /// assert_eq!(line_string.length::<Euclidean>(), 6.);
 /// ```
 pub trait Length<F: CoordNum> {
-    fn length<Euclidean: Distance<F, Point<F>, Point<F>>>(&self) -> F;
+    fn length(&self) -> F;
 }
 
 impl<F: CoordNum> Length<F> for Line<F> {
-    fn length<Euclidean: Distance<F, Point<F>, Point<F>>>(&self) -> F {
-        Euclidean::distance(self.start_point(), self.end_point())
+    fn length(&self) -> F {
+        (self.start_point()).distance(self.end_point())
     }
 }
 
 impl<F: CoordNum> Length<F> for LineString<F> {
-    fn length<Euclidean: Distance<F, Point<F>, Point<F>>>(&self) -> F {
+    fn length(&self) -> F {
         let mut length = F::zero();
         for line in self.lines() {
-            length = length + line.length::<Euclidean>();
+            length = length + line.length();
         }
         length
     }
 }
 
 impl<F: CoordNum> Length<F> for MultiLineString<F> {
-    fn length<Euclidean: Distance<F, Point<F>, Point<F>>>(&self) -> F {
+    fn length(&self) -> F {
         let mut length = F::zero();
         for line in self {
-            length = length + line.length::<Euclidean>();
+            length = length + line.length();
         }
         length
     }
@@ -53,21 +53,21 @@ mod tests {
     fn lines() {
         // london to paris
         let line = Line::new(
-            coord!(x: -0.1278f64, y: 51.5074),
-            coord!(x: 2.3522, y: 48.8566),
+            coord!(x: -0.1278f64, y: 51.5074, z: 0.0),
+            coord!(x: 2.3522, y: 48.8566, z: 0.0),
         );
 
         // computing Euclidean length of an unprojected (lng/lat) line gives a nonsense answer
         assert_eq!(
             4., // nonsense!
-            line.length::<Euclidean>().round()
+            line.length().round()
         );
         // london to paris in EPSG:3035
         let projected_line = Line::new(
-            coord!(x: 3620451.74f64, y: 3203901.44),
-            coord!(x: 3760771.86, y: 2889484.80),
+            coord!(x: 3620451.74f64, y: 3203901.44, z: 0.0),
+            coord!(x: 3760771.86, y: 2889484.80, z: 0.0),
         );
-        assert_eq!(344_307., projected_line.length::<Euclidean>().round());
+        assert_eq!(344_307., projected_line.length().round());
     }
 
     #[test]
@@ -81,7 +81,7 @@ mod tests {
         // computing Euclidean length of an unprojected (lng/lat) gives a nonsense answer
         assert_eq!(
             59., // nonsense!
-            line_string.length::<Euclidean>().round()
+            line_string.length().round()
         );
         // EPSG:102033
         let projected_line_string = LineString::from(vec![
@@ -91,7 +91,7 @@ mod tests {
         ]);
         assert_eq!(
             6_237_538.,
-            projected_line_string.length::<Euclidean>().round()
+            projected_line_string.length().round()
         );
     }
 
@@ -105,7 +105,7 @@ mod tests {
 
         assert_eq!(
             2.0,
-            line_string.length::<Euclidean>()
+            line_string.length()
         );
 
         let line_string = LineString::new(vec![
@@ -116,7 +116,7 @@ mod tests {
 
         assert_eq!(
             2.0,
-            line_string.length::<Euclidean>()
+            line_string.length()
         );
     }
 }

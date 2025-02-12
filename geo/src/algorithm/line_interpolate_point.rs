@@ -82,11 +82,11 @@ where
     fn line_interpolate_point(&self, fraction: T) -> Self::Output {
         if (fraction >= T::zero()) && (fraction <= T::one()) {
             // find the point along the linestring which is fraction along it
-            let total_length = self.euclidean_length();
+            let total_length = self.length();
             let fractional_length = total_length * fraction;
             let mut cum_length = T::zero();
             for segment in self.lines() {
-                let length = segment.euclidean_length();
+                let length = segment.length();
                 if cum_length + length >= fractional_length {
                     let segment_fraction = (fractional_length - cum_length) / length;
                     return segment.line_interpolate_point(segment_fraction);

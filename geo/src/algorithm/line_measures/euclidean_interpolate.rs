@@ -1,6 +1,4 @@
-mod distance;
-
-use super::super::{Distance, InterpolatePoint};
+use super::super::InterpolatePoint;
 use crate::line_measures::densify::densify_between;
 use crate::{CoordNum, Point};
 use num_traits::FromPrimitive;
@@ -8,16 +6,10 @@ use num_traits::FromPrimitive;
 /// Operations on the [Euclidean plane] measure distance with the pythagorean formula -
 /// what you'd measure with a ruler.
 ///
-/// If you wish to use Euclidean operations with lon/lat, the coordinates must first be transformed
-/// using the [`Transform::transform`](crate::Transform::transform) / [`Transform::transform_crs_to_crs`](crate::Transform::transform_crs_to_crs) methods or their
-/// immutable variants. Use of these requires the proj feature
-///
 /// [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
-/// [`Transform`]: crate::Transform
-/// [metric spaces]: super
 pub struct Euclidean;
 
-/// Interpolate Point(s) along a line on the [Euclidean plane].
+/// Interpolate Point(s) along a line in [Euclidean space].
 ///
 /// [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
 impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
