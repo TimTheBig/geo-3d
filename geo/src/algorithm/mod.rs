@@ -46,10 +46,6 @@ pub use convert_angle_unit::{ToDegrees, ToRadians};
 pub mod convex_hull;
 pub use convex_hull::ConvexHull;
 
-/// Cross track distance
-pub mod cross_track_distance;
-pub use cross_track_distance::CrossTrackDistance;
-
 /// Determine whether a `Coord` lies inside, outside, or on the boundary of a geometry.
 pub mod coordinate_position;
 pub use coordinate_position::CoordinatePosition;
@@ -61,11 +57,6 @@ pub use coords_iter::CoordsIter;
 /// Dimensionality of a geometry and its boundary, based on OGC-SFA.
 pub mod dimensions;
 pub use dimensions::HasDimensions;
-
-/// Calculate the minimum Euclidean distance between two `Geometries`.
-pub mod euclidean_distance;
-#[allow(deprecated)]
-pub use euclidean_distance::EuclideanDistance;
 
 /// Calculate the length of a planar line between two `Geometries`.
 pub mod euclidean_length;
@@ -117,12 +108,12 @@ pub mod lines_iter;
 pub use lines_iter::LinesIter;
 
 pub mod line_measures;
-pub use line_measures::metric_spaces::{Euclidean, Haversine};
+pub use line_measures::metric_spaces::Euclidean;
 pub use line_measures::{Bearing, Densify, Destination, Distance, InterpolatePoint, Length};
 
 /// Split a LineString into n segments
 pub mod linestring_segment;
-pub use linestring_segment::{LineStringSegmentize, LineStringSegmentizeHaversine};
+pub use linestring_segment::LineStringSegmentize;
 
 /// Apply a function to all `Coord`s of a `Geometry`.
 pub mod map_coords;
