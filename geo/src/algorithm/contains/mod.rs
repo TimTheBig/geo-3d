@@ -33,6 +33,44 @@ pub trait Contains<Rhs = Self> {
     fn contains(&self, rhs: &Rhs) -> bool;
 }
 
+/// Checks if `rhs` (x and y) is completely contained within `self`.
+/// More formally, the interior of `rhs` has non-empty
+/// (set-theoretic) intersection but neither the interior,
+/// nor the boundary of `rhs` intersects the exterior of
+/// `self`. In other words, the [DE-9IM] intersection matrix
+/// of `(rhs, self)` is `T*F**F***`.
+///
+/// [DE-9IM]: https://en.wikipedia.org/wiki/DE-9IM
+///
+/// # Examples
+///
+/// ```
+/// use geo::Contains2D;
+/// use geo::{line_string, point, Polygon};
+///
+/// let line_string = line_string![
+///     (x: 0., y: 0., z: 0.),
+///     (x: 2., y: 0., z: -2.),
+///     (x: 2., y: 2., z: 2.),
+///     (x: 0., y: 2., z: 0.),
+///     (x: 0., y: 0., z: -80000.),
+/// ];
+///
+/// let polygon = Polygon::new(line_string.clone(), vec![]);
+///
+/// // Point in Point
+/// assert!(point!(x: 2., y: 0., z: -2.).contains_2d(&point!(x: 2., y: 0., z: -2.)));
+///
+/// // Point in Linestring
+/// assert!(line_string.contains_2d(&point!(x: 2., y: 0., z: -2.)));
+///
+/// // Point in Polygon
+/// assert!(polygon.contains_2d(&point!(x: 1., y: 1., z: 1.)));
+/// ```
+pub trait Contains2D<Rhs = Self> {
+    fn contains_2d(&self, rhs: &Rhs) -> bool;
+}
+
 mod geometry;
 mod geometry_collection;
 mod line;
