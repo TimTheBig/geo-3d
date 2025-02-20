@@ -105,6 +105,7 @@ where
     /// by the vectors `self` → `point_b` and `self` → `point_c`.
     ///
     /// - For 2D use cases, use `wedge_product`.
+    /// - For cross of two coords use `.cross()`
     ///
     fn cross_product(self, point_b: Self, point_c: Self) -> Self;
 

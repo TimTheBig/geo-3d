@@ -40,7 +40,7 @@ pub trait KNearestConcaveHull {
 
 impl<T> KNearestConcaveHull for Vec<Point<T>>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -50,7 +50,7 @@ where
 
 impl<T> KNearestConcaveHull for [Point<T>]
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -60,7 +60,7 @@ where
 
 impl<T> KNearestConcaveHull for Vec<Coord<T>>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -70,7 +70,7 @@ where
 
 impl<T> KNearestConcaveHull for [Coord<T>]
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -80,7 +80,7 @@ where
 
 impl<T> KNearestConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -90,7 +90,7 @@ where
 
 fn concave_hull<'a, T>(coords: impl Iterator<Item = &'a Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: 'a + GeoFloat + RTreeNum + Into<f64>,
+    T: 'a + GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     let dataset = prepare_dataset(coords);
     concave_hull_inner(dataset, k)
@@ -154,7 +154,7 @@ where
 
 fn concave_hull_inner<T>(original_dataset: rstar::RTree<Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     let set_length = original_dataset.size();
     if set_length <= 3 {
@@ -214,10 +214,10 @@ where
 
 fn fall_back_hull<T>(dataset: &rstar::RTree<Coord<T>>) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
 {
     let multipoint = MultiPoint::from(dataset.iter().cloned().collect::<Vec<Coord<T>>>());
-    multipoint.convex_hull()
+    multipoint.convex_hull().expect("This MultiPoint should be valid")
 }
 
 fn get_next_k(curr_k: u32) -> u32 {

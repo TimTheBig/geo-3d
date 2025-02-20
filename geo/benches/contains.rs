@@ -67,21 +67,21 @@ fn criterion_benchmark(c: &mut Criterion) {
             //               |____________|
             let polygon = polygon!(
                 (x: 0., y: 0., z: 0.),
-                (x: 0., y: 10., z: ),
-                (x: 1., y: 5., z:),
-                (x: 2., y: 10., z:),
-                (x: 3., y: 5., z:),
-                (x: 4., y: 10., z:),
-                (x: 5., y: 5., z:),
-                (x: 6., y: 10., z:),
-                (x: 7., y: 5., z:),
-                (x: 8., y: 10., z:),
-                (x: 9., y: 10., z:),
-                (x: 10.,y: 10., z:),
-                (x: 10.,y: 0., z:),
-                (x: 0., y: 0., z:)
+                (x: 0., y: 10., z: 9.),
+                (x: 1., y: 5., z: 9.),
+                (x: 2., y: 10., z: 9.),
+                (x: 3., y: 5., z: 9.),
+                (x: 4., y: 10., z: 9.),
+                (x: 5., y: 5., z: 9.),
+                (x: 6., y: 10., z: 9.),
+                (x: 7., y: 5., z: 9.),
+                (x: 8., y: 10., z: 9.),
+                (x: 9., y: 10., z: 9.),
+                (x: 10.,y: 10., z: 9.),
+                (x: 10.,y: 0., z: 9.),
+                (x: 0., y: 0., z: 0.)
             );
-            let point = point!(x: 20, y: 7, z:);
+            let point = point!(x: 20., y: 7., z: 9.);
 
             bencher.iter(|| {
                 assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&point)));

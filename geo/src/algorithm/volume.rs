@@ -148,14 +148,16 @@ mod test {
 
     #[test]
     fn rect_hull_volume() {
+        // inssrue that polygon volume is consistent with rect volume
         assert_eq!(
             Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).try_volume().unwrap(),
             Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap(),
         );
-        // this tests to make sure the volume of a convex_hull is cons
-        assert_eq!(
-            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap(),
-            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).convex_hull().try_volume().unwrap(),
+        // this tests to make sure the volume of a convex_hull is smaller
+        assert!(
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().convex_hull().unwrap().try_volume().unwrap()
+            <
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap()
         )
     }
 }

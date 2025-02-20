@@ -171,6 +171,8 @@ impl<C: CoordNum> HasDimensions for Line<C> {
         if self.start == self.end {
             // degenerate line is a point
             Dimensions::ZeroDimensional
+        } else if (self.start.x == self.end.x) ^ (self.start.y == self.end.y) ^ (self.start.z == self.end.z) {
+            Dimensions::TwoDimensional
         } else {
             Dimensions::OneDimensional
         }

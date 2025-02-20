@@ -223,7 +223,7 @@ fn convex_hull_multipoint_test() {
         Coord::from((0., -10., 0.)),
     ];
     let res = mp.convex_hull();
-    assert_eq!(res.exterior().0, correct);
+    assert_eq!(res.unwrap().exterior().0, correct);
 }
 #[test]
 fn convex_hull_linestring_test() {
@@ -246,7 +246,7 @@ fn convex_hull_linestring_test() {
         Coord::from((0.0, -10.0, 0.0)),
     ];
     let res = mp.convex_hull();
-    assert_eq!(res.exterior().0, correct);
+    assert_eq!(res.unwrap().exterior().0, correct);
 }
 #[test]
 fn convex_hull_multilinestring_test() {
@@ -261,7 +261,7 @@ fn convex_hull_multilinestring_test() {
         Coord::from((2.0, 0.0, 2.0)),
     ];
     let res = mls.convex_hull();
-    assert_eq!(res.exterior().0, correct);
+    assert_eq!(res.unwrap().exterior().0, correct);
 }
 #[test]
 fn convex_hull_multipolygon_test() {
@@ -276,7 +276,7 @@ fn convex_hull_multipolygon_test() {
         Coord::from((5.0, 0.0, 5.0)),
     ];
     let res = mp.convex_hull();
-    assert_eq!(res.exterior().0, correct);
+    assert_eq!(res.unwrap().exterior().0, correct);
 }
 
 #[test]
@@ -293,7 +293,7 @@ fn collection() {
 
     let convex_hull = collection.convex_hull();
     assert_eq!(
-        convex_hull,
+        convex_hull.unwrap(),
         polygon![
             coord! { x: 4.0, y: 0.0, z: 4.0 },
             coord! { x: 4.0, y: 4.0, z: 4.0 },

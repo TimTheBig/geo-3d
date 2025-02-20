@@ -2,10 +2,7 @@
 /// More formally, the interior of `rhs` has non-empty
 /// (set-theoretic) intersection but neither the interior,
 /// nor the boundary of `rhs` intersects the exterior of
-/// `self`. In other words, the [DE-9IM] intersection matrix
-/// of `(rhs, self)` is `T*F**F***`.
-///
-/// [DE-9IM]: https://en.wikipedia.org/wiki/DE-9IM
+/// `self`.
 ///
 /// # Examples
 ///
@@ -168,10 +165,10 @@ mod test {
     // LineString is fully contained
     fn linestring_fully_contained_in_polygon() {
         let poly = Polygon::new(
-            LineString::from(vec![(0., 0.), (5., 0.), (5., 6.), (0., 6.), (0., 0.)]),
+            LineString::from(vec![(0., 0., 0.), (5., 0., 5.), (5., 6., 5.), (0., 6., 0.), (0., 0., 0.)]),
             vec![],
         );
-        let ls = LineString::from(vec![(3.0, 0.5), (3.0, 3.5)]);
+        let ls = LineString::from(vec![(3.0, 0.5, 3.0), (3.0, 3.5, 3.0)]);
         assert!(poly.contains(&ls));
     }
     /// Tests: Point in LineString
@@ -647,9 +644,9 @@ mod test {
 
     #[test]
     fn rect_contains_polygon_in_boundary() {
-        let rect = Rect::new(coord! { x: 90. , y: 150. }, coord! { x: 300., y: 360. });
+        let rect = Rect::new(coord! { x: 90. , y: 150., z: 90. }, coord! { x: 300., y: 360., z: 300. });
         let poly_one_border =
-            Rect::new(coord! { x: 90. , y: 150. }, coord! { x: 90., y: 360. }).to_polygon();
+            Rect::new(coord! { x: 90. , y: 150., z: 90. }, coord! { x: 90., y: 360., z: 90. }).to_polygon();
         assert_eq!(
             rect.contains(&poly_one_border),
             rect.relate(&poly_one_border).is_contains()
@@ -657,11 +654,11 @@ mod test {
 
         let poly_two_borders = Polygon::new(
             line_string![
-                (x: 90., y: 150.),
-                (x: 300., y: 150.),
-                (x: 90., y: 150.),
-                (x: 90., y: 360.),
-                (x: 90., y: 150.),
+                (x: 90., y: 150., z: 6.),
+                (x: 300., y: 150., z: 6.),
+                (x: 90., y: 150., z: 6.),
+                (x: 90., y: 360., z: 12.),
+                (x: 90., y: 150., z: 6.),
             ],
             vec![],
         );
@@ -672,10 +669,10 @@ mod test {
 
         let poly_two_borders_triangle = Polygon::new(
             line_string![
-                (x: 90., y: 150.),
-                (x: 300., y: 150.),
-                (x: 90., y: 360.),
-                (x: 90., y: 150.),
+                (x: 90., y: 150., z: 0.),
+                (x: 300., y: 150., z: 0.),
+                (x: 90., y: 360., z: 0.),
+                (x: 90., y: 150., z: 0.),
             ],
             vec![],
         );
@@ -687,19 +684,19 @@ mod test {
 
     #[test]
     fn rect_contains_polygon_in_boundary_with_hole() {
-        let rect = Rect::new(coord! { x: 90. , y: 150. }, coord! { x: 300., y: 360. });
+        let rect = Rect::new(coord! { x: 90. , y: 150., z: 90. }, coord! { x: 300., y: 360., z: 300. });
         let poly_two_borders_triangle_with_hole = Polygon::new(
             line_string![
-                (x: 90., y: 150.),
-                (x: 300., y: 150.),
-                (x: 90., y: 360.),
-                (x: 90., y: 150.),
+                (x: 90., y: 150., z: 6.),
+                (x: 300., y: 150., z: 6.),
+                (x: 90., y: 360., z: 12.),
+                (x: 90., y: 150., z: 6.),
             ],
             vec![line_string![
-                (x: 90., y: 150.),
-                (x: 300., y: 150.),
-                (x: 90., y: 360.),
-                (x: 90., y: 150.),
+                (x: 90., y: 150., z: 6.),
+                (x: 300., y: 150., z: 6.),
+                (x: 90., y: 360., z: 12.),
+                (x: 90., y: 150., z: 6.),
             ]],
         );
         assert_eq!(

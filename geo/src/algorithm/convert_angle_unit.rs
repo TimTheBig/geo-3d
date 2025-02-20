@@ -55,11 +55,11 @@ mod tests {
     use super::*;
 
     fn line_degrees_mock() -> Line {
-        Line::new((90.0, 180.), (0., -90.))
+        Line::new((90.0, 180., 90.0), (0., -90., 0.))
     }
 
     fn line_radians_mock() -> Line {
-        Line::new((PI / 2., PI), (0., -PI / 2.))
+        Line::new((PI / 2., PI, PI / 2.), (0., -PI / 2., 0.))
     }
 
     #[test]

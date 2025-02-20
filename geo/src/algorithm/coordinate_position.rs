@@ -298,7 +298,6 @@ where
             return;
         }
 
-        // todo check
         match inside(self, coord, boundary_count) {
             CoordPos::OnBoundary => {
                 boundary_count.add_assign(1);
@@ -433,7 +432,6 @@ fn intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
 
 /// Calculate the position of a `Coord` relative to a
 /// closed `LineString`.
-// todo add z
 pub fn coord_pos_relative_to_ring<T>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos
 where
     T: GeoNum,

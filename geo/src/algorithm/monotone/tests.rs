@@ -1,9 +1,7 @@
 use std::{fmt::Display, str::FromStr};
-
 use approx::RelativeEq;
-use geo_types::Polygon;
+use geo_types::{coord, CoordNum, LineString, Polygon};
 use num_traits::Signed;
-use wkt::{ToWkt, TryFromWkt};
 
 use crate::{
     area::twice_signed_ring_area, coordinate_position::CoordPos, dimensions::Dimensions,
@@ -28,10 +26,9 @@ fn twice_polygon_area<T: GeoNum + Signed>(poly: &Polygon<T>) -> T {
     area
 }
 
-fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + RelativeEq>(wkt: &str) {
+fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + RelativeEq + CoordNum>(input: Polygon<T>) {
     init_log();
-    eprintln!("input: {wkt}");
-    let input: Polygon<T> = wkt::Wkt::from_str(wkt).unwrap().to_geo_types();
+    eprintln!("input: {input:?}");
     let area = twice_polygon_area(&input);
     let subdivisions = monotone_subdivision([input.clone()]);
     eprintln!("Got {} subdivisions", subdivisions.len());
@@ -56,11 +53,11 @@ fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + Relati
             // This branch is for debugging
             // It will never be reached unless assertions elsewhere are commented.
             error!("Got an unclosed line string");
-            error!("{}", top.into().to_wkt());
+            error!("{:?}", top);
         } else {
             let poly = Polygon::new(top, vec![]);
             sub_area = sub_area + twice_polygon_area(&poly);
-            info!("{}", poly.into().to_wkt());
+            info!("{:?}", poly);
 
             let im = poly.relate(&input);
             assert!(im.is_within());
@@ -71,44 +68,44 @@ fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + Relati
 
 #[test]
 fn test_monotone_subdivision_simple() {
-    let input = "POLYGON Z((0 0 0,5 5 5,3 0 -3,5 -5 5,0 0 0))";
+    let input = crate::wkt!{POLYGON((0. 0. 0.,5. 5. 5.,3. 0. -3.,5. -5. 5.,0. 0. 0.))};
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_monotone_subdivision_merge_split() {
-    let input = "POLYGON Z((-5 -5, -3 0, -5 5, 5 5,3 0,5 -5))";
+    let input = crate::wkt!{POLYGON((-5. -5. -5., -3. 0. -3., -5. 5. -5., 5. 5. 5.,3. 0. 3.,5. -5. 5.))};
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_complex() {
-    let input = "POLYGON Z((140 300, 140 100, 140 70, 340 220, 187 235, 191 285, 140 300), 
-        (140 100, 150 100, 150 110, 140 100))";
+    let input = crate::wkt!{POLYGON((140. 300. 140., 140. 100. 140., 140. 70. 140., 340. 220. 340., 187. 235. 187., 191. 285. 191., 140. 300. 140.), 
+        (140. 100. 140., 150. 100. 150., 150. 110. 150., 140. 100. 140.))};
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_complex2() {
-    let input = "POLYGON Z((100 100 100, 200 150 200, 100 200 300, 200 250 300, 100 300 100, 400 300 400,
-       300 200 300, 400 100 400, 100 100 100))";
+    let input = crate::wkt!{POLYGON((100. 100. 100., 200. 150. 200., 100. 200. 300., 200. 250. 300., 100. 300. 100., 400. 300. 400.,
+       300. 200. 300., 400. 100. 400., 100. 100. 100.))};
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_complex3() {
-    let input = "POLYGON((0 0,11.9 1,5.1 2,6.6 3,13.3 4,
-        20.4 5,11.5 6,1.3 7,19.4 8,15.4 9,2.8 10,7.0 11,
-        13.7 12,24.0 13,2.6 14,9.6 15,0.2 16,250 16,
-        67.1 15,66.1 14,61.2 13,76.4 12,75.1 11,88.3 10,
-        75.3 9,63.8 8,84.2 7,77.5 6,95.9 5,83.8 4,
-        86.9 3,64.5 2,68.3 1,99.6 0,0 0))";
+    let input = crate::wkt!{POLYGON((0. 0. 0.,11.9 1.,5.1 2.,6.6 3.,13.3 4.,
+        20.4 5.,11.5 6.,1.3. 7.,19.4 8.,15.4 9.,2.8 10.,7.0 11.,
+        13.7 12.,24.0 13.,2.6 14.,9.6 15.,0.2 16.,250. 16.,
+        67.1 15.,66.1 14.,61.2 13.,76.4 12.,75.1 11.,88.3 10.,
+        75.3 9.,63.8 8.,84.2 7.,77.5 6.,95.9 5.,83.8 4.,
+        86.9 3.,64.5 2.,68.3 1.,99.6 0.,0. 0. 0.))};
     check_monotone_subdivision::<f64>(input);
 }
 
 #[test]
 fn test_tangent() {
-    let input = "POLYGON ((60 60 60, 60 200 60, 240 200 240, 240 60 240, 60 60 60), 
-    (60 140 60, 110 170 110, 110 100 110, 80 100 80, 60 140 60))";
+    let input = crate::wkt!{POLYGON((60. 60. 60., 60. 200. 60., 240. 200. 240., 240. 60. 240., 60. 60. 60.), 
+    (60. 140. 60., 110. 170. 110., 110. 100. 110., 80. 100. 80., 60. 140. 60.))};
     check_monotone_subdivision::<f64>(input);
 }

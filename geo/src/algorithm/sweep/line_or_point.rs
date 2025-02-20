@@ -332,25 +332,21 @@ impl<T: GeoFloat> LineOrPoint<T> {
 #[cfg(test)]
 mod tests {
     use std::cmp::Ordering;
-
     use geo_types::{Coord, LineString};
-    use wkt::ToWkt;
-
     use crate::{GeoFloat, GeoNum, Kernel};
-
     use super::LineOrPoint;
 
     // Used for debugging sweep fp issues
     #[test]
     #[ignore]
     fn check_ordering() {
-        let pt_7 = Coord::from((-32.57812499999999, 241.33427773853316));
-        let pt_8 = Coord::from((-36.11348070978957, 237.7989220287436));
-        let pt_13 = Coord::from((-25.507080078124993, 248.40532266040816));
-        let pt_14 = Coord::from((-36.48784219165816, 237.424560546875));
-        let _pt_15 = Coord::from((4.4929199218750036, 196.44379843334184));
-        let pt_16 = Coord::from((-36.048578439260666, 237.8638242992725));
-        let pt_17 = Coord::from((3.545624214480127, 197.39109414073673));
+        let pt_7 = Coord::from((-32.57812499999999, 241.33427773853316, -36.048578439260666));
+        let pt_8 = Coord::from((-36.11348070978957, 237.7989220287436, -25.507080078124993));
+        let pt_13 = Coord::from((-25.507080078124993, 248.40532266040816, 3.545624214480127));
+        let pt_14 = Coord::from((-36.48784219165816, 237.424560546875, 197.39109414073673));
+        let _pt_15 = Coord::from((4.4929199218750036, 196.44379843334184, 237.8638242992725));
+        let pt_16 = Coord::from((-36.048578439260666, 237.8638242992725, -36.48784219165816));
+        let pt_17 = Coord::from((3.545624214480127, 197.39109414073673, 237.7989220287436));
 
         fn check_isection<T: GeoFloat>(abcd: [Coord<T>; 4]) -> Option<LineOrPoint<T>> {
             let l1 = LineOrPoint::from((abcd[0].into(), abcd[1].into()));
@@ -385,8 +381,8 @@ mod tests {
         );
         let l87 = LineString::new(vec![pt_8, pt_16, pt_7]);
         let lo = LineString::new(vec![pt_14, pt_16, pt_13]);
-        eprintln!("l1: {}", l87.into().to_wkt());
-        eprintln!("lo: {}", lo.into().to_wkt());
+        eprintln!("l1: {:?}", l87);
+        eprintln!("lo: {:?}", lo);
 
         eprintln!(
             "pred: {:?}",
