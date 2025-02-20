@@ -1,10 +1,7 @@
 use crate::coords_iter::CoordsIter;
-// This algorithm will be deprecated in the future, replaced by a unified implementation
-// rather than being Euclidean specific. Until the alternative is available, lets allow deprecations
-// so as not to change the method signature for existing users.
-#[allow(deprecated)]
-use crate::{CoordNum, EuclideanLength, Line, LineString, Point};
+use crate::{CoordNum, Line, LineString, Point};
 use std::ops::AddAssign;
+use super::Length;
 
 /// Returns an option of the point that lies a given fraction along the line.
 ///
@@ -70,12 +67,11 @@ where
     }
 }
 
-#[allow(deprecated)]
 impl<T> LineInterpolatePoint<T> for LineString<T>
 where
     T: CoordNum + AddAssign + std::fmt::Debug,
-    Line<T>: EuclideanLength<T>,
-    LineString<T>: EuclideanLength<T>,
+    Line<T>: Length<T>,
+    LineString<T>: Length<T>,
 {
     type Output = Option<Point<T>>;
 

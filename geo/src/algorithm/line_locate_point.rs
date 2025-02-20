@@ -1,7 +1,6 @@
 use crate::{CoordNum, Line, LineString, Point, Length};
 use std::ops::AddAssign;
 use super::Distance;
-use geo_types::Coord;
 
 /// Returns a (option of the) fraction of the line's total length
 /// representing the location of the closest point on the line to
@@ -77,7 +76,7 @@ where
 impl<T: CoordNum> LineLocatePoint<T, Point<T>> for LineString<T>
 where
     T: CoordNum + AddAssign,
-    Line<T>: Distance<T, Coord<T>> + Length<T>,
+    Line<T>: Distance<T, Point<T>> + Length<T>,
     LineString<T>: Length<T>,
 {
     type Output = Option<T>;

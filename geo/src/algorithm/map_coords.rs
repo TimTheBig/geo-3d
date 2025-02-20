@@ -808,22 +808,22 @@ mod test {
     fn polygon() {
         let exterior = LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., -1.), (0., 0., 0.)]);
         let interiors = vec![LineString::from(vec![
-            (0.1, 0.1),
-            (0.9, 0.9),
-            (0.9, 0.1),
-            (0.1, 0.1),
+            (0.1, 0.1, 0.1),
+            (0.9, 0.9, 0.9),
+            (0.9, 0.1, 0.9),
+            (0.1, 0.1, 0.1),
         ])];
         let p = Polygon::new(exterior, interiors);
 
-        let p2 = p.map_coords(|Coord { x, y, z }| (x + 10., y - 100.).into());
+        let p2 = p.map_coords(|Coord { x, y, z }| (x + 10., y - 100., z * 2.).into());
 
         let exterior2 =
-            LineString::from(vec![(10., -100.), (11., -99.), (11., -100.), (10., -100.)]);
+            LineString::from(vec![(10., -100., 0.), (11., -99., 2.), (11., -100., 2.), (10., -100., 0.)]);
         let interiors2 = vec![LineString::from(vec![
-            (10.1, -99.9),
-            (10.9, -99.1),
-            (10.9, -99.9),
-            (10.1, -99.9),
+            (10.1, -99.9, 0.2),
+            (10.9, -99.1, 4.0),
+            (10.9, -99.9, 1.8),
+            (10.1, -99.9, 0.2),
         ])];
         let expected_p2 = Polygon::new(exterior2, interiors2);
 
@@ -887,35 +887,35 @@ mod test {
         ];
 
         let mp = MultiPolygon::new(vec![poly1, poly2]);
-        let mp2 = mp.map_coords(|Coord { x, y, z }| (x * 2., y + 100.).into());
+        let mp2 = mp.map_coords(|Coord { x, y, z }| (x * 2., y + 100., z * 2.).into());
         assert_eq!(mp2.0.len(), 2);
         assert_relative_eq!(
             mp2.0[0],
             polygon![
-                (x: 0., y: 100.),
-                (x: 20., y: 100.),
-                (x: 20., y: 110.),
-                (x: 0., y: 110.),
-                (x: 0., y: 100.),
+                (x: 0., y: 100., z: 0.),
+                (x: 20., y: 100., z: 20.),
+                (x: 20., y: 110., z: 20.),
+                (x: 0., y: 110., z: 0.),
+                (x: 0., y: 100., z: 0.),
             ],
         );
         assert_relative_eq!(
             mp2.0[1],
             polygon![
                 exterior: [
-                    (x: 22., y: 111.),
-                    (x: 40., y: 111.),
-                    (x: 40., y: 120.),
-                    (x: 22., y: 120.),
-                    (x: 22., y: 111.),
+                    (x: 22., y: 111., z: 22.),
+                    (x: 40., y: 111., z: 40.),
+                    (x: 40., y: 120., z: 40.),
+                    (x: 22., y: 120., z: 22.),
+                    (x: 22., y: 111., z: 22.),
                 ],
                 interiors: [
                     [
-                        (x: 26., y: 113.),
-                        (x: 26., y: 117.),
-                        (x: 34., y: 117.),
-                        (x: 34., y: 113.),
-                        (x: 26., y: 113.),
+                        (x: 26., y: 113., z: 26.),
+                        (x: 26., y: 117., z: 26.),
+                        (x: 34., y: 117., z: 34.),
+                        (x: 34., y: 113., z: 34.),
+                        (x: 26., y: 113., z: 26.),
                     ],
                 ],
             ],
