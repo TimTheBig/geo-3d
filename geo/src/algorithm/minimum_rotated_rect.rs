@@ -36,14 +36,17 @@ pub trait MinimumRotatedRect<T> {
 
 impl<T, G> MinimumRotatedRect<T> for G
 where
-    T: GeoFloat + Into<f64> + Sum,
+    T: GeoFloat + Into<f64> + From<f64> + Sum,
     G: CoordsIter<Scalar = T>,
 {
     type Scalar = T;
 
     /// this is 2d
     fn minimum_rotated_rect(&self) -> Option<Polygon<Self::Scalar>> {
-        let convex_poly = ConvexHull::convex_hull(self);
+        let convex_poly = match ConvexHull::convex_hull(self) {
+            Ok(c_h) => c_h,
+            Err(_) => return None,
+        };
         let mut min_area: T = Float::max_value();
         let mut min_angle: T = T::zero();
         let mut rect_poly: Option<Polygon<T>> = None;

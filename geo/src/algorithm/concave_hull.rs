@@ -4,6 +4,7 @@ use crate::{
     coord, Centroid, Coord, CoordNum, Distance, GeoFloat, Length, Line, LineString,
     MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,
 };
+use quickhull::ErrorKind as QHullError;
 use rstar::{RTree, RTreeNum};
 use std::collections::VecDeque;
 
@@ -43,64 +44,64 @@ use std::collections::VecDeque;
 /// ```
 pub trait ConcaveHull {
     type Scalar: CoordNum;
-    fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar>;
+    fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError>;
 }
 
 impl<T> ConcaveHull for Polygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     type Scalar = T;
-    fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
+    fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
         let mut points: Vec<_> = self.exterior().0.clone();
-        Polygon::new(concave_hull(&mut points, concavity), vec![])
+        Ok(Polygon::new(concave_hull(&mut points, concavity)?, vec![]))
     }
 }
 
 impl<T> ConcaveHull for MultiPolygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     type Scalar = T;
-    fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
+    fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
         let mut aggregated: Vec<Coord<Self::Scalar>> = self
             .0
             .iter()
             .flat_map(|elem| elem.exterior().0.clone())
             .collect();
-        Polygon::new(concave_hull(&mut aggregated, concavity), vec![])
+        Ok(Polygon::new(concave_hull(&mut aggregated, concavity)?, vec![]))
     }
 }
 
 impl<T> ConcaveHull for LineString<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     type Scalar = T;
-    fn concave_hull(&self, concavity: Self::Scalar) -> Polygon<Self::Scalar> {
-        Polygon::new(concave_hull(&mut self.0.clone(), concavity), vec![])
+    fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
+        Ok(Polygon::new(concave_hull(&mut self.0.clone(), concavity)?, vec![]))
     }
 }
 
 impl<T> ConcaveHull for MultiLineString<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     type Scalar = T;
-    fn concave_hull(&self, concavity: T) -> Polygon<T> {
+    fn concave_hull(&self, concavity: T) -> Result<Polygon<T>, QHullError> {
         let mut aggregated: Vec<Coord<T>> = self.iter().flat_map(|elem| elem.0.clone()).collect();
-        Polygon::new(concave_hull(&mut aggregated, concavity), vec![])
+        Ok(Polygon::new(concave_hull(&mut aggregated, concavity)?, vec![]))
     }
 }
 
 impl<T> ConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     type Scalar = T;
-    fn concave_hull(&self, concavity: T) -> Polygon<T> {
+    fn concave_hull(&self, concavity: T) -> Result<Polygon<T>, QHullError> {
         let mut coordinates: Vec<Coord<T>> = self.iter().map(|point| point.0).collect();
-        Polygon::new(concave_hull(&mut coordinates, concavity), vec![])
+        Ok(Polygon::new(concave_hull(&mut coordinates, concavity)?, vec![]))
     }
 }
 
@@ -190,15 +191,17 @@ where
 
 // This takes significant inspiration from:
 // https://github.com/mapbox/concaveman/blob/54838e1/index.js#L11
-fn concave_hull<T>(coords: &mut [Coord<T>], concavity: T) -> LineString<T>
+fn concave_hull<T>(coords: &mut [Coord<T>], concavity: T) -> Result<LineString<T>, QHullError>
 where
-    T: GeoFloat + RTreeNum + Into<f64>,
+    T: GeoFloat + RTreeNum + From<f64>,
 {
     let hull = qhull::quick_hull(coords);
 
     if coords.len() < 4 {
         return hull;
     }
+
+    let hull = hull?;
 
     // Get points in overall dataset that aren't on the exterior linestring of the hull
     let hull_tree: RTree<Coord<T>> = RTree::bulk_load(hull.clone().0);
@@ -250,7 +253,7 @@ where
         }
     }
 
-    concave_list.into()
+    Ok(concave_list.into())
 }
 
 #[cfg(test)]
@@ -276,7 +279,7 @@ mod test {
 
         let concavity = 2.0;
         let res = concave_hull(&mut triangle, concavity);
-        assert_eq!(res, correct);
+        assert_eq!(res.unwrap(), correct);
     }
 
     #[test]
@@ -298,7 +301,7 @@ mod test {
 
         let concavity = 2.0;
         let res = concave_hull(&mut square, concavity);
-        assert_eq!(res, correct);
+        assert_eq!(res.unwrap(), correct);
     }
 
     #[test]
@@ -320,7 +323,7 @@ mod test {
         ];
         let concavity = 1.0;
         let res = concave_hull(&mut v, concavity);
-        assert_eq!(res, correct);
+        assert_eq!(res.unwrap(), correct);
     }
 
     #[test]
@@ -348,7 +351,7 @@ mod test {
         ];
         let concavity = 1.7;
         let res = concave_hull(&mut v, concavity);
-        assert_eq!(res, correct);
+        assert_eq!(res.unwrap(), correct);
     }
 
     #[test]
@@ -370,7 +373,7 @@ mod test {
         ];
         let concavity = 2.0;
         let res = concave_hull(&mut v, concavity);
-        assert_eq!(res, correct);
+        assert_eq!(res.unwrap(), correct);
     }
 
     #[test]
@@ -378,7 +381,7 @@ mod test {
         let norway = geo_test_fixtures::norway_main::<f64>();
         let norway_concave_hull: LineString = geo_test_fixtures::norway_concave_hull::<f64>();
         let res = norway.concave_hull(2.0);
-        assert_eq!(res.exterior(), &norway_concave_hull);
+        assert_eq!(res.unwrap().exterior(), &norway_concave_hull);
     }
 
     #[test]
@@ -399,7 +402,7 @@ mod test {
             Coord::from((0.0, 0.0, 0.0)),
             Coord::from((4.0, 0.0, -4.0)),
         ];
-        assert_eq!(concave.exterior().0, correct);
+        assert_eq!(concave.unwrap().exterior().0, correct);
     }
 
     #[test]
@@ -423,7 +426,7 @@ mod test {
             Coord::from((4.0, 0.0, -4.0)),
         ];
         let res = mls.concave_hull(2.0);
-        assert_eq!(res.exterior().0, correct);
+        assert_eq!(res.unwrap().exterior().0, correct);
     }
 
     #[test]
@@ -447,6 +450,6 @@ mod test {
             Coord::from((0.0, 0.0, 0.0)),
             Coord::from((4.0, 0.0, 4.0)),
         ];
-        assert_eq!(res.exterior().0, correct);
+        assert_eq!(res.unwrap().exterior().0, correct);
     }
 }

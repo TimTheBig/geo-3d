@@ -41,7 +41,7 @@ use crate::GeoNum;
 /// ```
 pub trait ConvexHull<'a, T> {
     type Scalar: GeoNum;
-    fn convex_hull(&'a self) -> Polygon<Self::Scalar>;
+    fn convex_hull(&'a self) -> Result<Polygon<Self::Scalar>, ErrorKind>;
 }
 
 use crate::algorithm::CoordsIter;
@@ -49,22 +49,24 @@ use crate::utils::lex_cmp;
 
 impl<'a, T, G> ConvexHull<'a, T> for G
 where
-    T: GeoNum + Into<f64>,
+    T: CoordNum + GeoNum + From<f64>,
     G: CoordsIter<Scalar = T>,
 {
     type Scalar = T;
 
-    fn convex_hull(&'a self) -> Polygon<T> {
+    fn convex_hull(&'a self) -> Result<Polygon<T>, ErrorKind> {
         let mut exterior: Vec<_> = self.exterior_coords_iter().collect();
-        Polygon::new(quick_hull(&mut exterior), vec![])
+        Ok(Polygon::new(quick_hull(&mut exterior)?, vec![]))
     }
 }
 
 pub mod qhull;
+use geo_types::CoordNum;
 pub use qhull::{quick_hull, ConvexQHull};
 
 pub mod graham;
 pub use graham::graham_hull;
+use quickhull::ErrorKind;
 
 // Helper function that outputs the convex hull in the
 // trivial case: input with at most 3 points. It ensures the
