@@ -1,6 +1,5 @@
 use crate::algorithm::{Densify, Length, LineInterpolatePoint, LinesIter};
 use crate::geometry::{Coord, LineString, MultiLineString};
-use crate::line_measures::Euclidean;
 
 /// Segments a LineString into `segment_count` equal length LineStrings as a MultiLineString
 /// using Euclidean distance calculations.
@@ -34,11 +33,11 @@ macro_rules! implement_segmentize {
                 }
 
                 let mut res_coords: Vec<Vec<Coord>> = Vec::with_capacity(n);
-                let total_length = self.length::<$metric_space>();
+                let total_length = self.length();
                 let mut cum_length = 0_f64;
                 let segment_prop = (1_f64) / (n as f64);
                 let segment_length = total_length * segment_prop;
-                let densified = self.densify::<$metric_space>(segment_length - f64::EPSILON);
+                let densified = self.densify(segment_length - f64::EPSILON);
 
                 if densified.lines().count() == n {
                     let linestrings = densified
@@ -57,7 +56,7 @@ macro_rules! implement_segmentize {
                         ln_vec.push(segment.start)
                     }
 
-                    let length = segment.length::<$metric_space>();
+                    let length = segment.length();
                     cum_length += length;
 
                     if (cum_length >= segment_length) && (i != (n_lines - 1)) {
@@ -122,8 +121,8 @@ mod test {
         assert_eq!(segments.0.len(), 4);
 
         assert_eq!(
-            segments.length::<Euclidean>(),
-            linestring.length::<Euclidean>()
+            segments.length(),
+            linestring.length()
         );
     }
 
@@ -143,21 +142,21 @@ mod test {
         let segments = linestring.line_segmentize(5).unwrap();
         assert_eq!(segments.0.len(), 5);
         assert_relative_eq!(
-            linestring.length::<Euclidean>(),
-            segments.length::<Euclidean>(),
+            linestring.length(),
+            segments.length(),
             epsilon = f64::EPSILON
         );
     }
 
     #[test]
     fn two_coords() {
-        let linestring: LineString = vec![[0.0, 0.0], [0.0, 1.0]].into();
+        let linestring: LineString = vec![[0.0, 0.0, 0.0], [0.0, 1.0, 2.0]].into();
 
         let segments = linestring.line_segmentize(5).unwrap();
         assert_eq!(segments.0.len(), 5);
         assert_relative_eq!(
-            linestring.length::<Euclidean>(),
-            segments.length::<Euclidean>(),
+            linestring.length(),
+            segments.length(),
             epsilon = f64::EPSILON
         );
     }
@@ -194,8 +193,8 @@ mod test {
         assert_eq!(segments.0.len(), 5);
 
         assert_relative_eq!(
-            linestring.length::<Euclidean>(),
-            segments.length::<Euclidean>(),
+            linestring.length(),
+            segments.length(),
             epsilon = f64::EPSILON
         );
     }
@@ -217,7 +216,7 @@ mod test {
 
     #[test]
     fn n_greater_than_lines() {
-        let linestring: LineString = vec![[-1.0, 0.0], [0.5, 1.0], [1.0, 2.0]].into();
+        let linestring: LineString = vec![[-1.0, 0.0, -1.0], [0.5, 1.0, 0.5], [1.0, 2.0, 1.0]].into();
         let segments = linestring.line_segmentize(5).unwrap();
 
         // assert that there are n linestring segments
@@ -226,7 +225,7 @@ mod test {
         // assert that the lines are equal length
         let lens = segments
             .into_iter()
-            .map(|x| x.length::<Euclidean>())
+            .map(|x| x.length())
             .collect::<Vec<f64>>();
 
         let first = lens[0];
@@ -243,8 +242,8 @@ mod test {
         let segments = linestring.line_segmentize(2).unwrap();
 
         assert_relative_eq!(
-            linestring.length::<Euclidean>(),
-            segments.length::<Euclidean>(),
+            linestring.length(),
+            segments.length(),
             epsilon = f64::EPSILON
         )
     }

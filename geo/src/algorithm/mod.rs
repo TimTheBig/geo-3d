@@ -58,11 +58,6 @@ pub use coords_iter::CoordsIter;
 pub mod dimensions;
 pub use dimensions::HasDimensions;
 
-/// Calculate the length of a planar line between two `Geometries`.
-pub mod euclidean_length;
-#[allow(deprecated)]
-pub use euclidean_length::EuclideanLength;
-
 /// Calculate the extreme coordinates and indices of a geometry.
 pub mod extremes;
 pub use extremes::Extremes;
@@ -108,7 +103,7 @@ pub mod lines_iter;
 pub use lines_iter::LinesIter;
 
 pub mod line_measures;
-pub use line_measures::metric_spaces::Euclidean;
+pub use line_measures::Euclidean;
 pub use line_measures::{Bearing, Densify, Destination, Distance, InterpolatePoint, Length};
 
 /// Split a LineString into n segments

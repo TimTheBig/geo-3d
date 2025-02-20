@@ -16,7 +16,7 @@ impl<F: GeoFloat> Closest<F> {
     /// Compare two `Closest`s relative to `p` and return a copy of the best
     /// one.
     pub fn best_of_two(&self, other: &Self, p: Point<F>) -> Self {
-        use crate::{Distance, Euclidean};
+        use crate::Distance;
 
         let left = match *self {
             Closest::Indeterminate => return *other,
@@ -29,7 +29,7 @@ impl<F: GeoFloat> Closest<F> {
             Closest::SinglePoint(r) => r,
         };
 
-        if Euclidean::distance(left, p) <= Euclidean::distance(right, p) {
+        if left.distance(p) <= right.distance(p) {
             *self
         } else {
             *other

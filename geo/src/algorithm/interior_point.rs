@@ -6,7 +6,7 @@ use crate::algorithm::{
     coords_iter::CoordsIter,
     dimensions::HasDimensions,
     line_intersection::LineIntersection,
-    line_measures::{Distance, Euclidean},
+    line_measures::Distance,
     lines_iter::LinesIter,
     relate::Relate,
 };
@@ -106,7 +106,7 @@ impl<T: GeoFloat> InteriorPoint for LineString<T> {
                     .iter()
                     .map(|coord| {
                         let pt = Point::from(*coord);
-                        (pt, Euclidean::distance(pt, centroid))
+                        (pt, pt.distance(centroid))
                     })
                     .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Less))
                     .map(|(pt, _distance)| pt)
@@ -126,7 +126,7 @@ impl<T: GeoFloat> InteriorPoint for MultiLineString<T> {
                 .filter_map(|linestring| {
                     linestring
                         .interior_point()
-                        .map(|pt| (pt, Euclidean::distance(pt, centroid)))
+                        .map(|pt| (pt, pt.distance(centroid)))
                 })
                 .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Less))
                 .map(|(pt, _distance)| pt)
@@ -292,7 +292,7 @@ impl<T: GeoFloat> InteriorPoint for MultiPoint<T> {
     fn interior_point(&self) -> Self::Output {
         if let Some(centroid) = self.centroid() {
             self.iter()
-                .map(|pt| (pt, Euclidean::distance(pt, &centroid)))
+                .map(|pt| (pt, pt.distance(&centroid)))
                 .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Less))
                 .map(|(pt, _distance)| *pt)
         } else {
@@ -322,7 +322,7 @@ impl<T: GeoFloat> InteriorPoint for GeometryCollection<T> {
                             // maximize dimensions, minimize distance
                             (
                                 Reverse(geom.dimensions()),
-                                Euclidean::distance(pt, centroid),
+                                pt.distance(centroid),
                             ),
                         )
                     })

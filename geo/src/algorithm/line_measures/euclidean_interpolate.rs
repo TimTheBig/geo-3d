@@ -13,7 +13,7 @@ pub struct Euclidean;
 ///
 /// [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
 impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
-    /// Returns the point at the given distance along the line between `start` and `end`.
+    /// Returns the point at the given distance along the line between `start` and `end`.\
     ///
     /// # Units
     /// - `distance`: Measured in whatever units your `start` and `end` points use.
@@ -28,7 +28,7 @@ impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
         distance_from_start: F,
     ) -> Point<F> {
         let diff = end - start;
-        let total_distance = diff.x().hypot(diff.y());
+        let total_distance = diff.x().hypot(diff.y()).hypot(diff.z());
         let offset = diff * distance_from_start / total_distance;
         start + offset
     }
@@ -72,7 +72,7 @@ impl<F: CoordNum + FromPrimitive> InterpolatePoint<F> for Euclidean {
         if include_ends {
             container.push(start);
         }
-        densify_between::<F, Self>(start, end, &mut container, max_distance);
+        densify_between::<F>(start, end, &mut container, max_distance);
         if include_ends {
             container.push(end);
         }
@@ -87,15 +87,17 @@ mod tests {
     type MetricSpace = Euclidean;
 
     mod distance {
+        use crate::Distance;
+
         use super::*;
 
         #[test]
         fn new_york_to_london() {
             // web mercator
-            let new_york_city = Point::new(-8238310.24, 4942194.78);
+            let new_york_city = Point::new(-8238310.24, 4942194.78, 0.0);
             // web mercator
-            let london = Point::new(-14226.63, 6678077.70);
-            let distance: f64 = MetricSpace::distance(new_york_city, london);
+            let london = Point::new(-14226.63, 6678077.70, 0.0);
+            let distance: f64 = new_york_city.distance(london);
 
             assert_relative_eq!(
                 8_405_286., // meters in web mercator
@@ -105,15 +107,15 @@ mod tests {
 
         #[test]
         fn test_point_at_distance_between() {
-            let new_york_city = Point::new(-8_238_310.24, 4_942_194.78);
+            let new_york_city = Point::new(-8_238_310.24, 4_942_194.78, 6_678_077.70);
             // web mercator
-            let london = Point::new(-14_226.63, 6_678_077.70);
+            let london = Point::new(-14_226.63, 6_678_077.70, -8_238_310.24);
             let start = MetricSpace::point_at_distance_between(new_york_city, london, 0.0);
             assert_relative_eq!(new_york_city, start);
 
             let midway =
                 MetricSpace::point_at_distance_between(new_york_city, london, 8_405_286.0 / 2.0);
-            assert_relative_eq!(Point::new(-4_126_268., 5_810_136.), midway, epsilon = 1.0);
+            assert_relative_eq!(Point::new(-4_126_268., 5_810_136., -8_238_310.24), midway, epsilon = 1.0);
 
             let end = MetricSpace::point_at_distance_between(new_york_city, london, 8_405_286.0);
             assert_relative_eq!(london, end, epsilon = 1.0);

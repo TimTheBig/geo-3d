@@ -4,10 +4,23 @@ use crate::*;
 // todo check
 impl<T: CoordNum> Intersects<Coord<T>> for Line<T> {
     fn intersects(&self, rhs: &Coord<T>) -> bool {
-        let dist = Euclidean::distance(*rhs, self);
+        let dist = (*rhs).distance(self);
         dist > T::zero() - T::epsilon() && dist < T::zero() + T::epsilon()
+        // point_line_segment_distance(*rhs, self) == T::zero()
     }
 }
+
+// /// returns the distance that point is from the line segment
+// pub fn point_line_segment_distance<T: CoordNum>(point: Coord<T>, line: &Line<T>) -> T {
+//     let (l1, l2) = (line.start, line.end);
+//     let dx = line.delta();
+//     let m2 = dx.magnitude_squared();
+//     // find parameter value of closest point on segment
+//     let s12 = ((l2 - point).dot(dx) / m2).clamp(T::zero(), T::one());
+//     // and find the distance
+//     Euclidean::distance(point, l1 * s12 + l2 * (T::one() - s12))
+// }
+
 symmetric_intersects_impl!(Coord<T>, Line<T>);
 symmetric_intersects_impl!(Line<T>, Point<T>);
 

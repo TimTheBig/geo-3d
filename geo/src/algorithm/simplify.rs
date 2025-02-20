@@ -1,4 +1,4 @@
-use crate::algorithm::{CoordsIter, Distance, Euclidean};
+use crate::algorithm::{CoordsIter, Distance};
 use crate::geometry::{Coord, Line, LineString, MultiLineString, MultiPolygon, Polygon};
 use crate::GeoFloat;
 
@@ -100,7 +100,7 @@ where
         .map(|(index, rdp_index)| {
             (
                 index,
-                Euclidean::distance(rdp_index.coord, &first_last_line),
+                rdp_index.coord.distance(&first_last_line),
             )
         })
         .fold(
