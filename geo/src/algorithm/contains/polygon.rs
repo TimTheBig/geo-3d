@@ -1,4 +1,4 @@
-use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, Contains2D};
+use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
 use crate::geometry::*;
 use crate::{GeoFloat, GeoNum};
@@ -8,18 +8,25 @@ use crate::{HasDimensions, Relate};
 // │      2D Implementations     │
 // └─────────────────────────────┘
 
-impl<T> Contains2D<Coord<T>> for Polygon<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> ContainsXY<Coord<T>> for Polygon<T> {
+    /// Checks whether a `Coord` is inside a `Polygon`
     fn contains_2d(&self, coord: &Coord<T>) -> bool {
         use crate::coordinate_position::CoordPos;
 
-        coord_position_in_poly(self, coord) == CoordPos::Inside
+        xy_position_in_poly(self, coord) == CoordPos::Inside
     }
 }
 
-fn coord_position_in_poly<T: GeoNum>(poly: &Polygon<T>, coord: &Coord<T>) -> CoordPos {
+
+impl<T: GeoNum> ContainsXY<Point<T>> for Polygon<T> {
+    /// Checks whether a `Point` is inside a `Polygon`
+    fn contains_2d(&self, point: &Point<T>) -> bool {
+        self.contains_2d(&point.0)
+    }
+}
+
+/// Returns whether the `Coord` is CoordPos::OnBoundary, CoordPos::Inside, or CoordPos::Outside.
+fn xy_position_in_poly<T: GeoNum>(poly: &Polygon<T>, coord: &Coord<T>) -> CoordPos {
     let mut is_inside = false;
     let mut boundary_count = 0;
 
@@ -71,19 +78,26 @@ fn calculate_coord_poly_position<T: GeoNum>(
     }
 }
 
-impl<T: GeoNum> Contains2D<Coord<T>> for MultiPolygon<T> {
+impl<T: GeoNum> ContainsXY<Coord<T>> for MultiPolygon<T> {
+    /// Checks whether any `Polygon` contains `Coord`
     fn contains_2d(&self, coord: &Coord<T>) -> bool {
         self.iter().any(|poly| poly.contains_2d(coord))
     }
 }
 
-impl<T: GeoNum> Contains2D<Point<T>> for MultiPolygon<T> {
+impl<T: GeoNum> ContainsXY<Point<T>> for MultiPolygon<T> {
+    /// Checks whether any `Polygon` contains `Point`
     fn contains_2d(&self, p: &Point<T>) -> bool {
         self.contains_2d(&p.0)
     }
 }
 
-impl<T: GeoNum> Contains2D<MultiPoint<T>> for MultiPolygon<T> {
+impl<T: GeoNum> ContainsXY<MultiPoint<T>> for MultiPolygon<T> {
+    /// Checks if all points of `rhs` are contained in `self`.
+    ///
+    /// ## Cost
+    /// This is very expensive as it has to check `MultiPolygon::contains_2d::<Point>`,
+    /// an expensive function in it's own right, `n` times.
     fn contains_2d(&self, rhs: &MultiPoint<T>) -> bool {
         if self.is_empty() || rhs.is_empty() {
             return false;

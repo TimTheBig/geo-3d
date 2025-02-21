@@ -1,5 +1,5 @@
 use std::iter::Sum;
-use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, Contains2D};
+use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::algorithm::{CoordsIter, HasDimensions};
 use crate::geometry::*;
 use crate::{CoordNum, GeoFloat};
@@ -26,19 +26,21 @@ where
     }
 }
 
-impl<T> Contains2D<Coord<T>> for Point<T>
+impl<T> ContainsXY<Coord<T>> for Point<T>
 where
     T: CoordNum,
 {
+    /// Checks that the x and y of `Point` and `Coord` are the same
     fn contains_2d(&self, coord: &Coord<T>) -> bool {
         self.0.x == coord.x && self.0.y == coord.y
     }
 }
 
-impl<T> Contains2D<Point<T>> for Point<T>
+impl<T> ContainsXY<Point<T>> for Point<T>
 where
     T: CoordNum,
 {
+    /// Checks that the x and y of two `Point`s are the same
     fn contains_2d(&self, p: &Point<T>) -> bool {
         self.contains_2d(&p.0)
     }

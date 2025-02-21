@@ -67,7 +67,7 @@ pub trait Contains<Rhs = Self> {
 /// // Point in Polygon
 /// assert!(polygon.contains_2d(&point!(x: 1., y: 1., z: 1.)));
 /// ```
-pub trait Contains2D<Rhs = Self> {
+pub trait ContainsXY<Rhs = Self> {
     fn contains_2d(&self, rhs: &Rhs) -> bool;
 }
 
