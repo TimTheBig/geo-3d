@@ -1,8 +1,8 @@
 #[macro_use]
 extern crate criterion;
-extern crate geo;
+extern crate geo_3d;
 
-use geo::{
+use geo_3d::{
     coordinate_position::CoordPos, BoundingRect, Centroid, CoordinatePosition, Point, Rect,
     Triangle,
 };
@@ -41,8 +41,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Point in triangle", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (5., 10.)]);
-        let point = Point::new(5., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (5., 10., 5.)]);
+        let point = Point::new(5., 5., 5.);
 
         bencher.iter(|| {
             assert!(
@@ -53,8 +53,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Point on triangle boundary", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (6., 10.)]);
-        let point = Point::new(3., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (6., 10., 6.)]);
+        let point = Point::new(3., 5., 3.);
 
         bencher.iter(|| {
             assert!(

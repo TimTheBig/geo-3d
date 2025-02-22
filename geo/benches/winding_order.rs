@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main};
-use geo::algorithm::Winding;
+use geo_3d::algorithm::Winding;
 
 fn criterion_benchmark(c: &mut criterion::Criterion) {
     c.bench_function("winding order: winding_order (f32)", |bencher| {

@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::prelude::*;
-use geo::simplify_vw::SimplifyVwPreserve;
+use geo_3d::prelude::*;
+use geo_3d::simplify_vw::SimplifyVwPreserve;
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("simplify vw simple f32", |bencher| {

@@ -1,9 +1,9 @@
 use std::fmt::Display;
 
 use criterion::{measurement::Measurement, *};
-use geo::{Coord, Line};
+use geo_3d::{Coord, Line};
 
-const BBOX: Coord<f64> = Coord { x: 1024., y: 1024. };
+const BBOX: Coord<f64> = Coord { x: 1024., y: 1024., z: 1024. };
 
 #[path = "utils/random.rs"]
 mod random;
@@ -68,7 +68,7 @@ fn short<T: Measurement>(c: &mut Criterion<T>) {
 
         bench_algos(
             &mut group,
-            || (0..NUM_LINES).map(|_| line_gen()).collect(),
+            || (0..NUM_LINES).map(|_| line_gen(scale)).collect(),
             SAMPLE_SIZE,
             1. / scaling,
         );
@@ -89,7 +89,7 @@ fn uniform<T: Measurement>(c: &mut Criterion<T>) {
         let num_lines = 1 << log_num_lines;
         bench_algos(
             &mut group,
-            || (0..num_lines).map(|_| line_gen()).collect(),
+            || (0..num_lines).map(|_| line_gen(SCALE)).collect(),
             SAMPLE_SIZE,
             num_lines,
         );
@@ -111,7 +111,7 @@ fn mixed<T: Measurement>(c: &mut Criterion<T>) {
                 (0..8)
                     .flat_map(|scale| {
                         let line_gen = scaled_generator(BBOX, scale);
-                        (0..num_lines / 8).map(move |_| line_gen())
+                        (0..num_lines / 8).map(move |_| line_gen(scale))
                     })
                     .collect()
             },

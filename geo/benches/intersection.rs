@@ -1,6 +1,6 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::intersects::Intersects;
-use geo::MultiPolygon;
+use geo_3d::intersects::Intersects;
+use geo_3d::MultiPolygon;
 
 fn multi_polygon_intersection(c: &mut Criterion) {
     let plot_polygons: MultiPolygon = geo_test_fixtures::nl_plots_wgs84();
@@ -28,8 +28,8 @@ fn multi_polygon_intersection(c: &mut Criterion) {
 }
 
 fn rect_intersection(c: &mut Criterion) {
-    use geo::algorithm::BoundingRect;
-    use geo::geometry::Rect;
+    use geo_3d::algorithm::BoundingRect;
+    use geo_3d::geometry::Rect;
     let plot_bbox: Vec<Rect> = geo_test_fixtures::nl_plots_wgs84()
         .iter()
         .map(|plot| plot.bounding_rect().unwrap())
@@ -61,8 +61,8 @@ fn rect_intersection(c: &mut Criterion) {
 }
 
 fn point_rect_intersection(c: &mut Criterion) {
-    use geo::algorithm::{BoundingRect, Centroid};
-    use geo::geometry::{Point, Rect};
+    use geo_3d::algorithm::{BoundingRect, Centroid};
+    use geo_3d::geometry::{Point, Rect};
     let plot_centroids: Vec<Point> = geo_test_fixtures::nl_plots_wgs84()
         .iter()
         .map(|plot| plot.centroid().unwrap())
@@ -94,7 +94,7 @@ fn point_rect_intersection(c: &mut Criterion) {
 }
 
 fn point_triangle_intersection(c: &mut Criterion) {
-    use geo::{Centroid, TriangulateEarcut};
+    use geo_3d::{Centroid, TriangulateEarcut};
     use geo_types::{Point, Triangle};
     let plot_centroids: Vec<Point> = geo_test_fixtures::nl_plots_wgs84()
         .iter()
@@ -126,8 +126,8 @@ fn point_triangle_intersection(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle intersects point", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (5., 10.)]);
-        let point = Point::new(5., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (5., 10., 5.)]);
+        let point = Point::new(5., 5., 5.);
 
         bencher.iter(|| {
             assert!(criterion::black_box(&triangle).intersects(criterion::black_box(&point)));
@@ -135,8 +135,8 @@ fn point_triangle_intersection(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle intersects point on edge", |bencher| {
-        let triangle = Triangle::from([(0., 0.), (10., 0.), (6., 10.)]);
-        let point = Point::new(3., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (6., 10., 6.)]);
+        let point = Point::new(3., 5., 3.);
 
         bencher.iter(|| {
             assert!(criterion::black_box(&triangle).intersects(criterion::black_box(&point)));

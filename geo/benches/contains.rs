@@ -6,10 +6,10 @@ use geo_3d::{coord, point, polygon};
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("point in simple polygon", |bencher| {
         let polygon = polygon![
-            (x: 0.0f64, y: 0.0),
-            (x: 1.0, y: 0.0),
-            (x: 1.0, y: 1.0),
-            (x: 0.0, y: 0.0),
+            (x: 0.0f64, y: 0.0, z: 0.0),
+            (x: 1.0, y: 0.0, z: 1.0),
+            (x: 1.0, y: 1.0, z: 1.0),
+            (x: 0.0, y: 0.0, z: 0.0),
         ];
         let point = Point::new(0.5, 0.1, 0.5);
         bencher.iter(|| {
@@ -20,8 +20,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("point outside simple polygon", |bencher| {
         let polygon = polygon![
             (x: 0.0f64, y: 0.0, z: 0.0),
-            (x: 1.0, y: 0.0),
-            (x: 1.0, y: 1.0),
+            (x: 1.0, y: 0.0, z: 1.0),
+            (x: 1.0, y: 1.0, z: 1.0),
             (x: 0.0, y: 0.0, z: 0.0),
         ];
         let point = Point::new(2.0, 2.0, 2.0);
@@ -43,7 +43,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         |bencher| {
             let polygon = Polygon::<f64>::new(geo_test_fixtures::louisiana(), vec![]);
             // lake borgne - near and mostly surrounded by, but not inside of, Louisiana
-            let point = point!(x: -89.641854, y: 30.026283);
+            let point = point!(x: -89.641854, y: 30.026283, z: -89.641854);
             bencher.iter(|| {
                 assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&point)));
             });
@@ -52,7 +52,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("point outside bbox of complex polygon", |bencher| {
         let polygon = Polygon::<f64>::new(geo_test_fixtures::louisiana(), vec![]);
-        let point = point!(x: 2.3522, y: 48.8566);
+        let point = point!(x: 2.3522, y: 48.8566, z: 2.3522);
         bencher.iter(|| {
             assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&point)));
         });
@@ -94,7 +94,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         // crossing part of, but not contained by Louisiana
         let line = Line::new(
             geo_test_fixtures::baton_rouge(),
-            point!(x: -89.641854, y: 30.026283),
+            point!(x: -89.641854, y: 30.026283, z: -89.641854),
         );
         bencher.iter(|| {
             assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&line)));
@@ -113,7 +113,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle contains point", |bencher| {
-        let triangle = Triangle::from([(0., 0., 0.), (10., 0.), (5., 10.)]);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (5., 10., 5.)]);
         let point = Point::new(5., 5., 5.);
 
         bencher.iter(|| {
@@ -122,8 +122,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 
     c.bench_function("Triangle contains point on edge", |bencher| {
-        let triangle = Triangle::from([(0., 0., 0.), (10., 0.), (6., 10.)]);
-        let point = Point::new(3., 5.);
+        let triangle = Triangle::from([(0., 0., 0.), (10., 0., 10.), (6., 10., 6.)]);
+        let point = Point::new(3., 5., 3.);
 
         bencher.iter(|| {
             assert!(!criterion::black_box(&triangle).contains(criterion::black_box(&point)));
@@ -132,15 +132,15 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("Rect contains polygon", |bencher| {
         let polygon = polygon![
-            (x: 150., y: 350.),
-            (x: 100., y: 350.),
-            (x: 210., y: 160.),
-            (x: 290., y: 350.),
-            (x: 250., y: 350.),
-            (x: 200., y: 250.),
-            (x: 150., y: 350.),
+            (x: 150., y: 350., z: 150.),
+            (x: 100., y: 350., z: 100.),
+            (x: 210., y: 160., z: 210.),
+            (x: 290., y: 350., z: 290.),
+            (x: 250., y: 350., z: 250.),
+            (x: 200., y: 250., z: 200.),
+            (x: 150., y: 350., z: 150.),
         ];
-        let rect = Rect::new(coord! { x: 90., y: 150. }, coord! { x: 300., y: 360. });
+        let rect = Rect::new(coord! { x: 90., y: 150., z: 90. }, coord! { x: 300., y: 360., z: 300. });
 
         bencher.iter(|| {
             assert!(criterion::black_box(&rect).contains(criterion::black_box(&polygon)));
@@ -150,8 +150,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function(
         "LineString not contains LineString (Contains trait)",
         |bencher| {
-            let ls_1: geo::LineString<f64> = geo_test_fixtures::poly1();
-            let ls_2: geo::LineString<f64> = geo_test_fixtures::poly2();
+            let ls_1: LineString<f64> = geo_test_fixtures::poly1();
+            let ls_2: LineString<f64> = geo_test_fixtures::poly2();
 
             bencher.iter(|| {
                 assert!(!ls_1.contains(&ls_2));
@@ -162,8 +162,8 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function(
         "LineString not contains LineString (Relate trait)",
         |bencher| {
-            let ls_1: geo::LineString<f64> = geo_test_fixtures::poly1();
-            let ls_2: geo::LineString<f64> = geo_test_fixtures::poly2();
+            let ls_1: LineString<f64> = geo_test_fixtures::poly1();
+            let ls_2: LineString<f64> = geo_test_fixtures::poly2();
 
             bencher.iter(|| {
                 assert!(!ls_1.relate(&ls_2).is_contains());
@@ -185,7 +185,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     );
 
     c.bench_function("LineString contains LineString (Relate trait)", |bencher| {
-        let ls_1: geo::LineString<f64> = geo_test_fixtures::poly1();
+        let ls_1: LineString<f64> = geo_test_fixtures::poly1();
         let mut ls_2 = LineString::new(ls_1.0[1..].to_vec());
         ls_2.0.pop();
 
@@ -198,7 +198,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         let p_1: Polygon<f64> = Polygon::new(geo_test_fixtures::poly1(), vec![]);
         let p_2: Polygon<f64> = Polygon::new(geo_test_fixtures::poly2(), vec![]);
         let multi_poly = MultiPolygon(vec![p_1, p_2]);
-        let multi_point: MultiPoint<f64> = geo::wkt!(MULTIPOINT (-60 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
+        let multi_point: MultiPoint<f64> = geo_3d::wkt!(MULTIPOINT (-60 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
 
         bencher.iter(|| {
             assert!(multi_poly.contains(&multi_point));
@@ -209,7 +209,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         let p_1: Polygon<f64> = Polygon::new(geo_test_fixtures::poly1(), vec![]);
         let p_2: Polygon<f64> = Polygon::new(geo_test_fixtures::poly2(), vec![]);
         let multi_poly = MultiPolygon(vec![p_1, p_2]);
-        let multi_point: MultiPoint<f64> = geo::wkt!(MULTIPOINT (-60 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
+        let multi_point: MultiPoint<f64> = geo_3d::wkt!(MULTIPOINT (-60 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
 
         bencher.iter(|| {
             assert!(multi_poly.relate(&multi_point).is_contains());
@@ -220,7 +220,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         let p_1: Polygon<f64> = Polygon::new(geo_test_fixtures::poly1(), vec![]);
         let p_2: Polygon<f64> = Polygon::new(geo_test_fixtures::poly2(), vec![]);
         let multi_poly = MultiPolygon(vec![p_1, p_2]);
-        let multi_point: MultiPoint<f64> = geo::wkt!(MULTIPOINT (-160 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
+        let multi_point: MultiPoint<f64> = geo_3d::wkt!(MULTIPOINT (-160 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
 
         bencher.iter(|| {
             assert!(multi_poly.contains(&multi_point));
@@ -231,7 +231,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         let p_1: Polygon<f64> = Polygon::new(geo_test_fixtures::poly1(), vec![]);
         let p_2: Polygon<f64> = Polygon::new(geo_test_fixtures::poly2(), vec![]);
         let multi_poly = MultiPolygon(vec![p_1, p_2]);
-        let multi_point: MultiPoint<f64> = geo::wkt!(MULTIPOINT (-160 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
+        let multi_point: MultiPoint<f64> = geo_3d::wkt!(MULTIPOINT (-160 10,-60 -70,-120 -70,-120 10,-40 80,30 80,30 10,-40 10,100 210,100 120,30 120,30 210,-185 -135,-100 -135,-100 -230,-185 -230)).convert();
 
         bencher.iter(|| {
             assert!(multi_poly.relate(&multi_point).is_contains());
