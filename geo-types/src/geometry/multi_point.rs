@@ -27,12 +27,12 @@ use rayon::prelude::*;
 ///
 /// ```
 /// use geo_types::{MultiPoint, Point};
-/// let points: MultiPoint<_> = vec![(0., 0.), (1., 2.)].into();
+/// let points: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
 /// for point in points {
-///     println!("Point x = {}, y = {}", point.x(), point.y());
+///     println!("Point x = {}, y = {}, z = {}", point.x(), point.y(), point.z());
 /// }
 /// ```
-#[derive(Eq, PartialEq, Clone, Debug, Hash)]
+#[derive(Eq, PartialEq, Clone, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MultiPoint<T: CoordNum = f64>(pub Vec<Point<T>>);
 

@@ -120,6 +120,8 @@ mod arbitrary;
 #[doc(hidden)]
 pub mod private_utils;
 
+mod debug;
+
 #[doc(hidden)]
 pub mod _alloc {
     //! Needed to access these types from `alloc` in macros when the std feature is
@@ -219,7 +221,7 @@ mod tests {
         assert_eq!(rl.envelope(), l.envelope());
         // difference in 15th decimal place
         assert_relative_eq!(26.0, rl.distance_2(&Point::new(4.0, 10.0, 0.0)));
-        assert_relative_eq!(25.999999999999996, l.distance_2(&Point::new(4.0, 10.0, 0.0)));
+        assert_relative_eq!(25.999999999999996, l.distance_2(&point!(4.0, 10.0, 0.0)));
     }
 
     #[test]

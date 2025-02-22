@@ -3,11 +3,11 @@ use crate::{polygon, Coord, CoordNum, Line, Polygon};
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
 
-/// A bounded 2D area whose three vertices are defined by
+/// A bounded 3D area whose three vertices are defined by
 /// `Coord`s. The semantics and validity are that of
 /// the equivalent [`Polygon`]; in addition, the three
 /// vertices must not be collinear and they must be distinct.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Triangle<T: CoordNum = f64>(pub Coord<T>, pub Coord<T>, pub Coord<T>);
 

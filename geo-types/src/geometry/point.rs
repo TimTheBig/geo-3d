@@ -22,11 +22,11 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 ///
 /// ```
 /// use geo_types::{coord, Point};
-/// let p1: Point = (0., 1.).into();
-/// let c = coord! { x: 10., y: 20. };
+/// let p1: Point = (0., 1., 2.).into();
+/// let c = coord! { x: 10., y: 20., z: 30. };
 /// let p2: Point = c.into();
 /// ```
-#[derive(Eq, PartialEq, Clone, Copy, Debug, Hash, Default)]
+#[derive(Eq, PartialEq, Clone, Copy, Hash, Default)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Point<T: CoordNum = f64>(pub Coord<T>);
 
@@ -89,6 +89,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// assert_eq!(p.x(), 1.234);
     /// ```
+    #[inline(always)]
     pub fn x(self) -> T {
         self.0.x
     }
@@ -136,6 +137,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// assert_eq!(p.y(), 2.345);
     /// ```
+    #[inline(always)]
     pub fn y(self) -> T {
         self.0.y
     }
@@ -184,6 +186,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// assert_eq!(p.z(), 4.382);
     /// ```
+    #[inline(always)]
     pub fn z(self) -> T {
         self.0.z
     }
