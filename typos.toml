@@ -1,0 +1,9 @@
+[files]
+extend-exclude = ["geo-test-fixtures", "Cargo.lock", "target"]
+ignore-hidden = true
+
+[default]
+locale = "en"
+
+[type.extend-words]
+Either = "Either"
