@@ -71,8 +71,10 @@ pub trait Area<T>
 where
     T: CoordNum,
 {
+    /// Calculate the signed area of a geometry.
     fn signed_area(&self) -> T;
 
+    /// Calculate the unsigned area of a geometry.
     fn unsigned_area(&self) -> T;
 }
 
@@ -188,15 +190,25 @@ where
     }
 }
 
-/// Because a `Rect` has no winding order, the area will always be positive.
+// todo make sure this is serface area
+/// Because a `Rect` has no winding order, the area will always be positive.\
+/// If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
 impl<T> Area<T> for Rect<T>
 where
     T: CoordNum,
 {
+    /// Calculate the signed area of a `Rect`.
+    ///
+    /// ## Note
+    /// - If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
     fn signed_area(&self) -> T {
         self.width() * self.depth() * T::max(T::one(), self.height())
     }
 
+    /// Calculate the unsigned area of a `Rect`.
+    ///
+    /// ## Note
+    /// - If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
     fn unsigned_area(&self) -> T {
         self.width() * self.depth() * T::max(T::one(), self.height())
     }
