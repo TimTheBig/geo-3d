@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 use crate::area::{get_linestring_area, Area};
 use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions};
 use crate::geometry::*;
-use crate::line_measures::{Euclidean, Length};
+use crate::line_measures::Length;
 use crate::GeoFloat;
 
 /// Calculation of the centroid.

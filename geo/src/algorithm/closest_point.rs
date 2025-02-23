@@ -1,4 +1,4 @@
-use crate::algorithm::{Euclidean, Intersects, Length};
+use crate::algorithm::{Intersects, Length};
 use crate::geometry::*;
 use crate::Closest;
 use crate::GeoFloat;

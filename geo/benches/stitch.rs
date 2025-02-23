@@ -4,7 +4,6 @@
 //
 // use criterion::{criterion_group, criterion_main, criterion};
 // use geo::stitch::StitchTriangles;
-// use geo::TriangulateSpade;
 //
 // fn criterion_benchmark(c: &mut criterion) {
 //     c.bench_function("stitch", |bencher| {

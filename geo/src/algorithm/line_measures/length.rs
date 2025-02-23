@@ -47,7 +47,7 @@ impl<F: CoordNum> Length<F> for MultiLineString<F> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{coord, Euclidean};
+    use crate::coord;
 
     #[test]
     fn lines() {

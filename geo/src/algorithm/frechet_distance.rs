@@ -1,5 +1,5 @@
 use crate::coords_iter::CoordsIter;
-use crate::line_measures::{Distance, Euclidean};
+use crate::line_measures::Distance;
 use crate::{GeoFloat, LineString};
 use num_traits::FromPrimitive;
 

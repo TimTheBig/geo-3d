@@ -11,7 +11,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 
-[dependencies.geo]
+[dependencies.geo_3d]
 path = ".."
 
 [dependencies.geo-types]
@@ -35,5 +35,5 @@ test = false
 doc = false
 
 [patch.crates-io]
-geo = { path = ".." }
+geo_3d = { path = ".." }
 geo-types = { path = "../../geo-types" }
