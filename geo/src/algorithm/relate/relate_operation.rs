@@ -394,20 +394,20 @@ mod test {
     #[test]
     fn test_disjoint() {
         let square_a: Geometry = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 20.),
-            (x: 20., y: 20.),
-            (x: 20., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 20., z: 0.),
+            (x: 20., y: 20., z: 20.),
+            (x: 20., y: 0., z: 20.),
+            (x: 0., y: 0., z: 0.),
         ]
         .into();
 
         let square_b: Geometry = polygon![
-            (x: 55., y: 55.),
-            (x: 50., y: 60.),
-            (x: 60., y: 60.),
-            (x: 60., y: 55.),
-            (x: 55., y: 55.),
+            (x: 55., y: 55., z: 55.),
+            (x: 50., y: 60., z: 50.),
+            (x: 60., y: 60., z: 60.),
+            (x: 60., y: 55., z: 60.),
+            (x: 55., y: 55., z: 55.),
         ]
         .into();
 
@@ -420,20 +420,20 @@ mod test {
     #[test]
     fn test_a_contains_b() {
         let square_a: Geometry = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 20.),
-            (x: 20., y: 20.),
-            (x: 20., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 20., z: 0.),
+            (x: 20., y: 20., z: 20.),
+            (x: 20., y: 0., z: 20.),
+            (x: 0., y: 0., z: 0.),
         ]
         .into();
 
         let square_b: Geometry = polygon![
-            (x: 5., y: 5.),
-            (x: 5., y: 10.),
-            (x: 10., y: 10.),
-            (x: 10., y: 5.),
-            (x: 5., y: 5.),
+            (x: 5., y: 5., z: 5.),
+            (x: 5., y: 10., z: 5.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 5., z: 10.),
+            (x: 5., y: 5., z: 5.),
         ]
         .into();
 
@@ -446,20 +446,20 @@ mod test {
     #[test]
     fn test_a_overlaps_b() {
         let square_a: Geometry = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 20.),
-            (x: 20., y: 20.),
-            (x: 20., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 20., z: 0.),
+            (x: 20., y: 20., z: 20.),
+            (x: 20., y: 0., z: 20.),
+            (x: 0., y: 0., z: 0.),
         ]
         .into();
 
         let square_b: Geometry = polygon![
-            (x: 5., y: 5.),
-            (x: 5., y: 30.),
-            (x: 30., y: 30.),
-            (x: 30., y: 5.),
-            (x: 5., y: 5.),
+            (x: 5., y: 5., z: 5.),
+            (x: 5., y: 30., z: 5.),
+            (x: 30., y: 30., z: 30.),
+            (x: 30., y: 5., z: 30.),
+            (x: 5., y: 5., z: 5.),
         ]
         .into();
 
@@ -471,24 +471,24 @@ mod test {
     #[test]
     fn equals() {
         let square_a = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 20.),
-            (x: 20., y: 20.),
-            (x: 20., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 20., z: 0.),
+            (x: 20., y: 20., z: 20.),
+            (x: 20., y: 0., z: 20.),
+            (x: 0., y: 0., z: 0.),
         ];
         let square_b = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 20.),
-            (x: 20., y: 20.),
-            (x: 20., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 20., z: 0.),
+            (x: 20., y: 20., z: 20.),
+            (x: 20., y: 0., z: 20.),
+            (x: 0., y: 0., z: 0.),
         ];
         let polyrelation = square_a.relate(&square_b);
 
         // same, but different coordinate order
-        let ls1 = line_string![(x: 1.0, y: 1.0), (x: 2.0, y: 2.0)];
-        let ls2 = line_string![(x: 2.0, y: 2.0), (x: 1.0, y: 1.0)];
+        let ls1 = line_string![(x: 1.0, y: 1.0, z: 1.0), (x: 2.0, y: 2.0, z: 2.0)];
+        let ls2 = line_string![(x: 2.0, y: 2.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
         let lsrelation = ls1.relate(&ls2);
 
         let de9im_eq = "T*F**FFF*";

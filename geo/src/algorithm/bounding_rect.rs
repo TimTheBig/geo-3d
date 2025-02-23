@@ -296,11 +296,11 @@ mod test {
     #[test]
     fn multipolygon_test() {
         let mpoly = MultiPolygon::new(vec![
-            polygon![(x: 0., y: 0.), (x: 50., y: 0.), (x: 0., y: -70.), (x: 0., y: 0.)],
-            polygon![(x: 0., y: 0.), (x: 5., y: 0.), (x: 0., y: 80.), (x: 0., y: 0.)],
-            polygon![(x: 0., y: 0.), (x: -60., y: 0.), (x: 0., y: 6.), (x: 0., y: 0.)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 50., y: 0., z: 50.), (x: 0., y: -70., z: 0.), (x: 0., y: 0., z: 0.)],
+            polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 0., y: 80., z: 0.), (x: 0., y: 0., z: 0.)],
+            polygon![(x: 0., y: 0., z: 0.), (x: -60., y: 0., z: -60.), (x: 0., y: 6., z: 0.), (x: 0., y: 0., z: 0.)],
         ]);
-        let bounding_rect = Rect::new(coord! { x: -60., y: -70. }, coord! { x: 50., y: 80. });
+        let bounding_rect = Rect::new(coord! { x: -60., y: -70., z: -60. }, coord! { x: 50., y: 80., z: 50. });
         assert_eq!(bounding_rect, mpoly.bounding_rect().unwrap());
     }
     #[test]

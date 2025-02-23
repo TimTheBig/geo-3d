@@ -194,7 +194,7 @@ mod test {
 
     #[test]
     fn linestring_open() {
-        let ls = LineString::from(vec![(3.0, 0.0, -3.0), (6.0, 3.0), (3.0, 6.0), (0.0, 3.0, 0.0)]);
+        let ls = LineString::from(vec![(3.0, 0.0, -3.0), (6.0, 3.0, 6.0), (3.0, 6.0, 3.0), (0.0, 3.0, 0.0)]);
         let ls_out = ls.chaikin_smoothing(1);
         assert_eq!(
             ls_out,

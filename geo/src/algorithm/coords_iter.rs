@@ -31,9 +31,9 @@ pub trait CoordsIter {
     /// ]);
     ///
     /// let mut iter = multi_point.coords_iter();
-    /// assert_eq!(Some(geo::coord! { x: -10., y: 0. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 20., y: 20. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 30., y: 40. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: -10., y: 0., z: -10. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 20., y: 20., z: 20. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 30., y: 40., z: 30. }), iter.next());
     /// assert_eq!(None, iter.next());
     /// ```
     fn coords_iter(&self) -> Self::Iter<'_>;
@@ -47,9 +47,9 @@ pub trait CoordsIter {
     /// use geo::line_string;
     ///
     /// let ls = line_string![
-    ///     (x: 1., y: 2.),
-    ///     (x: 23., y: 82.),
-    ///     (x: -1., y: 0.),
+    ///     (x: 1., y: 2., z: 1.),
+    ///     (x: 23., y: 82., z: 23.),
+    ///     (x: -1., y: 0., z: -1.),
     /// ];
     ///
     /// assert_eq!(3, ls.coords_count());
@@ -67,29 +67,29 @@ pub trait CoordsIter {
     /// // a diamond shape
     /// let polygon = polygon![
     ///     exterior: [
-    ///         (x: 1.0, y: 0.0),
-    ///         (x: 2.0, y: 1.0),
-    ///         (x: 1.0, y: 2.0),
-    ///         (x: 0.0, y: 1.0),
-    ///         (x: 1.0, y: 0.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
+    ///         (x: 2.0, y: 1.0, z: 2.0),
+    ///         (x: 1.0, y: 2.0, z: 1.0),
+    ///         (x: 0.0, y: 1.0, z: 0.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
     ///     ],
     ///     interiors: [
     ///         [
-    ///             (x: 1.0, y: 0.5),
-    ///             (x: 0.5, y: 1.0),
-    ///             (x: 1.0, y: 1.5),
-    ///             (x: 1.5, y: 1.0),
-    ///             (x: 1.0, y: 0.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
+    ///             (x: 0.5, y: 1.0, z: 0.5),
+    ///             (x: 1.0, y: 1.5, z: 1.0),
+    ///             (x: 1.5, y: 1.0, z: 1.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
     ///         ],
     ///     ],
     /// ];
     ///
     /// let mut iter = polygon.exterior_coords_iter();
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 0. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 2., y: 1. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 2. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 0., y: 1. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 0. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 1., y: 0., z: 1. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 2., y: 1., z: 2. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 1., y: 2., z: 1. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 0., y: 1., z: 0. }), iter.next());
+    /// assert_eq!(Some(geo::coord! { x: 1., y: 0., z: 1. }), iter.next());
     /// assert_eq!(None, iter.next());
     /// ```
     fn exterior_coords_iter(&self) -> Self::ExteriorIter<'_>;
@@ -922,9 +922,9 @@ mod test {
             Rect::new(coord! { x: 1., y: 2., z: 3. }, coord! { x: 3., y: 4., z: 5. }),
             vec![
                 coord! { x: 1., y: 2., z: 3. },
-                coord! { x: 1., y: 4. },
-                coord! { x: 3., y: 4. },
-                coord! { x: 3., y: 2. },
+                coord! { x: 1., y: 4., z: 1. },
+                coord! { x: 3., y: 4., z: 3. },
+                coord! { x: 3., y: 2., z: 3. },
             ],
         )
     }
@@ -932,28 +932,28 @@ mod test {
     fn create_line_string() -> (LineString, Vec<Coord>) {
         (
             line_string![
-                (x: 1., y: 2.),
-                (x: 2., y: 3.),
+                (x: 1., y: 2., z: 1.),
+                (x: 2., y: 3., z: 2.),
             ],
-            vec![coord! { x: 1., y: 2. }, coord! { x: 2., y: 3. }],
+            vec![coord! { x: 1., y: 2., z: 1. }, coord! { x: 2., y: 3., z: 2. }],
         )
     }
 
     fn create_polygon() -> (Polygon<f64>, Vec<Coord>) {
         (
             polygon!(
-                exterior: [(x: 0., y: 0.), (x: 5., y: 10.), (x: 10., y: 0.), (x: 0., y: 0.)],
-                interiors: [[(x: 1., y: 1.), (x: 9., y: 1.), (x: 5., y: 9.), (x: 1., y: 1.)]],
+                exterior: [(x: 0., y: 0., z: 0.), (x: 5., y: 10., z: 5.), (x: 10., y: 0., z: 10.), (x: 0., y: 0., z: 0.)],
+                interiors: [[(x: 1., y: 1., z: 1.), (x: 9., y: 1., z: 9.), (x: 5., y: 9., z: 5.), (x: 1., y: 1., z: 1.)]],
             ),
             vec![
-                coord! { x: 0.0, y: 0.0 },
-                coord! { x: 5.0, y: 10.0 },
-                coord! { x: 10.0, y: 0.0 },
-                coord! { x: 0.0, y: 0.0 },
-                coord! { x: 1.0, y: 1.0 },
-                coord! { x: 9.0, y: 1.0 },
-                coord! { x: 5.0, y: 9.0 },
-                coord! { x: 1.0, y: 1.0 },
+                coord! { x: 0.0, y: 0.0, z: 0.0 },
+                coord! { x: 5.0, y: 10.0, z: 5.0 },
+                coord! { x: 10.0, y: 0.0, z: 10.0 },
+                coord! { x: 0.0, y: 0.0, z: 0.0 },
+                coord! { x: 1.0, y: 1.0, z: 1.0 },
+                coord! { x: 9.0, y: 1.0, z: 9.0 },
+                coord! { x: 5.0, y: 9.0, z: 5.0 },
+                coord! { x: 1.0, y: 1.0, z: 1.0 },
             ],
         )
     }

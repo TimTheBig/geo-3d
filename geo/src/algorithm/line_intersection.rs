@@ -50,23 +50,23 @@ impl<F: GeoFloat> LineIntersection<F> {
 /// use geo::{Line, Coord};
 /// use geo::line_intersection::{line_intersection, LineIntersection};
 ///
-/// let line_1 = Line::new(coord! {x: 0.0, y: 0.0}, coord! { x: 5.0, y: 5.0 } );
-/// let line_2 = Line::new(coord! {x: 0.0, y: 5.0}, coord! { x: 5.0, y: 0.0 } );
-/// let expected = LineIntersection::SinglePoint { intersection: coord! { x: 2.5, y: 2.5 }, is_proper: true };
+/// let line_1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 } );
+/// let line_2 = Line::new(coord! { x: 0.0, y: 5.0, z: 0.0 }, coord! { x: 5.0, y: 0.0, z: 5.0 } );
+/// let expected = LineIntersection::SinglePoint { intersection: coord! { x: 2.5, y: 2.5, z: 2.5 }, is_proper: true };
 /// assert_eq!(line_intersection(line_1, line_2), Some(expected));
 ///
-/// let line_1 = Line::new(coord! {x: 0.0, y: 0.0}, coord! { x: 5.0, y: 5.0 } );
-/// let line_2 = Line::new(coord! {x: 0.0, y: 1.0}, coord! { x: 5.0, y: 6.0 } );
+/// let line_1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 } );
+/// let line_2 = Line::new(coord! { x: 0.0, y: 1.0, z: 0.0 }, coord! { x: 5.0, y: 6.0, z: 5.0 } );
 /// assert_eq!(line_intersection(line_1, line_2), None);
 ///
-/// let line_1 = Line::new(coord! {x: 0.0, y: 0.0}, coord! { x: 5.0, y: 5.0 } );
-/// let line_2 = Line::new(coord! {x: 5.0, y: 5.0}, coord! { x: 5.0, y: 0.0 } );
-/// let expected = LineIntersection::SinglePoint { intersection: coord! { x: 5.0, y: 5.0 }, is_proper: false };
+/// let line_1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 } );
+/// let line_2 = Line::new(coord! { x: 5.0, y: 5.0, z: 5.0 }, coord! { x: 5.0, y: 0.0, z: 5.0 } );
+/// let expected = LineIntersection::SinglePoint { intersection: coord! { x: 5.0, y: 5.0, z: 5.0 }, is_proper: false };
 /// assert_eq!(line_intersection(line_1, line_2), Some(expected));
 ///
-/// let line_1 = Line::new(coord! {x: 0.0, y: 0.0}, coord! { x: 5.0, y: 5.0 } );
-/// let line_2 = Line::new(coord! {x: 3.0, y: 3.0}, coord! { x: 6.0, y: 6.0 } );
-/// let expected = LineIntersection::Collinear { intersection: Line::new(coord! { x: 3.0, y: 3.0 }, coord! { x: 5.0, y: 5.0 })};
+/// let line_1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 } );
+/// let line_2 = Line::new(coord! { x: 3.0, y: 3.0, z: 3.0 }, coord! { x: 6.0, y: 6.0, z: 6.0 } );
+/// let expected = LineIntersection::Collinear { intersection: Line::new(coord! { x: 3.0, y: 3.0, z: 3.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 })};
 /// assert_eq!(line_intersection(line_1, line_2), Some(expected));
 /// ```
 /// Strongly inspired by, and meant to produce the same results as, [JTS's RobustLineIntersector](https://github.com/locationtech/jts/blob/master/modules/core/src/main/java/org/locationtech/jts/algorithm/RobustLineIntersector.java#L26).
@@ -347,20 +347,24 @@ mod test {
             coord! {
                 x: 163.81867067,
                 y: -211.31840378,
+                z: 163.81867067,
             },
             coord! {
                 x: 165.9174252,
                 y: -214.1665075,
+                z: 165.9174252,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 2.84139601,
                 y: -57.95412726,
+                z: 2.84139601,
             },
             coord! {
                 x: 469.59990601,
                 y: -502.63851732,
+                z: 469.59990601,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -368,6 +372,7 @@ mod test {
             intersection: coord! {
                 x: 163.81867067,
                 y: -211.31840378,
+                z: 163.81867067,
             },
             is_proper: true,
         };
@@ -385,20 +390,24 @@ mod test {
             coord! {
                 x: -58.00593335955,
                 y: -1.43739086465,
+                z: -58.00593335955,
             },
             coord! {
                 x: -513.86101637525,
                 y: -457.29247388035,
+                z: -513.86101637525,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: -215.22279674875,
                 y: -158.65425425385,
+                z: -215.22279674875,
             },
             coord! {
                 x: -218.1208801283,
                 y: -160.68343590235,
+                z: -218.1208801283,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -406,6 +415,7 @@ mod test {
             intersection: coord! {
                 x: -215.22279674875,
                 y: -158.65425425385,
+                z: -215.22279674875,
             },
             is_proper: true,
         };
@@ -419,8 +429,8 @@ mod test {
     /// > Succeeds using DD and Shewchuk orientation
     #[test]
     fn test_tomas_fa_1() {
-        let line_1 = Line::new(coord! { x: -42.0, y: 163.2 }, coord! { x: 21.2, y: 265.2 });
-        let line_2 = Line::new(coord! { x: -26.2, y: 188.7 }, coord! { x: 37.0, y: 290.7 });
+        let line_1 = Line::new(coord! { x: -42.0, y: 163.2, z: -42.0 }, coord! { x: 21.2, y: 265.2, z: 21.2 });
+        let line_2 = Line::new(coord! { x: -26.2, y: 188.7, z: -26.2 }, coord! { x: 37.0, y: 290.7, z: 37.0 });
         let actual = line_intersection(line_1, line_2);
         let expected = None;
         assert_eq!(actual, expected);
@@ -433,8 +443,8 @@ mod test {
     /// > Fails using original JTS DeVillers determine orientation test.
     #[test]
     fn test_tomas_fa_2() {
-        let line_1 = Line::new(coord! { x: -5.9, y: 163.1 }, coord! { x: 76.1, y: 250.7 });
-        let line_2 = Line::new(coord! { x: 14.6, y: 185.0 }, coord! { x: 96.6, y: 272.6 });
+        let line_1 = Line::new(coord! { x: -5.9, y: 163.1, z: -5.9 }, coord! { x: 76.1, y: 250.7, z: 76.1 });
+        let line_2 = Line::new(coord! { x: 14.6, y: 185.0, z: 14.6 }, coord! { x: 96.6, y: 272.6, z: 96.6 });
         let actual = line_intersection(line_1, line_2);
         let expected = None;
         assert_eq!(actual, expected);
@@ -450,20 +460,24 @@ mod test {
             coord! {
                 x: 305690.0434123494,
                 y: 254176.46578338774,
+                z: 305690.0434123494,
             },
             coord! {
                 x: 305601.9999843455,
                 y: 254243.19999846347,
+                z: 305601.9999843455,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 305689.6153764265,
                 y: 254177.33102743194,
+                z: 305689.6153764265,
             },
             coord! {
                 x: 305692.4999844298,
                 y: 254171.4999983967,
+                z: 305692.4999844298,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -471,6 +485,7 @@ mod test {
             intersection: coord! {
                 x: 305690.0434123494,
                 y: 254176.46578338774,
+                z: 305690.0434123494,
             },
             is_proper: true,
         };
@@ -486,20 +501,24 @@ mod test {
             coord! {
                 x: 588750.7429703881,
                 y: 4518950.493668233,
+                z: 588750.7429703881,
             },
             coord! {
                 x: 588748.2060409798,
                 y: 4518933.9452804085,
+                z: 588748.2060409798,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 588745.824857241,
                 y: 4518940.742239175,
+                z: 588745.824857241,
             },
             coord! {
                 x: 588748.2060437313,
                 y: 4518933.9452791475,
+                z: 588748.2060437313,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -507,6 +526,7 @@ mod test {
             intersection: coord! {
                 x: 588748.2060416829,
                 y: 4518933.945284994,
+                z: 588748.2060416829,
             },
             is_proper: true,
         };
@@ -522,20 +542,24 @@ mod test {
             coord! {
                 x: 588743.626135934,
                 y: 4518924.610969561,
+                z: 588743.626135934,
             },
             coord! {
                 x: 588732.2822865889,
                 y: 4518925.4314047815,
+                z: 588732.2822865889,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 588739.1191384895,
                 y: 4518927.235700594,
+                z: 588739.1191384895,
             },
             coord! {
                 x: 588731.7854614238,
                 y: 4518924.578370095,
+                z: 588731.7854614238,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -543,6 +567,7 @@ mod test {
             intersection: coord! {
                 x: 588733.8306132929,
                 y: 4518925.319423238,
+                z: 588733.8306132929,
             },
             is_proper: true,
         };
@@ -559,20 +584,24 @@ mod test {
             coord! {
                 x: 2089426.5233462777,
                 y: 1180182.387733969,
+                z: 2089426.5233462777,
             },
             coord! {
                 x: 2085646.6891757075,
                 y: 1195618.7333999649,
+                z: 2085646.6891757075,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 1889281.8148903656,
                 y: 1997547.0560044837,
+                z: 1889281.8148903656,
             },
             coord! {
                 x: 2259977.3672236,
                 y: 483675.17050843034,
+                z: 2259977.3672236,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -580,6 +609,7 @@ mod test {
             intersection: coord! {
                 x: 2087536.6062609926,
                 y: 1187900.560566967,
+                z: 2087536.6062609926,
             },
             is_proper: true,
         };
@@ -595,20 +625,24 @@ mod test {
             coord! {
                 x: 4348433.262114629,
                 y: 5552595.478385733,
+                z: 4348433.262114629,
             },
             coord! {
                 x: 4348440.849387404,
                 y: 5552599.272022122,
+                z: 4348440.849387404,
             },
         );
         let line_2 = Line::new(
             coord! {
                 x: 4348433.26211463,
                 y: 5552595.47838573,
+                z: 4348433.26211463,
             },
             coord! {
                 x: 4348440.8493874,
                 y: 5552599.27202212,
+                z: 4348440.8493874,
             },
         );
         let actual = line_intersection(line_1, line_2);
@@ -616,6 +650,7 @@ mod test {
             intersection: coord! {
                 x: 4348440.8493874,
                 y: 5552599.27202212,
+                z: 4348440.8493874,
             },
             is_proper: true,
         };

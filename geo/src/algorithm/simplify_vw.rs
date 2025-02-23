@@ -273,6 +273,7 @@ where
     rings
 }
 
+// todo make 3d
 /// Visvalingam-Whyatt with self-intersection detection to preserve topologies
 /// this is a port of the technique at https://www.jasondavies.com/simplify/
 //
@@ -301,7 +302,7 @@ where
 
     // Adjacent retained points. Simulating the points in a
     // linked list with indices into `orig`. Big number (larger than or equal to
-    // `max`) means no next element, and (0, 0) means deleted element.
+    // `max`) means no next element, and (0, 0, 0) means deleted element.
     let mut adjacent: Vec<_> = (0..orig.0.len())
         .map(|i| {
             if i == 0 {
@@ -452,19 +453,19 @@ pub trait SimplifyVw<T, Epsilon = T> {
     /// use geo::line_string;
     ///
     /// let line_string = line_string![
-    ///     (x: 5.0, y: 2.0),
-    ///     (x: 3.0, y: 8.0),
-    ///     (x: 6.0, y: 20.0),
-    ///     (x: 7.0, y: 25.0),
-    ///     (x: 10.0, y: 10.0),
+    ///     (x: 5.0, y: 2.0, z: 5.0),
+    ///     (x: 3.0, y: 8.0, z: 3.0),
+    ///     (x: 6.0, y: 20.0, z: 6.0),
+    ///     (x: 7.0, y: 25.0, z: 7.0),
+    ///     (x: 10.0, y: 10.0, z: 10.0),
     /// ];
     ///
     /// let simplified = line_string.simplify_vw(&30.0);
     ///
     /// let expected = line_string![
-    ///     (x: 5.0, y: 2.0),
-    ///     (x: 7.0, y: 25.0),
-    ///     (x: 10.0, y: 10.0),
+    ///     (x: 5.0, y: 2.0, z: 5.0),
+    ///     (x: 7.0, y: 25.0, z: 7.0),
+    ///     (x: 10.0, y: 10.0, z: 10.0),
     /// ];
     ///
     /// assert_eq!(expected, simplified);
@@ -497,11 +498,11 @@ pub trait SimplifyVwIdx<T, Epsilon = T> {
     /// use geo::line_string;
     ///
     /// let line_string = line_string![
-    ///     (x: 5.0, y: 2.0),
-    ///     (x: 3.0, y: 8.0),
-    ///     (x: 6.0, y: 20.0),
-    ///     (x: 7.0, y: 25.0),
-    ///     (x: 10.0, y: 10.0),
+    ///     (x: 5.0, y: 2.0, z: 5.0),
+    ///     (x: 3.0, y: 8.0, z: 3.0),
+    ///     (x: 6.0, y: 20.0, z: 6.0),
+    ///     (x: 7.0, y: 25.0, z: 7.0),
+    ///     (x: 10.0, y: 10.0, z: 10.0),
     /// ];
     ///
     /// let simplified = line_string.simplify_vw_idx(&30.0);
@@ -561,25 +562,25 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     /// use geo::line_string;
     ///
     /// let line_string = line_string![
-    ///     (x: 10., y: 60.),
-    ///     (x: 135., y: 68.),
-    ///     (x: 94., y: 48.),
-    ///     (x: 126., y: 31.),
-    ///     (x: 280., y: 19.),
-    ///     (x: 117., y: 48.),
-    ///     (x: 300., y: 40.),
-    ///     (x: 301., y: 10.),
+    ///     (x: 10., y: 60., z: 10.),
+    ///     (x: 135., y: 68., z: 135.),
+    ///     (x: 94., y: 48., z: 94.),
+    ///     (x: 126., y: 31., z: 126.),
+    ///     (x: 280., y: 19., z: 280.),
+    ///     (x: 117., y: 48., z: 117.),
+    ///     (x: 300., y: 40., z: 300.),
+    ///     (x: 301., y: 10., z: 301.),
     /// ];
     ///
     /// let simplified = line_string.simplify_vw_preserve(&668.6);
     ///
     /// let expected = line_string![
-    ///     (x: 10., y: 60.),
-    ///     (x: 126., y: 31.),
-    ///     (x: 280., y: 19.),
-    ///     (x: 117., y: 48.),
-    ///     (x: 300., y: 40.),
-    ///     (x: 301., y: 10.),
+    ///     (x: 10., y: 60., z: 10.),
+    ///     (x: 126., y: 31., z: 126.),
+    ///     (x: 280., y: 19., z: 280.),
+    ///     (x: 117., y: 48., z: 117.),
+    ///     (x: 300., y: 40., z: 300.),
+    ///     (x: 301., y: 10., z: 301.),
     /// ];
     ///
     /// assert_relative_eq!(expected, simplified, epsilon = 1e-6);
@@ -704,24 +705,24 @@ mod test {
     #[should_panic]
     fn vwp_bug() {
         let pol = polygon![
-            (x: 1., y: 4.),
-            (x: 3., y: 4.),
-            (x: 1., y: 1.),
-            (x: 7., y: 0.),
-            (x: 1., y: 0.),
-            (x: 0., y: 1.),
-            (x: 1., y: 4.),
+            (x: 1., y: 4., z: 1.),
+            (x: 3., y: 4., z: 3.),
+            (x: 1., y: 1., z: 1.),
+            (x: 7., y: 0., z: 7.),
+            (x: 1., y: 0., z: 1.),
+            (x: 0., y: 1., z: 0.),
+            (x: 1., y: 4., z: 1.),
         ];
         let simplified = pol.simplify_vw_preserve(&2.25);
         assert_eq!(
             simplified,
             polygon![
-                (x: 1., y: 4.),
-                (x: 3., y: 4.),
-                (x: 1., y: 1.),
-                (x: 7., y: 0.),
-                (x: 1., y: 0.),
-                (x: 1., y: 4.),
+                (x: 1., y: 4., z: 1.),
+                (x: 3., y: 4., z: 3.),
+                (x: 1., y: 1., z: 1.),
+                (x: 7., y: 0., z: 7.),
+                (x: 1., y: 0., z: 1.),
+                (x: 1., y: 4., z: 1.),
             ]
         );
     }
@@ -737,7 +738,7 @@ mod test {
         ];
 
         let correct = [(5.0, 2.0, 6.0), (7.0, 25.0, 8.0), (10.0, 10.0, 10.0)];
-        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1, e/2))).collect();
+        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
 
         let simplified = visvalingam(&ls, &30.);
         assert_eq!(simplified, correct_ls);
@@ -751,26 +752,26 @@ mod test {
         // Point 1 must also be removed giving a final, valid
         // LineString of (0, 3, 4, 5, 6, 7)
         let ls = line_string![
-            (x: 10., y:60.),
-            (x: 135., y: 68.),
-            (x: 94.,  y: 48.),
-            (x: 126., y: 31.),
-            (x: 280., y: 19.),
-            (x: 117., y: 48.),
-            (x: 300., y: 40.),
-            (x: 301., y: 10.)
+            (x: 10.,  y:60., z: 10.),
+            (x: 135., y: 68., z: 135.),
+            (x: 94.,  y: 48., z: 94.),
+            (x: 126., y: 31., z: 126.),
+            (x: 280., y: 19., z: 280.),
+            (x: 117., y: 48., z: 117.),
+            (x: 300., y: 40., z: 300.),
+            (x: 301., y: 10., z: 301.)
         ];
         let simplified = vwp_wrapper::<_, 2, 4>(&ls, None, &668.6);
         // this is the correct, non-intersecting LineString
         let correct = [
-            (10., 60.),
-            (126., 31.),
-            (280., 19.),
-            (117., 48.),
-            (300., 40.),
-            (301., 10.),
+            (10., 60., 10.),
+            (126., 31., 126.),
+            (280., 19., 280.),
+            (117., 48., 117.),
+            (300., 40., 300.),
+            (301., 10., 301.),
         ];
-        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1))).collect();
+        let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
         assert_eq!(simplified[0], correct_ls);
     }
     #[test]
@@ -781,17 +782,17 @@ mod test {
         // leaving the geometry below min_points. It is thus retained.
         // Inner should also be reduced, but has points == initial_min for the Polygon type
         let outer = line_string![
-            (x: -54.4921875, y: 21.289374355860424),
-            (x: -33.5, y: 56.9449741808516),
-            (x: -22.5, y: 44.08758502824516),
-            (x: -19.5, y: 23.241346102386135),
-            (x: -54.4921875, y: 21.289374355860424)
+            (x: -54.4921875, y: 21.289374355860424, z: -54.4921875),
+            (x: -33.5, y: 56.9449741808516, z: -33.5),
+            (x: -22.5, y: 44.08758502824516, z: -22.5),
+            (x: -19.5, y: 23.241346102386135, z: -19.5),
+            (x: -54.4921875, y: 21.289374355860424, z: -54.4921875)
         ];
         let inner = line_string![
-            (x: -24.451171875, y: 35.266685523707665),
-            (x: -29.513671875, y: 47.32027765985069),
-            (x: -22.869140625, y: 43.80817468459856),
-            (x: -24.451171875, y: 35.266685523707665)
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875),
+            (x: -29.513671875, y: 47.32027765985069, z: -29.513671875),
+            (x: -22.869140625, y: 43.80817468459856, z: -22.869140625),
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875)
         ];
         let poly = Polygon::new(outer.clone(), vec![inner]);
         let simplified = poly.simplify_vw_preserve(&95.4);
@@ -805,24 +806,24 @@ mod test {
         // leaving the geometry below min_points. It is thus retained.
         // Inner should be reduced to four points by removing inner[2]
         let outer = line_string![
-            (x: -54.4921875, y: 21.289374355860424),
-            (x: -33.5, y: 56.9449741808516),
-            (x: -22.5, y: 44.08758502824516),
-            (x: -19.5, y: 23.241346102386135),
-            (x: -54.4921875, y: 21.289374355860424)
+            (x: -54.4921875, y: 21.289374355860424, z: -54.4921875),
+            (x: -33.5, y: 56.9449741808516, z: -33.5),
+            (x: -22.5, y: 44.08758502824516, z: -22.5),
+            (x: -19.5, y: 23.241346102386135, z: -19.5),
+            (x: -54.4921875, y: 21.289374355860424, z: -54.4921875)
         ];
         let inner = line_string![
-            (x: -24.451171875, y: 35.266685523707665),
-            (x: -40.0, y: 45.),
-            (x: -29.513671875, y: 47.32027765985069),
-            (x: -22.869140625, y: 43.80817468459856),
-            (x: -24.451171875, y: 35.266685523707665)
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875),
+            (x: -40.0, y: 45., z: -40.0),
+            (x: -29.513671875, y: 47.32027765985069, z: -29.513671875),
+            (x: -22.869140625, y: 43.80817468459856, z: -22.869140625),
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875)
         ];
         let correct_inner = line_string![
-            (x: -24.451171875, y: 35.266685523707665),
-            (x: -40.0, y: 45.0),
-            (x: -22.869140625, y: 43.80817468459856),
-            (x: -24.451171875, y: 35.266685523707665)
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875),
+            (x: -40.0, y: 45.0, z: -40.0),
+            (x: -22.869140625, y: 43.80817468459856, z: -22.869140625),
+            (x: -24.451171875, y: 35.266685523707665, z: -24.451171875)
         ];
         let poly = Polygon::new(outer.clone(), vec![inner]);
         let simplified = poly.simplify_vw_preserve(&95.4);
@@ -855,7 +856,7 @@ mod test {
     }
     #[test]
     fn visvalingam_test_empty_linestring() {
-        let vec: Vec<[f32; 2]> = Vec::new();
+        let vec: Vec<[f32; 3]> = Vec::new();
         let compare = Vec::new();
         let simplified = visvalingam(&LineString::from(vec), &1.0);
         assert_eq!(simplified, compare);
@@ -872,15 +873,15 @@ mod test {
     fn multilinestring() {
         // this is the PostGIS example
         let points = [
-            (5.0, 2.0),
-            (3.0, 8.0),
-            (6.0, 20.0),
-            (7.0, 25.0),
-            (10.0, 10.0),
+            (5.0, 2.0, 5.0),
+            (3.0, 8.0, 3.0),
+            (6.0, 20.0, 6.0),
+            (7.0, 25.0, 7.0),
+            (10.0, 10.0, 10.0),
         ];
         let points_ls: Vec<_> = points.iter().map(|e| Point::new(e.0, e.1, e.2)).collect();
 
-        let correct = [(5.0, 2.0), (7.0, 25.0), (10.0, 10.0, 10.0)];
+        let correct = [(5.0, 2.0, 5.0), (7.0, 25.0, 7.0), (10.0, 10.0, 10.0)];
         let correct_ls: Vec<_> = correct.iter().map(|e| Point::new(e.0, e.1, e.2)).collect();
 
         let mline = MultiLineString::new(vec![LineString::from(points_ls)]);
@@ -894,12 +895,12 @@ mod test {
     #[test]
     fn polygon() {
         let poly = polygon![
-            (x: 0., y: 0.),
-            (x: 0., y: 10.),
-            (x: 5., y: 11.),
-            (x: 10., y: 10.),
-            (x: 10., y: 0.),
-            (x: 0., y: 0.),
+            (x: 0., y: 0., z: 0.),
+            (x: 0., y: 10., z: 0.),
+            (x: 5., y: 11., z: 5.),
+            (x: 10., y: 10., z: 10.),
+            (x: 10., y: 0., z: 10.),
+            (x: 0., y: 0., z: 0.),
         ];
 
         let poly2 = poly.simplify_vw(&10.);
@@ -907,11 +908,11 @@ mod test {
         assert_relative_eq!(
             poly2,
             polygon![
-                (x: 0., y: 0.),
-                (x: 0., y: 10.),
-                (x: 10., y: 10.),
-                (x: 10., y: 0.),
-                (x: 0., y: 0.),
+                (x: 0., y: 0., z: 0.),
+                (x: 0., y: 10., z: 0.),
+                (x: 10., y: 10., z: 10.),
+                (x: 10., y: 0., z: 10.),
+                (x: 0., y: 0., z: 0.),
             ],
             epsilon = 1e-6
         );

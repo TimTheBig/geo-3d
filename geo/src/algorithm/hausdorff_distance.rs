@@ -1,4 +1,4 @@
-use crate::algorithm::{Distance, Euclidean};
+use crate::algorithm::Distance;
 use crate::CoordsIter;
 use crate::GeoFloat;
 use geo_types::{Coord, Point};
@@ -86,10 +86,10 @@ mod test {
     fn hd_mpnt_poly() {
         let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let poly = polygon![
-        (x: 1., y: -3.1), (x: 3.7, y: 2.7),
-        (x: 0.9, y: 7.6), (x: -4.8, y: 6.7),
-        (x: -7.5, y: 0.9), (x: -4.7, y: -4.),
-        (x: 1., y: -3.1)
+        (x: 1., y: -3.1, z: 1.), (x: 3.7, y: 2.7, z: 3.7),
+        (x: 0.9, y: 7.6, z: 0.9), (x: -4.8, y: 6.7, z: -4.8),
+        (x: -7.5, y: 0.9, z: -7.5), (x: -4.7, y: -4., z: -4.7),
+        (x: 1., y: -3.1, z: 1.)
         ];
 
         assert_relative_eq!(p1.hausdorff_distance(&poly), 7.553807, epsilon = 1.0e-6)
@@ -99,10 +99,10 @@ mod test {
     fn hd_mpnt_lns() {
         let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let lns = line_string![
-        (x: 1., y: -3.1), (x: 3.7, y: 2.7),
-        (x: 0.9, y: 7.6), (x: -4.8, y: 6.7),
-        (x: -7.5, y: 0.9), (x: -4.7, y: -4.),
-        (x: 1., y: -3.1)
+        (x: 1., y: -3.1, z: 1.), (x: 3.7, y: 2.7, z: 3.7),
+        (x: 0.9, y: 7.6, z: 0.9), (x: -4.8, y: 6.7, z: -4.8),
+        (x: -7.5, y: 0.9, z: -7.5), (x: -4.7, y: -4., z: -4.7),
+        (x: 1., y: -3.1, z: 1.)
         ];
 
         assert_relative_eq!(p1.hausdorff_distance(&lns), 7.553807, epsilon = 1.0e-6)
@@ -113,16 +113,16 @@ mod test {
         let p1: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
         let multi_polygon = MultiPolygon::new(vec![
             polygon![
-              (x: 0.0f32, y: 0.0),
-              (x: 2.0, y: 0.0),
-              (x: 2.0, y: 1.0),
-              (x: 0.0, y: 1.0),
+              (x: 0.0f32, y: 0.0, z: 0.0),
+              (x: 2.0, y: 0.0, z: 2.0),
+              (x: 2.0, y: 1.0, z: 2.0),
+              (x: 0.0, y: 1.0, z: 0.0),
             ],
             polygon![
-              (x: 1.0, y: 1.0),
-              (x: -2.0, y: 1.0),
-              (x: -2.0, y: -1.0),
-              (x: 1.0, y: -1.0),
+              (x: 1.0, y: 1.0, z: 1.0),
+              (x: -2.0, y: 1.0, z: -2.0),
+              (x: -2.0, y: -1.0, z: -2.0),
+              (x: 1.0, y: -1.0, z: 1.0),
             ],
         ]);
 

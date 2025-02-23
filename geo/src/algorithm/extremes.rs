@@ -11,11 +11,11 @@ use crate::{Coord, CoordNum};
 ///
 /// // a diamond shape
 /// let polygon = polygon![
-///     (x: 1.0, y: 0.0),
-///     (x: 2.0, y: 1.0),
-///     (x: 1.0, y: 2.0),
-///     (x: 0.0, y: 1.0),
-///     (x: 1.0, y: 0.0),
+///     (x: 1.0, y: 0.0, z: 3.0),
+///     (x: 2.0, y: 1.0, z: 2.0),
+///     (x: 1.0, y: 2.0, z: 1.0),
+///     (x: 0.0, y: 1.0, z: 0.0),
+///     (x: 1.0, y: 0.0, z: 3.0),
 /// ];
 ///
 /// let extremes = polygon.extremes().unwrap();
@@ -23,6 +23,7 @@ use crate::{Coord, CoordNum};
 /// assert_eq!(extremes.y_max.index, 2);
 /// assert_eq!(extremes.y_max.coord.x, 1.);
 /// assert_eq!(extremes.y_max.coord.y, 2.);
+/// assert_eq!(extremes.y_max.coord.z, 3.);
 /// ```
 pub trait Extremes<'a, T: CoordNum> {
     fn extremes(&'a self) -> Option<Outcome<T>>;
@@ -88,11 +89,11 @@ mod test {
     fn polygon() {
         // a diamond shape
         let polygon = polygon![
-            (x: 1.0, y: 0.0),
-            (x: 2.0, y: 1.0),
-            (x: 1.0, y: 2.0),
-            (x: 0.0, y: 1.0),
-            (x: 1.0, y: 0.0),
+            (x: 1.0, y: 0.0, z: 1.0),
+            (x: 2.0, y: 1.0, z: 2.0),
+            (x: 1.0, y: 2.0, z: 1.0),
+            (x: 0.0, y: 1.0, z: 0.0),
+            (x: 1.0, y: 0.0, z: 1.0),
         ];
 
         let actual = polygon.extremes();
@@ -101,19 +102,19 @@ mod test {
             Some(Outcome {
                 x_min: Extreme {
                     index: 3,
-                    coord: coord! { x: 0.0, y: 1.0 }
+                    coord: coord! { x: 0.0, y: 1.0, z: 0.0 }
                 },
                 y_min: Extreme {
                     index: 0,
-                    coord: coord! { x: 1.0, y: 0.0 }
+                    coord: coord! { x: 1.0, y: 0.0, z: 1.0 }
                 },
                 x_max: Extreme {
                     index: 1,
-                    coord: coord! { x: 2.0, y: 1.0 }
+                    coord: coord! { x: 2.0, y: 1.0, z: 2.0 }
                 },
                 y_max: Extreme {
                     index: 2,
-                    coord: coord! { x: 1.0, y: 2.0 }
+                    coord: coord! { x: 1.0, y: 2.0, z: 1.0 }
                 }
             }),
             actual

@@ -8,12 +8,14 @@ use crate::{CoordNum, Point, EARTH_FLATTENING, EQUATORIAL_EARTH_RADIUS, POLAR_EA
 use num_traits::FromPrimitive;
 use std::{error, fmt};
 
-/// Determine the distance between two geometries using [Vincenty’s formulae].
+/// Determine the distance between two geometries using [Vincenty’s formulae].\
+/// This is 2d only.
 ///
 /// [Vincenty’s formulae]: https://en.wikipedia.org/wiki/Vincenty%27s_formulae
 pub trait VincentyDistance<T, Rhs = Self> {
     /// Determine the distance between two geometries using [Vincenty’s
-    /// formulae].
+    /// formulae].\
+    /// This is 2d only.
     ///
     /// # Units
     ///
@@ -180,11 +182,12 @@ impl error::Error for FailedToConvergeError {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::point;
 
     #[test]
     fn test_vincenty_distance_1() {
-        let a = Point::new(17.072561, 48.154563);
-        let b = Point::new(17.072562, 48.154564);
+        let a = point!(17.072561, 48.154563, 17.072561);
+        let b = point!(17.072562, 48.154564, 17.072562);
         assert_relative_eq!(
             a.vincenty_distance(&b).unwrap(),
             0.13378944117648012,
@@ -194,8 +197,8 @@ mod test {
 
     #[test]
     fn test_vincenty_distance_2() {
-        let a = Point::new(17.072561, 48.154563);
-        let b = Point::new(17.064064, 48.158800);
+        let a = point!(17.072561, 48.154563, 17.072561);
+        let b = point!(17.064064, 48.158800, 17.064064);
         assert_relative_eq!(
             a.vincenty_distance(&b).unwrap(),
             788.4148295236967,
@@ -205,8 +208,8 @@ mod test {
 
     #[test]
     fn test_vincenty_distance_3() {
-        let a = Point::new(17.107558, 48.148636);
-        let b = Point::new(16.372477, 48.208810);
+        let a = point!(17.107558, 48.148636, 17.107558);
+        let b = point!(16.372477, 48.208810, 16.372477);
         assert_relative_eq!(
             a.vincenty_distance(&b).unwrap(),
             55073.68246366003,
@@ -216,8 +219,8 @@ mod test {
 
     #[test]
     fn test_vincenty_distance_equatorial() {
-        let a = Point::new(0.0, 0.0, 0.0);
-        let b = Point::new(100.0, 0.0, 0.0);
+        let a = point!(0.0, 0.0, 0.0);
+        let b = point!(100.0, 0.0, 0.0);
         assert_relative_eq!(
             a.vincenty_distance(&b).unwrap(),
             11131949.079,
@@ -227,15 +230,15 @@ mod test {
 
     #[test]
     fn test_vincenty_distance_coincident() {
-        let a = Point::new(12.3, 4.56, 5.09);
-        let b = Point::new(12.3, 4.56, 5.09);
+        let a = point!(12.3, 4.56, 5.09);
+        let b = point!(12.3, 4.56, 5.09);
         assert_relative_eq!(a.vincenty_distance(&b).unwrap(), 0.0, epsilon = 1.0e-3);
     }
 
     #[test]
     fn test_vincenty_distance_antipodal() {
-        let a = Point::new(2.0, 4.0, 6.0);
-        let b = Point::new(-178.0, -4.0, -359.8);
+        let a = point!(2.0, 4.0, 6.0);
+        let b = point!(-178.0, -4.0, -359.8);
         assert_eq!(a.vincenty_distance(&b), Err(FailedToConvergeError))
     }
 }

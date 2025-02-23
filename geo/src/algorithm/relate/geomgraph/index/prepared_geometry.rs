@@ -192,8 +192,8 @@ mod tests {
 
     #[test]
     fn relate() {
-        let p1 = polygon![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0), (x: 1.0, y: 1.0)];
-        let p2 = polygon![(x: 0.5, y: 0.0), (x: 2.0, y: 0.0), (x: 1.0, y: 1.0)];
+        let p1 = polygon![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
+        let p2 = polygon![(x: 0.5, y: 0.0, z: 0.5), (x: 2.0, y: 0.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
         let prepared_1 = PreparedGeometry::from(&p1);
         let prepared_2 = PreparedGeometry::from(&p2);
         assert!(prepared_1.relate(&prepared_2).is_contains());
@@ -202,8 +202,8 @@ mod tests {
 
     #[test]
     fn prepared_with_unprepared() {
-        let p1 = polygon![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0), (x: 1.0, y: 1.0)];
-        let p2 = polygon![(x: 0.5, y: 0.0), (x: 2.0, y: 0.0), (x: 1.0, y: 1.0)];
+        let p1 = polygon![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
+        let p2 = polygon![(x: 0.5, y: 0.0, z: 0.5), (x: 2.0, y: 0.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
         let prepared_1 = PreparedGeometry::from(&p1);
         assert!(prepared_1.relate(&p2).is_contains());
         assert!(p2.relate(&prepared_1).is_within());
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn swap_arg_index() {
-        let poly = polygon![(x: 0.0, y: 0.0), (x: 2.0, y: 0.0), (x: 1.0, y: 1.0)];
+        let poly = polygon![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 1.0, y: 1.0, z: 1.0)];
         let prepared_geom = PreparedGeometry::from(&poly);
 
         let poly_cow = GeometryCow::from(&poly);

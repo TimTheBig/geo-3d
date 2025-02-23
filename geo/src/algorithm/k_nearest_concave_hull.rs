@@ -328,10 +328,10 @@ mod tests {
     #[test]
     fn coord_ordering() {
         let coords = [
-            coord!(x: 1.0, y: 1.0),
-            coord!(x: -1.0, y: 0.0),
-            coord!(x: 0.0, y: 1.0),
-            coord!(x: 1.0, y: 0.0),
+            coord!(x: 1.0, y: 1.0, z: 1.0),
+            coord!(x: -1.0, y: 0.0, z: -1.0),
+            coord!(x: 0.0, y: 1.0, z: 0.0),
+            coord!(x: 1.0, y: 0.0, z: 1.0),
         ];
 
         let mut coords_mapped: Vec<&Coord<f32>> = coords.iter().collect();
@@ -346,7 +346,7 @@ mod tests {
 
         let expected = vec![&coords[1], &coords[2], &coords[0], &coords[3]];
 
-        let prev_coord = coord!(x: 1.0, y: -1.0);
+        let prev_coord = coord!(x: 1.0, y: -1.0, z: 1.0);
         sort_by_angle(&mut coords_mapped, &center, &prev_coord);
         assert_eq!(coords_mapped, expected);
     }
@@ -354,13 +354,13 @@ mod tests {
     #[test]
     fn get_first_coord_test() {
         let coords = vec![
-            coord!(x: 1.0, y: 1.0),
-            coord!(x: -1.0, y: 0.0),
-            coord!(x: 0.0, y: 1.0),
-            coord!(x: 0.0, y: 0.5),
+            coord!(x: 1.0, y: 1.0, z: 1.0),
+            coord!(x: -1.0, y: 0.0, z: -1.0),
+            coord!(x: 0.0, y: 1.0, z: 0.0),
+            coord!(x: 0.0, y: 0.5, z: 0.0),
         ];
         let tree = rstar::RTree::bulk_load(coords);
-        let first = coord!(x: -1.0, y: 0.0);
+        let first = coord!(x: -1.0, y: 0.0, z: -1.0);
 
         assert_eq!(get_first_coord(&tree), first);
     }
@@ -368,20 +368,20 @@ mod tests {
     #[test]
     fn concave_hull_test() {
         let coords = vec![
-            coord!(x: 0.0, y: 0.0),
-            coord!(x: 1.0, y: 0.0),
-            coord!(x: 2.0, y: 0.0),
-            coord!(x: 3.0, y: 0.0),
-            coord!(x: 0.0, y: 1.0),
-            coord!(x: 1.0, y: 1.0),
-            coord!(x: 2.0, y: 1.0),
-            coord!(x: 3.0, y: 1.0),
-            coord!(x: 0.0, y: 2.0),
-            coord!(x: 1.0, y: 2.5),
-            coord!(x: 2.0, y: 2.5),
-            coord!(x: 3.0, y: 2.0),
-            coord!(x: 0.0, y: 3.0),
-            coord!(x: 3.0, y: 3.0),
+            coord!(x: 0.0, y: 0.0, z: 0.0),
+            coord!(x: 1.0, y: 0.0, z: 1.0),
+            coord!(x: 2.0, y: 0.0, z: 2.0),
+            coord!(x: 3.0, y: 0.0, z: 3.0),
+            coord!(x: 0.0, y: 1.0, z: 0.0),
+            coord!(x: 1.0, y: 1.0, z: 1.0),
+            coord!(x: 2.0, y: 1.0, z: 2.0),
+            coord!(x: 3.0, y: 1.0, z: 3.0),
+            coord!(x: 0.0, y: 2.0, z: 0.0),
+            coord!(x: 1.0, y: 2.5, z: 1.0),
+            coord!(x: 2.0, y: 2.5, z: 2.0),
+            coord!(x: 3.0, y: 2.0, z: 3.0),
+            coord!(x: 0.0, y: 3.0, z: 0.0),
+            coord!(x: 3.0, y: 3.0, z: 3.0),
         ];
 
         let poly = concave_hull(coords.iter(), 3);

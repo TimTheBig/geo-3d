@@ -18,20 +18,20 @@ pub trait Orient {
     /// let polygon = polygon![
     ///     // exterior oriented clockwise
     ///     exterior: [
-    ///         (x: 1.0, y: 0.0),
-    ///         (x: 0.0, y: 1.0),
-    ///         (x: 1.0, y: 2.0),
-    ///         (x: 2.0, y: 1.0),
-    ///         (x: 1.0, y: 0.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
+    ///         (x: 0.0, y: 1.0, z: 0.0),
+    ///         (x: 1.0, y: 2.0, z: 1.0),
+    ///         (x: 2.0, y: 1.0, z: 2.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
     ///     ],
     ///     // interior oriented counter-clockwise
     ///     interiors: [
     ///         [
-    ///             (x: 1.0, y: 0.5),
-    ///             (x: 1.5, y: 1.0),
-    ///             (x: 1.0, y: 1.5),
-    ///             (x: 0.5, y: 1.0),
-    ///             (x: 1.0, y: 0.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
+    ///             (x: 1.5, y: 1.0, z: 1.5),
+    ///             (x: 1.0, y: 1.5, z: 1.0),
+    ///             (x: 0.5, y: 1.0, z: 0.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
     ///         ],
     ///     ],
     /// ];
@@ -42,20 +42,20 @@ pub trait Orient {
     /// let expected = polygon![
     ///     // exterior oriented counter-clockwise
     ///     exterior: [
-    ///         (x: 1.0, y: 0.0),
-    ///         (x: 2.0, y: 1.0),
-    ///         (x: 1.0, y: 2.0),
-    ///         (x: 0.0, y: 1.0),
-    ///         (x: 1.0, y: 0.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
+    ///         (x: 2.0, y: 1.0, z: 2.0),
+    ///         (x: 1.0, y: 2.0, z: 1.0),
+    ///         (x: 0.0, y: 1.0, z: 0.0),
+    ///         (x: 1.0, y: 0.0, z: 1.0),
     ///     ],
     ///     // interior oriented clockwise
     ///     interiors: [
     ///         [
-    ///             (x: 1.0, y: 0.5),
-    ///             (x: 0.5, y: 1.0),
-    ///             (x: 1.0, y: 1.5),
-    ///             (x: 1.5, y: 1.0),
-    ///             (x: 1.0, y: 0.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
+    ///             (x: 0.5, y: 1.0, z: 0.5),
+    ///             (x: 1.0, y: 1.5, z: 1.0),
+    ///             (x: 1.5, y: 1.0, z: 1.5),
+    ///             (x: 1.0, y: 0.5, z: 1.0),
     ///         ],
     ///     ],
     /// ];
@@ -127,18 +127,18 @@ mod test {
     #[test]
     fn test_polygon_orientation() {
         // a diamond shape, oriented clockwise outside
-        let points_ext = vec![(1.0, 0.0), (0.0, 1.0), (1.0, 2.0), (2.0, 1.0), (1.0, 0.0)];
+        let points_ext = vec![(1.0, 0.0, 1.0), (0.0, 1.0, 0.0), (1.0, 2.0, 1.0), (2.0, 1.0, 2.0), (1.0, 0.0, 1.0)];
         // counter-clockwise interior
-        let points_int = vec![(1.0, 0.5), (1.5, 1.0), (1.0, 1.5), (0.5, 1.0), (1.0, 0.5)];
+        let points_int = vec![(1.0, 0.5, 1.0), (1.5, 1.0, 1.5), (1.0, 1.5, 1.0), (0.5, 1.0, 0.5), (1.0, 0.5, 1.0)];
         let poly1 = Polygon::new(
             LineString::from(points_ext),
             vec![LineString::from(points_int)],
         );
         // a diamond shape, oriented counter-clockwise outside,
-        let oriented_ext = vec![(1.0, 0.0), (2.0, 1.0), (1.0, 2.0), (0.0, 1.0), (1.0, 0.0)];
+        let oriented_ext = vec![(1.0, 0.0, 1.0), (2.0, 1.0, 2.0), (1.0, 2.0, 1.0), (0.0, 1.0, 0.0), (1.0, 0.0, 1.0)];
         let oriented_ext_ls = LineString::from(oriented_ext);
         // clockwise interior
-        let oriented_int_raw = vec![(1.0, 0.5), (0.5, 1.0), (1.0, 1.5), (1.5, 1.0), (1.0, 0.5)];
+        let oriented_int_raw = vec![(1.0, 0.5, 1.0), (0.5, 1.0, 0.5), (1.0, 1.5, 1.0), (1.5, 1.0, 1.5), (1.0, 0.5, 1.0)];
         let oriented_int_ls = LineString::from(oriented_int_raw);
         // build corrected Polygon
         let oriented = orient(&poly1, Direction::Default);

@@ -18,11 +18,11 @@ use std::iter;
 /// ```rust
 /// # use geo::ClosestPoint;
 /// # use geo::{Point, Line, Closest};
-/// let p: Point<f32> = Point::new(0.0, 100.0);
-/// let horizontal_line: Line<f32> = Line::new(Point::new(-50.0, 0.0), Point::new(50.0, 0.0));
+/// let p: Point<f32> = Point::new(0.0, 100.0, 0.0);
+/// let horizontal_line: Line<f32> = Line::new(Point::new(-50.0, 0.0, -50.0), Point::new(50.0, 0.0, 50.0));
 ///
 /// let closest = horizontal_line.closest_point(&p);
-/// assert_eq!(closest, Closest::SinglePoint(Point::new(0.0, 0.0)));
+/// assert_eq!(closest, Closest::SinglePoint(Point::new(0.0, 0.0, 0.0)));
 /// ```
 pub trait ClosestPoint<F: GeoFloat, Rhs = Point<F>> {
     /// Find the closest point between `self` and `p`.
@@ -190,7 +190,7 @@ mod tests {
     use crate::{point, polygon};
 
     /// Create a test which checks that we get `$should_be` when trying to find
-    /// the closest distance between `$p` and the line `(0, 0) -> (100, 100)`.
+    /// the closest distance between `$p` and the line `(0, 0, 0) -> (100, 100, 100)`.
     macro_rules! closest {
         (intersects: $name:ident, $p:expr) => {
             closest!($name, $p => Closest::Intersection($p.into()));

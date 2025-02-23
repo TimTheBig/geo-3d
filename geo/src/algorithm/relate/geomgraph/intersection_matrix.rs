@@ -714,10 +714,10 @@ mod tests {
     #[test]
     fn test_crosses() {
         // these polygons look like they cross, but two polygons cannot cross
-        let a: Geometry<_> = wkt! { POLYGON ((3.4 15.7, 2.2 11.3, 5.8 11.4, 3.4 15.7)) }.into();
-        let b: Geometry<_> = wkt! { POLYGON ((5.2 13.1, 4.5 10.9, 6.3 11.1, 5.2 13.1)) }.into();
+        let a: Geometry<_> = wkt! { POLYGON ((3.4 15.7 3.4, 2.2 11.3 2.2, 5.8 11.4 5.8, 3.4 15.7 3.4)) }.into();
+        let b: Geometry<_> = wkt! { POLYGON ((5.2 13.1 5.2, 4.5 10.9 4.5, 6.3 11.1 6.3, 5.2 13.1 5.2)) }.into();
         // this linestring is a single leg of b: it can cross polygon a
-        let c: Geometry<_> = wkt! { LINESTRING (5.2 13.1, 4.5 10.9) }.into();
+        let c: Geometry<_> = wkt! { LINESTRING (5.2 13.1 5.2, 4.5 10.9 4.5) }.into();
         let relate_ab = a.relate(&b);
         let relate_ca = c.relate(&a);
         assert!(!relate_ab.is_crosses());
@@ -728,8 +728,8 @@ mod tests {
     fn test_crosses_2() {
         // two lines can cross
         // same geometry as test_crosses: single legs of polygons a and b
-        let a: Geometry<_> = wkt! { LINESTRING (5.2 13.1, 4.5 10.9) }.into();
-        let b: Geometry<_> = wkt! { LINESTRING (3.4 15.7, 2.2 11.3, 5.8 11.4) }.into();
+        let a: Geometry<_> = wkt! { LINESTRING (5.2 13.1 5.2, 4.5 10.9 4.5) }.into();
+        let b: Geometry<_> = wkt! { LINESTRING (3.4 15.7 3.4, 2.2 11.3 2.2, 5.8 11.4 5.8) }.into();
         let relate_ab = a.relate(&b);
         assert!(relate_ab.is_crosses());
     }
