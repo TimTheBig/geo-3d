@@ -1,7 +1,6 @@
 use criterion::{criterion_group, criterion_main};
-use geo::algorithm::{TriangulateEarcut, TriangulateSpade};
-use geo::geometry::Polygon;
-use geo::triangulate_spade::SpadeTriangulationConfig;
+use geo_3d::algorithm::TriangulateEarcut;
+use geo_3d::geometry::Polygon;
 
 fn criterion_benchmark(c: &mut criterion::Criterion) {
     c.bench_function(

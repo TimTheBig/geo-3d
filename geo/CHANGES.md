@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+# All masively **BREAKING**
+- Make 3D by adding the z field to `Coord`
 - Drop int support
-- Make 3D
-- Drop rhumb and Geodesic support as those are 2d only, and intended for lon/lat
+- Drop rhumb, Hversine and Geodesic support as those are 2d only, and intended for lon/lat
+- Remove `spade`, `i_overlay` and `geographiclib-rs`
+
+- Add `wkt` like `debug` impls for geometry
 
 ## Old
 
@@ -45,7 +49,7 @@
 
 - Allow configuring of the `i_overlay` Rayon transitive dependency with a new Cargo `multithreading` flag.
   - <https://github.com/georust/geo/pull/1250>
-- Improve handling of InterploatePoint with collapsed Line
+- Improve handling of `InterpolatePoint` with collapsed Line
   - <https://github.com/georust/geo/pull/1248>
 
 ## 0.29.0 - 2024.10.30
