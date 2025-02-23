@@ -161,11 +161,7 @@ pub mod translate;
 pub use translate::Translate;
 
 /// Triangulate polygons using an [ear-cutting algorithm](https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf).
-///
-/// Requires the `"earcutr"` feature.
-#[cfg(feature = "earcutr")]
 pub mod triangulate_earcut;
-#[cfg(feature = "earcutr")]
 pub use triangulate_earcut::TriangulateEarcut;
 
 /// Vector Operations for 3D coordinates

@@ -13,14 +13,14 @@ rust-version = "1.75"
 categories = ["science::geo"]
 
 [features]
-default = ["earcutr", "multithreading"]
+default = ["multithreading"]
 use-proj = ["proj"]
 proj-network = ["use-proj", "proj/network"]
 use-serde = ["serde", "geo-types/serde"]
 multithreading = ["geo-types/multithreading"]
 
 [dependencies]
-earcutr = { version = "0.4.3", optional = true }
+earcutr = "0.4.3"
 float_next_after = "1.0.0"
 geo-types = { version = "0.8.0", path = "../geo-types", features = ["approx", "use-rstar"] }
 log = "0.4"
