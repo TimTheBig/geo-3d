@@ -229,7 +229,6 @@ impl<T: CoordNum> Rect<T> {
     /// );
     /// ```
     pub fn to_polygon(self) -> Polygon<T> {
-        // todo check
         polygon![
             // top
             (x: self.min.x, y: self.min.y, z: self.max.z),
@@ -245,7 +244,7 @@ impl<T: CoordNum> Rect<T> {
         ]
     }
 
-    // Returns the spatial representation of the `Rect`
+    /// Returns the spatial representation of the `Rect`
     pub fn to_coords(self) -> [Coord<T>; 8] {
         [
             // top
@@ -261,6 +260,7 @@ impl<T: CoordNum> Rect<T> {
         ]
     }
 
+    /// Return the lines of a `Rect`
     pub fn to_lines(&self) -> [Line<T>; 12] {
         [
             // top

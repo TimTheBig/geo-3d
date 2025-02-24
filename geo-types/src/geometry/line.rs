@@ -166,12 +166,10 @@ impl<T: CoordNum> Line<T> {
     /// ```
     pub fn determinant(&self) -> T {
         // Calculate the components of the cross product of the two vectors
-        let x = self.start.y * self.end.z - self.start.z * self.end.y;
-        let y = self.start.z * self.end.x - self.start.x * self.end.z;
-        let z = self.start.x * self.end.y - self.start.y * self.end.x;
+        let cross = self.start.cross(self.end);
 
         // Return the magnitude of the resulting 3D vector (the "volume" determinant)
-        T::hypot(T::hypot(x, y), z)
+        T::hypot(T::hypot(cross.x, cross.y), cross.z)
     }
 
     pub fn start_point(&self) -> Point<T> {

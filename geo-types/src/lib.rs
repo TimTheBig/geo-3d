@@ -4,7 +4,7 @@
 //! The `geo-types` library defines geometric types for the [GeoRust] ecosystem.
 //!
 //! In most cases, you will only need to use this crate if you’re a crate author and want
-//! compatibility with other GeoRust crates. Otherwise, the [`geo`](https://crates.io/crates/geo)
+//! compatibility with other GeoRust crates. Otherwise, the [`geo-3`](https://crates.io/crates/geo-3d)
 //! crate re-exports these types and additionally provides geospatial algorithms.
 //!
 //! ## Geometries
@@ -51,8 +51,7 @@
 //! # Semantics
 //!
 //! The geospatial types provided here aim to adhere to the [OpenGIS Simple feature access][OGC-SFA]
-//! standards. Thus, the types here are inter-operable with other implementations of the standards:
-//! [JTS], [GEOS], etc.
+//! standards.
 //!
 //! # Features
 //!
@@ -74,8 +73,6 @@
 //! [arbitrary]: https://github.com/rust-fuzz/arbitrary
 //! [Cargo features]: https://doc.rust-lang.org/cargo/reference/features.html
 //! [GeoRust]: https://georust.org
-//! [GEOS]: https://trac.osgeo.org/geos
-//! [JTS]: https://github.com/locationtech/jts
 //! [OGC-SFA]: https://www.ogc.org/standards/sfa
 //! [rstar]: https://github.com/Stoeoef/rstar
 //! [Serde]: https://serde.rs/

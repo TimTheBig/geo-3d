@@ -120,7 +120,7 @@ pub use orient::Orient;
 
 /// Coordinate projections and transformations using the current stable version of [PROJ](http://proj.org).
 #[cfg(feature = "use-proj")]
-pub mod proj;
+pub use proj::*;
 
 /// Relate two geometries based on DE-9IM
 pub mod relate;
