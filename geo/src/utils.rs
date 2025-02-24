@@ -1,7 +1,6 @@
 //! Internal utility functions, types, and data structures.
 
 use geo_types::{Coord, CoordNum};
-use num_traits::FromPrimitive;
 
 /// Partition a mutable slice in-place so that it contains all elements for
 /// which `predicate(e)` is `true`, followed by all elements for which
@@ -9,10 +8,7 @@ use num_traits::FromPrimitive;
 /// non-predicated elements, respectively.
 ///
 /// https://github.com/llogiq/partition/blob/master/src/lib.rs
-pub fn partition_slice<T, P>(data: &mut [T], predicate: P) -> (&mut [T], &mut [T])
-where
-    P: Fn(&T) -> bool,
-{
+pub fn partition_slice<T, P: Fn(&T) -> bool>(data: &mut [T], predicate: P) -> (&mut [T], &mut [T]) {
     let len = data.len();
     if len == 0 {
         return (&mut [], &mut []);
@@ -32,6 +28,7 @@ where
     }
 }
 
+/// An iterator of `I1` or `I2`
 pub enum EitherIter<I1, I2> {
     A(I1),
     B(I2),
@@ -96,7 +93,7 @@ pub fn partial_min<T: PartialOrd>(a: T, b: T) -> T {
 use std::cmp::Ordering;
 
 /// Compare two coordinates lexicographically: first by the
-/// x coordinate, and break ties with the y coordinate.
+/// x coordinate, and break ties with the y coordinate then z.
 /// Expects none of coordinates to be uncomparable (eg. nan)
 #[inline]
 pub fn lex_cmp<T: CoordNum>(p: &Coord<T>, q: &Coord<T>) -> Ordering {
@@ -153,15 +150,6 @@ pub fn least_and_greatest_index<T: CoordNum>(pts: &[Coord<T>]) -> (usize, usize)
             )
         });
     (min.unwrap().0, max.unwrap().0)
-}
-
-/// Normalize a longitude to coordinate to ensure it's within [-180,180]
-pub fn normalize_longitude<T: CoordNum + FromPrimitive>(coord: T) -> T {
-    let one_eighty = T::from(180.0f64).unwrap();
-    let three_sixty = T::from(360.0f64).unwrap();
-    let five_forty = T::from(540.0f64).unwrap();
-
-    ((coord + five_forty) % three_sixty) - one_eighty
 }
 
 #[cfg(test)]

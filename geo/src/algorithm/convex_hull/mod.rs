@@ -68,10 +68,9 @@ pub mod graham;
 pub use graham::graham_hull;
 use quickhull::ErrorKind;
 
-// Helper function that outputs the convex hull in the
-// trivial case: input with at most 3 points. It ensures the
-// output is ccw, and does not repeat points unless
-// required.
+/// Helper function that outputs the convex hull in the
+/// trivial case: input with at most 3 points.\
+/// It ensures the output is ccw, and does not repeat points unless required.
 fn trivial_hull<T>(points: &mut [Coord<T>], include_on_hull: bool) -> LineString<T>
 where
     T: GeoNum,

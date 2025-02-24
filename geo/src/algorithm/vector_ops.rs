@@ -91,7 +91,7 @@ where
     ///   parallelogram formed by the operands
     /// - Anti-commutative: The sign of the output is reversed if the operands
     ///   are reversed
-    /// - If the operands are colinear with the origin, the value is zero
+    /// - If the operands are collinear with the origin, the value is zero
     /// - The sign can be used to check if the operands are clockwise with
     ///   respect to the origin, or phrased differently:
     ///   "is a to the left of the line between the origin and b"?
@@ -148,11 +148,11 @@ where
         let vz = point_c.z - self.z;
 
         // Compute the cross product:
-        let x = uy * vz - uz * vy;
-        let y = uz * vx - ux * vz;
-        let z = ux * vy - uy * vx;
-
-        Self { x: x, y: y, z: z }
+        Self {
+            x: uy * vz - uz * vy,
+            y: uz * vx - ux * vz,
+            z: ux * vy - uy * vx,
+        }
     }
 
     fn dot_product(self, other: Self) -> Self::Scalar {
