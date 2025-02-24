@@ -1,6 +1,7 @@
 use std::{fs, iter::FromIterator, path::PathBuf, str::FromStr};
 
-use geo_types::{LineString, MultiPolygon, Point, Polygon};
+use geo_types::{coord, Coord, CoordNum, LineString, MultiPolygon, Point, Polygon};
+use num_traits::FloatConst;
 use wkt::{Wkt, WktFloat};
 
 pub fn louisiana<T>() -> LineString<T>
@@ -102,6 +103,41 @@ where
     T: WktFloat + Default + FromStr,
 {
     line_string("poly_in_ring.wkt")
+}
+
+pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
+    fn sphere_points<T: CoordNum + FloatConst>(divisions: usize) -> LineString<T> {
+        #[inline]
+        fn rot_z<T: CoordNum>(point: Coord<T>, angle: T) -> Coord<T> {
+            let e1 = angle.cos() * point.x - angle.sin() * point.y;
+            let e2 = angle.sin() * point.x + angle.cos() * point.y;
+            let e3 = point.z;
+            coord!(e1, e2, e3)
+        }
+    
+        #[inline]
+        fn rot_x<T: CoordNum>(point: Coord<T>, angle: T) -> Coord<T> {
+            let e1 = point.x;
+            let e2 = angle.cos() * point.y - angle.sin() * point.z;
+            let e3 = angle.sin() * point.y + angle.cos() * point.z;
+            coord!(e1, e2, e3)
+        }
+    
+        let mut points = Vec::with_capacity(divisions * divisions);
+        let unit_y = coord!(T::zero(), T::one(), T::zero());
+        for step_x in 0..divisions {
+            let angle_x: T = (T::one() + T::one()) * T::PI() * (T::from(step_x).unwrap() / T::from(divisions).unwrap());
+            let p = rot_x(unit_y, angle_x);
+            for step_z in 0..divisions {
+                let angle_z = (T::one() + T::one()) * T::PI() * (T::from(step_z).unwrap() / T::from(divisions).unwrap());
+                let p = rot_z(p, angle_z);
+                points.push(p);
+            }
+        }
+    
+        points.into()
+    }
+    sphere_points(104)
 }
 
 pub fn ring<T>() -> LineString<T>

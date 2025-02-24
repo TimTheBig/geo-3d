@@ -7,3 +7,4 @@ publish = false
 [dependencies]
 wkt = { version = "0.13", git = "https://github.com/TimTheBig/wkt.git", default-features = false }
 geo-types = { path = "../geo-types" }
+num-traits = "0.2"
