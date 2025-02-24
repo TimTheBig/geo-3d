@@ -46,8 +46,8 @@ pub trait Scale<T: CoordNum> {
     /// let scaled = ls.scale_xy(2., 4., 6.);
     ///
     /// assert_eq!(scaled, line_string![
-    ///     (x: -5., y: -15.),
-    ///     (x: 15., y: 25.)
+    ///     (x: -5., y: -15., z: -5.),
+    ///     (x: 15., y: 25., z: 15.)
     /// ]);
     /// ```
     #[must_use]
@@ -68,13 +68,13 @@ pub trait Scale<T: CoordNum> {
     /// use geo::Scale;
     /// use geo::{LineString, line_string, Coord};
     ///
-    /// let ls: LineString = line_string![(x: 0., y: 0.), (x: 10., y: 10.)];
+    /// let ls: LineString = line_string![(x: 0., y: 0., z: 0.), (x: 10., y: 10., z: 10.)];
     ///
     /// let scaled = ls.scale_around_point(2., 4., Coord { x: 100., y: 100. });
     ///
     /// assert_eq!(scaled, line_string![
-    ///     (x: -100., y: -300.),
-    ///     (x: -80., y: -260.)
+    ///     (x: -100., y: -300., z: -100.),
+    ///     (x: -80., y: -260., z: -80.)
     /// ]);
     /// ```
     #[must_use]

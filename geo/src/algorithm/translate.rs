@@ -22,12 +22,12 @@ pub trait Translate<T: CoordNum> {
     ///     (x: 10.0, y: 10.0, z: 10.0),
     /// ];
     ///
-    /// let translated = ls.translate(1.5, 3.5);
+    /// let translated = ls.translate(1.5, 3.5, 1.5);
     ///
     /// assert_eq!(translated, line_string![
-    ///     (x: 1.5, y: 3.5),
-    ///     (x: 6.5, y: 8.5),
-    ///     (x: 11.5, y: 13.5),
+    ///     (x: 1.5, y: 3.5, z: 1.5),
+    ///     (x: 6.5, y: 8.5, z: 6.5),
+    ///     (x: 11.5, y: 13.5, z: 11.5),
     /// ]);
     /// ```
     #[must_use]

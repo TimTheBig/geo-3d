@@ -78,10 +78,10 @@ impl<C: Cross + Clone> Crossing<C> {
 /// use geo::sweep::CrossingsIter;
 /// use std::iter::FromIterator;
 /// let input = vec![
-///     Line::from([(1., 0.), (0., 1.)]),
-///     Line::from([(0., 0.75), (1., 0.25)]),
-///     Line::from([(0., 0.25), (1., 0.75)]),
-///     Line::from([(0., 0.), (1., 1.)]),
+///     Line::from([(1., 0., 1.), (0., 1., 0.)]),
+///     Line::from([(0., 0.75, 0.), (1., 0.25, 1.)]),
+///     Line::from([(0., 0.25, 0.), (1., 0.75, 1.)]),
+///     Line::from([(0., 0., 0.), (1., 1., 1.)]),
 /// ];
 /// let iter = CrossingsIter::<_>::from_iter(input);
 /// // 1 intersection point, and 8 end points
@@ -185,10 +185,10 @@ where
 /// use geo::sweep::Intersections;
 /// use std::iter::FromIterator;
 /// let input = vec![
-///     Line::from([(1., 0.), (0., 1.)]),
-///     Line::from([(0., 0.75), (1., 0.25)]),
-///     Line::from([(0., 0.25), (1., 0.75)]),
-///     Line::from([(0., 0.), (1., 1.)]),
+///     Line::from([(1., 0., 1.), (0., 1., 0.)]),
+///     Line::from([(0., 0.75, 0.), (1., 0.25, 1.)]),
+///     Line::from([(0., 0.25, 0.), (1., 0.75, 1.)]),
+///     Line::from([(0., 0., 0.), (1., 1., 1.)]),
 /// ];
 /// let iter = Intersections::<_>::from_iter(input);
 /// // All pairs intersect
@@ -349,9 +349,9 @@ pub(super) mod tests {
             [(0., 0., 0.), (0., 0., 0.)].into(),
         ];
         // Intersections (by_idx):
-        // (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
-        // (1, 2), (1, 3), (1, 4),
-        // (2, 3)
+        // (0, 1, 0), (0, 2, 0), (0, 3, 0), (0, 4, 0), (0, 5, 0),
+        // (1, 2, 1), (1, 3, 1), (1, 4, 1),
+        // (2, 3, 2)
         let mut verify = 0;
         for (i, l1) in input.iter().enumerate() {
             for (j, l2) in input.iter().enumerate() {

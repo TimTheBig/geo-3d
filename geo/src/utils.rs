@@ -100,9 +100,11 @@ use std::cmp::Ordering;
 /// Expects none of coordinates to be uncomparable (eg. nan)
 #[inline]
 pub fn lex_cmp<T: CoordNum>(p: &Coord<T>, q: &Coord<T>) -> Ordering {
-    p.x.partial_cmp(&q.x)
-        .unwrap()
-        .then(p.y.partial_cmp(&q.y).unwrap())
+    p.x.partial_cmp(&q.x).unwrap()
+    .then(
+        p.y.partial_cmp(&q.y).unwrap()
+        .then(p.z.partial_cmp(&q.z).unwrap())
+    )
 }
 
 /// Compute index of the least point in slice. Comparison is

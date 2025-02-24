@@ -16,7 +16,7 @@ use crate::algorithm::Contains;
 ///
 /// // Note that a geometry on only the *boundary* of another geometry is not considered to
 /// // be _within_ that geometry. See [`Relate`] for more information.
-/// assert!(! point!(x: 0.0, y: 0.0).is_within(&line_string));
+/// assert!(! point!(x: 0.0, y: 0.0, z: 0.0).is_within(&line_string));
 /// ```
 ///
 /// `Within` is equivalent to [`Contains`] with the arguments swapped.

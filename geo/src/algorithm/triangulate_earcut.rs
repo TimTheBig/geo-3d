@@ -10,11 +10,11 @@ pub trait TriangulateEarcut<T: CoordNum> {
     /// use geo::{coord, polygon, Triangle, TriangulateEarcut};
     ///
     /// let square_polygon = polygon![
-    ///     (x: 0., y: 0.), // SW
-    ///     (x: 10., y: 0.), // SE
-    ///     (x: 10., y: 10.), // NE
-    ///     (x: 0., y: 10.), // NW
-    ///     (x: 0., y: 0.), // SW
+    ///     (x: 0., y: 0., z: 0.), // SW
+    ///     (x: 10., y: 0., z: 10.), // SE
+    ///     (x: 10., y: 10., z: 10.), // NE
+    ///     (x: 0., y: 10., z: 0.), // NW
+    ///     (x: 0., y: 0., z: 0.), // SW
     /// ];
     ///
     /// let triangles = square_polygon.earcut_triangles();
@@ -45,11 +45,11 @@ pub trait TriangulateEarcut<T: CoordNum> {
     /// use geo::{coord, polygon, Triangle, TriangulateEarcut};
     ///
     /// let square_polygon = polygon![
-    ///     (x: 0., y: 0.), // SW
-    ///     (x: 10., y: 0.), // SE
-    ///     (x: 10., y: 10.), // NE
-    ///     (x: 0., y: 10.), // NW
-    ///     (x: 0., y: 0.), // SW
+    ///     (x: 0., y: 0., z: 0.), // SW
+    ///     (x: 10., y: 0., z: 10.), // SE
+    ///     (x: 10., y: 10., z: 10.), // NE
+    ///     (x: 0., y: 10., z: 0.), // NW
+    ///     (x: 0., y: 0., z: 0.), // SW
     /// ];
     ///
     /// let mut triangles_iter = square_polygon.earcut_triangles_iter();
@@ -91,11 +91,11 @@ pub trait TriangulateEarcut<T: CoordNum> {
     /// use geo::triangulate_earcut::RawTriangulation;
     ///
     /// let square_polygon = polygon![
-    ///     (x: 0., y: 0.), // SW
-    ///     (x: 10., y: 0.), // SE
-    ///     (x: 10., y: 10.), // NE
-    ///     (x: 0., y: 10.), // NW
-    ///     (x: 0., y: 0.), // SW
+    ///     (x: 0., y: 0., z: 0.), // SW
+    ///     (x: 10., y: 0., z: 10.), // SE
+    ///     (x: 10., y: 10., z: 10.), // NE
+    ///     (x: 0., y: 10., z: 0.), // NW
+    ///     (x: 0., y: 0., z: 0.), // SW
     /// ];
     ///
     /// let mut triangles_raw = square_polygon.earcut_triangles_raw();

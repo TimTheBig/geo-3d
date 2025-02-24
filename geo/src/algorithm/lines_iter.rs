@@ -20,9 +20,9 @@ pub trait LinesIter<'a> {
     /// use geo::{coord, Line};
     ///
     /// let ls = line_string![
-    ///     (x: 1., y: 2.),
-    ///     (x: 23., y: 82.),
-    ///     (x: -1., y: 0.),
+    ///     (x: 1., y: 2., z: 1.),
+    ///     (x: 23., y: 82., z: 23.),
+    ///     (x: -1., y: 0., z: -1.),
     /// ];
     ///
     /// let mut iter = ls.lines_iter();

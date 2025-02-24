@@ -176,20 +176,20 @@ pub trait Simplify<T, Epsilon = T> {
     /// use geo::line_string;
     ///
     /// let line_string = line_string![
-    ///     (x: 0.0, y: 0.0),
-    ///     (x: 5.0, y: 4.0),
-    ///     (x: 11.0, y: 5.5),
-    ///     (x: 17.3, y: 3.2),
-    ///     (x: 27.8, y: 0.1),
+    ///     (x: 0.0, y: 0.0, z: 0.0),
+    ///     (x: 5.0, y: 4.0, z: 5.0),
+    ///     (x: 11.0, y: 5.5, z: 11.0),
+    ///     (x: 17.3, y: 3.2, z: 17.3),
+    ///     (x: 27.8, y: 0.1, z: 27.8),
     /// ];
     ///
     /// let simplified = line_string.simplify(&1.0);
     ///
     /// let expected = line_string![
-    ///     (x: 0.0, y: 0.0),
-    ///     (x: 5.0, y: 4.0),
-    ///     (x: 11.0, y: 5.5),
-    ///     (x: 27.8, y: 0.1),
+    ///     (x: 0.0, y: 0.0, z: 0.0),
+    ///     (x: 5.0, y: 4.0, z: 5.0),
+    ///     (x: 11.0, y: 5.5, z: 11.0),
+    ///     (x: 27.8, y: 0.1, z: 27.8),
     /// ];
     ///
     /// assert_eq!(expected, simplified)
@@ -221,11 +221,11 @@ pub trait SimplifyIdx<T, Epsilon = T> {
     /// use geo::line_string;
     ///
     /// let line_string = line_string![
-    ///     (x: 0.0, y: 0.0),
-    ///     (x: 5.0, y: 4.0),
-    ///     (x: 11.0, y: 5.5),
-    ///     (x: 17.3, y: 3.2),
-    ///     (x: 27.8, y: 0.1),
+    ///     (x: 0.0, y: 0.0, z: 0.0),
+    ///     (x: 5.0, y: 4.0, z: 5.0),
+    ///     (x: 11.0, y: 5.5, z: 11.0),
+    ///     (x: 17.3, y: 3.2, z: 17.3),
+    ///     (x: 27.8, y: 0.1, z: 27.8),
     /// ];
     ///
     /// let simplified = line_string.simplify_idx(&1.0);

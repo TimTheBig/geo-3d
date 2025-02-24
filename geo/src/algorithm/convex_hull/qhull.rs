@@ -23,7 +23,7 @@ impl ConvexQHull {
     /// Attempts to compute a [`ConvexQHull`] for the given set of points.
     pub fn try_new<T: CoordNum>(points: &[Coord<T>]) -> Result<Self, ErrorKind> {
         match ConvexHull::try_new(
-            &(points.iter().map(|c| glam_vec3_from_geo(c))).collect::<Vec<_>>(),
+            &(points.iter().map(glam_vec3_from_geo)).collect::<Vec<_>>(),
             None
         ) {
             Ok(ch) => Ok(ConvexQHull(ch)),
@@ -49,10 +49,11 @@ impl ConvexQHull {
 
     /// Adds the given points to the point set, attempting to update the convex hull.
     pub fn add_points<T: CoordNum + Into<f64>>(&mut self, points: &[Coord<T>]) -> Result<(), ErrorKind> {
-        self.0.add_iter_points(&mut points.iter().map(|c| glam_vec3_from_geo(c)))
+        self.0.add_iter_points(&mut points.iter().map(glam_vec3_from_geo))
     }
 }
 
+/// Convert `Coord` to `glam::DVec3`
 fn glam_vec3_from_geo<T: CoordNum>(coord: &Coord<T>) -> DVec3 {
     DVec3::new(
         coord.x.to_f64().expect("CoordNum is float"),
@@ -81,7 +82,7 @@ mod test {
 
     #[test]
     fn sphere_test() {
-        let (_v, _i) = ConvexQHull::try_new(&geo_test_fixtures::sphere().0)
+        let (_v, _i) = ConvexQHull::try_new(&geo_test_fixtures::sphere::<f64>().0)
             .unwrap()
             .0
             .vertices_indices();

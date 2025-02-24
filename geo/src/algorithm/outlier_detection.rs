@@ -50,10 +50,10 @@ where
     /// use geo::{point, MultiPoint};
     ///
     /// let v = vec![
-    ///     point!(x: 0.0, y: 0.0),
-    ///     point!(x: 0.0, y: 1.0),
-    ///     point!(x: 3.0, y: 0.0),
-    ///     point!(x: 1.0, y: 1.0),
+    ///     point!(x: 0.0, y: 0.0, z: 0.0),
+    ///     point!(x: 0.0, y: 1.0, z: 0.0),
+    ///     point!(x: 3.0, y: 0.0, z: 3.0),
+    ///     point!(x: 1.0, y: 1.0, z: 1.0),
     /// ];
     ///
     /// let lofscores = v.outliers(2);
@@ -70,29 +70,29 @@ where
     ///
     /// // these points contain 4 strong outliers
     /// let v = vec![
-    ///     point!(x: 0.16, y: 0.14),
-    ///     point!(x: 0.15, y: 0.33),
-    ///     point!(x: 0.37, y: 0.25),
-    ///     point!(x: 0.3 , y: 0.4),
-    ///     point!(x: 0.3 , y: 0.1),
-    ///     point!(x: 0.3 , y: 0.2),
+    ///     point!(x: 0.16, y: 0.14, z: 0.16),
+    ///     point!(x: 0.15, y: 0.33, z: 0.15),
+    ///     point!(x: 0.37, y: 0.25, z: 0.37),
+    ///     point!(x: 0.3,  y: 0.4, z: 0.3),
+    ///     point!(x: 0.3,  y: 0.1, z: 0.3),
+    ///     point!(x: 0.3,  y: 0.2, z: 0.3),
     ///     // outlier
-    ///     point!(x: 1.3 , y: 2.3),
+    ///     point!(x: 1.3,  y: 2.3, z: 1.3),
     ///     // outlier
-    ///     point!(x: 1.7 , y: 0.2),
+    ///     point!(x: 1.7,  y: 0.2, z: 1.7),
     ///     // outlier
-    ///     point!(x: 0.7 , y: -0.9),
+    ///     point!(x: 0.7,  y: -0.9, z: 0.7),
     ///     // outlier
-    ///     point!(x: 0.21, y: 2.45),
-    ///     point!(x: 0.8 , y: 0.7),
-    ///     point!(x: 0.9 , y: 0.7),
-    ///     point!(x: 0.8 , y: 0.6),
-    ///     point!(x: 0.73, y: 0.65),
-    ///     point!(x: 0.9 , y: 0.6),
-    ///     point!(x: 1.0, y: 0.6),
-    ///     point!(x: 1.0, y: 0.7),
-    ///     point!(x: 0.25, y: 0.29),
-    ///     point!(x: 0.2 , y: 0.2),
+    ///     point!(x: 0.21, y: 2.45, z: 0.21),
+    ///     point!(x: 0.8,  y: 0.7, z: 0.8),
+    ///     point!(x: 0.9,  y: 0.7, z: 0.9),
+    ///     point!(x: 0.8,  y: 0.6, z: 0.8),
+    ///     point!(x: 0.73, y: 0.65, z: 0.73),
+    ///     point!(x: 0.9,  y: 0.6, z: 0.9),
+    ///     point!(x: 1.0,  y: 0.6, z: 1.0),
+    ///     point!(x: 1.0,  y: 0.7, z: 1.0),
+    ///     point!(x: 0.25, y: 0.29, z: 0.25),
+    ///     point!(x: 0.2,  y: 0.2, z: 0.2),
     /// ];
     /// let lofs = &mut v.outliers(3);
     /// let mut idx_lofs: Vec<(usize, f64)> = lofs
@@ -124,25 +124,25 @@ where
     /// use geo::OutlierDetection;
     /// use geo::{point, Point, MultiPoint};
     /// let v: Vec<Point<f64>> = vec![
-    ///     point!(x: 0.16, y: 0.14),
-    ///     point!(x: 0.15, y: 0.33),
-    ///     point!(x: 0.37, y: 0.25),
-    ///     point!(x: 0.3 , y: 0.4),
-    ///     point!(x: 0.3 , y: 0.1),
-    ///     point!(x: 0.3 , y: 0.2),
-    ///     point!(x: 1.3 , y: 2.3),
-    ///     point!(x: 1.7 , y: 0.2),
-    ///     point!(x: 0.7 , y: -0.9),
-    ///     point!(x: 0.21, y: 2.45),
-    ///     point!(x: 0.8 , y: 0.7),
-    ///     point!(x: 0.9 , y: 0.7),
-    ///     point!(x: 0.8 , y: 0.6),
-    ///     point!(x: 0.73, y: 0.65),
-    ///     point!(x: 0.9 , y: 0.6),
-    ///     point!(x: 1.0, y: 0.6),
-    ///     point!(x: 1.0, y: 0.7),
-    ///     point!(x: 0.25, y: 0.29),
-    ///     point!(x: 0.2 , y: 0.2),
+    ///     point!(x: 0.16, y: 0.14, z: 0.16),
+    ///     point!(x: 0.15, y: 0.33, z: 0.15),
+    ///     point!(x: 0.37, y: 0.25, z: 0.37),
+    ///     point!(x: 0.3, y: 0.4, z: 0.3),
+    ///     point!(x: 0.3, y: 0.1, z: 0.3),
+    ///     point!(x: 0.3, y: 0.2, z: 0.3),
+    ///     point!(x: 1.3, y: 2.3, z: 1.3),
+    ///     point!(x: 1.7, y: 0.2, z: 1.7),
+    ///     point!(x: 0.7, y: -0.9, z: 0.7),
+    ///     point!(x: 0.21, y: 2.45, z: 0.21),
+    ///     point!(x: 0.8, y: 0.7, z: 0.8),
+    ///     point!(x: 0.9, y: 0.7, z: 0.9),
+    ///     point!(x: 0.8, y: 0.6, z: 0.8),
+    ///     point!(x: 0.73, y: 0.65, z: 0.73),
+    ///     point!(x: 0.9, y: 0.6, z: 0.9),
+    ///     point!(x: 1.0, y: 0.6, z: 1.0),
+    ///     point!(x: 1.0, y: 0.7, z: 1.0),
+    ///     point!(x: 0.25, y: 0.29, z: 0.25),
+    ///     point!(x: 0.2, y: 0.2, z: 0.2),
     /// ];
     /// let ensemble = v.generate_ensemble((2..=5));
     /// // retain the maximum LOF value for each point for all runs

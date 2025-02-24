@@ -11,11 +11,11 @@ use geo_types::{MultiPolygon, MultiPoint, CoordNum, LineString, Point, Polygon, 
 /// use geo::Volume;
 ///
 /// let mut polygon = polygon![
-///     (x: 0., y: 0.),
-///     (x: 5., y: 0.),
-///     (x: 5., y: 6.),
-///     (x: 0., y: 6.),
-///     (x: 0., y: 0.),
+///     (x: 0., y: 0., z: 0.),
+///     (x: 5., y: 0., z: 5.),
+///     (x: 5., y: 6., z: 5.),
+///     (x: 0., y: 6., z: 0.),
+///     (x: 0., y: 0., z: 0.),
 /// ];
 ///
 /// assert_eq!(polygon.signed_area(), 30.);
@@ -66,11 +66,11 @@ impl<T: CoordNum> Volume<T> for Rect<T> {
 /// use geo::Volume;
 ///
 /// let mut polygon = polygon![
-///     (x: 0., y: 0.),
-///     (x: 5., y: 0.),
-///     (x: 5., y: 6.),
-///     (x: 0., y: 6.),
-///     (x: 0., y: 0.),
+///     (x: 0., y: 0., z: 0.),
+///     (x: 5., y: 0., z: 5.),
+///     (x: 5., y: 6., z: 5.),
+///     (x: 0., y: 6., z: 0.),
+///     (x: 0., y: 0., z: 0.),
 /// ];
 ///
 /// assert_eq!(polygon.signed_area(), 30.);

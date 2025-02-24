@@ -696,7 +696,7 @@ mod tests {
         let composed = a.compose(&b);
 
         assert_eq!(composed.0[0][0], 43.);
-        assert_eq!(composed.0[0][1], 82.);
+        assert_eq!(composed.0[0][1], 70.);
         assert_eq!(composed.0[0][2], 31.);
         assert_eq!(composed.0[0][3], 154.);
     

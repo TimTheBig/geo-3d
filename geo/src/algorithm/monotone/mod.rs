@@ -33,14 +33,14 @@ pub use builder::monotone_subdivision;
 /// use geo::{polygon, coord};
 ///
 /// let polygon = polygon![
-///     (x: -2., y: 1.),
-///     (x: 1., y: 3.),
-///     (x: 4., y: 1.),
-///     (x: 1., y: -1.),
-///     (x: -2., y: 1.),
+///     (x: -2., y: 1., z: -2.),
+///     (x: 1., y: 3., z: 1.),
+///     (x: 4., y: 1., z: 4.),
+///     (x: 1., y: -1., z: 1.),
+///     (x: -2., y: 1., z: -2.),
 /// ];
 /// let mp = MonotonicPolygons::from(polygon);
-/// assert!(mp.intersects(&coord!(x: -2., y: 1.)));
+/// assert!(mp.intersects(&coord!(x: -2., y: 1., z: -2.)));
 /// ```
 #[derive(Clone, Debug)]
 pub struct MonotonicPolygons<T: GeoNum>(Vec<MonoPoly<T>>);

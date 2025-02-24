@@ -40,15 +40,15 @@ use crate::GeoFloat;
 ///
 /// // rhombus shaped polygon
 /// let polygon = polygon![
-///     (x: -2., y: 1.),
-///     (x: 1., y: 3.),
-///     (x: 4., y: 1.),
-///     (x: 1., y: -1.),
-///     (x: -2., y: 1.),
+///     (x: -2., y: 1., z: -2.),
+///     (x: 1., y: 3., z: 1.),
+///     (x: 4., y: 1., z: 4.),
+///     (x: 1., y: -1., z: 1.),
+///     (x: -2., y: 1., z: -2.),
 /// ];
 ///
 /// assert_eq!(
-///     Some(point!(x: 1., y: 2.)),
+///     Some(point!(x: 1., y: 2., z: 1.)),
 ///     polygon.interior_point(),
 /// );
 /// ```
@@ -70,7 +70,7 @@ pub trait InteriorPoint {
     /// ];
     ///
     /// assert_eq!(
-    ///     Some(point!(x: 40.02, y: 118.23)),
+    ///     Some(point!(x: 40.02, y: 118.23, z: 40.02)),
     ///     line_string.interior_point(),
     /// );
     /// ```
@@ -283,8 +283,8 @@ impl<T: GeoFloat> InteriorPoint for Point<T> {
 /// let empty_multi_points: MultiPoint<_> = empty.into();
 /// assert_eq!(empty_multi_points.interior_point(), None);
 ///
-/// let points: MultiPoint<_> = vec![(5., 1.), (1., 3.), (3., 2.)].into();
-/// assert_eq!(points.interior_point(), Some(Point::new(3., 2.)));
+/// let points: MultiPoint<_> = vec![(5., 1., 5.), (1., 3., 1.), (3., 2., 3.)].into();
+/// assert_eq!(points.interior_point(), Some(Point::new(3., 2., 3.)));
 /// ```
 impl<T: GeoFloat> InteriorPoint for MultiPoint<T> {
     type Output = Option<Point<T>>;

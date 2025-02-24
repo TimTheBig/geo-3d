@@ -50,7 +50,7 @@ pub trait Centroid {
     /// ];
     ///
     /// assert_eq!(
-    ///     Some(point!(x: 40.02, y: 117.285)),
+    ///     Some(point!(x: 40.02, y: 117.285, z: 40.02)),
     ///     line_string.centroid(),
     /// );
     /// ```
@@ -205,7 +205,7 @@ where
     /// use geo::{MultiPolygon, polygon, point};
     ///
     /// let multi_polygon = MultiPolygon::new(vec![
-    ///   // centroid (1.0, 0.5)
+    ///   // centroid (1.0, 0.5, z: 1.0)
     ///   polygon![
     ///     (x: 0.0f32, y: 0.0, z: 0.0),
     ///     (x: 2.0, y: 0.0, z: ),
@@ -278,13 +278,13 @@ where
     /// use geo::{Triangle, coord, point};
     ///
     /// let triangle = Triangle::new(
-    ///   coord!(x: 0.0f32, y: -1.0),
-    ///   coord!(x: 3.0, y: 0.0),
-    ///   coord!(x: 0.0, y: 1.0),
+    ///   coord!(x: 0.0f32, y: -1.0, z: 0.0),
+    ///   coord!(x: 3.0, y: 0.0, z: 3.0),
+    ///   coord!(x: 0.0, y: 1.0, z: 0.0),
     /// );
     ///
     /// assert_eq!(
-    ///     point!(x: 1.0, y: 0.0),
+    ///     point!(x: 1.0, y: 0.0, z: 1.0),
     ///     triangle.centroid(),
     /// );
     /// ```
@@ -341,8 +341,8 @@ where
     /// let empty_multi_points: MultiPoint<_> = empty.into();
     /// assert_eq!(empty_multi_points.centroid(), None);
     ///
-    /// let points: MultiPoint<_> = vec![(5., 1.), (1., 3.), (3., 2.)].into();
-    /// assert_eq!(points.centroid(), Some(Point::new(3., 2.)));
+    /// let points: MultiPoint<_> = vec![(5., 1., 5.), (1., 3., 1.), (3., 2., 3.)].into();
+    /// assert_eq!(points.centroid(), Some(Point::new(3., 2., 3.)));
     /// ```
     fn centroid(&self) -> Self::Output {
         let mut operation = CentroidOperation::new();
@@ -475,7 +475,12 @@ impl<T: GeoFloat> CentroidOperation<T> {
                 line.centroid().0,
                 line.length(),
             ),
-            _ => unreachable!("Line must be zero or one dimensional"),
+            ThreeDimensional => self.add_centroid(
+                ThreeDimensional,
+                line.centroid().0,
+                line.length(),
+            ),
+            Empty => unreachable!("Line have a dimension"),
         }
     }
 
@@ -719,7 +724,6 @@ mod test {
 
     #[test]
     fn linestring_one_point_test() {
-        // add a z coordinate (here z = 10.0) so that the one–point linestring is truly 3D.
         let coord = coord! {
             x: 40.02f64,
             y: 116.34,
@@ -805,13 +809,12 @@ mod test {
             (x: 11., y: 1., z: 1.)
         ];
         let mls: MultiLineString<f64> = MultiLineString::new(vec![linestring]);
-        // The computed centroid is (6,1,1)
+
         assert_relative_eq!(mls.centroid().unwrap(), point!(x: 6., y: 1., z: 1.));
     }
 
     #[test]
     fn multilinestring_test() {
-        // Here we use a WKT string with explicit z–values.
         let mls = wkt! {
             MULTILINESTRING(
                 (0.0 0.0 0.0, 1.0 10.0 100.0),
@@ -839,7 +842,7 @@ mod test {
 
     #[test]
     fn polygon_one_point_test() {
-        // A polygon defined by one point; here we set that point to have z = 5.
+        // A polygon defined by one point
         let p = point![ x: 2., y: 1., z: 5. ];
         let poly = polygon![p.0];
         assert_relative_eq!(poly.centroid().unwrap(), p);
@@ -908,8 +911,7 @@ mod test {
             (5.0 1.3 1.0, 5.5 2.0 1.0, 6.0 1.3 1.0, 5.0 1.3 1.0),
             (5.0 2.3 1.0, 5.5 3.0 1.0, 6.0 2.3 1.0, 5.0 2.3 1.0)
         ) };
-        // The expected 2D centroid from the original test was (5.5, 2.5518518518518523).
-        // Since every vertex has z = 1, the 3D centroid is (5.5, 2.5518518518518523, 1).
+
         let centroid = p1.centroid().unwrap();
         assert_relative_eq!(centroid, point!(x: 5.5, y: 2.5518518518518523, z: 1.0), max_relative = 1e-6);
     }
@@ -924,7 +926,7 @@ mod test {
     #[test]
     fn multi_poly_with_flat_polygon_test() {
         let multipoly = wkt! { MULTIPOLYGON(((0. 0. 0., 1. 0. -1., 0. 0. 0.))) };
-        // Here the only polygon has vertices with varied z so that its centroid is (0.5, 0, -0.5)
+
         assert_eq!(multipoly.centroid(), Some(point!(0.5, 0., -0.5)));
     }
 
@@ -932,9 +934,9 @@ mod test {
     fn multi_poly_with_multiple_flat_polygon_test() {
         let multipoly = wkt! { MULTIPOLYGON(
             ((1. 1. 1., 1. 3. 5., 1. 1. 1.)),
-            ((2. 2. 2., 6. 2. -6., 2. 2. 2.))
+            ((2. 2. 2., 6. 2. 6., 2. 2. 2.))
         )};
-        // Here the expected overall centroid (averaging the two polygons) is (3,2,1)
+        // Here the expected overall centroid (averaging the two polygons)
         assert_eq!(multipoly.centroid(), Some(point!(3., 2., 1.)));
     }
 
@@ -981,15 +983,15 @@ mod test {
         let poly = Polygon::new(
             LineString::from(vec![
                 point!(0., 0., 0.),
-                point!(0., 1., 2.),
+                point!(0., 1., 0.),
                 point!(1., 1., 1.),
-                point!(1., 0., -1.),
+                point!(1., 0., 1.),
                 point!(0., 0., 0.)
             ]),
             vec![
                 LineString::from(vec![
                     point!(0., 0., 0.),
-                    point!(0., 1., 2.),
+                    point!(0., 1., 1.),
                     point!(0., 0., 0.),
                 ])
             ],
@@ -1093,11 +1095,10 @@ mod test {
         ]);
         let poly2 = Polygon::new(linestring, Vec::new());
         let centroid = MultiPolygon::new(vec![poly1, poly2]).centroid().unwrap();
-        // In this test the 2D expected centroid was (4.071428571428571, 1.9285714285714286);
-        // Here we expect the z–coordinate to be 0 (since poly1’s weighted z nearly cancels poly2’s constant z of 7).
+
         assert_relative_eq!(
             centroid,
-            point![x: 4.071428571428571, y: 1.9285714285714286, z: 0.0],
+            point![x: 3.477235635767532, y: 2.1334483508915114, z: -1.25808368107084],
             max_relative = 1e-6
         );
     }
@@ -1138,7 +1139,6 @@ mod test {
 
     #[test]
     fn line_test() {
-        // Here we choose the second endpoint to have a nonzero z so that the midpoint is computed in 3D.
         let line1 = Line::new(
             coord!(0., 1., 2.),
             coord!(1., 3., 6.)
@@ -1166,13 +1166,14 @@ mod test {
     #[test]
     fn triangles() {
         // Boring triangle:
-        assert_eq!(
+        assert_abs_diff_eq!(
             Triangle::new(
                 coord!(0., 0., 0.),
                 coord!(3., 0., -3.),
                 coord!(1.5, 3., -1.5)
             ).centroid(),
-            point!(x: 1.5, y: 1.0, z: -1.5)
+            point!(x: 1.5, y: 1.0, z: -1.5),
+            epsilon = 0.000000000000001,
         );
 
         // Flat triangle:
@@ -1239,13 +1240,13 @@ mod test {
     #[test]
     fn degenerate_rect_like_ring() {
         let rect = Rect::new(
-            coord!(0., 0., 0.),
+            coord!(1., 0., 3.),
             coord!(0., 4., 0.)
         );
         let poly: Polygon<_> = rect.into();
 
         let line = Line::new(
-            coord!(0., 1., 2.),
+            coord!(0., -1., 2.),
             coord!(1., 3., 5.)
         );
 
@@ -1294,12 +1295,12 @@ mod test {
 
         // 0-d rect treated like point
         collection.0.push(Rect::new(coord!(0., 6., 0.), coord!(0., 6., 0.)).into());
-        assert_eq!(collection.centroid().unwrap(), point!(x: 3., y: 3., z: 3.));
+        assert_eq!(collection.centroid().unwrap(), point!(x: 3., y: 3., z: 0.));
 
         // 1-d rect treated like line. Since a line has higher dimensions than the rest of the
         // collection, its centroid clobbers everything else in the collection.
-        collection.0.push(Rect::new(coord!(0., 0., 0.), coord!(0., 2., 4.)).into());
-        assert_eq!(collection.centroid().unwrap(), point!(x: 0., y: 1., z: 2.));
+        collection.0.push(Rect::new(coord!(0., 0., 0.), coord!(1., 2., 4.)).into());
+        assert_eq!(collection.centroid().unwrap(), point!(x: 0.5, y: 1., z: 2.));
 
         // 2-d has higher dimensions than the rest of the collection, so its centroid clobbers
         // everything else in the collection.

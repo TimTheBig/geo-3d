@@ -229,7 +229,7 @@ mod test {
         assert_eq!(a.wedge_product(b), 1f64);
         assert_eq!(b.wedge_product(a), -1f64);
 
-        // Colinear case should yield zero
+        // Collinear case should yield zero
         let a = coord! { x: 2f64, y: 2f64, z: 3f64 };
         let b = coord! { x: 1f64, y: 1f64, z: 1f64 };
         assert_eq!(a.wedge_product(b), 0f64);
@@ -242,24 +242,22 @@ mod test {
         let b = coord! { x: 0.0, y: 1.0, z: 0.0 };
         let c = coord! { x: 0.0, y: 1.0, z: 0.0 };
 
-        assert_eq!(a.cross_product(b, c), coord! { x: 0.0, y: -1.0, z: 1.0 });
+        assert_eq!(a.cross_product(b, c), coord! { x: 0.0, y: 0.0, z: 0.0 });
         assert_eq!(b.cross_product(a, c), coord! { x: 0.0, y: 1.0, z: -1.0 });
         assert_eq!(c.cross_product(a, b), coord! { x: 0.0, y: 1.0, z: -1.0 });
 
-        // The following tests assume a 2-argument version of cross product (i.e. the 2D wedge)
-        // For the purpose of these tests we assume that calling cross_product with two arguments
-        // returns the scalar equivalent to wedge_product.
         let a = coord! { x: 1.0, y: 0.0, z: -1.0 };
         let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
+        let c = coord! { x: -1.0, y: 1.0, z: 1.0 };
 
-        // These tests compare to scalar values.
-        assert_eq!(a.cross_product(b), 1f64);
+        assert_eq!(a.cross_product(b, c), coord!(1.0, 1.0, 1.0));
         // Swapping the operands should negate the result.
-        assert_eq!(b.cross_product(a), -1f64);
+        assert_eq!(b.cross_product(a, c), coord!(-1.0, -1.0, -1.0));
 
         let a = coord! { x: 2.0, y: 2.0, z: 2.0 };
         let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
-        assert_eq!(a.cross_product(b), 0f64);
+        let c = coord! { x: -2.0, y: -2.0, z: -2.0 };
+        assert_eq!(c.cross_product(a, b), coord!(0.0, 0.0, 0.0));
     }
 
     #[test]

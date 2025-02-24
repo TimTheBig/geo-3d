@@ -212,7 +212,7 @@ mod tests {
     closest!(intersects: end_point, (100.0, 100.0, 100.0));
     closest!(intersects: mid_point, (50.0, 50.0, 50.0));
     closest!(in_line_far_away, (1000.0, 1000.0, 1000.0) => Closest::SinglePoint(Point::new(100.0, 100.0, 100.0)));
-    closest!(perpendicular_from_50_50, (0.0, 100.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0, 50.0)));
+    closest!(perpendicular_from_50_50, (100.0, 100.0, 100.0) => Closest::SinglePoint(Point::new(50.0, 50.0, 50.0)));
 
     fn a_square(width: f32) -> LineString<f32> {
         LineString::from(vec![

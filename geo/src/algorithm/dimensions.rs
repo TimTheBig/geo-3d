@@ -11,8 +11,8 @@ use crate::{CoordNum, GeoNum, GeometryCow};
 /// use geo_types::{Point, Rect, line_string};
 /// use geo::dimensions::{HasDimensions, Dimensions};
 ///
-/// let point = Point::new(0.0, 5.0);
-/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 5.0, y: 5.0, z: 5.0), (x: 0.0, y: 5.0)];
+/// let point = Point::new(0.0, 5.0, 0.0);
+/// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 5.0, y: 5.0, z: 5.0), (x: 0.0, y: 5.0, z: 0.0)];
 /// let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
 /// assert_eq!(Dimensions::ZeroDimensional, point.dimensions());
 /// assert_eq!(Dimensions::OneDimensional, line_string.dimensions());
@@ -55,7 +55,7 @@ pub trait HasDimensions {
     /// let empty_line_string: LineString = LineString::new(vec![]);
     /// assert!(empty_line_string.is_empty());
     ///
-    /// let point = Point::new(0.0, 0.0);
+    /// let point = Point::new(0.0, 0.0, 0.0);
     /// assert!(!point.is_empty());
     /// ```
     fn is_empty(&self) -> bool;
@@ -72,22 +72,22 @@ pub trait HasDimensions {
     /// use geo::dimensions::{Dimensions, HasDimensions};
     ///
     /// // normal rectangle
-    /// let rect = Rect::new((0.0, 0.0), (10.0, 10.0));
+    /// let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::TwoDimensional, rect.dimensions());
     ///
     /// // "rectangle" with zero height degenerates to a line
-    /// let degenerate_line_rect = Rect::new((0.0, 10.0), (10.0, 10.0));
+    /// let degenerate_line_rect = Rect::new((0.0, 10.0, 0.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::OneDimensional, degenerate_line_rect.dimensions());
     ///
     /// // "rectangle" with zero height and zero width degenerates to a point
-    /// let degenerate_point_rect = Rect::new((10.0, 10.0), (10.0, 10.0));
+    /// let degenerate_point_rect = Rect::new((10.0, 10.0, 10.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::ZeroDimensional, degenerate_point_rect.dimensions());
     ///
     /// // collections inherit the greatest dimensionality of their elements
     /// let geometry_collection = GeometryCollection::new(vec![degenerate_line_rect.into(), degenerate_point_rect.into()]);
     /// assert_eq!(Dimensions::OneDimensional, geometry_collection.dimensions());
     ///
-    /// let point = Point::new(10.0, 10.0);
+    /// let point = Point::new(10.0, 10.0, 10.0);
     /// assert_eq!(Dimensions::ZeroDimensional, point.dimensions());
     ///
     /// // An `Empty` dimensionality is distinct from, and less than, being 0-dimensional
@@ -106,20 +106,20 @@ pub trait HasDimensions {
     /// use geo::dimensions::{Dimensions, HasDimensions};
     ///
     /// // a point has no boundary
-    /// let point = Point::new(10.0, 10.0);
+    /// let point = Point::new(10.0, 10.0, 10.0);
     /// assert_eq!(Dimensions::Empty, point.boundary_dimensions());
     ///
     /// // a typical rectangle has a *line* (one dimensional) boundary
-    /// let rect = Rect::new((0.0, 0.0), (10.0, 10.0));
+    /// let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::OneDimensional, rect.boundary_dimensions());
     ///
     /// // a "rectangle" with zero height degenerates to a line, whose boundary is two points
-    /// let degenerate_line_rect = Rect::new((0.0, 10.0), (10.0, 10.0));
+    /// let degenerate_line_rect = Rect::new((0.0, 10.0, 0.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::ZeroDimensional, degenerate_line_rect.boundary_dimensions());
     ///
     /// // a "rectangle" with zero height and zero width degenerates to a point,
     /// // and points have no boundary
-    /// let degenerate_point_rect = Rect::new((10.0, 10.0), (10.0, 10.0));
+    /// let degenerate_point_rect = Rect::new((10.0, 10.0, 10.0), (10.0, 10.0, 10.0));
     /// assert_eq!(Dimensions::Empty, degenerate_point_rect.boundary_dimensions());
     ///
     /// // collections inherit the greatest dimensionality of their elements
@@ -171,7 +171,11 @@ impl<C: CoordNum> HasDimensions for Line<C> {
         if self.start == self.end {
             // degenerate line is a point
             Dimensions::ZeroDimensional
-        } else if (self.start.x == self.end.x) ^ (self.start.y == self.end.y) ^ (self.start.z == self.end.z) {
+        } else if self.start.x != self.end.x && self.start.y != self.end.y && self.start.z != self.end.z {
+            Dimensions::ThreeDimensional
+        } else if (self.start.x == self.end.x && self.start.y == self.end.y)
+            || (self.start.y == self.end.y && self.start.z == self.end.z)
+            || (self.start.z == self.end.z && self.start.x == self.end.x) {
             Dimensions::TwoDimensional
         } else {
             Dimensions::OneDimensional
@@ -214,7 +218,7 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
     /// let ls = line_string![(x: 0.,  y: 0., z: 0.), (x: 0., y: 1., z: 0.), (x: 1., y: 1., z: 1.)];
     /// assert_eq!(Dimensions::ZeroDimensional, ls.boundary_dimensions());
     ///
-    /// let ls = line_string![(x: 0.,  y: 0., z:0.), (x: 0., y: 1.), (x: 1., y: 1., z:1.), (x: 0., y: 0., z: 0.)];
+    /// let ls = line_string![(x: 0.,  y: 0., z:0.), (x: 0., y: 1., z: 0.), (x: 1., y: 1., z:1.), (x: 0., y: 0., z: 0.)];
     /// assert_eq!(Dimensions::Empty, ls.boundary_dimensions());
     ///```
     fn boundary_dimensions(&self) -> Dimensions {
