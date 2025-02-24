@@ -2,8 +2,8 @@
 
 use std::iter::FromIterator;
 
-use geo::algorithm::sweep::Intersections;
-use geo::{line_intersection::line_intersection, Line};
+use geo_3d::algorithm::sweep::Intersections;
+use geo_3d::{line_intersection::line_intersection, Line};
 
 use rstar::{primitives::GeomWithData, RTree};
 
