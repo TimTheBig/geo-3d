@@ -1,5 +1,5 @@
 use crate::{
-    Contains, ConvexHull, Coord, CoordNum, GeoFloat, Intersects, LineString, MultiPoint, Point,
+    Contains, ConvexHull, Coord, CoordNum, GeoNum, Intersects, LineString, MultiPoint, Point,
     Polygon,
 };
 use num_traits::Float;
@@ -40,7 +40,7 @@ pub trait KNearestConcaveHull {
 
 impl<T> KNearestConcaveHull for Vec<Point<T>>
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -50,7 +50,7 @@ where
 
 impl<T> KNearestConcaveHull for [Point<T>]
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -60,7 +60,7 @@ where
 
 impl<T> KNearestConcaveHull for Vec<Coord<T>>
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -70,7 +70,7 @@ where
 
 impl<T> KNearestConcaveHull for [Coord<T>]
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -80,7 +80,7 @@ where
 
 impl<T> KNearestConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     type Scalar = T;
     fn k_nearest_concave_hull(&self, k: u32) -> Polygon<Self::Scalar> {
@@ -90,7 +90,7 @@ where
 
 fn concave_hull<'a, T>(coords: impl Iterator<Item = &'a Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: 'a + GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: 'a + GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     let dataset = prepare_dataset(coords);
     concave_hull_inner(dataset, k)
@@ -101,7 +101,7 @@ const DELTA: f32 = 0.000000001;
 /// Removes duplicate coords from the dataset.
 fn prepare_dataset<'a, T>(coords: impl Iterator<Item = &'a Coord<T>>) -> rstar::RTree<Coord<T>>
 where
-    T: 'a + GeoFloat + RTreeNum,
+    T: 'a + GeoNum + RTreeNum,
 {
     let mut dataset: rstar::RTree<Coord<T>> = rstar::RTree::new();
     for coord in coords {
@@ -122,14 +122,14 @@ where
 /// (see the value of DELTA constant).
 fn coords_are_equal<T>(c1: &Coord<T>, c2: &Coord<T>) -> bool
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoNum + RTreeNum,
 {
     float_equal(c1.x, c2.x) && float_equal(c1.y, c2.y)
 }
 
 fn float_equal<T>(a: T, b: T) -> bool
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     let da = a * T::from(DELTA)
         .expect("Conversion from constant is always valid.")
@@ -139,7 +139,7 @@ where
 
 fn polygon_from_tree<T>(dataset: &rstar::RTree<Coord<T>>) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoNum + RTreeNum,
 {
     assert!(dataset.size() <= 3);
 
@@ -154,7 +154,7 @@ where
 
 fn concave_hull_inner<T>(original_dataset: rstar::RTree<Coord<T>>, k: u32) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     let set_length = original_dataset.size();
     if set_length <= 3 {
@@ -214,7 +214,7 @@ where
 
 fn fall_back_hull<T>(dataset: &rstar::RTree<Coord<T>>) -> Polygon<T>
 where
-    T: GeoFloat + RTreeNum + Into<f64> + From<f64>,
+    T: GeoNum + RTreeNum + Into<f64> + From<f64>,
 {
     let multipoint = MultiPoint::from(dataset.iter().cloned().collect::<Vec<Coord<T>>>());
     multipoint.convex_hull().expect("This MultiPoint should be valid")
@@ -230,7 +230,7 @@ fn adjust_k(k: u32) -> u32 {
 
 fn get_first_coord<T>(coord_set: &rstar::RTree<Coord<T>>) -> Coord<T>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoNum + RTreeNum,
 {
     let mut min_y = Float::max_value();
     let mut result = coord_set
@@ -254,7 +254,7 @@ fn get_nearest_coords<'a, T>(
     candidate_no: u32,
 ) -> impl Iterator<Item = &'a Coord<T>>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoNum + RTreeNum,
 {
     dataset
         .nearest_neighbor_iter(base_coord)
@@ -263,7 +263,7 @@ where
 
 fn sort_by_angle<T>(coords: &mut [&Coord<T>], curr_coord: &Coord<T>, prev_coord: &Coord<T>)
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     let base_angle = pseudo_angle(prev_coord.x - curr_coord.x, prev_coord.y - curr_coord.y);
     coords.sort_by(|a, b| {
@@ -283,7 +283,7 @@ where
 
 fn pseudo_angle<T>(dx: T, dy: T) -> T
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     if dx == T::zero() && dy == T::zero() {
         return T::zero();
@@ -299,7 +299,7 @@ where
 
 fn intersects<T>(hull: &[Coord<T>], line: &[&Coord<T>; 2]) -> bool
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     // This is the case of finishing the contour.
     if *line[1] == hull[0] {
@@ -314,7 +314,7 @@ where
 
 fn coord_inside<T>(coord: &Coord<T>, poly: &Polygon<T>) -> bool
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     poly.contains(coord) || poly.exterior().contains(coord)
 }

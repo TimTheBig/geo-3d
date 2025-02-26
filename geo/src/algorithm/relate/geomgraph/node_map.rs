@@ -1,5 +1,5 @@
 use super::{CoordNode, CoordPos, EdgeEnd};
-use crate::{Coord, GeoFloat};
+use crate::{Coord, GeoNum};
 
 use std::collections::BTreeMap;
 use std::fmt;
@@ -9,7 +9,7 @@ use std::marker::PhantomData;
 #[derive(Clone, PartialEq)]
 pub(crate) struct NodeMap<F, NF>
 where
-    F: GeoFloat,
+    F: GeoNum,
     NF: NodeFactory<F>,
 {
     map: BTreeMap<NodeKey<F>, NF::Node>,
@@ -17,14 +17,14 @@ where
 }
 
 /// Creates the node stored in `NodeMap`
-pub(crate) trait NodeFactory<F: GeoFloat>: PartialEq {
+pub(crate) trait NodeFactory<F: GeoNum>: PartialEq {
     type Node;
     fn create_node(coordinate: Coord<F>) -> Self::Node;
 }
 
 impl<F, NF> fmt::Debug for NodeMap<F, NF>
 where
-    F: GeoFloat,
+    F: GeoNum,
     NF: NodeFactory<F>,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -35,9 +35,9 @@ where
 }
 
 #[derive(Clone)]
-struct NodeKey<F: GeoFloat>(Coord<F>);
+struct NodeKey<F: GeoNum>(Coord<F>);
 
-impl<F: GeoFloat> std::cmp::Ord for NodeKey<F> {
+impl<F: GeoNum> std::cmp::Ord for NodeKey<F> {
     fn cmp(&self, other: &NodeKey<F>) -> std::cmp::Ordering {
         debug_assert!(!self.0.x.is_nan());
         debug_assert!(!self.0.y.is_nan());
@@ -47,13 +47,13 @@ impl<F: GeoFloat> std::cmp::Ord for NodeKey<F> {
     }
 }
 
-impl<F: GeoFloat> std::cmp::PartialOrd for NodeKey<F> {
+impl<F: GeoNum> std::cmp::PartialOrd for NodeKey<F> {
     fn partial_cmp(&self, other: &NodeKey<F>) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<F: GeoFloat> std::cmp::PartialEq for NodeKey<F> {
+impl<F: GeoNum> std::cmp::PartialEq for NodeKey<F> {
     fn eq(&self, other: &NodeKey<F>) -> bool {
         debug_assert!(!self.0.x.is_nan());
         debug_assert!(!self.0.y.is_nan());
@@ -63,11 +63,11 @@ impl<F: GeoFloat> std::cmp::PartialEq for NodeKey<F> {
     }
 }
 
-impl<F: GeoFloat> std::cmp::Eq for NodeKey<F> {}
+impl<F: GeoNum> std::cmp::Eq for NodeKey<F> {}
 
 impl<F, NF> NodeMap<F, NF>
 where
-    F: GeoFloat,
+    F: GeoNum,
     NF: NodeFactory<F>,
 {
     pub fn new() -> Self {

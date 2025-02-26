@@ -1,9 +1,9 @@
-use crate::{GeoFloat, Point};
+use crate::{GeoNum, Point};
 
 /// The result of trying to find the closest spot on an object to a point.
 #[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Closest<F: GeoFloat> {
+pub enum Closest<F: GeoNum> {
     /// The point actually intersects with the object.
     Intersection(Point<F>),
     /// There is exactly one place on this object which is closest to the point.
@@ -12,7 +12,7 @@ pub enum Closest<F: GeoFloat> {
     Indeterminate,
 }
 
-impl<F: GeoFloat> Closest<F> {
+impl<F: GeoNum> Closest<F> {
     /// Compare two `Closest`s relative to `p` and return a copy of the best
     /// one.
     pub fn best_of_two(&self, other: &Self, p: Point<F>) -> Self {

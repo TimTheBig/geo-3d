@@ -1,5 +1,5 @@
 use super::{utils, CoordIndex, Validation};
-use crate::{GeoFloat, Rect};
+use crate::{GeoNum, Rect};
 
 use std::fmt;
 
@@ -22,7 +22,7 @@ impl fmt::Display for InvalidRect {
         }
     }
 }
-impl<F: GeoFloat> Validation for Rect<F> {
+impl<F: GeoNum> Validation for Rect<F> {
     type Error = InvalidRect;
 
     fn visit_validation<T>(

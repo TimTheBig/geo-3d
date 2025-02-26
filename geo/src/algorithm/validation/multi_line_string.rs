@@ -1,6 +1,6 @@
 use super::{GeometryIndex, Validation};
 use crate::algorithm::validation::line_string::InvalidLineString;
-use crate::{GeoFloat, MultiLineString};
+use crate::{GeoNum, MultiLineString};
 
 use std::fmt;
 
@@ -23,7 +23,7 @@ impl fmt::Display for InvalidMultiLineString {
 
 impl std::error::Error for InvalidMultiLineString {}
 
-impl<F: GeoFloat> Validation for MultiLineString<F> {
+impl<F: GeoNum> Validation for MultiLineString<F> {
     type Error = InvalidMultiLineString;
 
     fn visit_validation<T>(

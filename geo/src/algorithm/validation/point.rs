@@ -1,5 +1,5 @@
 use super::{utils, Validation};
-use crate::{GeoFloat, Point};
+use crate::{GeoNum, Point};
 
 use std::fmt;
 
@@ -19,7 +19,7 @@ impl fmt::Display for InvalidPoint {
 
 impl std::error::Error for InvalidPoint {}
 
-impl<F: GeoFloat> Validation for Point<F> {
+impl<F: GeoNum> Validation for Point<F> {
     type Error = InvalidPoint;
 
     fn visit_validation<T>(

@@ -1,5 +1,5 @@
 use super::{GeometryIndex, InvalidGeometry, Validation};
-use crate::{GeoFloat, GeometryCollection};
+use crate::{GeoNum, GeometryCollection};
 
 use std::fmt;
 
@@ -22,7 +22,7 @@ impl fmt::Display for InvalidGeometryCollection {
     }
 }
 
-impl<F: GeoFloat> Validation for GeometryCollection<F> {
+impl<F: GeoNum> Validation for GeometryCollection<F> {
     type Error = InvalidGeometryCollection;
 
     fn visit_validation<T>(

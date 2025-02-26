@@ -1,6 +1,6 @@
 use crate::coords_iter::CoordsIter;
 use crate::line_measures::Distance;
-use crate::{GeoFloat, LineString};
+use crate::{GeoNum, LineString};
 use num_traits::FromPrimitive;
 
 /// Determine the similarity between two `LineStrings` using the [Frechet distance].
@@ -43,7 +43,7 @@ pub trait FrechetDistance<T, Rhs = Self> {
 
 impl<T> FrechetDistance<T, LineString<T>> for LineString<T>
 where
-    T: GeoFloat + FromPrimitive,
+    T: GeoNum + FromPrimitive,
 {
     fn frechet_distance(&self, ls: &LineString<T>) -> T {
         if self.coords_count() != 0 && ls.coords_count() != 0 {
@@ -61,7 +61,7 @@ where
 
 struct Data<'a, T>
 where
-    T: GeoFloat + FromPrimitive,
+    T: GeoNum + FromPrimitive,
 {
     cache: Vec<T>,
     ls_a: &'a LineString<T>,
@@ -70,7 +70,7 @@ where
 
 impl<T> Data<'_, T>
 where
-    T: GeoFloat + FromPrimitive,
+    T: GeoNum + FromPrimitive,
 {
     /// [Reference implementation]: https://github.com/joaofig/discrete-frechet/tree/master
     fn compute_linear(&mut self) -> T {

@@ -1,7 +1,7 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
 use crate::geometry::*;
-use crate::{GeoFloat, GeoNum};
+use crate::GeoNum;
 use crate::{HasDimensions, Relate};
 
 // ┌─────────────────────────────┐
@@ -152,49 +152,49 @@ impl<T: GeoNum> Contains<MultiPoint<T>> for MultiPolygon<T> {
     }
 }
 
-impl<F: GeoFloat> Contains<Line<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<Line<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &Line<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<LineString<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<LineString<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &LineString<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<MultiLineString<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<MultiLineString<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &MultiLineString<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<Polygon<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<Polygon<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &Polygon<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<MultiPolygon<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<MultiPolygon<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &MultiPolygon<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<GeometryCollection<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<GeometryCollection<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &GeometryCollection<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<Rect<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<Rect<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &Rect<F>) -> bool {
         rhs.relate(self).is_within()
     }
 }
 
-impl<F: GeoFloat> Contains<Triangle<F>> for MultiPolygon<F> {
+impl<F: GeoNum> Contains<Triangle<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &Triangle<F>) -> bool {
         rhs.relate(self).is_within()
     }

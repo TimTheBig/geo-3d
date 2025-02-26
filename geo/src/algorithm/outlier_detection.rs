@@ -1,7 +1,7 @@
 use std::iter::Sum;
 use std::ops::RangeInclusive;
 
-use crate::{GeoFloat, MultiPoint, Point};
+use crate::{GeoNum, MultiPoint, Point};
 
 use rstar::primitives::GeomWithData;
 use rstar::RTree;
@@ -25,7 +25,7 @@ use rstar::RTree;
 /// allowing aggregations to be carried out over the resulting data.
 pub trait OutlierDetection<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     /// The LOF algorithm. `k_neighbours` specifies the number of neighbours to use for local outlier
     /// classification. The paper linked above (see p. 100) suggests a `k_neighbours` value of 10 - 20
@@ -171,7 +171,7 @@ where
 #[derive(Clone, Debug)]
 pub struct PreparedDetector<'a, T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     tree: RTree<GeomWithData<Point<T>, usize>>,
     points: &'a [Point<T>],
@@ -179,7 +179,7 @@ where
 
 impl<'a, T> PreparedDetector<'a, T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     /// Create a new "prepared" detector which allows repeated LOF algorithm calls with varying neighbour sizes
     fn new(points: &'a [Point<T>]) -> Self {
@@ -204,7 +204,7 @@ fn lof<T>(
     kneighbours: usize,
 ) -> Vec<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     debug_assert!(kneighbours > 0);
     if points.len() <= kneighbours || kneighbours < 1 {
@@ -269,7 +269,7 @@ where
 
 impl<T> OutlierDetection<T> for MultiPoint<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     fn outliers(&self, k_neighbours: usize) -> Vec<T> {
         let pd = self.prepared_detector();
@@ -303,7 +303,7 @@ where
 
 impl<T> OutlierDetection<T> for [Point<T>]
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     fn outliers(&self, k_neighbours: usize) -> Vec<T> {
         let pd = self.prepared_detector();

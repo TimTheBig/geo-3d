@@ -2,8 +2,8 @@ use std::{cmp::Ordering, ops::Deref};
 
 use super::SweepPoint;
 use crate::{
-    line_intersection::line_intersection, Coord, GeoFloat, GeoNum, Kernel, Line, LineIntersection,
-    Orientation,
+    line_intersection::line_intersection, Coord, GeoNum, Kernel,
+    Line, LineIntersection, Orientation,
 };
 
 /// Either a line segment or a point.
@@ -206,7 +206,7 @@ impl<T: GeoNum> PartialOrd for LineOrPoint<T> {
     }
 }
 
-impl<T: GeoFloat> LineOrPoint<T> {
+impl<T: GeoNum> LineOrPoint<T> {
     /// Intersect a line with self and return a point, a overlapping segment or `None`.
     ///
     /// The `other` argument must be a line variant (debug builds will panic otherwise).
@@ -333,7 +333,7 @@ impl<T: GeoFloat> LineOrPoint<T> {
 mod tests {
     use std::cmp::Ordering;
     use geo_types::{Coord, LineString};
-    use crate::{GeoFloat, GeoNum, Kernel};
+    use crate::{GeoNum, Kernel};
     use super::LineOrPoint;
 
     // Used for debugging sweep fp issues
@@ -348,7 +348,7 @@ mod tests {
         let pt_16 = Coord::from((-36.048578439260666, 237.8638242992725, -36.48784219165816));
         let pt_17 = Coord::from((3.545624214480127, 197.39109414073673, 237.7989220287436));
 
-        fn check_isection<T: GeoFloat>(abcd: [Coord<T>; 4]) -> Option<LineOrPoint<T>> {
+        fn check_isection<T: GeoNum>(abcd: [Coord<T>; 4]) -> Option<LineOrPoint<T>> {
             let l1 = LineOrPoint::from((abcd[0].into(), abcd[1].into()));
             let l2 = LineOrPoint::from((abcd[2].into(), abcd[3].into()));
             l1.intersect_line_ordered(&l2)

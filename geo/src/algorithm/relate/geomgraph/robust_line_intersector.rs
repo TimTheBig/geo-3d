@@ -1,7 +1,7 @@
 use super::{LineIntersection, LineIntersector};
 use crate::kernels::{Kernel, Orientation, RobustKernel};
 use crate::{BoundingRect, Contains, Intersects};
-use crate::{Coord, GeoFloat, Line, Rect};
+use crate::{Coord, GeoNum, Line, Rect};
 use num_traits::Zero;
 
 /// A robust version of [LineIntersector](traits.LineIntersector).
@@ -14,7 +14,7 @@ impl RobustLineIntersector {
     }
 }
 
-impl<F: GeoFloat> LineIntersector<F> for RobustLineIntersector {
+impl<F: GeoNum> LineIntersector<F> for RobustLineIntersector {
     fn compute_intersection(&mut self, p: Line<F>, q: Line<F>) -> Option<LineIntersection<F>> {
         crate::line_intersection::line_intersection(p, q)
     }
@@ -37,7 +37,7 @@ impl RobustLineIntersector {
     /// My hypothesis is that the function is safe to use for points which are the
     /// result of _rounding_ points which lie on the line,
     /// but not safe to use for _truncated_ points.
-    pub fn compute_edge_distance<F: GeoFloat>(intersection: Coord<F>, line: Line<F>) -> F {
+    pub fn compute_edge_distance<F: GeoNum>(intersection: Coord<F>, line: Line<F>) -> F {
         let dx = (line.end.x - line.start.x).abs();
         let dy = (line.end.y - line.start.y).abs();
 

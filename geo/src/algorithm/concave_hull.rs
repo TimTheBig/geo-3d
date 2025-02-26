@@ -1,7 +1,7 @@
 use crate::convex_hull::qhull;
 use crate::utils::partial_min;
 use crate::{
-    coord, Centroid, Coord, CoordNum, Distance, GeoFloat, Length, Line, LineString,
+    coord, Centroid, Coord, CoordNum, Distance, GeoNum, Length, Line, LineString,
     MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,
 };
 use quickhull::ErrorKind as QHullError;
@@ -49,7 +49,7 @@ pub trait ConcaveHull {
 
 impl<T> ConcaveHull for Polygon<T>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
@@ -60,7 +60,7 @@ where
 
 impl<T> ConcaveHull for MultiPolygon<T>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
@@ -75,7 +75,7 @@ where
 
 impl<T> ConcaveHull for LineString<T>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: Self::Scalar) -> Result<Polygon<Self::Scalar>, QHullError> {
@@ -85,7 +85,7 @@ where
 
 impl<T> ConcaveHull for MultiLineString<T>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: T) -> Result<Polygon<T>, QHullError> {
@@ -96,7 +96,7 @@ where
 
 impl<T> ConcaveHull for MultiPoint<T>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     type Scalar = T;
     fn concave_hull(&self, concavity: T) -> Result<Polygon<T>, QHullError> {
@@ -114,7 +114,7 @@ fn find_point_closest_to_line<T>(
     line_tree: &RTree<Line<T>>,
 ) -> Option<Coord<T>>
 where
-    T: GeoFloat + RTreeNum,
+    T: GeoNum + RTreeNum,
 {
     let h = max_dist + max_dist;
     let w = line.length() + h;
@@ -193,7 +193,7 @@ where
 // https://github.com/mapbox/concaveman/blob/54838e1/index.js#L11
 fn concave_hull<T>(coords: &mut [Coord<T>], concavity: T) -> Result<LineString<T>, QHullError>
 where
-    T: GeoFloat + RTreeNum + From<f64>,
+    T: GeoNum + RTreeNum + From<f64>,
 {
     let hull = qhull::quick_hull(coords);
 

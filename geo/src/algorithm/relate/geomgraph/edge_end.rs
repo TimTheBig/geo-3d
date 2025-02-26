@@ -1,5 +1,5 @@
 use super::{CoordNode, Edge, Label, Quadrant};
-use crate::{coord, Coord, GeoFloat};
+use crate::{coord, Coord, GeoNum};
 
 use std::cell::RefCell;
 use std::fmt;
@@ -18,7 +18,7 @@ use std::fmt;
 #[derive(Clone, Debug)]
 pub(crate) struct EdgeEnd<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     label: Label,
     key: EdgeEndKey<F>,
@@ -27,7 +27,7 @@ where
 #[derive(Clone)]
 pub(crate) struct EdgeEndKey<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     coord_0: Coord<F>,
     coord_1: Coord<F>,
@@ -35,7 +35,7 @@ where
     quadrant: Option<Quadrant>,
 }
 
-impl<F: GeoFloat> fmt::Debug for EdgeEndKey<F> {
+impl<F: GeoNum> fmt::Debug for EdgeEndKey<F> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("EdgeEndKey")
             .field(
@@ -49,7 +49,7 @@ impl<F: GeoFloat> fmt::Debug for EdgeEndKey<F> {
 
 impl<F> EdgeEnd<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub fn new(coord_0: Coord<F>, coord_1: Coord<F>, label: Label) -> EdgeEnd<F> {
         let delta = coord_1 - coord_0;
@@ -82,11 +82,11 @@ where
     }
 }
 
-impl<F> std::cmp::Eq for EdgeEndKey<F> where F: GeoFloat {}
+impl<F> std::cmp::Eq for EdgeEndKey<F> where F: GeoNum {}
 
 impl<F> std::cmp::PartialEq for EdgeEndKey<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     fn eq(&self, other: &EdgeEndKey<F>) -> bool {
         self.delta == other.delta
@@ -95,7 +95,7 @@ where
 
 impl<F> std::cmp::PartialOrd for EdgeEndKey<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     fn partial_cmp(&self, other: &EdgeEndKey<F>) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
@@ -104,7 +104,7 @@ where
 
 impl<F> std::cmp::Ord for EdgeEndKey<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     fn cmp(&self, other: &EdgeEndKey<F>) -> std::cmp::Ordering {
         self.compare_direction(other)
@@ -113,7 +113,7 @@ where
 
 impl<F> EdgeEndKey<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub(crate) fn compare_direction(&self, other: &EdgeEndKey<F>) -> std::cmp::Ordering {
         use std::cmp::Ordering;

@@ -1,6 +1,6 @@
 use crate::algorithm::{CoordsIter, Distance};
 use crate::geometry::{Coord, Line, LineString, MultiLineString, MultiPolygon, Polygon};
-use crate::GeoFloat;
+use crate::GeoNum;
 
 const LINE_STRING_INITIAL_MIN: usize = 2;
 const POLYGON_INITIAL_MIN: usize = 4;
@@ -11,7 +11,7 @@ const POLYGON_INITIAL_MIN: usize = 4;
 #[derive(Copy, Clone)]
 struct RdpIndex<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     index: usize,
     coord: Coord<T>,
@@ -23,7 +23,7 @@ fn rdp<T, I: Iterator<Item = Coord<T>>, const INITIAL_MIN: usize>(
     epsilon: &T,
 ) -> Vec<Coord<T>>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     // Epsilon must be greater than zero for any meaningful simplification to happen
     if *epsilon <= T::zero() {
@@ -49,7 +49,7 @@ fn calculate_rdp_indices<T, const INITIAL_MIN: usize>(
     epsilon: &T,
 ) -> Vec<usize>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     if *epsilon <= T::zero() {
         return rdp_indices
@@ -77,7 +77,7 @@ fn compute_rdp<T, const INITIAL_MIN: usize>(
     epsilon: &T,
 ) -> Vec<RdpIndex<T>>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     if rdp_indices.is_empty() {
         return vec![];
@@ -196,7 +196,7 @@ pub trait Simplify<T, Epsilon = T> {
     /// ```
     fn simplify(&self, epsilon: &T) -> Self
     where
-        T: GeoFloat;
+        T: GeoNum;
 }
 
 /// Simplifies a geometry, returning the retained _indices_ of the input.
@@ -241,12 +241,12 @@ pub trait SimplifyIdx<T, Epsilon = T> {
     /// ```
     fn simplify_idx(&self, epsilon: &T) -> Vec<usize>
     where
-        T: GeoFloat;
+        T: GeoNum;
 }
 
 impl<T> Simplify<T> for LineString<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn simplify(&self, epsilon: &T) -> Self {
         LineString::from(rdp::<_, _, LINE_STRING_INITIAL_MIN>(
@@ -258,7 +258,7 @@ where
 
 impl<T> SimplifyIdx<T> for LineString<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn simplify_idx(&self, epsilon: &T) -> Vec<usize> {
         calculate_rdp_indices::<_, LINE_STRING_INITIAL_MIN>(
@@ -278,7 +278,7 @@ where
 
 impl<T> Simplify<T> for MultiLineString<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn simplify(&self, epsilon: &T) -> Self {
         MultiLineString::new(self.iter().map(|l| l.simplify(epsilon)).collect())
@@ -287,7 +287,7 @@ where
 
 impl<T> Simplify<T> for Polygon<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn simplify(&self, epsilon: &T) -> Self {
         Polygon::new(
@@ -307,7 +307,7 @@ where
 
 impl<T> Simplify<T> for MultiPolygon<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn simplify(&self, epsilon: &T) -> Self {
         MultiPolygon::new(self.iter().map(|p| p.simplify(epsilon)).collect())

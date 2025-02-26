@@ -2,7 +2,7 @@ use std::iter::Sum;
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::algorithm::{CoordsIter, HasDimensions};
 use crate::geometry::*;
-use crate::{CoordNum, GeoFloat};
+use crate::{CoordNum, GeoNum};
 
 // ┌────────────────────────────────┐
 // │ Implementations for Point      │
@@ -128,7 +128,7 @@ where
 
 impl<T> Contains<GeometryCollection<T>> for Point<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     fn contains(&self, geometry_collection: &GeometryCollection<T>) -> bool {
         if geometry_collection.is_empty() {

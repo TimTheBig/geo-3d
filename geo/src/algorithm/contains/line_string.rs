@@ -1,7 +1,7 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
 use crate::algorithm::Intersects;
 use crate::geometry::*;
-use crate::{CoordNum, GeoFloat, GeoNum, HasDimensions};
+use crate::{CoordNum, GeoNum, HasDimensions};
 
 // ┌────────────────────────────────┐
 // │ Implementations for LineString │

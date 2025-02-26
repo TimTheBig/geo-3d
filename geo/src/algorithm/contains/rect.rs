@@ -1,7 +1,7 @@
 use std::iter::Sum;
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
 use crate::{geometry::*, Area, CoordsIter, HasDimensions, Intersects};
-use crate::{CoordNum, GeoFloat};
+use crate::{CoordNum, GeoNum};
 
 // ┌──────────────────────────┐
 // │ Implementations for Rect │

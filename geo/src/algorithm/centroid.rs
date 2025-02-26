@@ -4,7 +4,7 @@ use crate::area::{get_linestring_area, Area};
 use crate::dimensions::{Dimensions, Dimensions::*, HasDimensions};
 use crate::geometry::*;
 use crate::line_measures::Length;
-use crate::GeoFloat;
+use crate::GeoNum;
 
 /// Calculation of the centroid.
 /// The centroid is the arithmetic mean position of all points in the shape.
@@ -59,7 +59,7 @@ pub trait Centroid {
 
 impl<T> Centroid for Line<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Point<T>;
 
@@ -89,7 +89,7 @@ where
 
 impl<T> Centroid for LineString<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -123,7 +123,7 @@ where
 
 impl<T> Centroid for MultiLineString<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -158,7 +158,7 @@ where
 
 impl<T> Centroid for Polygon<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -191,7 +191,7 @@ where
 
 impl<T> Centroid for MultiPolygon<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -236,7 +236,7 @@ where
 
 impl<T> Centroid for Rect<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Point<T>;
 
@@ -265,7 +265,7 @@ where
 
 impl<T> Centroid for Triangle<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Point<T>;
 
@@ -299,7 +299,7 @@ where
 
 impl<T> Centroid for Point<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Point<T>;
 
@@ -325,7 +325,7 @@ where
 
 impl<T> Centroid for MultiPoint<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -353,7 +353,7 @@ where
 
 impl<T> Centroid for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -388,7 +388,7 @@ where
 
 impl<T> Centroid for GeometryCollection<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     type Output = Option<Point<T>>;
 
@@ -439,8 +439,8 @@ where
     }
 }
 
-struct CentroidOperation<T: GeoFloat>(Option<WeightedCentroid<T>>);
-impl<T: GeoFloat> CentroidOperation<T> {
+struct CentroidOperation<T: GeoNum>(Option<WeightedCentroid<T>>);
+impl<T: GeoNum> CentroidOperation<T> {
     fn new() -> Self {
         CentroidOperation(None)
     }
@@ -600,7 +600,7 @@ impl<T: GeoFloat> CentroidOperation<T> {
                 let centroid = (triangle.0 + triangle.1 + triangle.2) / T::from(3).unwrap();
                 self.add_centroid(ThreeDimensional, centroid, triangle.unsigned_area());
             }
-            Empty => unreachable!("Rect dimensions cannot be empty"),
+            Empty => unreachable!("Tri dimensions cannot be empty"),
         }
     }
 
@@ -668,7 +668,7 @@ impl<T: GeoFloat> CentroidOperation<T> {
 }
 
 // Aggregated state for accumulating the centroid of a geometry or collection of geometries.
-struct WeightedCentroid<T: GeoFloat> {
+struct WeightedCentroid<T: GeoNum> {
     weight: T,
     accumulated: Coord<T>,
     /// Collections of Geometries can have different dimensionality. Centroids must be considered
@@ -684,7 +684,7 @@ struct WeightedCentroid<T: GeoFloat> {
     dimensions: Dimensions,
 }
 
-impl<T: GeoFloat> WeightedCentroid<T> {
+impl<T: GeoNum> WeightedCentroid<T> {
     fn add_assign(&mut self, b: WeightedCentroid<T>) {
         match self.dimensions.cmp(&b.dimensions) {
             Ordering::Less => *self = b,

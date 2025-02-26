@@ -85,7 +85,7 @@ macro_rules! impl_contains_from_relate {
         $(
             impl<T> Contains<$target> for $for
             where
-                T: GeoFloat
+                T: GeoNum
             {
                 fn contains(&self, target: &$target) -> bool {
                     use $crate::algorithm::Relate;
@@ -101,7 +101,7 @@ macro_rules! impl_contains_geometry_for {
     ($geom_type: ty) => {
         impl<T> Contains<Geometry<T>> for $geom_type
         where
-            T: GeoFloat + std::iter::Sum,
+            T: GeoNum + std::iter::Sum,
         {
             fn contains(&self, geometry: &Geometry<T>) -> bool {
                 match geometry {

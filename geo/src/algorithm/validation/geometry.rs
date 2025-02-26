@@ -4,7 +4,7 @@ use super::{
     InvalidMultiPoint, InvalidMultiPolygon, InvalidPoint, InvalidPolygon, InvalidRect,
     InvalidTriangle,
 };
-use crate::{GeoFloat, Geometry};
+use crate::{GeoNum, Geometry};
 
 use crate::geometry_cow::GeometryCow;
 use std::fmt;
@@ -59,7 +59,7 @@ impl std::error::Error for InvalidGeometry {
     }
 }
 
-impl<F: GeoFloat> Validation for Geometry<F> {
+impl<F: GeoNum> Validation for Geometry<F> {
     type Error = InvalidGeometry;
 
     fn visit_validation<T>(
@@ -102,7 +102,7 @@ impl<F: GeoFloat> Validation for Geometry<F> {
     }
 }
 
-impl<F: GeoFloat> Validation for GeometryCow<'_, F> {
+impl<F: GeoNum> Validation for GeometryCow<'_, F> {
     type Error = InvalidGeometry;
 
     fn visit_validation<T>(

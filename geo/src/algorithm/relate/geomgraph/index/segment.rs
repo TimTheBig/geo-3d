@@ -1,8 +1,8 @@
 use crate::Coord;
-use crate::GeoFloat;
+use crate::GeoNum;
 
 #[derive(Debug, Clone)]
-pub(crate) struct Segment<F: GeoFloat + rstar::RTreeNum> {
+pub(crate) struct Segment<F: GeoNum + rstar::RTreeNum> {
     pub edge_idx: usize,
     pub segment_idx: usize,
     pub envelope: rstar::AABB<Coord<F>>,
@@ -10,7 +10,7 @@ pub(crate) struct Segment<F: GeoFloat + rstar::RTreeNum> {
 
 impl<F> Segment<F>
 where
-    F: GeoFloat + rstar::RTreeNum,
+    F: GeoNum + rstar::RTreeNum,
 {
     pub fn new(edge_idx: usize, segment_idx: usize, p1: Coord<F>, p2: Coord<F>) -> Self {
         Self {
@@ -23,7 +23,7 @@ where
 
 impl<F> rstar::RTreeObject for Segment<F>
 where
-    F: GeoFloat + rstar::RTreeNum,
+    F: GeoNum + rstar::RTreeNum,
 {
     type Envelope = rstar::AABB<Coord<F>>;
 

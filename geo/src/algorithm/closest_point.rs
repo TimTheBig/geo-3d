@@ -1,7 +1,7 @@
 use crate::algorithm::{Intersects, Length};
 use crate::geometry::*;
 use crate::Closest;
-use crate::GeoFloat;
+use crate::GeoNum;
 
 use std::iter;
 
@@ -24,7 +24,7 @@ use std::iter;
 /// let closest = horizontal_line.closest_point(&p);
 /// assert_eq!(closest, Closest::SinglePoint(Point::new(0.0, 0.0, 0.0)));
 /// ```
-pub trait ClosestPoint<F: GeoFloat, Rhs = Point<F>> {
+pub trait ClosestPoint<F: GeoNum, Rhs = Point<F>> {
     /// Find the closest point between `self` and `p`.
     fn closest_point(&self, p: &Rhs) -> Closest<F>;
 }
@@ -32,14 +32,14 @@ pub trait ClosestPoint<F: GeoFloat, Rhs = Point<F>> {
 impl<F, C> ClosestPoint<F> for &'_ C
 where
     C: ClosestPoint<F>,
-    F: GeoFloat,
+    F: GeoNum,
 {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         (*self).closest_point(p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for Point<F> {
+impl<F: GeoNum> ClosestPoint<F> for Point<F> {
     fn closest_point(&self, p: &Self) -> Closest<F> {
         if self == p {
             Closest::Intersection(*self)
@@ -50,7 +50,7 @@ impl<F: GeoFloat> ClosestPoint<F> for Point<F> {
 }
 
 #[allow(clippy::many_single_char_names)]
-impl<F: GeoFloat> ClosestPoint<F> for Line<F> {
+impl<F: GeoNum> ClosestPoint<F> for Line<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         let line_length = self.length();
         if line_length == F::zero() {
@@ -96,7 +96,7 @@ impl<F: GeoFloat> ClosestPoint<F> for Line<F> {
 /// If the iterator is empty, we get `Closest::Indeterminate`.
 fn closest_of<C, F, I>(iter: I, p: Point<F>) -> Closest<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
     I: IntoIterator<Item = C>,
     C: ClosestPoint<F>,
 {
@@ -114,13 +114,13 @@ where
     best
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for LineString<F> {
+impl<F: GeoNum> ClosestPoint<F> for LineString<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         closest_of(self.lines(), *p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for Polygon<F> {
+impl<F: GeoNum> ClosestPoint<F> for Polygon<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         if self.intersects(p) {
             return Closest::Intersection(*p);
@@ -130,13 +130,13 @@ impl<F: GeoFloat> ClosestPoint<F> for Polygon<F> {
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for Coord<F> {
+impl<F: GeoNum> ClosestPoint<F> for Coord<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         Point::from(*self).closest_point(p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for Triangle<F> {
+impl<F: GeoNum> ClosestPoint<F> for Triangle<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         if self.intersects(p) {
             return Closest::Intersection(*p);
@@ -145,7 +145,7 @@ impl<F: GeoFloat> ClosestPoint<F> for Triangle<F> {
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for Rect<F> {
+impl<F: GeoNum> ClosestPoint<F> for Rect<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         if self.intersects(p) {
             return Closest::Intersection(*p);
@@ -154,30 +154,30 @@ impl<F: GeoFloat> ClosestPoint<F> for Rect<F> {
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for MultiPolygon<F> {
+impl<F: GeoNum> ClosestPoint<F> for MultiPolygon<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         closest_of(self.iter(), *p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for MultiPoint<F> {
+impl<F: GeoNum> ClosestPoint<F> for MultiPoint<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         closest_of(self.iter(), *p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for MultiLineString<F> {
+impl<F: GeoNum> ClosestPoint<F> for MultiLineString<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         closest_of(self.iter(), *p)
     }
 }
 
-impl<F: GeoFloat> ClosestPoint<F> for GeometryCollection<F> {
+impl<F: GeoNum> ClosestPoint<F> for GeometryCollection<F> {
     fn closest_point(&self, p: &Point<F>) -> Closest<F> {
         closest_of(self.iter(), *p)
     }
 }
-impl<F: GeoFloat> ClosestPoint<F> for Geometry<F> {
+impl<F: GeoNum> ClosestPoint<F> for Geometry<F> {
     crate::geometry_delegate_impl! {
         fn closest_point(&self, p: &Point<F>) -> Closest<F>;
     }

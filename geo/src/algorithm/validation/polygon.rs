@@ -1,7 +1,7 @@
 use super::{utils, CoordIndex, RingRole, Validation};
 use crate::coordinate_position::CoordPos;
 use crate::dimensions::Dimensions;
-use crate::{GeoFloat, HasDimensions, Polygon, Relate};
+use crate::{GeoNum, HasDimensions, Polygon, Relate};
 
 use std::fmt;
 
@@ -56,7 +56,7 @@ impl fmt::Display for InvalidPolygon {
 
 impl std::error::Error for InvalidPolygon {}
 
-impl<F: GeoFloat> Validation for Polygon<F> {
+impl<F: GeoNum> Validation for Polygon<F> {
     type Error = InvalidPolygon;
 
     fn visit_validation<T>(

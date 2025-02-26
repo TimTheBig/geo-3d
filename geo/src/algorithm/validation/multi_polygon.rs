@@ -1,7 +1,7 @@
 use super::{GeometryIndex, InvalidPolygon, Validation};
 use crate::coordinate_position::CoordPos;
 use crate::dimensions::Dimensions;
-use crate::{GeoFloat, MultiPolygon, Relate};
+use crate::{GeoNum, MultiPolygon, Relate};
 
 use std::fmt;
 
@@ -41,7 +41,7 @@ impl fmt::Display for InvalidMultiPolygon {
 
 impl std::error::Error for InvalidMultiPolygon {}
 
-impl<F: GeoFloat> Validation for MultiPolygon<F> {
+impl<F: GeoNum> Validation for MultiPolygon<F> {
     type Error = InvalidMultiPolygon;
 
     fn visit_validation<T>(

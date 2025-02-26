@@ -1,5 +1,5 @@
 use super::{GeometryIndex, InvalidPoint, Validation};
-use crate::{GeoFloat, MultiPoint};
+use crate::{GeoNum, MultiPoint};
 
 use std::fmt;
 
@@ -22,7 +22,7 @@ impl fmt::Display for InvalidMultiPoint {
 
 impl std::error::Error for InvalidMultiPoint {}
 
-impl<F: GeoFloat> Validation for MultiPoint<F> {
+impl<F: GeoNum> Validation for MultiPoint<F> {
     type Error = InvalidMultiPoint;
 
     fn visit_validation<T>(

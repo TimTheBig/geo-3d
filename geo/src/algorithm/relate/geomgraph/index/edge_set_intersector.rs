@@ -1,11 +1,11 @@
 use super::super::{Edge, GeometryGraph};
 use super::SegmentIntersector;
-use crate::{Coord, GeoFloat};
+use crate::{Coord, GeoNum};
 
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub(crate) trait EdgeSetIntersector<F: GeoFloat> {
+pub(crate) trait EdgeSetIntersector<F: GeoNum> {
     /// Compute all intersections between the edges within a set, recording those intersections on
     /// the intersecting edges.
     ///

@@ -2,7 +2,7 @@ use std::iter::Sum;
 use super::Contains;
 use crate::geometry::*;
 use crate::geometry_delegate_impl;
-use crate::{GeoFloat, GeoNum};
+use crate::GeoNum;
 
 impl<T> Contains<Coord<T>> for Geometry<T>
 where
@@ -24,7 +24,7 @@ where
 
 impl<T> Contains<Line<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, line: &Line<T>) -> bool;
@@ -33,7 +33,7 @@ where
 
 impl<T> Contains<LineString<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, line_string: &LineString<T>) -> bool;
@@ -42,7 +42,7 @@ where
 
 impl<T> Contains<Polygon<T>> for Geometry<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     geometry_delegate_impl! {
         fn contains(&self, polygon: &Polygon<T>) -> bool;
@@ -51,7 +51,7 @@ where
 
 impl<T> Contains<MultiPoint<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, multi_point: &MultiPoint<T>) -> bool;
@@ -60,7 +60,7 @@ where
 
 impl<T> Contains<MultiLineString<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, multi_line_string: &MultiLineString<T>) -> bool;
@@ -69,7 +69,7 @@ where
 
 impl<T> Contains<MultiPolygon<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, multi_line_string: &MultiPolygon<T>) -> bool;
@@ -78,7 +78,7 @@ where
 
 impl<T> Contains<GeometryCollection<T>> for Geometry<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     geometry_delegate_impl! {
         fn contains(&self, geometry_collection: &GeometryCollection<T>) -> bool;
@@ -87,7 +87,7 @@ where
 
 impl<T> Contains<Rect<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, rect: &Rect<T>) -> bool;
@@ -96,7 +96,7 @@ where
 
 impl<T> Contains<Triangle<T>> for Geometry<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     geometry_delegate_impl! {
         fn contains(&self, triangle: &Triangle<T>) -> bool;
@@ -105,7 +105,7 @@ where
 
 impl<T> Contains<Geometry<T>> for Geometry<T>
 where
-    T: GeoFloat + Sum,
+    T: GeoNum + Sum,
 {
     fn contains(&self, other: &Geometry<T>) -> bool {
         match other {

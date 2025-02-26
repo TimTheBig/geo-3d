@@ -3,7 +3,7 @@ use std::{fmt::Debug, rc::Rc, sync::Arc};
 use geo_types::Line;
 
 use super::*;
-use crate::GeoFloat;
+use crate::GeoNum;
 
 /// Interface for types that can be processed to detect crossings.
 ///
@@ -19,7 +19,7 @@ use crate::GeoFloat;
 /// are supported via blanket trait implementations.
 pub trait Cross: Sized + Debug {
     /// Scalar used the coordinates.
-    type Scalar: GeoFloat;
+    type Scalar: GeoNum;
 
     /// The geometry associated with this type. Use a `Line` with the
     /// `start` and `end` coordinates to represent a point.
@@ -34,7 +34,7 @@ impl<T: Cross> Cross for &'_ T {
     }
 }
 
-impl<T: GeoFloat> Cross for LineOrPoint<T> {
+impl<T: GeoNum> Cross for LineOrPoint<T> {
     type Scalar = T;
 
     fn line(&self) -> LineOrPoint<Self::Scalar> {
@@ -42,7 +42,7 @@ impl<T: GeoFloat> Cross for LineOrPoint<T> {
     }
 }
 
-impl<T: GeoFloat> Cross for Line<T> {
+impl<T: GeoNum> Cross for Line<T> {
     type Scalar = T;
 
     fn line(&self) -> LineOrPoint<Self::Scalar> {

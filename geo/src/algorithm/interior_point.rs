@@ -12,7 +12,7 @@ use crate::algorithm::{
 };
 use crate::geometry::*;
 use crate::sweep::{Intersections, SweepPoint};
-use crate::GeoFloat;
+use crate::GeoNum;
 
 /// Calculation of interior points.
 ///
@@ -77,7 +77,7 @@ pub trait InteriorPoint {
     fn interior_point(&self) -> Self::Output;
 }
 
-impl<T: GeoFloat> InteriorPoint for Line<T> {
+impl<T: GeoNum> InteriorPoint for Line<T> {
     type Output = Point<T>;
 
     fn interior_point(&self) -> Self::Output {
@@ -87,7 +87,7 @@ impl<T: GeoFloat> InteriorPoint for Line<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for LineString<T> {
+impl<T: GeoNum> InteriorPoint for LineString<T> {
     type Output = Option<Point<T>>;
 
     // The interior point of a LineString the non-endpoint vertex closest to the centroid if any,
@@ -115,7 +115,7 @@ impl<T: GeoFloat> InteriorPoint for LineString<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for MultiLineString<T> {
+impl<T: GeoNum> InteriorPoint for MultiLineString<T> {
     type Output = Option<Point<T>>;
 
     /// The interior point of a MultiLineString is, of the interior points of all the constituent
@@ -136,7 +136,7 @@ impl<T: GeoFloat> InteriorPoint for MultiLineString<T> {
     }
 }
 
-fn polygon_interior_point_with_segment_length<T: GeoFloat>(polygon: &Polygon<T>) -> Option<(Point<T>, T)> {
+fn polygon_interior_point_with_segment_length<T: GeoNum>(polygon: &Polygon<T>) -> Option<(Point<T>, T)> {
     // special-case a one-point polygon since this algorithm won't otherwise support it
     if polygon.exterior().0.len() == 1 {
         return Some((polygon.exterior().0[0].into(), T::zero()));
@@ -237,7 +237,7 @@ fn polygon_interior_point_with_segment_length<T: GeoFloat>(polygon: &Polygon<T>)
         .map(|coord| (coord.into(), T::zero()))
 }
 
-impl<T: GeoFloat> InteriorPoint for Polygon<T> {
+impl<T: GeoNum> InteriorPoint for Polygon<T> {
     type Output = Option<Point<T>>;
 
     fn interior_point(&self) -> Self::Output {
@@ -245,7 +245,7 @@ impl<T: GeoFloat> InteriorPoint for Polygon<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for MultiPolygon<T> {
+impl<T: GeoNum> InteriorPoint for MultiPolygon<T> {
     type Output = Option<Point<T>>;
 
     fn interior_point(&self) -> Self::Output {
@@ -258,7 +258,7 @@ impl<T: GeoFloat> InteriorPoint for MultiPolygon<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for Rect<T> {
+impl<T: GeoNum> InteriorPoint for Rect<T> {
     type Output = Point<T>;
 
     fn interior_point(&self) -> Self::Output {
@@ -266,7 +266,7 @@ impl<T: GeoFloat> InteriorPoint for Rect<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for Point<T> {
+impl<T: GeoNum> InteriorPoint for Point<T> {
     type Output = Point<T>;
 
     fn interior_point(&self) -> Self::Output {
@@ -286,7 +286,7 @@ impl<T: GeoFloat> InteriorPoint for Point<T> {
 /// let points: MultiPoint<_> = vec![(5., 1., 5.), (1., 3., 1.), (3., 2., 3.)].into();
 /// assert_eq!(points.interior_point(), Some(Point::new(3., 2., 3.)));
 /// ```
-impl<T: GeoFloat> InteriorPoint for MultiPoint<T> {
+impl<T: GeoNum> InteriorPoint for MultiPoint<T> {
     type Output = Option<Point<T>>;
 
     fn interior_point(&self) -> Self::Output {
@@ -301,7 +301,7 @@ impl<T: GeoFloat> InteriorPoint for MultiPoint<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for Geometry<T> {
+impl<T: GeoNum> InteriorPoint for Geometry<T> {
     type Output = Option<Point<T>>;
 
     crate::geometry_delegate_impl! {
@@ -309,7 +309,7 @@ impl<T: GeoFloat> InteriorPoint for Geometry<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for GeometryCollection<T> {
+impl<T: GeoNum> InteriorPoint for GeometryCollection<T> {
     type Output = Option<Point<T>>;
 
     fn interior_point(&self) -> Self::Output {
@@ -335,7 +335,7 @@ impl<T: GeoFloat> InteriorPoint for GeometryCollection<T> {
     }
 }
 
-impl<T: GeoFloat> InteriorPoint for Triangle<T> {
+impl<T: GeoNum> InteriorPoint for Triangle<T> {
     type Output = Point<T>;
 
     fn interior_point(&self) -> Self::Output {

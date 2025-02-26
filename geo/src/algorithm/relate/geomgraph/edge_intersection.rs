@@ -1,4 +1,4 @@
-use crate::{Coord, GeoFloat};
+use crate::{Coord, GeoNum};
 
 /// Represents a point on an edge which intersects with another edge.
 ///
@@ -7,13 +7,13 @@ use crate::{Coord, GeoFloat};
 ///
 /// This is based on [JTS's EdgeIntersection as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/geomgraph/EdgeIntersection.java)
 #[derive(Debug, Clone)]
-pub(crate) struct EdgeIntersection<F: GeoFloat> {
+pub(crate) struct EdgeIntersection<F: GeoNum> {
     coord: Coord<F>,
     segment_index: usize,
     dist: F,
 }
 
-impl<F: GeoFloat> EdgeIntersection<F> {
+impl<F: GeoNum> EdgeIntersection<F> {
     pub fn new(coord: Coord<F>, segment_index: usize, dist: F) -> EdgeIntersection<F> {
         EdgeIntersection {
             coord,
@@ -35,21 +35,21 @@ impl<F: GeoFloat> EdgeIntersection<F> {
     }
 }
 
-impl<F: GeoFloat> std::cmp::PartialEq for EdgeIntersection<F> {
+impl<F: GeoNum> std::cmp::PartialEq for EdgeIntersection<F> {
     fn eq(&self, other: &EdgeIntersection<F>) -> bool {
         self.segment_index == other.segment_index && self.dist == other.dist
     }
 }
 
-impl<F: GeoFloat> std::cmp::Eq for EdgeIntersection<F> {}
+impl<F: GeoNum> std::cmp::Eq for EdgeIntersection<F> {}
 
-impl<F: GeoFloat> std::cmp::PartialOrd for EdgeIntersection<F> {
+impl<F: GeoNum> std::cmp::PartialOrd for EdgeIntersection<F> {
     fn partial_cmp(&self, other: &EdgeIntersection<F>) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<F: GeoFloat> std::cmp::Ord for EdgeIntersection<F> {
+impl<F: GeoNum> std::cmp::Ord for EdgeIntersection<F> {
     fn cmp(&self, other: &EdgeIntersection<F>) -> std::cmp::Ordering {
         if self.segment_index < other.segment_index {
             return std::cmp::Ordering::Less;
@@ -72,4 +72,4 @@ impl<F: GeoFloat> std::cmp::Ord for EdgeIntersection<F> {
     }
 }
 
-impl<F: GeoFloat> EdgeIntersection<F> {}
+impl<F: GeoNum> EdgeIntersection<F> {}

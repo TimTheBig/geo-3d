@@ -7,7 +7,7 @@ use super::{
 };
 
 use crate::HasDimensions;
-use crate::{Coord, GeoFloat, GeometryCow, Line, LineString, Point, Polygon};
+use crate::{Coord, GeoNum, GeometryCow, Line, LineString, Point, Polygon};
 
 use rstar::{RTree, RTreeNum};
 use std::cell::RefCell;
@@ -31,7 +31,7 @@ use std::rc::Rc;
 #[derive(Clone)]
 pub struct GeometryGraph<'a, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     arg_index: usize,
     parent_geometry: GeometryCow<'a, F>,
@@ -47,7 +47,7 @@ where
 /// use composition and delegation to the same effect.
 impl<F> GeometryGraph<'_, F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub(crate) fn set_tree(&mut self, tree: Rc<RTree<Segment<F>>>) {
         self.tree = Some(tree);
@@ -128,7 +128,7 @@ where
 
 impl<'a, F> GeometryGraph<'a, F>
 where
-    F: GeoFloat + RTreeNum,
+    F: GeoNum + RTreeNum,
 {
     pub(crate) fn new(arg_index: usize, parent_geometry: GeometryCow<'a, F>) -> Self {
         let mut graph = GeometryGraph {

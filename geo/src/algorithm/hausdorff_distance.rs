@@ -1,6 +1,6 @@
 use crate::algorithm::Distance;
 use crate::CoordsIter;
-use crate::GeoFloat;
+use crate::GeoNum;
 use geo_types::{Coord, Point};
 use num_traits::Bounded;
 
@@ -13,7 +13,7 @@ use num_traits::Bounded;
 /// [Hausdorff distance formula]: https://en.wikipedia.org/wiki/Hausdorff_distance
 pub trait HausdorffDistance<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn hausdorff_distance<Rhs>(&self, rhs: &Rhs) -> T
     where
@@ -22,7 +22,7 @@ where
 
 impl<T, G> HausdorffDistance<T> for G
 where
-    T: GeoFloat,
+    T: GeoNum,
     G: CoordsIter<Scalar = T>,
 {
     fn hausdorff_distance<Rhs>(&self, rhs: &Rhs) -> T
@@ -60,7 +60,7 @@ where
 
 impl<T> HausdorffDistance<T> for Coord<T>
 where
-    T: GeoFloat,
+    T: GeoNum,
 {
     fn hausdorff_distance<Rhs>(&self, rhs: &Rhs) -> T
     where

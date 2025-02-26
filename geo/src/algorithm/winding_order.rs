@@ -1,7 +1,7 @@
 use super::kernels::*;
 use crate::coords_iter::CoordsIter;
 use crate::utils::EitherIter;
-use crate::{CoordNum, GeoFloat, GeoNum, LineString, Point};
+use crate::{CoordNum, GeoNum, LineString, Point};
 use geo_types::{PointsIter, Triangle};
 use std::iter::Rev;
 

@@ -1,6 +1,6 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
 use crate::geometry::*;
-use crate::{GeoFloat, GeoNum};
+use crate::GeoNum;
 
 impl<T> Contains<Coord<T>> for GeometryCollection<T>
 where

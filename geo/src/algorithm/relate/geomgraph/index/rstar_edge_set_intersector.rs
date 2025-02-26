@@ -1,6 +1,6 @@
 use super::super::{Edge, GeometryGraph};
 use super::{EdgeSetIntersector, Segment, SegmentIntersector};
-use crate::GeoFloat;
+use crate::GeoNum;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -11,7 +11,7 @@ pub(crate) struct RStarEdgeSetIntersector;
 
 impl<F> EdgeSetIntersector<F> for RStarEdgeSetIntersector
 where
-    F: GeoFloat + RTreeNum,
+    F: GeoNum + RTreeNum,
 {
     fn compute_intersections_within_set(
         &self,

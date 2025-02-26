@@ -1,5 +1,5 @@
 use super::*;
-use crate::GeoFloat;
+use crate::GeoNum;
 use std::{cmp::Ordering, fmt::Debug};
 
 /// A segment of input [`LineOrPoint`] generated during the sweep.
@@ -141,7 +141,7 @@ impl<C: Cross> PartialOrd for Segment<C> {
 /// Stores the type of split and extra geometries from adjusting a
 /// segment for intersection.
 #[derive(Debug)]
-pub(super) enum SplitSegments<T: GeoFloat> {
+pub(super) enum SplitSegments<T: GeoNum> {
     Unchanged {
         overlap: bool,
     },
@@ -159,7 +159,7 @@ mod tests {
 
     use super::*;
 
-    impl<T: GeoFloat> PartialEq for SplitSegments<T> {
+    impl<T: GeoNum> PartialEq for SplitSegments<T> {
         fn eq(&self, other: &Self) -> bool {
             match (self, other) {
                 (

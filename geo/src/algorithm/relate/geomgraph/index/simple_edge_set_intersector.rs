@@ -1,6 +1,6 @@
 use super::super::{Edge, GeometryGraph};
 use super::{EdgeSetIntersector, SegmentIntersector};
-use crate::GeoFloat;
+use crate::GeoNum;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -12,7 +12,7 @@ impl SimpleEdgeSetIntersector {
         SimpleEdgeSetIntersector
     }
 
-    fn compute_intersects<F: GeoFloat>(
+    fn compute_intersects<F: GeoNum>(
         &self,
         edge0: &Rc<RefCell<Edge<F>>>,
         edge1: &Rc<RefCell<Edge<F>>>,
@@ -28,7 +28,7 @@ impl SimpleEdgeSetIntersector {
     }
 }
 
-impl<F: GeoFloat> EdgeSetIntersector<F> for SimpleEdgeSetIntersector {
+impl<F: GeoNum> EdgeSetIntersector<F> for SimpleEdgeSetIntersector {
     fn compute_intersections_within_set(
         &self,
         graph: &GeometryGraph<F>,

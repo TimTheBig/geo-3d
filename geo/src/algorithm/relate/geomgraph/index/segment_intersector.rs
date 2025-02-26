@@ -1,5 +1,5 @@
 use super::super::{CoordNode, Edge, LineIntersection, LineIntersector};
-use crate::{Coord, GeoFloat, Line};
+use crate::{Coord, GeoNum, Line};
 
 use std::cell::{Ref, RefCell};
 
@@ -7,7 +7,7 @@ use std::cell::{Ref, RefCell};
 /// the segments.
 pub(crate) struct SegmentIntersector<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     // Though JTS leaves this abstract - we might consider hard coding it to a RobustLineIntersector
     line_intersector: Box<dyn LineIntersector<F>>,
@@ -19,7 +19,7 @@ where
 
 impl<F> SegmentIntersector<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     fn is_adjacent_segments(i1: usize, i2: usize) -> bool {
         let difference = if i1 > i2 { i1 - i2 } else { i2 - i1 };

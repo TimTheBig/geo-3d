@@ -1,5 +1,5 @@
 use super::geomgraph::{Edge, EdgeEnd, EdgeIntersection};
-use crate::GeoFloat;
+use crate::GeoNum;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -8,11 +8,11 @@ use std::rc::Rc;
 /// populated with self and proper [`EdgeIntersection`]s.
 ///
 /// Based on [JTS's EdgeEndBuilder as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/operation/relate/EdgeEndBuilder.java)
-pub(crate) struct EdgeEndBuilder<F: GeoFloat> {
+pub(crate) struct EdgeEndBuilder<F: GeoNum> {
     _marker: std::marker::PhantomData<F>,
 }
 
-impl<F: GeoFloat> EdgeEndBuilder<F> {
+impl<F: GeoNum> EdgeEndBuilder<F> {
     pub fn new() -> Self {
         EdgeEndBuilder {
             _marker: std::marker::PhantomData,

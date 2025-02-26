@@ -1,5 +1,5 @@
 use super::{utils, CoordIndex, Validation};
-use crate::{GeoFloat, HasDimensions, LineString};
+use crate::{GeoNum, HasDimensions, LineString};
 
 use std::fmt;
 
@@ -26,7 +26,7 @@ impl fmt::Display for InvalidLineString {
 
 impl std::error::Error for InvalidLineString {}
 
-impl<F: GeoFloat> Validation for LineString<F> {
+impl<F: GeoNum> Validation for LineString<F> {
     type Error = InvalidLineString;
 
     fn visit_validation<T>(

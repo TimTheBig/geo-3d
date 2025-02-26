@@ -5,7 +5,7 @@ use relate_operation::RelateOperation;
 use crate::geometry::*;
 pub use crate::relate::geomgraph::index::PreparedGeometry;
 pub use crate::relate::geomgraph::GeometryGraph;
-use crate::{GeoFloat, GeometryCow};
+use crate::{GeoNum, GeometryCow};
 
 mod edge_end_builder;
 mod geomgraph;
@@ -54,7 +54,7 @@ mod relate_operation;
 /// ```
 ///
 /// Note: `Relate` must not be called on geometries containing `NaN` coordinates.
-pub trait Relate<F: GeoFloat> {
+pub trait Relate<F: GeoNum> {
     /// Construct a [`GeometryGraph`]
     fn geometry_graph(&self, arg_index: usize) -> GeometryGraph<F>;
 

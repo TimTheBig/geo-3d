@@ -1,4 +1,4 @@
-use crate::{Coord, CoordNum, GeoFloat, Intersects, LineString, RemoveRepeatedPoints};
+use crate::{Coord, CoordNum, GeoNum, Intersects, LineString, RemoveRepeatedPoints};
 use robust::{orient2d, Coord as RobustCoord};
 
 pub(crate) fn check_coord_is_not_finite<T: CoordNum>(geom: &Coord<T>) -> bool {
@@ -38,7 +38,7 @@ pub(crate) fn check_too_few_points<T: CoordNum>(geom: &LineString<T>, is_ring: b
     false
 }
 
-pub(crate) fn linestring_has_self_intersection<F: GeoFloat>(geom: &LineString<F>) -> bool {
+pub(crate) fn linestring_has_self_intersection<F: GeoNum>(geom: &LineString<F>) -> bool {
     // This need more test to see if we detect "spikes" correctly.
     // Maybe we could also use https://docs.rs/geo/latest/geo/algorithm/line_intersection/fn.line_intersection.html
     // to compute the intersection, see if it is a single point or not, etc.

@@ -3,7 +3,7 @@ use super::{
     LabeledEdgeEndBundle,
 };
 use crate::coordinate_position::{CoordPos, CoordinatePosition};
-use crate::{Coord, GeoFloat, GeometryCow};
+use crate::{Coord, GeoNum, GeometryCow};
 
 /// An ordered list of [`EdgeEndBundle`]s around a [`RelateNodeFactory::Node`].
 ///
@@ -14,7 +14,7 @@ use crate::{Coord, GeoFloat, GeometryCow};
 #[derive(Clone, Debug)]
 pub(crate) struct EdgeEndBundleStar<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     edge_map: std::collections::BTreeMap<EdgeEndKey<F>, EdgeEndBundle<F>>,
     point_in_area_location: Option<[CoordPos; 2]>,
@@ -23,12 +23,12 @@ where
 #[derive(Clone, Debug)]
 pub(crate) struct LabeledEdgeEndBundleStar<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     edges: Vec<LabeledEdgeEndBundle<F>>,
 }
 
-impl<F: GeoFloat> LabeledEdgeEndBundleStar<F> {
+impl<F: GeoNum> LabeledEdgeEndBundleStar<F> {
     pub(crate) fn new(
         edges: Vec<LabeledEdgeEndBundle<F>>,
         graph_a: &GeometryGraph<F>,
@@ -83,7 +83,7 @@ impl<F: GeoFloat> LabeledEdgeEndBundleStar<F> {
         debug!("edge_end_bundle_star: {:?}", self);
     }
 
-    fn propagate_side_labels(&mut self, geom_index: usize, geometry_graph: &GeometryGraph<F>) {
+    fn propagate_side_labels(&mut self, geom_index: usize, _geometry_graph: &GeometryGraph<F>) {
         let mut start_position = None;
 
         for edge_ends in self.edge_end_bundles_iter() {
@@ -150,7 +150,7 @@ impl<F: GeoFloat> LabeledEdgeEndBundleStar<F> {
 
 impl<F> EdgeEndBundleStar<F>
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     pub(crate) fn new() -> Self {
         EdgeEndBundleStar {

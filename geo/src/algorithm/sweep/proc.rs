@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, collections::BinaryHeap};
 
-use crate::GeoFloat;
+use crate::GeoNum;
 
 use super::*;
 
@@ -304,7 +304,7 @@ impl<C: Cross + Clone> Sweep<C> {
 }
 
 /// Internal enum to communicate result from `process_adjacent_segments`
-struct AdjProcOutput<T: GeoFloat> {
+struct AdjProcOutput<T: GeoNum> {
     isec: Option<LineOrPoint<T>>,
     should_continue: bool,
     should_callback: bool,

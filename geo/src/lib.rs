@@ -292,21 +292,7 @@ pub mod prelude {
 ///     })
 /// }
 /// ```
-pub trait GeoFloat:
-    GeoNum + num_traits::Float + num_traits::Signed + num_traits::Bounded + float_next_after::NextAfter
-{
-}
-impl<T> GeoFloat for T where
-    T: GeoNum
-        + num_traits::Float
-        + num_traits::Signed
-        + num_traits::Bounded
-        + float_next_after::NextAfter
-{
-}
-
-/// A trait for methods which work for floating point, using a Kernel
-pub trait GeoNum: CoordNum {
+pub trait GeoNum: CoordNum + num_traits::Float + num_traits::Signed + num_traits::Bounded + float_next_after::NextAfter {
     type Ker: Kernel<Self>;
 
     /// Return the ordering between self and other.

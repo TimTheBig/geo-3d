@@ -2,7 +2,7 @@ use super::Segment;
 use crate::geometry::*;
 use crate::relate::geomgraph::{GeometryGraph, RobustLineIntersector};
 use crate::GeometryCow;
-use crate::{GeoFloat, Relate};
+use crate::{GeoNum, Relate};
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -26,134 +26,134 @@ use rstar::{RTree, RTreeNum};
 /// assert!(prepared_polygon.relate(&contained_line).is_contains());
 ///
 /// ```
-pub struct PreparedGeometry<'a, F: GeoFloat + RTreeNum = f64> {
+pub struct PreparedGeometry<'a, F: GeoNum + RTreeNum = f64> {
     geometry_graph: GeometryGraph<'a, F>,
 }
 
 mod conversions {
     use crate::geometry_cow::GeometryCow;
     use crate::relate::geomgraph::{GeometryGraph, RobustLineIntersector};
-    use crate::{GeoFloat, PreparedGeometry};
+    use crate::{GeoNum, PreparedGeometry};
     use geo_types::{
         Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint, MultiPolygon,
         Point, Polygon, Rect, Triangle,
     };
     use std::rc::Rc;
 
-    impl<F: GeoFloat> From<Point<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Point<F>> for PreparedGeometry<'_, F> {
         fn from(point: Point<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(point))
         }
     }
-    impl<F: GeoFloat> From<Line<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Line<F>> for PreparedGeometry<'_, F> {
         fn from(line: Line<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(line))
         }
     }
-    impl<F: GeoFloat> From<LineString<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<LineString<F>> for PreparedGeometry<'_, F> {
         fn from(line_string: LineString<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(line_string))
         }
     }
-    impl<F: GeoFloat> From<Polygon<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Polygon<F>> for PreparedGeometry<'_, F> {
         fn from(polygon: Polygon<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(polygon))
         }
     }
-    impl<F: GeoFloat> From<MultiPoint<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<MultiPoint<F>> for PreparedGeometry<'_, F> {
         fn from(multi_point: MultiPoint<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_point))
         }
     }
-    impl<F: GeoFloat> From<MultiLineString<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<MultiLineString<F>> for PreparedGeometry<'_, F> {
         fn from(multi_line_string: MultiLineString<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_line_string))
         }
     }
-    impl<F: GeoFloat> From<MultiPolygon<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<MultiPolygon<F>> for PreparedGeometry<'_, F> {
         fn from(multi_polygon: MultiPolygon<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_polygon))
         }
     }
-    impl<F: GeoFloat> From<Rect<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Rect<F>> for PreparedGeometry<'_, F> {
         fn from(rect: Rect<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(rect))
         }
     }
-    impl<F: GeoFloat> From<Triangle<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Triangle<F>> for PreparedGeometry<'_, F> {
         fn from(triangle: Triangle<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(triangle))
         }
     }
-    impl<F: GeoFloat> From<GeometryCollection<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<GeometryCollection<F>> for PreparedGeometry<'_, F> {
         fn from(geometry_collection: GeometryCollection<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(geometry_collection))
         }
     }
-    impl<F: GeoFloat> From<Geometry<F>> for PreparedGeometry<'_, F> {
+    impl<F: GeoNum> From<Geometry<F>> for PreparedGeometry<'_, F> {
         fn from(geometry: Geometry<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(geometry))
         }
     }
 
-    impl<'a, F: GeoFloat> From<&'a Point<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Point<F>> for PreparedGeometry<'a, F> {
         fn from(point: &'a Point<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(point))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a Line<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Line<F>> for PreparedGeometry<'a, F> {
         fn from(line: &'a Line<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(line))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a LineString<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a LineString<F>> for PreparedGeometry<'a, F> {
         fn from(line_string: &'a LineString<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(line_string))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a Polygon<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Polygon<F>> for PreparedGeometry<'a, F> {
         fn from(polygon: &'a Polygon<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(polygon))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a MultiPoint<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a MultiPoint<F>> for PreparedGeometry<'a, F> {
         fn from(multi_point: &'a MultiPoint<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_point))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a MultiLineString<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a MultiLineString<F>> for PreparedGeometry<'a, F> {
         fn from(multi_line_string: &'a MultiLineString<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_line_string))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a MultiPolygon<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a MultiPolygon<F>> for PreparedGeometry<'a, F> {
         fn from(multi_polygon: &'a MultiPolygon<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(multi_polygon))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a GeometryCollection<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a GeometryCollection<F>> for PreparedGeometry<'a, F> {
         fn from(geometry_collection: &'a GeometryCollection<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(geometry_collection))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a Rect<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Rect<F>> for PreparedGeometry<'a, F> {
         fn from(rect: &'a Rect<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(rect))
         }
     }
-    impl<'a, F: GeoFloat> From<&'a Triangle<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Triangle<F>> for PreparedGeometry<'a, F> {
         fn from(triangle: &'a Triangle<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(triangle))
         }
     }
 
-    impl<'a, F: GeoFloat> From<&'a Geometry<F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<&'a Geometry<F>> for PreparedGeometry<'a, F> {
         fn from(geometry: &'a Geometry<F>) -> Self {
             PreparedGeometry::from(GeometryCow::from(geometry))
         }
     }
 
-    impl<'a, F: GeoFloat> From<GeometryCow<'a, F>> for PreparedGeometry<'a, F> {
+    impl<'a, F: GeoNum> From<GeometryCow<'a, F>> for PreparedGeometry<'a, F> {
         fn from(geometry: GeometryCow<'a, F>) -> Self {
             let mut geometry_graph = GeometryGraph::new(0, geometry);
             geometry_graph.set_tree(Rc::new(geometry_graph.build_tree()));
@@ -169,14 +169,14 @@ mod conversions {
 
 impl<F> PreparedGeometry<'_, F>
 where
-    F: GeoFloat + RTreeNum,
+    F: GeoNum + RTreeNum,
 {
     pub(crate) fn geometry(&self) -> &GeometryCow<F> {
         self.geometry_graph.geometry()
     }
 }
 
-impl<F: GeoFloat> Relate<F> for PreparedGeometry<'_, F> {
+impl<F: GeoNum> Relate<F> for PreparedGeometry<'_, F> {
     /// Efficiently builds a [`GeometryGraph`] which can then be used for topological
     /// computations.
     fn geometry_graph(&self, arg_index: usize) -> GeometryGraph<F> {

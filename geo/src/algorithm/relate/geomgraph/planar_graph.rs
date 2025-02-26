@@ -2,7 +2,7 @@ use super::{
     node_map::{NodeFactory, NodeMap},
     CoordNode, CoordPos, Edge, Label,
 };
-use crate::{Coord, GeoFloat};
+use crate::{Coord, GeoNum};
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -13,7 +13,7 @@ pub(crate) struct PlanarGraphNode;
 /// The basic node constructor does not allow for incident edges
 impl<F> NodeFactory<F> for PlanarGraphNode
 where
-    F: GeoFloat,
+    F: GeoNum,
 {
     type Node = CoordNode<F>;
     fn create_node(coordinate: Coord<F>) -> Self::Node {
@@ -22,12 +22,12 @@ where
 }
 
 #[derive(Clone, PartialEq)]
-pub(crate) struct PlanarGraph<F: GeoFloat> {
+pub(crate) struct PlanarGraph<F: GeoNum> {
     pub(crate) nodes: NodeMap<F, PlanarGraphNode>,
     edges: Vec<Rc<RefCell<Edge<F>>>>,
 }
 
-impl<F: GeoFloat> PlanarGraph<F> {
+impl<F: GeoNum> PlanarGraph<F> {
     pub fn clone_for_arg_index(&self, from_arg_index: usize, to_arg_index: usize) -> Self {
         let mut graph = Self {
             nodes: self.nodes.clone(),

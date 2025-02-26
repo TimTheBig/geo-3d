@@ -14,7 +14,7 @@ pub trait Distance<F, Destination> {
 use crate::algorithm::Intersects;
 use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
 use crate::geometry::*;
-use crate::{CoordNum, GeoFloat, GeoNum};
+use crate::{CoordNum, GeoNum};
 use num_traits::{Bounded, Float};
 use rstar::primitives::CachedEnvelope;
 use rstar::RTree;
@@ -111,7 +111,7 @@ impl<F: CoordNum> Distance<F, &LineString<F>> for &Point<F> {
     }
 }
 
-impl<F: GeoFloat> Distance<F, &Polygon<F>> for &Point<F> {
+impl<F: GeoNum> Distance<F, &Polygon<F>> for &Point<F> {
     fn distance(self, polygon: &Polygon<F>) -> F {
         // No need to continue if the polygon intersects the point, or is zero-length
         if polygon.exterior().0.is_empty() || polygon.intersects(self) {
@@ -146,7 +146,7 @@ symmetric_distance_impl!(CoordNum, &Line<F>, Coord<F>);
 symmetric_distance_impl!(CoordNum, Line<F>, Point<F>);
 symmetric_distance_impl!(CoordNum, &Line<F>, &Point<F>);
 
-impl<F: GeoFloat> Distance<F, &Line<F>> for &Line<F> {
+impl<F: GeoNum> Distance<F, &Line<F>> for &Line<F> {
     fn distance(self, line_b: &Line<F>) -> F {
         if self.intersects(line_b) {
             return F::zero();
@@ -159,7 +159,7 @@ impl<F: GeoFloat> Distance<F, &Line<F>> for &Line<F> {
     }
 }
 
-impl<F: GeoFloat> Distance<F, &LineString<F>> for &Line<F> {
+impl<F: GeoNum> Distance<F, &LineString<F>> for &Line<F> {
     fn distance(self, line_string: &LineString<F>) -> F {
         line_string
             .lines()
@@ -169,7 +169,7 @@ impl<F: GeoFloat> Distance<F, &LineString<F>> for &Line<F> {
     }
 }
 
-impl<F: GeoFloat> Distance<F, &Polygon<F>> for &Line<F> {
+impl<F: GeoNum> Distance<F, &Polygon<F>> for &Line<F> {
     fn distance(self, polygon: &Polygon<F>) -> F {
         if self.intersects(polygon) {
             return F::zero();
@@ -189,9 +189,9 @@ impl<F: GeoFloat> Distance<F, &Polygon<F>> for &Line<F> {
 // └────────────────────────────────┘
 
 symmetric_distance_impl!(CoordNum, &LineString<F>, &Point<F>);
-symmetric_distance_impl!(GeoFloat, &LineString<F>, &Line<F>);
+symmetric_distance_impl!(GeoNum, &LineString<F>, &Line<F>);
 
-impl<F: GeoFloat> Distance<F, &LineString<F>> for &LineString<F> {
+impl<F: GeoNum> Distance<F, &LineString<F>> for &LineString<F> {
     fn distance(self, line_string_b: &LineString<F>) -> F {
         if self.intersects(line_string_b) {
             F::zero()
@@ -201,7 +201,7 @@ impl<F: GeoFloat> Distance<F, &LineString<F>> for &LineString<F> {
     }
 }
 
-impl<F: GeoFloat> Distance<F, &Polygon<F>> for &LineString<F> {
+impl<F: GeoNum> Distance<F, &Polygon<F>> for &LineString<F> {
     fn distance(self, polygon: &Polygon<F>) -> F {
         if self.intersects(polygon) {
             F::zero()
@@ -225,10 +225,10 @@ impl<F: GeoFloat> Distance<F, &Polygon<F>> for &LineString<F> {
 // │ Implementations for Polygon │
 // └─────────────────────────────┘
 
-symmetric_distance_impl!(GeoFloat, &Polygon<F>, &Point<F>);
-symmetric_distance_impl!(GeoFloat, &Polygon<F>, &Line<F>);
-symmetric_distance_impl!(GeoFloat, &Polygon<F>, &LineString<F>);
-impl<F: GeoFloat> Distance<F, &Polygon<F>> for &Polygon<F> {
+symmetric_distance_impl!(GeoNum, &Polygon<F>, &Point<F>);
+symmetric_distance_impl!(GeoNum, &Polygon<F>, &Line<F>);
+symmetric_distance_impl!(GeoNum, &Polygon<F>, &LineString<F>);
+impl<F: GeoNum> Distance<F, &Polygon<F>> for &Polygon<F> {
     fn distance(self, polygon_b: &Polygon<F>) -> F {
         if self.intersects(polygon_b) {
             return F::zero();
@@ -265,20 +265,20 @@ impl<F: GeoFloat> Distance<F, &Polygon<F>> for &Polygon<F> {
 /// Implements Euclidean distance for Triangles and Rects by converting them to polygons.
 macro_rules! impl_euclidean_distance_for_polygonlike_geometry {
   ($polygonlike:ty,  [$($geometry_b:ty),*]) => {
-      impl<F: GeoFloat> Distance<F, $polygonlike> for $polygonlike
+      impl<F: GeoNum> Distance<F, $polygonlike> for $polygonlike
       {
           fn distance(self, destination: $polygonlike) -> F {
               self.to_polygon().distance(destination)
           }
       }
       $(
-          impl<F: GeoFloat> Distance<F, $geometry_b> for $polygonlike
+          impl<F: GeoNum> Distance<F, $geometry_b> for $polygonlike
           {
               fn distance(self, geometry_b: $geometry_b) -> F {
                     self.to_polygon().distance(geometry_b)
               }
           }
-          symmetric_distance_impl!(GeoFloat, $geometry_b, $polygonlike);
+          symmetric_distance_impl!(GeoNum, $geometry_b, $polygonlike);
       )*
   };
 }
@@ -293,7 +293,7 @@ impl_euclidean_distance_for_polygonlike_geometry!(&Rect<F>,     [&Point<F>, &Lin
 /// Euclidean distance implementation for multi geometry types.
 macro_rules! impl_euclidean_distance_for_iter_geometry {
     ($iter_geometry:ty,  [$($to_geometry:ty),*]) => {
-        impl<F: GeoFloat> Distance<F, $iter_geometry> for $iter_geometry {
+        impl<F: GeoNum> Distance<F, $iter_geometry> for $iter_geometry {
             fn distance(self, destination: $iter_geometry) -> F {
                 self
                     .iter()
@@ -303,7 +303,7 @@ macro_rules! impl_euclidean_distance_for_iter_geometry {
              }
         }
         $(
-            impl<F: GeoFloat> Distance<F, $to_geometry> for $iter_geometry {
+            impl<F: GeoNum> Distance<F, $to_geometry> for $iter_geometry {
                 fn distance(self, to_geometry: $to_geometry) -> F {
                     self
                         .iter()
@@ -312,7 +312,7 @@ macro_rules! impl_euclidean_distance_for_iter_geometry {
                         })
                 }
             }
-            symmetric_distance_impl!(GeoFloat, $to_geometry, $iter_geometry);
+            symmetric_distance_impl!(GeoNum, $to_geometry, $iter_geometry);
         )*
   };
 }
@@ -330,7 +330,7 @@ impl_euclidean_distance_for_iter_geometry!(&GeometryCollection<F>, [&Point<F>, &
 macro_rules! impl_euclidean_distance_for_geometry_and_variant {
   ([$($target:ty),*]) => {
       $(
-          impl<F: GeoFloat> Distance<F, &Geometry<F>> for $target {
+          impl<F: GeoNum> Distance<F, &Geometry<F>> for $target {
               fn distance(self, destination: &Geometry<F>) -> F {
                   match destination {
                       Geometry::Point(point) => Self::distance(self, point),
@@ -346,14 +346,14 @@ macro_rules! impl_euclidean_distance_for_geometry_and_variant {
                   }
               }
           }
-          symmetric_distance_impl!(GeoFloat, &Geometry<F>, $target);
+          symmetric_distance_impl!(GeoNum, &Geometry<F>, $target);
       )*
   };
 }
 
 impl_euclidean_distance_for_geometry_and_variant!([&Point<F>, &MultiPoint<F>, &Line<F>, &LineString<F>, &MultiLineString<F>, &Polygon<F>, &MultiPolygon<F>, &Triangle<F>, &Rect<F>, &GeometryCollection<F>]);
 
-impl<F: GeoFloat> Distance<F, &Geometry<F>> for &Geometry<F> {
+impl<F: GeoNum> Distance<F, &Geometry<F>> for &Geometry<F> {
     fn distance(self, destination: &Geometry<F>) -> F {
         match self {
             Geometry::Point(point) => point.distance(destination),
@@ -380,7 +380,7 @@ impl<F: GeoFloat> Distance<F, &Geometry<F>> for &Geometry<F> {
 
 /// Uses an R* tree and nearest-neighbour lookups to calculate minimum distances
 // This is somewhat slow and memory-inefficient, but certainly better than quadratic time
-fn nearest_neighbour_distance<F: GeoFloat>(geom1: &LineString<F>, geom2: &LineString<F>) -> F {
+fn nearest_neighbour_distance<F: GeoNum>(geom1: &LineString<F>, geom2: &LineString<F>) -> F {
     let tree_a = RTree::bulk_load(geom1.lines().map(CachedEnvelope::new).collect());
     let tree_b = RTree::bulk_load(geom2.lines().map(CachedEnvelope::new).collect());
     // Return minimum distance between all geom a points and geom b lines, and all geom b points and geom a lines

@@ -5,7 +5,7 @@ use num_traits::Signed;
 
 use crate::{
     area::twice_signed_ring_area, coordinate_position::CoordPos, dimensions::Dimensions,
-    monotone::monotone_subdivision, GeoFloat, GeoNum, Relate,
+    monotone::monotone_subdivision, GeoNum, GeoNum, Relate,
 };
 
 pub(super) fn init_log() {
@@ -26,7 +26,7 @@ fn twice_polygon_area<T: GeoNum + Signed>(poly: &Polygon<T>) -> T {
     area
 }
 
-fn check_monotone_subdivision<T: GeoFloat + FromStr + Default + Display + RelativeEq + CoordNum>(input: Polygon<T>) {
+fn check_monotone_subdivision<T: GeoNum + FromStr + Default + Display + RelativeEq + CoordNum>(input: Polygon<T>) {
     init_log();
     eprintln!("input: {input:?}");
     let area = twice_polygon_area(&input);
