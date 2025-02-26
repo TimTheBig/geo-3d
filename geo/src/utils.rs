@@ -2,32 +2,6 @@
 
 use geo_types::{Coord, CoordNum};
 
-/// Partition a mutable slice in-place so that it contains all elements for
-/// which `predicate(e)` is `true`, followed by all elements for which
-/// `predicate(e)` is `false`. Returns sub-slices to all predicated and
-/// non-predicated elements, respectively.
-///
-/// https://github.com/llogiq/partition/blob/master/src/lib.rs
-pub fn partition_slice<T, P: Fn(&T) -> bool>(data: &mut [T], predicate: P) -> (&mut [T], &mut [T]) {
-    let len = data.len();
-    if len == 0 {
-        return (&mut [], &mut []);
-    }
-    let (mut l, mut r) = (0, len - 1);
-    loop {
-        while l < len && predicate(&data[l]) {
-            l += 1;
-        }
-        while r > 0 && !predicate(&data[r]) {
-            r -= 1;
-        }
-        if l >= r {
-            return data.split_at_mut(l);
-        }
-        data.swap(l, r);
-    }
-}
-
 /// An iterator of `I1` or `I2`
 pub enum EitherIter<I1, I2> {
     A(I1),
@@ -115,41 +89,6 @@ pub fn least_index<T: CoordNum>(pts: &[Coord<T>]) -> usize {
         .min_by(|(_, p), (_, q)| lex_cmp(p, q))
         .unwrap()
         .0
-}
-
-/// Compute index of the lexicographically least _and_ the
-/// greatest coordinate in one pass.
-///
-/// Should only be called on a non-empty slice with no `nan`
-/// coordinates.
-pub fn least_and_greatest_index<T: CoordNum>(pts: &[Coord<T>]) -> (usize, usize) {
-    assert_ne!(pts.len(), 0);
-    let (min, max) = pts
-        .iter()
-        .enumerate()
-        .fold((None, None), |(min, max), (idx, p)| {
-            (
-                if let Some((midx, min)) = min {
-                    if lex_cmp(p, min) == Ordering::Less {
-                        Some((idx, p))
-                    } else {
-                        Some((midx, min))
-                    }
-                } else {
-                    Some((idx, p))
-                },
-                if let Some((midx, max)) = max {
-                    if lex_cmp(p, max) == Ordering::Greater {
-                        Some((idx, p))
-                    } else {
-                        Some((midx, max))
-                    }
-                } else {
-                    Some((idx, p))
-                },
-            )
-        });
-    (min.unwrap().0, max.unwrap().0)
 }
 
 #[cfg(test)]

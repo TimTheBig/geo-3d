@@ -108,11 +108,11 @@ impl<F: GeoNum> LabeledEdgeEndBundleStar<F> {
                 let left_position = label.position(geom_index, Direction::Left);
                 let right_position = label.position(geom_index, Direction::Right);
 
-                if let Some(right_position) = right_position {
+                if let Some(_right_position) = right_position {
                     #[cfg(debug_assertions)]
-                    if right_position != current_position {
+                    if _right_position != current_position {
                         use crate::algorithm::Validation;
-                        if geometry_graph.geometry().is_valid() {
+                        if _geometry_graph.geometry().is_valid() {
                             debug_assert!(false, "topology position conflict with coordinate — this can happen with invalid geometries. coordinate: {:?}, right_location: {:?}, current_location: {:?}", edge_ends.coordinate(), right_position, current_position);
                         } else {
                             warn!("topology position conflict with coordinate — this can happen with invalid geometries. coordinate: {:?}, right_location: {:?}, current_location: {:?}", edge_ends.coordinate(), right_position, current_position);

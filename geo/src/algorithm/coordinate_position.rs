@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use std::ops::AddAssign;
 use geo_types::{coord, CoordNum};
 // ! if this does not work use orient3d from kernels mod
-use ::robust::orient3d;
+// use ::robust::orient3d;
 
 use crate::geometry::*;
 use crate::intersects::{point_in_rect, value_in_between};
