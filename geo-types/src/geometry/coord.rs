@@ -341,9 +341,9 @@ use num_traits::Zero;
 ///
 /// let p: Coord = Zero::zero(); // or Coord::zero()
 ///
-/// assert_eq!(p.x, 0.);
-/// assert_eq!(p.y, 0.);
-/// assert_eq!(p.z, 0.);
+/// assert_eq!(p.x, 0.0);
+/// assert_eq!(p.y, 0.0);
+/// assert_eq!(p.z, 0.0);
 /// ```
 impl<T: CoordNum> Coord<T> {
     #[inline]

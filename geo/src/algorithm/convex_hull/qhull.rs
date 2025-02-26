@@ -8,14 +8,23 @@ use super::trivial_hull;
 /// 
 /// # Example
 /// ```
-/// use super::{coord, Coord, ConvexQHull};
-/// 
-/// ConvexQHull::try_new(
+/// # use geo_3d::{coord, Coord, convex_hull::ConvexQHull};
+/// # use geo_3d::{polygon, Centroid};
+/// let qhull = ConvexQHull::try_new(
 ///     &[
 ///     coord!(5.0, 5.0, 6.0),
-///     coord!(6.0, 5.0, 5.0),
-///     coord!(2.0, 3.0, 4.0)
-///     ]).expect("this is valid")
+///     coord!(2.0, 3.0, 4.0),
+///     coord!(5.0, 7.0, 4.0),
+///     // this one is inside
+///     coord!(4.3, 4.1, 5.0),
+///     coord!(3.0, 4.0, 3.0),
+///     coord!(6.0, 4.5, 5.0),
+///     ]).expect("this is valid");
+///
+///     assert_eq!(
+///         qhull.points::<f64>(),
+///         vec![coord!(5.0, 5.0, 6.0), coord!(6.0, 5.0, 5.0), coord!(2.0, 3.0, 4.0)]
+///     )
 /// ```
 pub struct ConvexQHull(ConvexHull);
 

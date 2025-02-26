@@ -154,6 +154,7 @@
 //! - **[`Transform`]**: Transform a geometry using Proj
 //! - **[`RemoveRepeatedPoints`]**: Remove repeated points from a geometry
 //! - **[`Validation`]**: Checks if the geometry is well formed. Some algorithms may not work correctly with invalid geometries
+//! - **`earcutr`**: Uses the `earcutr` crate, which provides triangulation of polygons using the earcut algorithm
 //!
 //! # Spatial Indexing
 //!
@@ -166,9 +167,6 @@
 //!
 //! The following optional [Cargo features] are available:
 //!
-//! - `earcutr`:
-//!     - Enables the `earcutr` crate, which provides triangulation of polygons using the earcut algorithm
-//!     - ☑ Enabled by default
 //! - `proj-network`:
 //!     - Enables [network grid] support for the [`proj` crate]
 //!     - After enabling this feature, [further configuration][proj crate file download] is required to use the network grid.
@@ -217,6 +215,8 @@
 //! [rhumb line]: https://en.wikipedia.org/wiki/Rhumb_line
 //! [Serde]: https://serde.rs/
 
+#![deny(unused)]
+
 #[cfg(feature = "use-serde")]
 #[macro_use]
 extern crate serde;
@@ -262,7 +262,8 @@ pub mod prelude {
     pub use crate::algorithm::*;
 }
 
-/// A common numeric trait used for geo algorithms
+/// A common numeric trait used for geo algorithms\
+/// A trait for methods which work for floating point, using a Kernel
 ///
 /// Different numeric types have different tradeoffs. `geo` strives to utilize generics to allow
 /// users to choose their numeric types. If you are writing a function which you'd like to be
