@@ -67,7 +67,7 @@ pub trait Relate<F: GeoNum> {
 macro_rules! relate_impl {
     ($($t:ty ,)*) => {
         $(
-            impl<F: GeoFloat> Relate<F> for $t {
+            impl<F: GeoNum> Relate<F> for $t {
                 fn geometry_graph(&self, arg_index: usize) -> GeometryGraph<F> {
                     GeometryGraph::new(arg_index, GeometryCow::from(self))
                 }

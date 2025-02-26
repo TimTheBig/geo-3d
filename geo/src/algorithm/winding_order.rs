@@ -122,31 +122,31 @@ where
 {
     type Scalar = T;
 
+    // todo check, is above/below consistent?
     fn winding_order(&self) -> Option<WindingOrder> {
-        // If linestring has at most 3 coords, it is either
+        // If linestring has at most 4 coords, it is either
         // not closed, or is at most two distinct points.
         // Either way, the WindingOrder is unspecified.
-        if self.coords_count() < 4 || !self.is_closed() {
+        if self.coords_count() < 5 || !self.is_closed() {
             return None;
         }
 
-        let increment = |x: &mut usize| {
-            *x += 1;
-            if *x >= self.coords_count() {
-                *x = 0;
+        let increment = |index: &mut usize| {
+            *index += 1;
+            if *index >= self.coords_count() {
+                *index = 0;
             }
         };
 
-        let decrement = |x: &mut usize| {
-            if *x == 0 {
-                *x = self.coords_count() - 1;
+        let decrement = |index: &mut usize| {
+            if *index == 0 {
+                *index = self.coords_count() - 1;
             } else {
-                *x -= 1;
+                *index -= 1;
             }
         };
 
-        use crate::utils::least_index;
-        let i = least_index(&self.0);
+        let i = crate::utils::least_index(&self.0);
 
         let mut next = i;
         increment(&mut next);
@@ -168,9 +168,19 @@ where
             decrement(&mut prev);
         }
 
-        match K::orient2d(self.0[prev], self.0[i], self.0[next]) {
-            Orientation::CounterClockwise => Some(WindingOrder::CounterClockwise),
-            Orientation::Clockwise => Some(WindingOrder::Clockwise),
+        // Find a third point that is neither prev nor next
+        let mut third = next;
+        increment(&mut third);
+        while self.0[third] == self.0[i] || self.0[third] == self.0[prev] || self.0[third] == self.0[next] {
+            increment(&mut third);
+            if third == i {
+                return None; // Not enough unique points
+            }
+        }
+
+        match K::orientation_3d(self.0[prev], self.0[third], self.0[next], self.0[i]) {
+            Orientation3D::Below => Some(WindingOrder::CounterClockwise),
+            Orientation3D::Above => Some(WindingOrder::Clockwise),
             _ => None,
         }
     }
@@ -212,20 +222,21 @@ where
     }
 }
 
+// todo add tests
 // This function can probably be converted into a trait implementation with a small refactoring of
 // the trait but this is not in scope of the PR it is added for.
 /// special cased algorithm for finding the winding of a triangle
-pub fn triangle_winding_order<T: GeoFloat>(tri: &Triangle<T>) -> Option<WindingOrder> {
-    let [a, b, c] = tri.to_array();
-    let ab = b - a;
-    let ac = c - a;
+pub fn triangle_winding_order<T, K>(tri: &Triangle<T>) -> Option<WindingOrder>
+where
+    T: GeoNum<Ker = K>,
+    K: Kernel<T>,
+{
+    let [p, q, r] = tri.to_array();
 
-    let cross_prod = ab.x * ac.y - ab.y * ac.x;
-
-    match cross_prod.total_cmp(&T::zero()) {
-        std::cmp::Ordering::Less => Some(WindingOrder::Clockwise),
-        std::cmp::Ordering::Equal => None,
-        std::cmp::Ordering::Greater => Some(WindingOrder::CounterClockwise),
+    match K::orient2d(p, q, r) {
+        Orientation::CounterClockwise => Some(WindingOrder::CounterClockwise),
+        Orientation::Clockwise => Some(WindingOrder::Clockwise),
+        _ => None,
     }
 }
 
@@ -233,6 +244,7 @@ pub fn triangle_winding_order<T: GeoFloat>(tri: &Triangle<T>) -> Option<WindingO
 mod test {
     use super::*;
     use crate::Point;
+    use geo_types::{coord, line_string};
 
     #[test]
     fn robust_winding_float() {
@@ -272,5 +284,31 @@ mod test {
         assert!(ls.is_cw());
 
         assert_eq!(&ls.points_ccw().collect::<Vec<_>>(), &ccw_ls,);
+    }
+
+    #[test]
+    fn test_triangle_winding_order() {
+        // cw
+        let tri = Triangle(coord!(-2.0, -2.0, -2.0), coord!(0.0, 2.0, 2.0), coord!(2.0, -2.0, -2.0));
+
+        assert_eq!(
+            triangle_winding_order(&tri).unwrap(),
+            WindingOrder::Clockwise,
+        )
+    }
+
+    #[test]
+    fn test_cw_ccw() {
+        // cw from above
+        let ls = line_string![
+            coord!(1., 1., 1.), coord!(2., -2., -2.), coord!(-3., -3., -3.), coord!(-4., 4., 5.), coord!(1., 1., 1.)
+        ];
+        assert_eq!(ls.winding_order().unwrap(), WindingOrder::Clockwise);
+
+        // ccw from above
+        let ls = line_string![
+            coord!(1., 1., 1.), coord!(-4., 4., 5.), coord!(-3., -3., -3.), coord!(2., -2., -2.), coord!(1., 1., 1.)
+        ];
+        assert_eq!(ls.winding_order().unwrap(), WindingOrder::CounterClockwise);
     }
 }

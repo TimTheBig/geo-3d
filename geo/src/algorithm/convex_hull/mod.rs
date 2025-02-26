@@ -1,5 +1,6 @@
 use crate::geometry::{Coord, LineString, Polygon};
 use crate::kernels::*;
+use crate::winding_order::triangle_winding_order;
 use crate::GeoNum;
 
 /// Returns the convex hull of a geometry. The hull is always oriented counter-clockwise.
@@ -61,7 +62,7 @@ where
 }
 
 pub mod qhull;
-use geo_types::CoordNum;
+use geo_types::{CoordNum, Triangle};
 pub use qhull::{quick_hull, ConvexQHull};
 
 pub mod graham;
@@ -71,33 +72,42 @@ use quickhull::ErrorKind;
 /// Helper function that outputs the convex hull in the
 /// trivial case: input with at most 3 points.\
 /// It ensures the output is ccw, and does not repeat points unless required.
-fn trivial_hull<T>(points: &mut [Coord<T>], include_on_hull: bool) -> LineString<T>
-where
-    T: GeoNum,
-{
+fn trivial_hull<T: GeoNum>(points: &mut [Coord<T>], include_on_hull: bool) -> LineString<T> {
     assert!(points.len() < 4);
 
-    // Remove repeated points unless collinear points
-    // are to be included.
-    let mut ls: Vec<Coord<T>> = points.to_vec();
+    let mut ls = points.to_vec();
+    // Remove repeated coplanear points
     if !include_on_hull {
         ls.sort_unstable_by(lex_cmp);
-        if ls.len() == 3 && T::Ker::orient2d(ls[0], ls[1], ls[2]) == Orientation::Collinear {
-            ls.remove(1);
+
+        if ls.len() == 3 {
+            let mut remove = None;
+            for (i, d) in ls.iter().enumerate() {
+                if T::Ker::orient3d(ls[0], ls[1], ls[2], *d) == T::zero() {
+                    remove = Some(i)
+                }
+            }
+            if let Some(i) = remove {
+                ls.remove(i);
+            }
         }
     }
 
-    // A linestring with a single point is invalid.
-    if ls.len() == 1 {
-        ls.push(ls[0]);
-    }
-
-    let mut ls = LineString::new(ls);
+    let mut ls: LineString<T> = ls.into();
     ls.close();
 
     // Maintain the CCW invariance
-    use super::winding_order::Winding;
-    ls.make_ccw_winding();
+    use super::winding_order::WindingOrder;
+    if ls.0.len() == 3 {
+        if let Some(w_o) = triangle_winding_order(
+            &Triangle::new(ls[0], ls[1], ls[2])
+        ) {
+            if w_o == WindingOrder::Clockwise {
+                ls.0.reverse();
+            }
+        }
+    }
+
     ls
 }
 

@@ -5,7 +5,7 @@ use num_traits::Signed;
 
 use crate::{
     area::twice_signed_ring_area, coordinate_position::CoordPos, dimensions::Dimensions,
-    monotone::monotone_subdivision, GeoNum, GeoNum, Relate,
+    monotone::monotone_subdivision, GeoNum, Relate,
 };
 
 pub(super) fn init_log() {
