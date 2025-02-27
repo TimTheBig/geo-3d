@@ -47,13 +47,8 @@ where
     /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
     fn right(self) -> Self;
 
-    /// The inner product of the coordinate components
-    ///
-    /// `a · b = a.x * b.x + a.y * b.y + a.z * b.z`
-    ///
-    fn dot_product(self, other: Rhs) -> Self::Scalar;
-
-    /// The calculates the `wedge product` between two vectors.
+    /// The calculates the `wedge product` between two vectors.\
+    /// Note: This is 2D only
     ///
     /// `a ∧ b = a.x * b.y - a.y * b.x`
     ///
@@ -100,15 +95,6 @@ where
     ///     explicit and has a `RobustKernel` option for extra precision.
     fn wedge_product(self, other: Rhs) -> Self::Scalar;
 
-    /// Returns the cross product of 3 points in 3D space.
-    /// The result is a 3D vector, which is perpendicular to the plane formed
-    /// by the vectors `self` → `point_b` and `self` → `point_c`.
-    ///
-    /// - For 2D use cases, use `wedge_product`.
-    /// - For cross of two coords use `.cross()`
-    ///
-    fn cross_product(self, point_b: Self, point_c: Self) -> Self;
-
     /// Try to find a vector of unit length in the same direction as this
     /// vector.
     ///
@@ -138,38 +124,16 @@ where
         self.x * other.y - self.y * other.x
     }
 
-    fn cross_product(self, point_b: Self, point_c: Self) -> Self {
-        let ux = point_b.x - self.x;
-        let uy = point_b.y - self.y;
-        let uz = point_b.z - self.z;
-        
-        let vx = point_c.x - self.x;
-        let vy = point_c.y - self.y;
-        let vz = point_c.z - self.z;
-
-        // Compute the cross product:
-        Self {
-            x: uy * vz - uz * vy,
-            y: uz * vx - ux * vz,
-            z: ux * vy - uy * vx,
-        }
-    }
-
-    fn dot_product(self, other: Self) -> Self::Scalar {
-        self.x * other.x + self.y * other.y + self.z * other.z
-    }
-
     fn magnitude(self) -> Self::Scalar {
-        // Use the 3D variant of hypot.
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+        self.dot(self).sqrt()
     }
 
     fn magnitude_squared(self) -> Self::Scalar {
-        self.x * self.x + self.y * self.y + self.z * self.z
+        self.dot(self)
     }
 
+    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
     fn left(self) -> Self {
-        // This assumes a 2D rotation in the XY plane, leaving Z unchanged.
         Self {
             x: -self.y,
             y: self.x,
@@ -177,8 +141,8 @@ where
         }
     }
 
+    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
     fn right(self) -> Self {
-        // This assumes a 2D rotation in the XY plane, leaving Z unchanged.
         Self {
             x: self.y,
             y: -self.x,
@@ -191,7 +155,7 @@ where
         let result = self / magnitude;
         // Both the result AND the magnitude must be finite they are finite
         // Otherwise very large vectors overflow magnitude to Infinity,
-        // and the after the division the result would be coord!{x:0.0,y:0.0}
+        // and the after the division the result would be coord!{x:0.0, y:0.0, z:0.0}
         // Note we don't need to check if magnitude is zero, because after the division
         // that would have made result non-finite or NaN anyway.
         if result.is_finite() && magnitude.is_finite() {
@@ -236,48 +200,23 @@ mod test {
     }
 
     #[test]
-    fn test_cross_product() {
-        // Using the 3-point (3D) cross product
-        let a = coord! { x: 1.0, y: 0.0, z: -1.0 };
-        let b = coord! { x: 0.0, y: 1.0, z: 0.0 };
-        let c = coord! { x: 0.0, y: 1.0, z: 0.0 };
-
-        assert_eq!(a.cross_product(b, c), coord! { x: 0.0, y: 0.0, z: 0.0 });
-        assert_eq!(b.cross_product(a, c), coord! { x: 0.0, y: 1.0, z: -1.0 });
-        assert_eq!(c.cross_product(a, b), coord! { x: 0.0, y: 1.0, z: -1.0 });
-
-        let a = coord! { x: 1.0, y: 0.0, z: -1.0 };
-        let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
-        let c = coord! { x: -1.0, y: 1.0, z: 1.0 };
-
-        assert_eq!(a.cross_product(b, c), coord!(1.0, 1.0, 1.0));
-        // Swapping the operands should negate the result.
-        assert_eq!(b.cross_product(a, c), coord!(-1.0, -1.0, -1.0));
-
-        let a = coord! { x: 2.0, y: 2.0, z: 2.0 };
-        let b = coord! { x: 1.0, y: 1.0, z: 1.0 };
-        let c = coord! { x: -2.0, y: -2.0, z: -2.0 };
-        assert_eq!(c.cross_product(a, b), coord!(0.0, 0.0, 0.0));
-    }
-
-    #[test]
     fn test_dot_product() {
         // Perpendicular unit vectors in the XY plane.
         let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
         let b = coord! { x: 0f64, y: 1f64, z: 0.0 };
-        assert_eq!(a.dot_product(b), 0f64);
+        assert_eq!(a.dot(b), 0f64);
 
         // Parallel vectors in the same direction.
         let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
         let b = coord! { x: 2f64, y: 0f64, z: 0.0 };
-        assert_eq!(a.dot_product(b), 2f64);
-        assert_eq!(b.dot_product(a), 2f64);
+        assert_eq!(a.dot(b), 2f64);
+        assert_eq!(b.dot(a), 2f64);
 
         // Parallel but opposite vectors.
         let a = coord! { x: 3f64, y: 4f64, z: 0.0 };
         let b = coord! { x: -3f64, y: -4f64, z: 0.0 };
-        assert_eq!(a.dot_product(b), -25f64);
-        assert_eq!(b.dot_product(a), -25f64);
+        assert_eq!(a.dot(b), -25f64);
+        assert_eq!(b.dot(a), -25f64);
     }
 
     #[test]
@@ -291,8 +230,8 @@ mod test {
         let a = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(a.magnitude(), 0f64);
 
-        let a = coord! { x: -3.0, y: 4.0, z: 0.5 };
-        assert_eq!(a.magnitude(), 5.5);
+        let a = coord! { x: -3.0, y: 4.10008, z: 2.10708 };
+        assert_relative_eq!(a.magnitude(), 5.5, epsilon = 0.00005);
     }
 
     #[test]

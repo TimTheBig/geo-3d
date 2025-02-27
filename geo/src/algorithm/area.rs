@@ -388,17 +388,26 @@ mod test {
 
     #[test]
     fn area_triangle_test() {
+        // One on each axis
+        let triangle = Triangle::new(
+            coord! { x: 0.0, y: 0.0, z: 1.0 },
+            coord! { x: 1.0, y: 0.0, z: 0.0 },
+            coord! { x: 0.0, y: 1.0, z: 0.0 },
+        );
+        assert_relative_eq!(triangle.signed_area(), 1.5);
+        assert_eq!(triangle.signed_area(), triangle.unsigned_area());
+
         let triangle = Triangle::new(
             coord! { x: 0.0, y: 0.0, z: 0.0 },
             coord! { x: 1.0, y: 0.0, z: 1.0 },
             coord! { x: 0.0, y: 1.0, z: 0.0 },
         );
-        assert_relative_eq!(triangle.signed_area(), 0.5);
+        assert_relative_eq!(triangle.signed_area(), 0.707, epsilon = 0.00011);
 
         let triangle = Triangle::new(
-            coord! { x: 0.0, y: 0.0, z: 0.0 },
-            coord! { x: 0.0, y: 1.0, z: 0.0 },
-            coord! { x: 1.0, y: 0.0, z: 1.0 },
+            coord! { x: 0.0, y: 0.0, z: -1.0 },
+            coord! { x: 0.0, y: -1.0, z: 0.0 },
+            coord! { x: 1.0, y: 0.0, z: -1.0 },
         );
         assert_relative_eq!(triangle.signed_area(), -0.5);
     }

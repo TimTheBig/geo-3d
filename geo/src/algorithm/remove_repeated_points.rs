@@ -268,13 +268,17 @@ mod test {
         Polygon::new(
             LineString(vec![
                 Coord { x: 0., y: 0., z: 0. },
+                // repeat
                 Coord { x: 1., y: 1., z: 1. },
                 Coord { x: 1., y: 1., z: 1. },
                 Coord { x: 1., y: 1., z: 1. },
+                // repeat
                 Coord { x: 0., y: 2., z: 0. },
                 Coord { x: 0., y: 2., z: 0. },
+                // repeat
                 Coord { x: 0., y: 0., z: 1. },
                 Coord { x: 0., y: 0., z: 1. },
+
                 Coord { x: 0., y: 0., z: 0. },
             ]),
             vec![],
@@ -287,6 +291,7 @@ mod test {
                 Coord { x: 0., y: 0., z: 0. },
                 Coord { x: 1., y: 1., z: 1. },
                 Coord { x: 0., y: 2., z: 0. },
+                Coord { x: 0., y: 0., z: 1. },
                 Coord { x: 0., y: 0., z: 0. },
             ]),
             vec![],
