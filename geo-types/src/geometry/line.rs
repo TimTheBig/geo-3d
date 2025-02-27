@@ -161,11 +161,11 @@ impl<T: CoordNum> Line<T> {
     /// # );
     /// # assert_eq!(
     /// #     line.determinant(),
-    /// #     ((4. * 9. - (-12.) * 0.).powi(2) + (4. * 0. - 4. * 0.).powi(2) + ((-12.) * 0. - 9. * 4.).powi(2)).sqrt()
+    /// #     ((4f64 * 9. - (-12.) * 0.).powi(2) + (4f64 * 0. - 4. * 0.).powi(2) + ((-12.) * 0. - 9. * 4f64).powi(2)).sqrt()
     /// # );
     /// ```
     pub fn determinant(&self) -> T {
-        // Calculate the components of the cross product of the two vectors
+        // Calculate the cross product of the two vectors
         let cross = self.start.cross(self.end);
 
         // Return the magnitude of the resulting 3D vector (the "volume" determinant)
