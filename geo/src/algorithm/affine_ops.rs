@@ -538,8 +538,6 @@ impl<T: CoordNum> From<(T, T, T, T, T, T, T, T, T, T, T, T)> for AffineTransform
 impl<U: CoordNum> AffineTransform<U> {
     /// **Create** an affine transform for 2D rotation, using an arbitrary point as its center.
     ///
-    /// Note that this operation is only available for geometries with floating point coordinates.
-    ///
     /// `angle` is given in **degrees**.
     ///
     /// The matrix (angle denoted as theta) is:
@@ -568,8 +566,6 @@ impl<U: CoordNum> AffineTransform<U> {
     }
 
     /// **Add** an affine transform for rotation, using an arbitrary point as its centre.
-    ///
-    /// Note that this operation is only available for geometries with floating point coordinates.
     ///
     /// `angle` is given in **degrees**.
     ///

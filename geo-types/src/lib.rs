@@ -26,7 +26,7 @@
 //!
 //! ## Coordinates and Numeric Types
 //!
-//! - **[`Coord`]**: A two-dimensional coordinate. All geometry types are composed of [`Coord`]s, though [`Coord`] itself is not a [`Geometry`] type. See [`Point`] for a single coordinate geometry.
+//! - **[`Coord`]**: A three-dimensional coordinate. All geometry types are composed of [`Coord`]s, though [`Coord`] itself is not a [`Geometry`] type. See [`Point`] for a single coordinate geometry.
 //!
 //! By default, coordinates are 64-bit floating point numbers, but this is generic, and you may specify any numeric type that implements [`CoordNum`] or [`CoordNum`]. As well as [`f64`], this includes common numeric types like [`f32`], [`i32`], [`i64`], etc.
 //!

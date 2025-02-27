@@ -4,7 +4,7 @@
 //!
 //! # Types
 //!
-//! - **[`Coord`]**: A two-dimensional coordinate. All geometry types are composed of [`Coord`]s, though [`Coord`] itself is not a [`Geometry`] type
+//! - **[`Coord`]**: A three-dimensional coordinate. All geometry types are composed of [`Coord`]s, though [`Coord`] itself is not a [`Geometry`] type
 //! - **[`Point`]**: A single point represented by one [`Coord`]
 //! - **[`MultiPoint`]**: A collection of [`Point`]s
 //! - **[`Line`]**: A line segment represented by two [`Coord`]s
@@ -131,7 +131,7 @@
 //!
 //! ## Affine transformations
 //!
-//! - **[`Rotate`]**: Rotate a geometry around its centroid
+//! - **[`Rotate`]**: Rotate a geometry around an axis or its centroid
 //! - **[`Scale`]**: Scale a geometry up or down by a factor
 //! - **[`Skew`]**: Skew a geometry by shearing angles along the `x` and `y` dimension
 //! - **[`Translate`]**: Translate a geometry along its axis
@@ -150,7 +150,6 @@
 //! - **[`ChaikinSmoothing`]**: Smoothen `LineString`, `Polygon`, `MultiLineString` and `MultiPolygon` using Chaikin's algorithm
 //! - **[`proj`]**: Project geometries with the `proj` crate (requires the `use-proj` feature)
 //! - **[`LineStringSegmentize`]**: Segment a LineString into `n` segments
-//! - **[`LineStringSegmentizeHaversine`]**: Segment a LineString using Haversine distance
 //! - **[`Transform`]**: Transform a geometry using Proj
 //! - **[`RemoveRepeatedPoints`]**: Remove repeated points from a geometry
 //! - **[`Validation`]**: Checks if the geometry is well formed. Some algorithms may not work correctly with invalid geometries

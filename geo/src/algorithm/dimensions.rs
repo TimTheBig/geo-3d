@@ -62,8 +62,8 @@ pub trait HasDimensions {
 
     /// The dimensions of some geometries are fixed, e.g. a Point always has 0 dimensions. However
     /// for others, the dimensionality depends on the specific geometry instance - for example
-    /// typical `Rect`s are 2-dimensional, but it's possible to create degenerate `Rect`s which
-    /// have either 1 or 0 dimensions.
+    /// typical `Rect`s are 3-dimensional, but it's possible to create degenerate `Rect`s which
+    /// have either 2, 1 or 0 dimensions.
     ///
     /// ## Examples
     ///
