@@ -1,7 +1,7 @@
 use num_traits::ToPrimitive;
 
 use crate::{Coord, CoordNum, MapCoords, MapCoordsInPlace};
-use std::{fmt, ops::Mul, ops::Neg};
+use std::{fmt::{self, Display}, ops::{Mul, Neg}};
 
 /// Apply an [`AffineTransform`] like [`scale`](AffineTransform::scale),
 /// [`skew`](AffineTransform::skew), or [`rotate`](AffineTransform::rotate) to a
@@ -137,15 +137,24 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 pub struct AffineTransform<T: CoordNum = f64>([[T; 4]; 4]);
 
 impl<T: CoordNum> Default for AffineTransform<T> {
+    /// Create the identity matrix
+    ///
+    /// The matrix is:
+    /// ```ignore
+    /// [[1, 0, 0, 0],
+    ///  [0, 1, 0, 0],
+    ///  [0, 0, 1, 0],
+    ///  [0, 0, 0, 1]]
+    /// ```
     fn default() -> Self {
         // identity matrix
         Self::identity()
     }
 }
 
-/// Makes an fn for a field at specified pos
+/// Makes an getter function for a field at specified 2d index
 macro_rules! affine_field_getter {
-    ($field_name: ident[$pos_0: literal][$pos_1: literal]) => {
+    ($field_name:ident[$pos_0:literal][$pos_1:literal]) => {
         /// See [AffineTransform::new] for this value's role in the affine transformation.
         pub fn $field_name(&self) -> T {
             self.0[$pos_0][$pos_1]
@@ -159,6 +168,16 @@ impl<T: CoordNum> AffineTransform<T> {
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
     pub fn compose(&self, other: &Self) -> Self {
+        // Enforce invariace
+        debug_assert!(
+            self.0[3] == [T::zero(), T::zero(), T::zero(), T::one()],
+            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}", self.0[3]
+        );
+        debug_assert!(
+            other.0[3] == [T::zero(), T::zero(), T::zero(), T::one()],
+            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}",other.0[3]
+        );
+
         Self([
             [
                 (other.0[0][0] * self.0[0][0])
@@ -215,23 +234,8 @@ impl<T: CoordNum> AffineTransform<T> {
                     + (other.0[2][3] * self.0[3][3]),
             ],
             [
-                // this section isn't technically necessary since the last row is invariant: [0, 0, 0, 1]
-                (other.0[3][0] * self.0[0][0])
-                    + (other.0[3][1] * self.0[1][0])
-                    + (other.0[3][2] * self.0[2][0])
-                    + (other.0[3][3] * self.0[3][0]),
-                (other.0[3][0] * self.0[0][1])
-                    + (other.0[3][1] * self.0[1][1])
-                    + (other.0[3][2] * self.0[2][1])
-                    + (other.0[3][3] * self.0[3][1]),
-                (other.0[3][0] * self.0[0][2])
-                    + (other.0[3][1] * self.0[1][2])
-                    + (other.0[3][2] * self.0[2][2])
-                    + (other.0[3][3] * self.0[3][2]),
-                (other.0[3][0] * self.0[0][3])
-                    + (other.0[3][1] * self.0[1][3])
-                    + (other.0[3][2] * self.0[2][3])
-                    + (other.0[3][3] * self.0[3][3]),
+                // this section isn't necessary since the last row is invariant: [0, 0, 0, 1]
+                T::zero(), T::zero(), T::zero(), T::one(),
             ],
         ])
     }
@@ -368,6 +372,12 @@ impl<T: CoordNum> AffineTransform<T> {
 
     /// Apply the current transform to a coordinate
     pub fn apply(&self, coord: Coord<T>) -> Coord<T> {
+        // Enforce invariace
+        debug_assert!(
+            self.0[3] == [T::zero(), T::zero(), T::zero(), T::one()],
+            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}",
+            self.0[3],
+        );
         Coord {
             x: self.0[0][0] * coord.x + self.0[0][1] * coord.y + self.0[0][2] * coord.z + self.0[0][3],
             y: self.0[1][0] * coord.x + self.0[1][1] * coord.y + self.0[1][2] * coord.z + self.0[1][3],
@@ -492,6 +502,18 @@ impl<T: CoordNum> fmt::Debug for AffineTransform<T> {
     }
 }
 
+impl<T: CoordNum> Display for AffineTransform<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(
+            f,
+            "[[{:?}, {:?}, {:?}, {:?}],\n[{:?}, {:?}, {:?}, {:?}],\n[{:?}, {:?}, {:?}, {:?}]]]",
+            self.a(), self.b(), self.f(), self.xoff(),
+            self.d(), self.e(), self.g(), self.yoff(),
+            self.h(), self.i(), self.j(), self.zoff(),
+        )
+    }
+}
+
 impl<T: CoordNum> From<[T; 12]> for AffineTransform<T> {
     fn from(arr: [T; 12]) -> Self {
         Self::new(
@@ -531,12 +553,12 @@ impl<U: CoordNum> AffineTransform<U> {
     /// yoff = origin.y - (origin.x * sin(theta)) - (origin.y * cos(theta))
     /// zoff = origin.z
     /// ```
-    pub fn rotate(degrees: U, origin: impl Into<Coord<U>>) -> Self {
+    pub fn rotate_xy(degrees: U, origin: impl Into<Coord<U>>) -> Self {
         let (sin_theta, cos_theta) = degrees.to_radians().sin_cos();
-        let Coord { x: x0, y: y0, z: z0 } = origin.into();
+        let Coord { x: x0, y: y0, .. } = origin.into();
         let xoff = x0 - (x0 * cos_theta) + (y0 * sin_theta);
         let yoff = y0 - (x0 * sin_theta) - (y0 * cos_theta);
-        let zoff = z0; // No change in the z-axis for a 2D rotation in 3D space.
+        let zoff = U::zero(); // No change in the z-axis for a 2D rotation in 3D space.
 
         Self::new(
             cos_theta, -sin_theta, U::zero(), xoff,
@@ -553,58 +575,63 @@ impl<U: CoordNum> AffineTransform<U> {
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
-    pub fn rotated(mut self, angle: U, origin: impl Into<Coord<U>>) -> Self {
-        self.0 = self.compose(&Self::rotate(angle, origin)).0;
+    pub fn rotated_xy(mut self, angle: U, origin: impl Into<Coord<U>>) -> Self {
+        self.0 = self.compose(&Self::rotate_xy(angle, origin)).0;
         self
     }
 
     /// **Create** an affine transform for skewing.
     ///
-    /// Note that this operation is only available for geometries with floating point coordinates.
-    ///
-    /// Geometries are sheared by angles along x (`xs`) and y (`ys`) dimensions.
-    /// The point of origin is *usually* given as the 2D bounding box centre of the geometry, but
+    /// Geometries are sheared by angles along x (`xs`), y (`ys`), and z (`zs`) dimensions.
+    /// The point of origin is *usually* given as the 3D bounding box centre of the geometry, but
     /// any coordinate may be specified. Angles are given in **degrees**.
     /// The matrix is:
     /// ```ignore
     /// [[1, tan(x), 0, xoff],
     /// [tan(y), 1, 0, yoff],
-    /// [0, 0, 1, zoff],
+    /// [0, tan(z), 1, zoff],
     /// [0, 0, 0, 1]]
     ///
     /// xoff = -origin.y * tan(xs)
     /// yoff = -origin.x * tan(ys)
-    /// zoff = origin.z
+    /// zoff = -origin.z * tan(zs)
     /// ```
-    pub fn skew(xs: U, ys: U, origin: impl Into<Coord<U>>) -> Self {
+    pub fn skew(xs: U, ys: U, zs: U, origin: impl Into<Coord<U>>) -> Self {
         let Coord { x: x0, y: y0, z: z0 } = origin.into();
         let mut tanx = xs.to_radians().tan();
         let mut tany = ys.to_radians().tan();
-        // These checks are stolen from Shapely's implementation -- may not be necessary
+        let mut tanz = zs.to_radians().tan();
+
+        // These checks are "barowed"(stolen) from Shapely's implementation -- may not be necessary
         if tanx.abs() < U::from::<f64>(2.5e-16).unwrap() {
             tanx = U::zero();
         }
         if tany.abs() < U::from::<f64>(2.5e-16).unwrap() {
             tany = U::zero();
         }
+        if tanz.abs() < U::from::<f64>(2.5e-16).unwrap() {
+            tanz = U::zero();
+        }
+
         let xoff = -y0 * tanx;
         let yoff = -x0 * tany;
-        let zoff = z0; // Z-offset remains unchanged during a 2D skew operation.
-        Self::new(U::one(), tanx, U::zero(), xoff, tany, U::one(), U::zero(), yoff, U::zero(), U::zero(), U::one(), zoff)
+        let zoff = -z0 * tanz;
+        Self::new(
+            U::one(), tanx, U::zero(), xoff,
+            tany, U::one(), U::zero(), yoff,
+            U::zero(), tanz, U::one(), zoff)
     }
 
     /// **Add** an affine transform for skewing.
     ///
-    /// Note that this operation is only available for geometries with floating point coordinates.
-    ///
-    /// Geometries are sheared by angles along x (`xs`) and y (`ys`) dimensions.
-    /// The point of origin is *usually* given as the 2D bounding box centre of the geometry, but
+    /// Geometries are sheared by angles along x (`xs`), y (`ys`), and z (`zs`) dimensions.
+    /// The point of origin is *usually* given as the 3D bounding box centre of the geometry, but
     /// any coordinate may be specified. Angles are given in **degrees**.
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
-    pub fn skewed(mut self, xs: U, ys: U, origin: impl Into<Coord<U>>) -> Self {
-        self.0 = self.compose(&Self::skew(xs, ys, origin)).0;
+    pub fn skewed(mut self, xs: U, ys: U, zs: U, origin: impl Into<Coord<U>>) -> Self {
+        self.0 = self.compose(&Self::skew(xs, ys, zs, origin)).0;
         self
     }
 }
@@ -697,18 +724,18 @@ mod tests {
 
         assert_eq!(composed.0[0][0], 43.);
         assert_eq!(composed.0[0][1], 70.);
-        assert_eq!(composed.0[0][2], 31.);
-        assert_eq!(composed.0[0][3], 154.);
+        assert_eq!(composed.0[0][2], 135.);
+        assert_eq!(composed.0[0][3], 136.);
     
-        assert_eq!(composed.0[1][0], 84.);
-        assert_eq!(composed.0[1][1], 145.);
-        assert_eq!(composed.0[1][2], 53.);
-        assert_eq!(composed.0[1][3], 258.);
+        assert_eq!(composed.0[1][0], 47.);
+        assert_eq!(composed.0[1][1], 74.);
+        assert_eq!(composed.0[1][2], 158.);
+        assert_eq!(composed.0[1][3], 145.);
     
-        assert_eq!(composed.0[2][0], 121.);
-        assert_eq!(composed.0[2][1], 175.);
-        assert_eq!(composed.0[2][2], 56.);
-        assert_eq!(composed.0[2][3], 287.);
+        assert_eq!(composed.0[2][0], 46.);
+        assert_eq!(composed.0[2][1], 74.);
+        assert_eq!(composed.0[2][2], 127.);
+        assert_eq!(composed.0[2][3], 144.);
     }
     #[test]
     fn test_transform_composition() {
@@ -716,9 +743,9 @@ mod tests {
         // scale once
         let mut scale_a = AffineTransform::default().scaled(2.0, 2.0, 2.0, p0);
         // rotate
-        scale_a = scale_a.rotated(45.0, p0);
+        scale_a = scale_a.rotated_xy(45.0, p0);
         // rotate back
-        scale_a = scale_a.rotated(-45.0, p0);
+        scale_a = scale_a.rotated_xy(-45.0, p0);
         // scale up again, doubling
         scale_a = scale_a.scaled(2.0, 2.0, 2.0, p0);
         // scaled once

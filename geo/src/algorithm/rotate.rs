@@ -135,12 +135,13 @@ where
     }
 
     fn rotate_around_point(&self, degrees: T, point: Point<T>) -> Self {
-        let transform = AffineTransform::rotate(degrees, point);
+        let transform = AffineTransform::rotate_xy(degrees, point);
+        eprintln!("{}", transform);
         self.affine_transform(&transform)
     }
 
     fn rotate_around_point_mut(&mut self, degrees: T, point: Point<T>) {
-        let transform = AffineTransform::rotate(degrees, point);
+        let transform = AffineTransform::rotate_xy(degrees, point);
         self.affine_transform_mut(&transform)
     }
 }
