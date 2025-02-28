@@ -404,7 +404,7 @@ fn inside<T: CoordNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usi
     }
 
     // is odd
-    if !(*boundary_count % 2 == 0) {
+    if *boundary_count % 2 != 0 {
         CoordPos::Inside
     } else {
         CoordPos::Outside

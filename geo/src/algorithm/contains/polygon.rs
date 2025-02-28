@@ -11,8 +11,6 @@ use crate::{HasDimensions, Relate};
 impl<T: GeoNum> ContainsXY<Coord<T>> for Polygon<T> {
     /// Checks whether a `Coord` is inside a `Polygon`
     fn contains_2d(&self, coord: &Coord<T>) -> bool {
-        use crate::coordinate_position::CoordPos;
-
         xy_position_in_poly(self, coord) == CoordPos::Inside
     }
 }
@@ -112,7 +110,7 @@ impl<T: GeoNum> ContainsXY<MultiPoint<T>> for MultiPolygon<T> {
 
 impl<T: GeoNum> Contains<Coord<T>> for Polygon<T> {
     fn contains(&self, coord: &Coord<T>) -> bool {
-        use crate::coordinate_position::{CoordPos, CoordinatePosition};
+        use crate::coordinate_position::CoordinatePosition;
 
         self.coordinate_position(coord) == CoordPos::Inside
     }

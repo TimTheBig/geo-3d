@@ -230,7 +230,7 @@ where
             let kth_dist = neighbours
                 .iter()
                 .map(|(_, distance)| distance)
-                .last()
+                .next_back()
                 .unwrap();
             T::from(neighbours.len()).unwrap()
                 / neighbours
@@ -250,7 +250,7 @@ where
             let kth_dist = neighbours
                 .iter()
                 .map(|(_, distance)| distance)
-                .last()
+                .next_back()
                 .unwrap();
             // sum neighbour set LRD scores
             let lrd_scores: T = neighbours

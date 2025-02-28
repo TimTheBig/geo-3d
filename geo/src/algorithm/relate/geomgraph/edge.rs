@@ -26,8 +26,7 @@ impl<F: GeoNum> Edge<F> {
     /// Create a new Edge.
     ///
     /// - `coords` a *non-empty* Vec of Coords
-    /// - `label` an appropriately dimensioned topology label for the Edge. See [`TopologyPosition`]
-    ///    for details
+    /// - `label` an appropriately dimensioned topology label for the Edge. See [`TopologyPosition`] for details
     pub(crate) fn new(mut coords: Vec<Coord<F>>, label: Label) -> Edge<F> {
         assert!(!coords.is_empty(), "Can't add empty edge");
         // Once set, `edge.coords` never changes length.

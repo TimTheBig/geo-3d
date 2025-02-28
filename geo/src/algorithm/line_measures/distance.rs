@@ -64,9 +64,8 @@ impl<F: CoordNum> Distance<F, Point<F>> for Point<F> {
     /// Calculate the Euclidean distance (a.k.a. pythagorean distance) between two Points
     ///
     /// # Units
-    /// - `origin`, `destination`: Point where the units of x/y represent non-angular units
-    ///    — e.g. meters or miles, not lon/lat. For lon/lat points, use the
-    ///    [`Haversine`] or [`Geodesic`] [metric spaces].
+    /// - `origin`, `destination`: Point where the units of x/y/z represent non-angular units
+    ///    — e.g. meters or miles
     /// - returns: distance in the same units as the `origin` and `destination` points
     ///
     /// # Example

@@ -52,7 +52,7 @@ impl ConvexQHull {
     }
 
     /// Gets the points of the convex hull without collecting an iterator.
-    pub fn points_iter<'a, T: CoordNum>(&self) -> impl Iterator<Item = Coord<f64>> + '_ {
+    pub fn points_iter<T: CoordNum>(&self) -> impl Iterator<Item = Coord<f64>> + '_ {
         self.0.points.iter().map(|v3| coord!(v3.x, v3.y, v3.z))
     }
 
