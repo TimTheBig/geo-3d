@@ -544,7 +544,7 @@ impl<U: CoordNum> AffineTransform<U> {
     /// ```ignore
     /// [[cos_theta, -sin_theta, 0, xoff],
     ///  [sin_theta,  cos_theta, 0, yoff],
-    ///  [0,          0,         1, zoff],
+    ///  [0,          0,         1, 0],
     ///  [0,          0,         0, 1]]
     ///
     /// xoff = origin.x - (origin.x * cos(theta)) + (origin.y * sin(theta))
@@ -571,11 +571,108 @@ impl<U: CoordNum> AffineTransform<U> {
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
     #[must_use]
-    pub fn rotated_xy(mut self, angle: U, origin: impl Into<Coord<U>>) -> Self {
+    pub fn rotated_around_point(mut self, angle: U, origin: impl Into<Coord<U>>) -> Self {
         self.0 = self.compose(&Self::rotate_xy(angle, origin)).0;
         self
     }
 
+    /// **Create** an affine transform for x-axis rotation, using an arbitrary point as its center.
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// The matrix (angle denoted as theta) is:
+    /// ```ignore
+    /// [[1 0 0 0],
+    /// [0 cos(θ) −sin(θ) 0],
+    /// [0 sin(θ) cos(θ) 0],
+    /// [0 0 0 1]]
+    /// ```
+    pub fn rotate_x(degrees: U) -> Self {
+        let rad = degrees.to_radians();
+
+        Self::new(
+            U::one(), U::zero(), U::zero(), U::zero(),
+            U::zero(), rad.cos(), -(rad.sin()), U::zero(),
+            U::zero(), rad.sin(), rad.cos(), U::zero(),
+        )
+    }
+
+    /// **Add** an affine transform for x-axis rotation
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
+    #[must_use]
+    pub fn rotated_x(mut self, angle: U) -> Self {
+        self.0 = self.compose(&Self::rotate_x(angle)).0;
+        self
+    }
+
+    /// **Create** an affine transform for y-axis rotation, using an arbitrary point as its center.
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// The matrix (angle denoted as theta) is:
+    /// ```ignore
+    /// [[cos(θ) 0 sin(θ) 0],
+    /// [0 1 0 0],
+    /// [−sin(θ) 0 cos(θ) 0],
+    /// [0 0 0 1]]
+    /// ```
+    pub fn rotate_y(degrees: U) -> Self {
+        let rad = degrees.to_radians();
+
+        Self::new(
+            rad.cos(), U::zero(), rad.sin(), U::zero(),
+            U::zero(), U::one(), U::zero(), U::zero(),
+            -(rad.sin()), U::zero(), rad.cos(), U::zero(),
+        )
+    }
+
+    /// **Add** an affine transform for y-axis rotation
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
+    #[must_use]
+    pub fn rotated_y(mut self, angle: U) -> Self {
+        self.0 = self.compose(&Self::rotate_y(angle)).0;
+        self
+    }
+
+    /// **Create** an affine transform for z-axis rotation, using an arbitrary point as its center.
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// The matrix (angle denoted as theta) is:
+    /// ```ignore
+    /// [[cos(θ) −sin(θ) 0 0],
+    /// [sin(θ) cos(θ) 0 0],
+    /// [0 0 1 0],
+    /// [0 0 0 1]]
+    /// ```
+    pub fn rotate_z(degrees: U) -> Self {
+        let rad = degrees.to_radians();
+
+        Self::new(
+            rad.cos(), -(rad.sin()), U::zero(), U::zero(),
+            rad.sin(), rad.cos(), U::zero(), U::zero(),
+            U::zero(), U::zero(), U::one(), U::zero(),
+        )
+    }
+
+    /// **Add** an affine transform for z-axis rotation
+    ///
+    /// `angle` is given in **degrees**.
+    ///
+    /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
+    #[must_use]
+    pub fn rotated_z(mut self, angle: U) -> Self {
+        self.0 = self.compose(&Self::rotate_z(angle)).0;
+        self
+    }
+
+    // todo searchup "3d affine transform skew" to see if tanz is in the right spot
     /// **Create** an affine transform for skewing.
     ///
     /// Geometries are sheared by angles along x (`xs`), y (`ys`), and z (`zs`) dimensions.
@@ -615,6 +712,7 @@ impl<U: CoordNum> AffineTransform<U> {
         Self::new(
             U::one(), tanx, U::zero(), xoff,
             tany, U::one(), U::zero(), yoff,
+            // todo check `tanz` pos
             U::zero(), tanz, U::one(), zoff)
     }
 
@@ -733,15 +831,16 @@ mod tests {
         assert_eq!(composed.0[2][2], 127.);
         assert_eq!(composed.0[2][3], 144.);
     }
+
     #[test]
     fn test_transform_composition() {
         let p0 = Point::new(0.0f64, 0.0, 0.0);
         // scale once
         let mut scale_a = AffineTransform::default().scaled(2.0, 2.0, 2.0, p0);
         // rotate
-        scale_a = scale_a.rotated_xy(45.0, p0);
+        scale_a = scale_a.rotated_around_point(45.0, p0);
         // rotate back
-        scale_a = scale_a.rotated_xy(-45.0, p0);
+        scale_a = scale_a.rotated_around_point(-45.0, p0);
         // scale up again, doubling
         scale_a = scale_a.scaled(2.0, 2.0, 2.0, p0);
         // scaled once
@@ -761,6 +860,7 @@ mod tests {
         let expected = wkt! { POLYGON((2.0 2.0 2.0, 2.0 6.0 2.0, 4.0 6.0 4.0)) };
         assert_eq!(expected, poly);
     }
+
     #[test]
     fn affine_transformed_inverse() {
         let transform = AffineTransform::translate(1.0, 1.0, 1.0).scaled(2.0, 2.0, 2.0, (0.0, 0.0, 0.0));
@@ -774,6 +874,7 @@ mod tests {
         poly.affine_transform_mut(&identity);
         assert_eq!(expected, poly);
     }
+
     #[test]
     fn test_affine_transform_getters() {
         let transform = AffineTransform::new(
@@ -795,6 +896,7 @@ mod tests {
         assert_eq!(transform.j(), 12.0);
         assert_eq!(transform.zoff(), 600_000.0);
     }
+
     #[test]
     fn test_compose() {
         let point = Point::new(1., 0., 2.);
@@ -811,5 +913,36 @@ mod tests {
         );
 
         assert_eq!(point.affine_transform(&composed), Point::new(8., 0., 6.));
+    }
+
+    #[test]
+    fn test_rotate() {
+        let mut ident = AffineTransform::identity();
+        ident = ident.rotated_x(15.0);
+        ident = ident.rotated_x(-15.0);
+        assert_eq!(AffineTransform::identity(), ident);
+
+        let mut ident = AffineTransform::identity();
+        ident = ident.rotated_y(15.0);
+        ident = ident.rotated_y(-15.0);
+        assert_eq!(AffineTransform::identity(), ident);
+
+        let mut ident = AffineTransform::identity();
+        ident = ident.rotated_z(15.0);
+        ident = ident.rotated_z(-15.0);
+        assert_eq!(AffineTransform::identity(), ident);
+
+        let mut ident = AffineTransform::identity();
+        ident = ident.rotated_z(15.0);
+        ident = ident.rotated_x(-15.0);
+        ident = ident.rotated_z(-15.0);
+        ident = ident.rotated_x(15.0);
+        assert_ne!(AffineTransform::identity(), ident);
+
+        assert_relative_eq!(
+            Coord { x: -1.0, y: 1.0, z: 2.0 },
+            AffineTransform::rotate_z(90.0).apply(Coord { x: 1.0, y: 1.0, z: 2.0 }),
+            epsilon = 0.1e-15,
+        )
     }
 }
