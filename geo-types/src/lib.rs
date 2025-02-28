@@ -12,14 +12,12 @@
 //! - **[`Point`]**: A single point represented by one [`Coord`]
 //! - **[`MultiPoint`]**: A collection of [`Point`]s
 //! - **[`Line`]**: A line segment represented by two [`Coord`]s
-//! - **[`LineString`]**: A series of contiguous line segments represented by two or more
-//!   [`Coord`]s
+//! - **[`LineString`]**: A series of contiguous line segments represented by two or more [`Coord`]s
 //! - **[`MultiLineString`]**: A collection of [`LineString`]s
 //! - **[`Polygon`]**: A bounded area represented by one [`LineString`] exterior ring, and zero or
 //!   more [`LineString`] interior rings
 //! - **[`MultiPolygon`]**: A collection of [`Polygon`]s
-//! - **[`Rect`]**: An axis-aligned bounded rectangle represented by minimum and maximum
-//!   [`Coord`]s
+//! - **[`Rect`]**: An axis-aligned bounded rectangle represented by minimum and maximum [`Coord`]s
 //! - **[`Triangle`]**: A bounded area represented by three [`Coord`] vertices
 //! - **[`GeometryCollection`]**: A collection of [`Geometry`]s
 //! - **[`Geometry`]**: An enumeration of all geometry types, excluding [`Coord`]

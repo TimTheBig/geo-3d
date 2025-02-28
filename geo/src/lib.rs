@@ -8,20 +8,18 @@
 //! - **[`Point`]**: A single point represented by one [`Coord`]
 //! - **[`MultiPoint`]**: A collection of [`Point`]s
 //! - **[`Line`]**: A line segment represented by two [`Coord`]s
-//! - **[`LineString`]**: A series of contiguous line segments represented by two or more
-//!   [`Coord`]s
+//! - **[`LineString`]**: A series of contiguous line segments represented by two or more [`Coord`]s
 //! - **[`MultiLineString`]**: A collection of [`LineString`]s
 //! - **[`Polygon`]**: A bounded area represented by one [`LineString`] exterior ring, and zero or
 //!   more [`LineString`] interior rings
 //! - **[`MultiPolygon`]**: A collection of [`Polygon`]s
-//! - **[`Rect`]**: An axis-aligned bounded rectangle represented by minimum and maximum
-//!   [`Coord`]s
+//! - **[`Rect`]**: An axis-aligned bounded rectangle represented by minimum and maximum [`Coord`]s
 //! - **[`Triangle`]**: A bounded area represented by three [`Coord`] vertices
 //! - **[`GeometryCollection`]**: A collection of [`Geometry`]s
 //! - **[`Geometry`]**: An enumeration of all geometry types, excluding [`Coord`]
 //!
 //! The preceding types are reexported from the [`geo-types`] crate. Consider using that crate
-//! if you only need access to these types and no other `geo` functionality.
+//! if you only need access to these types and no other `geo-3d` functionality.
 //!
 //! # Algorithms
 //!
@@ -31,8 +29,7 @@
 //!
 //! ### Metric Spaces
 //!
-//! - **[`Euclidean`]**: The [Euclidean plane] measures distance with the pythagorean formula. Not suitable for lon/lat geometries.
-//! - **[`Haversine`]**: The [Haversine Formula] measures distance on a sphere. Only suitable for lon/lat geometries.
+//! - **[`Euclidean`]**: The [Euclidean plane] measures distance with the pythagorean formula.
 //!
 //! ### Operations on Metric Spaces
 //!
@@ -49,11 +46,10 @@
 //! - **[`HausdorffDistance`]**: Calculate "the maximum of the distances from a point in any of the sets to the nearest point in the other set." (Rote, 1991)
 //! - **[`FrechetDistance`]**: Calculate the similarity between [`LineString`]s using the Fréchet distance
 //!
-//! ## Area
+//! ## Area/Volume
 //!
-//! - **[`Area`]**: Calculate the planar area of a geometry
-//! - **[`ChamberlainDuquetteArea`]**: Calculate the geodesic area of a geometry on a sphere using the algorithm presented in _Some Algorithms for Polygons on a Sphere_ by Chamberlain and Duquette (2007)
-//! - **[`GeodesicArea`]**: Calculate the geodesic area and perimeter of a geometry on an ellipsoid using the algorithm presented in _Algorithms for geodesics_ by Charles Karney (2013)
+//! - **[`Area`]**: Calculate the area of a geometry
+//! - **[`Volume`]**: Calculate the volume of a geometry
 //!
 //! ## Outlier Detection
 //!
@@ -71,8 +67,6 @@
 //!
 //! - **[`ClosestPoint`]**: Find the point on a geometry
 //!   closest to a given point
-//! - **[`HaversineClosestPoint`]**: Find the point on a geometry
-//!   closest to a given point on a sphere using spherical coordinates and lines being great arcs
 //! - **[`IsConvex`]**:
 //!   Calculate the convexity of a [`LineString`]
 //! - **[`LineInterpolatePoint`]**:
@@ -133,7 +127,7 @@
 //!
 //! - **[`Rotate`]**: Rotate a geometry around an axis or its centroid
 //! - **[`Scale`]**: Scale a geometry up or down by a factor
-//! - **[`Skew`]**: Skew a geometry by shearing angles along the `x` and `y` dimension
+//! - **[`Skew`]**: Skew a geometry by shearing angles along the `x`, `y`, and `z` dimension
 //! - **[`Translate`]**: Translate a geometry along its axis
 //! - **[`AffineOps`]**: generalised composable affine operations
 //!
@@ -153,7 +147,7 @@
 //! - **[`Transform`]**: Transform a geometry using Proj
 //! - **[`RemoveRepeatedPoints`]**: Remove repeated points from a geometry
 //! - **[`Validation`]**: Checks if the geometry is well formed. Some algorithms may not work correctly with invalid geometries
-//! - **`earcutr`**: Uses the `earcutr` crate, which provides triangulation of polygons using the earcut algorithm
+//! - **[`TriangulateEarcut`]**: Uses the [`earcutr`] crate, which provides triangulation of polygons using the earcut algorithm
 //!
 //! # Spatial Indexing
 //!
@@ -181,37 +175,15 @@
 //!       in `geo-types`, enabling multi-threaded iteration over `Multi*` geometries
 //!     - ☑ Enabled by default
 //!
-//! # Ecosystem
-//!
-//! There’s a wide variety of `geo`-compatible crates in the ecosystem that offer functionality not
-//! included in the `geo` crate, including:
-//!
-//! * Reading and writing file formats (e.g. [GeoJSON][geojson crate], [WKT][wkt crate],
-//!   [shapefile][shapefile crate])
-//! * [Latitude and longitude parsing][latlng crate]
-//! * [Label placement][polylabel crate]
-//! * [Geocoding][geocoding crate]
-//! * [and much more...][georust website]
-//!
 //! [Euclidean plane]: https://en.wikipedia.org/wiki/Euclidean_plane
 //! [`geo-types`]: https://crates.io/crates/geo-types
-//! [haversine formula]: https://en.wikipedia.org/wiki/Haversine_formula//
 //! [`proj` crate]: https://github.com/georust/proj
-//! [geojson crate]: https://crates.io/crates/geojson
 //! [Karney (2013)]:  https://arxiv.org/pdf/1109.4448.pdf
-//! [wkt crate]: https://crates.io/crates/wkt
 //! [shapefile crate]: https://crates.io/crates/shapefile
-//! [latlng crate]: https://crates.io/crates/latlon
-//! [polylabel crate]: https://crates.io/crates/polylabel
-//! [geocoding crate]: https://crates.io/crates/geocoding
 //! [georust website]: https://georust.org
 //! [Cargo features]: https://doc.rust-lang.org/cargo/reference/features.html
-//! [GEOS]: https://trac.osgeo.org/geos
-//! [JTS]: https://github.com/locationtech/jts
 //! [network grid]: https://proj.org/usage/network.html
-//! [OGC-SFA]: https://www.ogc.org/standards/sfa
 //! [proj crate file download]: https://docs.rs/proj/*/proj/#grid-file-download
-//! [rhumb line]: https://en.wikipedia.org/wiki/Rhumb_line
 //! [Serde]: https://serde.rs/
 
 #![deny(unused)]
@@ -264,25 +236,22 @@ pub mod prelude {
 /// A common numeric trait used for geo algorithms\
 /// A trait for methods which work for floating point, using a Kernel
 ///
-/// Different numeric types have different tradeoffs. `geo` strives to utilize generics to allow
-/// users to choose their numeric types. If you are writing a function which you'd like to be
-/// generic over all the numeric types supported by geo, you probably want to constrain
-/// your function input to `GeoFloat`. For methods which work for integers, and not just floating
-/// point, see [`GeoNum`].
+/// Different numeric types have different tradeoffs. `geo-3d` strives to utilize generics to allow
+/// users to choose their numeric types.
 ///
 /// # Examples
 ///
 /// ```
-/// use geo::{GeoFloat, MultiPolygon, Polygon, Point};
+/// use geo_3d::{GeoNum, MultiPolygon, Polygon, Point};
 ///
-/// // An admittedly silly method implementation, but the signature shows how to use the GeoFloat trait
-/// fn farthest_from<'a, T: GeoFloat>(point: &Point<T>, polygons: &'a MultiPolygon<T>) -> Option<&'a Polygon<T>> {
+/// // An admittedly silly method implementation, but the signature shows how to use the GeoNum trait
+/// fn farthest_from<'a, T: GeoNum>(point: &Point<T>, polygons: &'a MultiPolygon<T>) -> Option<&'a Polygon<T>> {
 ///     polygons.iter().fold(None, |accum, next| {
 ///         match accum {
 ///             None => Some(next),
 ///             Some(farthest) => {
-///                 use geo::{euclidean_distance::EuclideanDistance};
-///                 if next.euclidean_distance(point) > farthest.euclidean_distance(point) {
+///                 use geo_3d::Distance;
+///                 if next.distance(point) > farthest.distance(point) {
 ///                     Some(next)
 ///                 } else {
 ///                     Some(farthest)
@@ -320,7 +289,7 @@ macro_rules! impl_geo_num_for_float {
 // This is the list of primitives that we support.
 impl_geo_num_for_float!(f32);
 impl_geo_num_for_float!(f64);
-// for when f128 gets stabilized
+// todo for when f128 gets stabilized
 // impl_geo_num_for_float!(f128);
 
 #[cfg(test)]
@@ -351,7 +320,7 @@ mod tests {
     fn numeric_types() {
         let _n_f32 = Point::new(1.0f32, 2.0f32, 3.0f32);
         let _n_f64 = Point::new(1.0f64, 2.0f64, 3.0f64);
-        // for when f128 gets stabilized
+        // todo for when f128 gets stabilized
         // let _n_f128 = Point::new(1.0f128, 2.0f128, 3.0f128);
     }
 }
