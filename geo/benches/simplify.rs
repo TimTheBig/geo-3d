@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::simplify::Simplify;
+use geo_3d::simplify::Simplify;
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("simplify simple f32", |bencher| {

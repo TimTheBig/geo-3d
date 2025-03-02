@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo::prelude::*;
+use geo_3d::prelude::*;
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("rotate f32", |bencher| {

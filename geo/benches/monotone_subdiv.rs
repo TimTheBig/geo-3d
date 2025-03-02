@@ -28,7 +28,7 @@ fn criterion_benchmark_pt_in_poly(c: &mut Criterion) {
     }
     for size in [16, 64, 512, 1024, 2048] {
         let mut grp = c.benchmark_group("rand pt-in-poly steppy-polygon (best case)".to_string());
-        let poly = steppy_polygon(&mut rng(), size).map_coords(|c| (c.y, c.x).into());
+        let poly = steppy_polygon(&mut rng(), size).map_coords(|c| (c.y, c.x, c.z).into());
         bench_pt_in_poly(&mut grp, poly, size, &pt_samples)
     }
     for size in [16, 64, 512, 1024, 2048] {
@@ -96,7 +96,7 @@ fn criterion_benchmark_monotone_subdiv(c: &mut Criterion) {
     for size in [16, 64, 2048, 32000] {
         let mut grp = c.benchmark_group("monotone_subdiv steppy-polygon (best case)".to_string());
         let poly_fn =
-            |size| steppy_polygon(&mut rng(), size).map_coords(|c| (c.y, c.x).into());
+            |size| steppy_polygon(&mut rng(), size).map_coords(|c| (c.y, c.x, c.z).into());
         bench_monotone_subdiv(&mut grp, poly_fn, size)
     }
     for size in [16, 64, 2048, 32000] {

@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main};
-use geo::frechet_distance::FrechetDistance;
+use geo_3d::frechet_distance::FrechetDistance;
 
 fn criterion_benchmark(c: &mut criterion::Criterion) {
     c.bench_function("frechet distance f32", |bencher| {

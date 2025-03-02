@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use geo_3d::prelude::*;
+use geo_3d::{prelude::*, LineString};
 use geo_3d::{Coord, CoordNum};
 
 use num_traits::Signed;
@@ -37,6 +37,17 @@ fn criterion_benchmark(c: &mut Criterion) {
                 criterion::black_box(&mut points),
                 criterion::black_box(true),
             ));
+        });
+    });
+
+    c.bench_function("convex hull with random f64", |bencher| {
+        let line_string: LineString = uniform_points_in_range(100_000_f64, 100_000, &mut rand::rng()).into();
+        bencher.iter(|| {
+            criterion::black_box(unsafe {
+                criterion::black_box(&line_string)
+                .convex_hull()
+                .unwrap_unchecked()
+            });
         });
     });
 }
