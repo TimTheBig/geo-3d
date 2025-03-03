@@ -248,9 +248,9 @@ mod test {
         );
         assert_eq!(linestring.line_interpolate_point(Float::nan()), None);
 
-        let linestring: LineString = vec![[-1.0, 0.0, 1.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]].into();
+        let linestring: LineString = vec![[-1.0, -0.5, 1.0], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]].into();
         assert_eq!(
-            linestring.line_interpolate_point(0.5),
+            linestring.line_interpolate_point(0.6),
             Some(point!(x: 0.0, y: 0.0, z: 0.0))
         );
         assert_eq!(

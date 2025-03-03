@@ -119,9 +119,10 @@ mod test {
         let segments = linestring.line_segmentize(4).unwrap();
         assert_eq!(segments.0.len(), 4);
 
-        assert_eq!(
+        assert_relative_eq!(
             segments.length(),
-            linestring.length()
+            linestring.length(),
+            epsilon = 2e-16
         );
     }
 

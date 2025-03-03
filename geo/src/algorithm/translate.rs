@@ -129,7 +129,12 @@ mod test {
             (5.0, 1.0, 9.8),
         ]);
 
-        let ls2 = LineString::from(vec![(5.0, 1.3, 6.5), (5.5, 2.0, 4.3), (6.0, 1.3, 8.4), (5.0, 1.3, 2.2)]);
+        let ls2 = LineString::from(vec![
+            (5.0, 1.3, 6.5),
+            (5.5, 2.0, 4.3),
+            (6.0, 1.3, 8.4),
+            (5.0, 1.3, 2.2)]
+        );
 
         let poly1 = Polygon::new(ls1, vec![ls2]);
         let rotated = poly1.translate(17.0, 18.0, 19.0);

@@ -2,7 +2,6 @@ use super::{LineIntersection, LineIntersector};
 use crate::kernels::{Kernel, Orientation, RobustKernel};
 use crate::{BoundingRect, Contains, Intersects};
 use crate::{Coord, GeoNum, Line, Rect};
-use num_traits::Zero;
 
 /// A robust version of [LineIntersector](traits.LineIntersector).
 #[derive(Clone)]
@@ -40,33 +39,34 @@ impl RobustLineIntersector {
     pub fn compute_edge_distance<F: GeoNum>(intersection: Coord<F>, line: Line<F>) -> F {
         let dx = (line.end.x - line.start.x).abs();
         let dy = (line.end.y - line.start.y).abs();
+        let dz = (line.end.z - line.start.z).abs();
 
         let mut dist: F;
         if intersection == line.start {
             dist = F::zero();
         } else if intersection == line.end {
-            if dx > dy {
-                dist = dx;
-            } else {
-                dist = dy;
-            }
+            dist = dx.max(dy).max(dz);
         } else {
             let intersection_dx = (intersection.x - line.start.x).abs();
             let intersection_dy = (intersection.y - line.start.y).abs();
-            if dx > dy {
+            let intersection_dz = (intersection.z - line.start.z).abs();
+            if dx > dy && dx > dz {
                 dist = intersection_dx;
-            } else {
+            } else if dy > dx && dy > dz {
                 dist = intersection_dy;
+            } else {
+                dist = intersection_dz;
             }
             // hack to ensure that non-endpoints always have a non-zero distance
             if dist == F::zero() && intersection != line.start {
-                dist = intersection_dx.max(intersection_dy);
+                dist = intersection_dx.max(intersection_dy).max(intersection_dz);
             }
         }
         debug_assert!(
             !(dist == F::zero() && intersection != line.start),
             "Bad distance calculation"
         );
+
         dist
     }
 }

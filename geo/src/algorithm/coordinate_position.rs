@@ -1,8 +1,6 @@
 use std::cmp::Ordering;
 use std::ops::AddAssign;
 use geo_types::{coord, CoordNum};
-// ! if this does not work use orient3d from kernels mod
-// use ::robust::orient3d;
 
 use crate::geometry::*;
 use crate::intersects::{point_in_rect, value_in_between};
@@ -24,9 +22,9 @@ pub enum CoordPos {
 ///
 /// # Examples
 ///
-/// ```rust
-/// use geo::{polygon, coord};
-/// use geo::coordinate_position::{CoordinatePosition, CoordPos};
+/// ```
+/// use geo_3d::{polygon, coord};
+/// use geo_3d::coordinate_position::{CoordinatePosition, CoordPos};
 ///
 /// let square_poly = polygon![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 0.0, z: 2.0), (x: 2.0, y: 2.0, z: 2.0), (x: 0.0, y: 2.0, z: 0.0), (x: 0.0, y: 0.0, z: 0.0)];
 ///

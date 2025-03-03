@@ -791,7 +791,7 @@ mod test {
         let line = Line::from([(0., 0., 0.), (1., 2., 3.)]);
         assert_relative_eq!(
             line.map_coords(|Coord { x, y, z }| (x * 2., y, z - 1.).into()),
-            Line::from([(0., 0., 0.), (2., 2., 2.)]),
+            Line::from([(0., 0., -1.), (2., 2., 2.)]),
             epsilon = 1e-6
         );
     }
@@ -799,9 +799,9 @@ mod test {
     #[test]
     fn linestring() {
         let line1: LineString<f32> = LineString::from(vec![(0., 0., 0.), (1., 2., 3.)]);
-        let line2 = line1.map_coords(|Coord { x, y, z }| (x + 10., y - 100., z - 50.).into());
-        assert_relative_eq!(line2.0[0], Coord::from((10., -100., -40.)), epsilon = 1e-6);
-        assert_relative_eq!(line2.0[1], Coord::from((11., -98., -39.)), epsilon = 1e-6);
+        let line2 = line1.map_coords(|Coord { x, y, z }| (x + 10., y - 100., z - 40.).into());
+        assert_relative_eq!(line2.0[0], Coord::from((10., -100., -40.)), epsilon = 1e-8);
+        assert_relative_eq!(line2.0[1], Coord::from((11., -98., -37.)), epsilon = 1e-8);
     }
 
     #[test]
@@ -818,16 +818,16 @@ mod test {
         let p2 = p.map_coords(|Coord { x, y, z }| (x + 10., y - 100., z * 2.).into());
 
         let exterior2 =
-            LineString::from(vec![(10., -100., 0.), (11., -99., 2.), (11., -100., 2.), (10., -100., 0.)]);
+            LineString::from(vec![(10., -100., 0.), (11., -99., 2.), (11., -100., -2.), (10., -100., 0.)]);
         let interiors2 = vec![LineString::from(vec![
             (10.1, -99.9, 0.2),
-            (10.9, -99.1, 4.0),
+            (10.9, -99.1, 1.8),
             (10.9, -99.9, 1.8),
             (10.1, -99.9, 0.2),
         ])];
         let expected_p2 = Polygon::new(exterior2, interiors2);
 
-        assert_relative_eq!(p2, expected_p2, epsilon = 1e-6);
+        assert_relative_eq!(p2, expected_p2, epsilon = 1e-8);
     }
 
     #[test]
@@ -933,7 +933,7 @@ mod test {
             gc.map_coords(|Coord { x, y, z }| (x + 10., y + 100., z - 10.).into()),
             GeometryCollection::new(vec![
                 Geometry::Point(Point::new(20., 110., 0.)),
-                Geometry::LineString(LineString::from(vec![(10., 100., -10.), (11., 102., 7.)])),
+                Geometry::LineString(LineString::from(vec![(10., 100., -10.), (11., 102., -7.)])),
             ])
         );
     }

@@ -247,7 +247,7 @@ mod test {
     use geo_types::{coord, line_string};
 
     #[test]
-    fn robust_winding_float() {
+    fn robust_winding_1() {
         // 3 points forming a triangle
         let a = Point::new(0., 0., 0.);
         let b = Point::new(2., 0., -2.);
@@ -265,7 +265,7 @@ mod test {
     }
 
     #[test]
-    fn robust_winding_integer() {
+    fn robust_winding_2() {
         // 3 points forming a triangle
         let a = Point::new(0f32, 0., 0.);
         let b = Point::new(2., 0., -2.);

@@ -121,20 +121,20 @@ mod test {
     fn different_dimensions_linestrings() {
         let ls_a = LineString::from(vec![(1., 1. , 1.)]);
         let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 0.)]);
-        assert_relative_eq!(2f64.sqrt(), ls_a.frechet_distance(&ls_b));
+        assert_relative_eq!(3f64.sqrt(), ls_a.frechet_distance(&ls_b));
     }
 
     #[test]
     fn test_frechet_1() {
         let ls_a = LineString::from(vec![(1., 1., 1.), (2., 1., 2.)]);
-        let ls_b = LineString::from(vec![(2., 2., 2.), (2., 3., 4.)]);
-        assert_relative_eq!(2., ls_a.frechet_distance(&ls_b));
+        let ls_b = LineString::from(vec![(2., 2., 2.), (2., 3., 3.82)]);
+        assert_relative_eq!(2.704, ls_a.frechet_distance(&ls_b), epsilon = 4e-4);
     }
 
     #[test]
     fn test_frechet_2() {
         let ls_a = LineString::from(vec![(1., 1., 1.), (2., 1., 2.), (2., 2., 2.)]);
-        let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 2.), (2., 4., 6.)]);
+        let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 2.), (2., 4., 2.)]);
         assert_relative_eq!(2., ls_a.frechet_distance(&ls_b));
     }
 

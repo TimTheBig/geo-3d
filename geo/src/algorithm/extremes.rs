@@ -39,8 +39,10 @@ pub struct Extreme<T: CoordNum> {
 pub struct Outcome<T: CoordNum> {
     pub x_min: Extreme<T>,
     pub y_min: Extreme<T>,
+    pub z_min: Extreme<T>,
     pub x_max: Extreme<T>,
     pub y_max: Extreme<T>,
+    pub z_max: Extreme<T>,
 }
 
 impl<'a, T, G> Extremes<'a, T> for G
@@ -54,8 +56,10 @@ where
         let mut outcome = iter.next().map(|(index, coord)| Outcome {
             x_min: Extreme { index, coord },
             y_min: Extreme { index, coord },
+            z_min: Extreme { index, coord },
             x_max: Extreme { index, coord },
             y_max: Extreme { index, coord },
+            z_max: Extreme { index, coord },
         })?;
 
         for (index, coord) in iter {
@@ -67,12 +71,20 @@ where
                 outcome.y_min = Extreme { coord, index };
             }
 
+            if coord.z < outcome.z_min.coord.z {
+                outcome.z_min = Extreme { coord, index };
+            }
+
             if coord.x > outcome.x_max.coord.x {
                 outcome.x_max = Extreme { coord, index };
             }
 
             if coord.y > outcome.y_max.coord.y {
                 outcome.y_max = Extreme { coord, index };
+            }
+
+            if coord.z > outcome.z_max.coord.z {
+                outcome.z_max = Extreme { coord, index };
             }
         }
 
@@ -90,8 +102,9 @@ mod test {
         // a diamond shape
         let polygon = polygon![
             (x: 1.0, y: 0.0, z: 1.0),
-            (x: 2.0, y: 1.0, z: 2.0),
+            (x: 2.0, y: 1.0, z: 1.0),
             (x: 1.0, y: 2.0, z: 1.0),
+            (x: 1.0, y: 1.0, z: 2.0),
             (x: 0.0, y: 1.0, z: 0.0),
             (x: 1.0, y: 0.0, z: 1.0),
         ];
@@ -101,21 +114,29 @@ mod test {
         assert_eq!(
             Some(Outcome {
                 x_min: Extreme {
-                    index: 3,
+                    index: 4,
                     coord: coord! { x: 0.0, y: 1.0, z: 0.0 }
                 },
                 y_min: Extreme {
                     index: 0,
                     coord: coord! { x: 1.0, y: 0.0, z: 1.0 }
                 },
+                z_min: Extreme {
+                    index: 4,
+                    coord: coord! { x: 0.0, y: 1.0, z: 0.0 }
+                },
                 x_max: Extreme {
                     index: 1,
-                    coord: coord! { x: 2.0, y: 1.0, z: 2.0 }
+                    coord: coord! { x: 2.0, y: 1.0, z: 1.0 }
                 },
                 y_max: Extreme {
                     index: 2,
                     coord: coord! { x: 1.0, y: 2.0, z: 1.0 }
-                }
+                },
+                z_max: Extreme {
+                    index: 3,
+                    coord: coord! { x: 1.0, y: 1.0, z: 2.0 }
+                },
             }),
             actual
         );

@@ -51,9 +51,21 @@ where
 mod tests {
     use super::*;
     use crate::{point, Rect};
+
     #[test]
-    fn basic() {
+    fn basic_rect() {
+        let a = point!(x: 1.0, y: 2.0, z: 2.9);
+        let b = Rect::new((0.0, 0.0, 0.0), (3.0, 3.0, 3.0));
+        assert!(a.is_within(&b));
+
         let a = point!(x: 1.0, y: 2.0, z: 3.0);
+        let b = Rect::new((0.0, 0.0, 0.0), (3.0, 3.0, 3.0));
+        assert!(!a.is_within(&b));
+    }
+
+    #[test]
+    fn basic_poly() {
+        let a = point!(x: 1.0, y: 2.0, z: 2.9);
         let b = Rect::new((0.0, 0.0, 0.0), (3.0, 3.0, 3.0)).to_polygon();
         assert!(a.is_within(&b));
     }

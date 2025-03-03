@@ -263,13 +263,17 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
         // Check if all points lie on the same plane or axis
         let has_varying_x = self
             .rings().flatten()
-            .any(|c| c.x != first.x || c.y != first.y);
+            .any(|c| c.x != first.x);
 
-        let has_varying_z = self
+            let has_varying_y = self
+            .rings().flatten()
+            .any(|c| c.y != first.y);
+
+            let has_varying_z = self
             .rings().flatten()
             .any(|c| c.z != first.z);
 
-        if has_varying_x && has_varying_z {
+        if has_varying_x && has_varying_y && has_varying_z {
             Dimensions::ThreeDimensional
         } else {
             Dimensions::TwoDimensional
@@ -515,6 +519,10 @@ mod tests {
     fn polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
+            wkt!(POLYGON((1.0 1.0 0.0, 2.0 2.0 0.0, 3.0 3.0 0.0, 1.0 1.0 0.0))).dimensions()
+        );
+        assert_eq!(
+            Dimensions::ThreeDimensional,
             wkt!(POLYGON((1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0, 1.0 1.0 1.0))).dimensions()
         );
     }
@@ -539,6 +547,10 @@ mod tests {
     fn multi_polygon() {
         assert_eq!(
             Dimensions::TwoDimensional,
+            wkt!(MULTIPOLYGON(((1.0 0.0 1.0, 2.0 0.0 2.0, 3.0 0.0 3.0, 1.0 0.0 1.0)))).dimensions()
+        );
+        assert_eq!(
+            Dimensions::ThreeDimensional,
             wkt!(MULTIPOLYGON(((1.0 1.0 1.0, 2.0 2.0 2.0, 3.0 3.0 3.0, 1.0 1.0 1.0)))).dimensions()
         );
     }
