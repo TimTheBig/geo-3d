@@ -140,11 +140,9 @@ impl<T: CoordNum + Sum> TryVolume<T> for MultiPolygon<T> {
 
 #[cfg(test)]
 mod test {
-    use geo_types::coord;
-
-    use crate::ConvexHull;
-
     use super::*;
+    use geo_types::coord;
+    use crate::ConvexHull;
 
     #[test]
     fn rect_hull_volume() {

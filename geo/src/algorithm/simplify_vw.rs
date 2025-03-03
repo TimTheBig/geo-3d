@@ -154,7 +154,7 @@ where
 ///
 /// This is used for both standard and topology-preserving variants.
 #[allow(clippy::too_many_arguments)]
-fn recompute_triangles<T>(
+fn recompute_triangles<T: CoordNum>(
     smallest: &VScore<T>,
     orig: &LineString<T>,
     pq: &mut BinaryHeap<VScore<T>>,
@@ -164,9 +164,7 @@ fn recompute_triangles<T>(
     rr: i32,
     max: usize,
     epsilon: &T,
-) where
-    T: CoordNum,
-{
+) {
     let choices = [(ll, left, right), (left, right, rr)];
     for &(ai, current_point, bi) in &choices {
         if ai as usize >= max || bi as usize >= max {

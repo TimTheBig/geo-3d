@@ -9,22 +9,16 @@ const POLYGON_INITIAL_MIN: usize = 4;
 // instead, we wrap a simple struct around index and point in a wrapper function,
 // passing that around instead, extracting either points or indices on the way back out
 #[derive(Copy, Clone)]
-struct RdpIndex<T>
-where
-    T: GeoNum,
-{
+struct RdpIndex<T: GeoNum> {
     index: usize,
     coord: Coord<T>,
 }
 
 // Wrapper for the RDP algorithm, returning simplified points
-fn rdp<T, I: Iterator<Item = Coord<T>>, const INITIAL_MIN: usize>(
+fn rdp<T: GeoNum, I: Iterator<Item = Coord<T>>, const INITIAL_MIN: usize>(
     coords: I,
     epsilon: &T,
-) -> Vec<Coord<T>>
-where
-    T: GeoNum,
-{
+) -> Vec<Coord<T>> {
     // Epsilon must be greater than zero for any meaningful simplification to happen
     if *epsilon <= T::zero() {
         return coords.collect::<Vec<Coord<T>>>();
@@ -44,13 +38,10 @@ where
 }
 
 // Wrapper for the RDP algorithm, returning simplified point indices
-fn calculate_rdp_indices<T, const INITIAL_MIN: usize>(
+fn calculate_rdp_indices<T: GeoNum, const INITIAL_MIN: usize>(
     rdp_indices: &[RdpIndex<T>],
     epsilon: &T,
-) -> Vec<usize>
-where
-    T: GeoNum,
-{
+) -> Vec<usize> {
     if *epsilon <= T::zero() {
         return rdp_indices
             .iter()
@@ -71,14 +62,11 @@ where
 // Ramer–Douglas-Peucker line simplification algorithm
 // This function returns both the retained points, and their indices in the original geometry,
 // for more flexible use by FFI implementers
-fn compute_rdp<T, const INITIAL_MIN: usize>(
+fn compute_rdp<T: GeoNum, const INITIAL_MIN: usize>(
     rdp_indices: &[RdpIndex<T>],
     simplified_len: &mut usize,
     epsilon: &T,
-) -> Vec<RdpIndex<T>>
-where
-    T: GeoNum,
-{
+) -> Vec<RdpIndex<T>> {
     if rdp_indices.is_empty() {
         return vec![];
     }
@@ -166,7 +154,7 @@ where
 /// discarded.
 ///
 /// An `epsilon` less than or equal to zero will return an unaltered version of the geometry.
-pub trait Simplify<T, Epsilon = T> {
+pub trait Simplify<T: GeoNum, Epsilon = T> {
     /// Returns the simplified representation of a geometry, using the [Ramer–Douglas–Peucker](https://en.wikipedia.org/wiki/Ramer–Douglas–Peucker_algorithm) algorithm
     ///
     /// # Examples
@@ -194,9 +182,7 @@ pub trait Simplify<T, Epsilon = T> {
     ///
     /// assert_eq!(expected, simplified)
     /// ```
-    fn simplify(&self, epsilon: &T) -> Self
-    where
-        T: GeoNum;
+    fn simplify(&self, epsilon: &T) -> Self;
 }
 
 /// Simplifies a geometry, returning the retained _indices_ of the input.
@@ -211,7 +197,7 @@ pub trait Simplify<T, Epsilon = T> {
 /// discarded.
 ///
 /// An `epsilon` less than or equal to zero will return an unaltered version of the geometry.
-pub trait SimplifyIdx<T, Epsilon = T> {
+pub trait SimplifyIdx<T: GeoNum, Epsilon = T> {
     /// Returns the simplified indices of a geometry, using the [Ramer–Douglas–Peucker](https://en.wikipedia.org/wiki/Ramer–Douglas–Peucker_algorithm) algorithm
     ///
     /// # Examples
@@ -239,15 +225,10 @@ pub trait SimplifyIdx<T, Epsilon = T> {
     ///
     /// assert_eq!(expected, simplified);
     /// ```
-    fn simplify_idx(&self, epsilon: &T) -> Vec<usize>
-    where
-        T: GeoNum;
+    fn simplify_idx(&self, epsilon: &T) -> Vec<usize>;
 }
 
-impl<T> Simplify<T> for LineString<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Simplify<T> for LineString<T> {
     fn simplify(&self, epsilon: &T) -> Self {
         LineString::from(rdp::<_, _, LINE_STRING_INITIAL_MIN>(
             self.coords_iter(),
@@ -256,10 +237,7 @@ where
     }
 }
 
-impl<T> SimplifyIdx<T> for LineString<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> SimplifyIdx<T> for LineString<T> {
     fn simplify_idx(&self, epsilon: &T) -> Vec<usize> {
         calculate_rdp_indices::<_, LINE_STRING_INITIAL_MIN>(
             &self
@@ -276,19 +254,13 @@ where
     }
 }
 
-impl<T> Simplify<T> for MultiLineString<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Simplify<T> for MultiLineString<T> {
     fn simplify(&self, epsilon: &T) -> Self {
         MultiLineString::new(self.iter().map(|l| l.simplify(epsilon)).collect())
     }
 }
 
-impl<T> Simplify<T> for Polygon<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Simplify<T> for Polygon<T> {
     fn simplify(&self, epsilon: &T) -> Self {
         Polygon::new(
             LineString::from(rdp::<_, _, POLYGON_INITIAL_MIN>(
@@ -305,10 +277,7 @@ where
     }
 }
 
-impl<T> Simplify<T> for MultiPolygon<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Simplify<T> for MultiPolygon<T> {
     fn simplify(&self, epsilon: &T) -> Self {
         MultiPolygon::new(self.iter().map(|p| p.simplify(epsilon)).collect())
     }

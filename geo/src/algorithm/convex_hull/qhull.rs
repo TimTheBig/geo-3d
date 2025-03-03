@@ -1,7 +1,7 @@
 use geo_types::{coord, Coord, CoordNum, LineString};
 use glam::DVec3;
 pub use quickhull::{ErrorKind, ConvexHull};
-use crate::GeoNum;
+use crate::{GeoNum, Winding};
 use super::trivial_hull;
 
 /// A container to make using [quickhull](https://github.com/TimTheBig/quickhull) with geo simpler
@@ -71,7 +71,8 @@ fn glam_vec3_from_geo<T: CoordNum>(coord: &Coord<T>) -> DVec3 {
     )
 }
 
-/// Return the convex_hull of point set `points` as a `Linestring`
+/// Compute convex_hull of point set `points` as a `Linestring`.\
+/// The result will always be in a ccw winding.
 pub fn quick_hull<T: CoordNum + GeoNum + From<f64>>(points: &mut [Coord<T>]) -> Result<LineString<T>, ErrorKind> {
     // Can't build a hull from fewer than four points
     if points.len() < 4 {
@@ -79,7 +80,11 @@ pub fn quick_hull<T: CoordNum + GeoNum + From<f64>>(points: &mut [Coord<T>]) -> 
     }
 
     match ConvexQHull::try_new(points) {
-        Ok(ps) => Ok(LineString(ps.points_iter::<T>().map(|c| { coord!(c.x.into(), c.y.into(), c.z.into()) }).collect())),
+        Ok(ps) => {
+            let mut ls = LineString(ps.points_iter::<T>().map(|c| { coord!(c.x.into(), c.y.into(), c.z.into()) }).collect::<Vec<_>>());
+            ls.make_ccw_winding();
+            Ok(ls)
+        },
         Err(e) => Err(e),
     }
 }

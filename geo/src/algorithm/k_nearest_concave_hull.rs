@@ -312,10 +312,7 @@ where
     linestring.intersects(&line)
 }
 
-fn coord_inside<T>(coord: &Coord<T>, poly: &Polygon<T>) -> bool
-where
-    T: GeoNum,
-{
+fn coord_inside<T: GeoNum>(coord: &Coord<T>, poly: &Polygon<T>) -> bool {
     poly.contains(coord) || poly.exterior().contains(coord)
 }
 
