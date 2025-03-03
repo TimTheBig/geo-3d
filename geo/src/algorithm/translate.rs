@@ -13,8 +13,8 @@ pub trait Translate<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Translate;
-    /// use geo::line_string;
+    /// use geo_3d::Translate;
+    /// use geo_3d::line_string;
     ///
     /// let ls = line_string![
     ///     (x: 0.0, y: 0.0, z: 0.0),
@@ -30,7 +30,7 @@ pub trait Translate<T: CoordNum> {
     ///     (x: 11.5, y: 13.5, z: 11.5),
     /// ]);
     /// ```
-    #[must_use]
+    #[must_use = "Creates a new geometry with offsets."]
     fn translate(&self, x_offset: T, y_offset: T, z_offset: T) -> Self;
 
     /// Translate a Geometry along its axes, but in place.

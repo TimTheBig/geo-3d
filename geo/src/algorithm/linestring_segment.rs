@@ -9,7 +9,7 @@ use crate::geometry::{Coord, LineString, MultiLineString};
 ///
 /// # Examples
 /// ```
-/// use geo::{LineString, MultiLineString, LineStringSegmentize};
+/// use geo_3d::{LineString, MultiLineString, LineStringSegmentize};
 /// // Create a simple line string
 /// let lns: LineString<f64> = vec![[0.0, 0.0, 0.0], [1.0, 2.0, 3.0], [3.0, 6.0, 3.0]].into();
 /// // Segment it into 6 LineStrings inside of a MultiLineString

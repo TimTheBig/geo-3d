@@ -35,8 +35,8 @@ use crate::GeoNum;
 /// # Examples
 ///
 /// ```
-/// use geo::InteriorPoint;
-/// use geo::{point, polygon};
+/// use geo_3d::InteriorPoint;
+/// use geo_3d::{point, polygon};
 ///
 /// // rhombus shaped polygon
 /// let polygon = polygon![
@@ -48,7 +48,7 @@ use crate::GeoNum;
 /// ];
 ///
 /// assert_eq!(
-///     Some(point!(x: 1., y: 2., z: 1.)),
+///     Some(point!(x: -2., y: 1., z: -2.)),
 ///     polygon.interior_point(),
 /// );
 /// ```
@@ -60,8 +60,8 @@ pub trait InteriorPoint {
     /// # Examples
     ///
     /// ```
-    /// use geo::InteriorPoint;
-    /// use geo::{line_string, point};
+    /// use geo_3d::InteriorPoint;
+    /// use geo_3d::{line_string, point};
     ///
     /// let line_string = line_string![
     ///     (x: 40.02f64, y: 116.34),
@@ -276,8 +276,8 @@ impl<T: GeoNum> InteriorPoint for Point<T> {
 
 ///
 /// ```
-/// use geo::InteriorPoint;
-/// use geo::{MultiPoint, Point};
+/// use geo_3d::InteriorPoint;
+/// use geo_3d::{MultiPoint, Point};
 ///
 /// let empty: Vec<Point> = Vec::new();
 /// let empty_multi_points: MultiPoint<_> = empty.into();

@@ -13,8 +13,7 @@ pub enum Closest<F: GeoNum> {
 }
 
 impl<F: GeoNum> Closest<F> {
-    /// Compare two `Closest`s relative to `p` and return a copy of the best
-    /// one.
+    /// Compare two `Closest`s relative to `p` and return a copy of the best one.
     pub fn best_of_two(&self, other: &Self, p: Point<F>) -> Self {
         use crate::Distance;
 
@@ -40,7 +39,7 @@ impl<F: GeoNum> Closest<F> {
 /// Implements the common pattern where a Geometry enum simply delegates its trait impl to it's inner type.
 ///
 /// ```
-/// # use geo::{GeoNum, Coord, Point, Line, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Rect, Triangle, Geometry};
+/// # use geo_3d::{GeoNum, Coord, Point, Line, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection, Rect, Triangle, Geometry};
 ///
 /// trait Foo<T: GeoNum> {
 ///     fn foo_1(&self, coord: Coord<T>)  -> bool;
@@ -110,7 +109,7 @@ impl<F: GeoNum> Closest<F> {
 ///     // }
 ///
 ///     // we can equivalently write:
-///     geo::geometry_delegate_impl! {
+///     geo_3d::geometry_delegate_impl! {
 ///         fn foo_1(&self, coord: Coord<T>) -> bool;
 ///         fn foo_2(&self) -> i32;
 ///     }

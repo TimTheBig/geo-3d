@@ -334,8 +334,8 @@ where
     /// # Example
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{MultiPoint, Point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{MultiPoint, Point};
     ///
     /// let empty: Vec<Point> = Vec::new();
     /// let empty_multi_points: MultiPoint<_> = empty.into();

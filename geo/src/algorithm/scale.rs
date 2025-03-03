@@ -14,8 +14,8 @@ pub trait Scale<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Scale;
-    /// use geo::{LineString, line_string};
+    /// use geo_3d::Scale;
+    /// use geo_3d::{LineString, line_string};
     ///
     /// let ls: LineString = line_string![(x: 0., y: 0., z: 0.), (x: 10., y: 10., z: 10.)];
     ///
@@ -38,8 +38,8 @@ pub trait Scale<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Scale;
-    /// use geo::{LineString, line_string};
+    /// use geo_3d::Scale;
+    /// use geo_3d::{LineString, line_string};
     ///
     /// let ls: LineString = line_string![(x: 0., y: 0., z: 0.), (x: 10., y: 10., z: 10.)];
     ///
@@ -65,8 +65,8 @@ pub trait Scale<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Scale;
-    /// use geo::{LineString, line_string, Coord};
+    /// use geo_3d::Scale;
+    /// use geo_3d::{LineString, line_string, Coord};
     ///
     /// let ls: LineString = line_string![(x: 0., y: 0., z: 0.), (x: 10., y: 10., z: 10.)];
     ///

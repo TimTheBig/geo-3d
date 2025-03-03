@@ -4,8 +4,8 @@
 #![cfg_attr(not(feature = "use-proj"), doc = "```ignore")]
 //! // activate the [use-proj] feature in cargo.toml in order to access proj functions
 //! use approx::assert_relative_eq;
-//! use geo::{Coord, Point};
-//! use geo::MapCoords;
+//! use geo_3d::{Coord, Point};
+//! use geo_3d::MapCoords;
 //! use proj::{Coord as ProjCoord, Proj, ProjError};
 //! // GeoJSON uses the WGS 84 coordinate system
 //! let from = "EPSG:4326";
@@ -36,8 +36,8 @@ pub trait MapCoords<T, NT> {
     /// # Examples
     ///
     /// ```
-    /// use geo::MapCoords;
-    /// use geo::{Coord, Point};
+    /// use geo_3d::MapCoords;
+    /// use geo_3d::{Coord, Point};
     /// use approx::assert_relative_eq;
     ///
     /// let p1 = Point::new(10., 20.);
@@ -53,20 +53,20 @@ pub trait MapCoords<T, NT> {
     /// to six decimal places (eg. lat/lon * 1000000).
     ///
     /// ```
-    /// # use geo::{Coord, Point};
-    /// # use geo::MapCoords;
+    /// # use geo_3d::{Coord, Point};
+    /// # use geo_3d::MapCoords;
     /// # use approx::assert_relative_eq;
     ///
     /// let SCALE_FACTOR: f64 = 1000000.0;
     /// let floating_point_geom: Point<f64> = Point::new(10.15f64, 20.05f64);
-    /// let fixed_point_geom: Point<i32> = floating_point_geom.map_coords(|Coord { x, y, z }| {
-    ///     Coord { x: (x * SCALE_FACTOR) as i32, y: (y * SCALE_FACTOR) as i32 }
+    /// let fixed_point_geom: Point<f32> = floating_point_geom.map_coords(|Coord { x, y, z }| {
+    ///     Coord { x: (x * SCALE_FACTOR) as f32, y: (y * SCALE_FACTOR) as f32, z: (z * SCALE_FACTOR) as f32 }
     /// });
     ///
     /// assert_eq!(fixed_point_geom.x(), 10150000);
     /// ```
     ///
-    /// If you want *only* to convert between numeric types (i32 -> f64) without further
+    /// If you want *only* to convert between numeric types (f32 -> f64) without further
     /// transformation, consider using [`Convert`](crate::Convert).
     fn map_coords(&self, func: impl Fn(Coord<T>) -> Coord<NT> + Copy) -> Self::Output
     where
@@ -79,16 +79,16 @@ pub trait MapCoords<T, NT> {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo::MapCoords;
-    /// use geo::{Coord, Point};
+    /// use geo_3d::MapCoords;
+    /// use geo_3d::{Coord, Point};
     ///
-    /// let p1 = Point::new(10., 20.);
+    /// let p1 = Point::new(10., 20., 30.);
     /// let p2 = p1
     ///     .try_map_coords(|Coord { x, y, z }| -> Result<_, std::convert::Infallible> {
-    ///         Ok(Coord { x: x + 1000., y: y * 2. })
+    ///         Ok(Coord { x: x + 1000., y: y * 2., z: z - 90. })
     ///     }).unwrap();
     ///
-    /// assert_relative_eq!(p2, Point::new(1010., 40.), epsilon = 1e-6);
+    /// assert_relative_eq!(p2, Point::new(1010., 40., -60.), epsilon = 1e-8);
     /// ```
     ///
     /// ## Advanced Example: Geometry coordinate conversion using `PROJ`
@@ -97,8 +97,8 @@ pub trait MapCoords<T, NT> {
     #[cfg_attr(not(feature = "use-proj"), doc = "```ignore")]
     /// use approx::assert_relative_eq;
     /// // activate the [use-proj] feature in cargo.toml in order to access proj functions
-    /// use geo::{Coord, Point};
-    /// use geo::map_coords::MapCoords;
+    /// use geo_3d::{Coord, Point};
+    /// use geo_3d::map_coords::MapCoords;
     /// use proj::{Coord as ProjCoord, Proj, ProjError};
     /// // GeoJSON uses the WGS 84 coordinate system
     /// let from = "EPSG:4326";
@@ -113,8 +113,8 @@ pub trait MapCoords<T, NT> {
     /// // 👽
     /// let usa_m = Point::new(-115.797615, 37.2647978);
     /// let usa_ft = usa_m.try_map_coords(|coord| transform(coord)).unwrap();
-    /// assert_relative_eq!(6693625.67217475, usa_ft.x(), epsilon = 1e-6);
-    /// assert_relative_eq!(3497301.5918027186, usa_ft.y(), epsilon = 1e-6);
+    /// assert_relative_eq!(6693625.67217475, usa_ft.x(), epsilon = 1e-8);
+    /// assert_relative_eq!(3497301.5918027186, usa_ft.y(), epsilon = 1e-8);
     /// ```
     fn try_map_coords<E>(
         &self,
@@ -131,14 +131,14 @@ pub trait MapCoordsInPlace<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::MapCoordsInPlace;
-    /// use geo::{Coord, Point};
+    /// use geo_3d::MapCoordsInPlace;
+    /// use geo_3d::{Coord, Point};
     /// use approx::assert_relative_eq;
     ///
-    /// let mut p = Point::new(10., 20.);
-    /// p.map_coords_in_place(|Coord { x, y, z }| Coord { x: x + 1000., y: y * 2. });
+    /// let mut p = Point::new(10., 20., 30.);
+    /// p.map_coords_in_place(|Coord { x, y, z }| Coord { x: x + 1000., y: y * 2., z: z - 90. });
     ///
-    /// assert_relative_eq!(p, Point::new(1010., 40.), epsilon = 1e-6);
+    /// assert_relative_eq!(p, Point::new(1010., 40., -60.), epsilon = 1e-8);
     /// ```
     fn map_coords_in_place(&mut self, func: impl Fn(Coord<T>) -> Coord<T> + Copy)
     where
@@ -152,8 +152,8 @@ pub trait MapCoordsInPlace<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::MapCoordsInPlace;
-    /// use geo::Coord;
+    /// use geo_3d::MapCoordsInPlace;
+    /// use geo_3d::Coord;
     ///
     /// let mut p1 = geo::point!{x: 10f32, y: 20., z: 30.};
     ///

@@ -7,8 +7,8 @@ use crate::algorithm::Contains;
 /// # Examples
 ///
 /// ```
-/// use geo::{point, line_string};
-/// use geo::algorithm::Within;
+/// use geo_3d::{point, line_string};
+/// use geo_3d::algorithm::Within;
 ///
 /// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 4.0, z: 6.0)];
 ///
@@ -22,8 +22,8 @@ use crate::algorithm::Contains;
 /// `Within` is equivalent to [`Contains`] with the arguments swapped.
 ///
 /// ```
-/// use geo::{point, line_string};
-/// use geo::algorithm::{Contains, Within};
+/// use geo_3d::{point, line_string};
+/// use geo_3d::algorithm::{Contains, Within};
 ///
 /// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 2.0, y: 4.0, z: 6.0)];
 /// let point = point!(x: 1.0, y: 2.0, z: 3.0);

@@ -494,8 +494,8 @@ pub trait SimplifyVwIdx<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::SimplifyVwIdx;
-    /// use geo::line_string;
+    /// use geo_3d::SimplifyVwIdx;
+    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 5.0, y: 2.0, z: 5.0),
@@ -558,8 +558,8 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo::SimplifyVwPreserve;
-    /// use geo::line_string;
+    /// use geo_3d::SimplifyVwPreserve;
+    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 10., y: 60., z: 10.),

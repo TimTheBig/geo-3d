@@ -152,10 +152,10 @@ where
 
 /// Simplifies a geometry.
 ///
-/// The [Ramer–Douglas–Peucker
-/// algorithm](https://en.wikipedia.org/wiki/Ramer–Douglas–Peucker_algorithm) simplifies a
-/// linestring. Polygons are simplified by running the RDP algorithm on all their constituent
-/// rings. This may result in invalid Polygons, and has no guarantee of preserving topology.
+/// The [Ramer–Douglas–Peucker algorithm](https://en.wikipedia.org/wiki/Ramer–Douglas–Peucker_algorithm)
+/// simplifies a linestring.
+/// Polygons are simplified by running the RDP algorithm on all their constituent rings.
+/// This may result in invalid Polygons, and has no guarantee of preserving topology.
 ///
 /// Multi* objects are simplified by simplifying all their constituent geometries individually.
 ///
@@ -172,8 +172,8 @@ pub trait Simplify<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Simplify;
-    /// use geo::line_string;
+    /// use geo_3d::Simplify;
+    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 0.0, y: 0.0, z: 0.0),
@@ -217,8 +217,8 @@ pub trait SimplifyIdx<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::SimplifyIdx;
-    /// use geo::line_string;
+    /// use geo_3d::SimplifyIdx;
+    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 0.0, y: 0.0, z: 0.0),
