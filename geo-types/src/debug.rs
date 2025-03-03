@@ -126,7 +126,7 @@ impl<T: CoordNum> Debug for GeometryCollection<T> {
         };
         write!(f, "({first:?}")?;
         for geometry in geometries {
-            write!(f, ",{geometry:?}")?;
+            write!(f, ", {geometry:?}")?;
         }
         write!(f, ")")
     }

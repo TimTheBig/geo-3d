@@ -1,4 +1,4 @@
-use std::{fs, iter::FromIterator, path::PathBuf, str::FromStr};
+use std::{fs, iter::FromIterator, path::{Path, PathBuf}, str::FromStr};
 
 use geo_types::{coord, Coord, CoordNum, LineString, MultiPolygon, Point, Polygon};
 use num_traits::FloatConst;
@@ -8,7 +8,7 @@ pub fn louisiana<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("louisiana.wkt")
+    line_string(Path::new("louisiana.wkt"))
 }
 
 pub fn baton_rouge<T>() -> Point<T>
@@ -25,84 +25,84 @@ pub fn east_baton_rouge<T>() -> Polygon<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    polygon("east_baton_rouge.wkt")
+    polygon(Path::new("east_baton_rouge.wkt"))
 }
 
 pub fn norway_main<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("norway_main.wkt")
+    line_string(Path::new("norway_main.wkt"))
 }
 
 pub fn norway_concave_hull<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("norway_concave_hull.wkt")
+    line_string(Path::new("norway_concave_hull.wkt"))
 }
 
 pub fn norway_convex_hull<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("norway_convex_hull.wkt")
+    line_string(Path::new("norway_convex_hull.wkt"))
 }
 
 pub fn norway_nonconvex_hull<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("norway_nonconvex_hull.wkt")
+    line_string(Path::new("norway_nonconvex_hull.wkt"))
 }
 
 pub fn vw_orig<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("vw_orig.wkt")
+    line_string(Path::new("vw_orig.wkt"))
 }
 
 pub fn vw_simplified<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("vw_simplified.wkt")
+    line_string(Path::new("vw_simplified.wkt"))
 }
 
 pub fn poly1<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("poly1.wkt")
+    line_string(Path::new("poly1.wkt"))
 }
 
 pub fn poly1_hull<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("poly1_hull.wkt")
+    line_string(Path::new("poly1_hull.wkt"))
 }
 
 pub fn poly2<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("poly2.wkt")
+    line_string(Path::new("poly2.wkt"))
 }
 
 pub fn poly2_hull<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("poly2_hull.wkt")
+    line_string(Path::new("poly2_hull.wkt"))
 }
 
 pub fn poly_in_ring<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("poly_in_ring.wkt")
+    line_string(Path::new("poly_in_ring.wkt"))
 }
 
 pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
@@ -144,14 +144,14 @@ pub fn ring<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("ring.wkt")
+    line_string(Path::new("ring.wkt"))
 }
 
 pub fn shell<T>() -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    line_string("shell.wkt")
+    line_string(Path::new("shell.wkt"))
 }
 
 // From https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?request=GetFeature&service=WFS&srsName=EPSG:4326&typeName=kadastralekaartv4:perceel&version=2.0.0&outputFormat=json&bbox=165593,480993,166125,481552
@@ -159,7 +159,7 @@ pub fn nl_zones<T>() -> MultiPolygon<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    multi_polygon("nl_zones.wkt")
+    multi_polygon(Path::new("nl_zones.wkt"))
 }
 
 // From https://afnemers.ruimtelijkeplannen.nl/afnemers/services?request=GetFeature&service=WFS&srsName=EPSG:4326&typeName=Enkelbestemming&version=2.0.0&bbox=165618,480983,166149,481542";
@@ -167,7 +167,7 @@ pub fn nl_plots_wgs84<T>() -> MultiPolygon<T>
 where
     T: WktFloat + Default + FromStr,
 {
-    multi_polygon("nl_plots.wkt")
+    multi_polygon(Path::new("nl_plots.wkt"))
 }
 
 pub fn nl_plots_epsg_28992<T>() -> MultiPolygon<T>
@@ -175,10 +175,10 @@ where
     T: WktFloat + Default + FromStr,
 {
     // https://epsg.io/28992
-    multi_polygon("nl_plots_epsg_28992.wkt")
+    multi_polygon(Path::new("nl_plots_epsg_28992.wkt"))
 }
 
-fn line_string<T>(name: &str) -> LineString<T>
+fn line_string<T>(name: &Path) -> LineString<T>
 where
     T: WktFloat + Default + FromStr,
 {
@@ -189,7 +189,7 @@ where
     }
 }
 
-pub fn polygon<T>(name: &str) -> Polygon<T>
+pub fn polygon<T>(name: &Path) -> Polygon<T>
 where
     T: WktFloat + Default + FromStr,
 {
@@ -200,7 +200,7 @@ where
     }
 }
 
-pub fn multi_polygon<T>(name: &str) -> MultiPolygon<T>
+pub fn multi_polygon<T>(name: &Path) -> MultiPolygon<T>
 where
     T: WktFloat + Default + FromStr,
 {
@@ -236,9 +236,13 @@ where
     MultiPolygon(polygons)
 }
 
-pub fn file(name: &str) -> String {
+pub(crate) fn file(name: &Path) -> String {
     let mut res = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     res.push("fixtures");
     res.push(name);
+    if let None = name.extension() {
+        res.set_extension("wkt");
+    }
+
     fs::read_to_string(res).unwrap()
 }

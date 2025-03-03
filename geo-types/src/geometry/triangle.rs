@@ -63,6 +63,18 @@ impl<IC: Into<Coord<T>> + Copy, T: CoordNum> From<[IC; 3]> for Triangle<T> {
     }
 }
 
+impl<T: CoordNum> From<&[Coord<T>; 3]> for Triangle<T> {
+    fn from(coords: &[Coord<T>; 3]) -> Self {
+        Triangle(coords[0], coords[1], coords[2])
+    }
+}
+
+impl<T: CoordNum> From<(Coord<T>, Coord<T>, Coord<T>)> for Triangle<T> {
+    fn from(coords: (Coord<T>, Coord<T>, Coord<T>)) -> Self {
+        Triangle(coords.0, coords.1, coords.2)
+    }
+}
+
 #[cfg(any(feature = "approx", test))]
 impl<T> RelativeEq for Triangle<T>
 where
