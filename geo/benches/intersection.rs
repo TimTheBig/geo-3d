@@ -94,7 +94,7 @@ fn point_rect_intersection(c: &mut Criterion) {
 }
 
 fn point_triangle_intersection(c: &mut Criterion) {
-    use geo_3d::{Centroid, TriangulateEarcut};
+    use geo_3d::{Centroid, TriangulateDelaunay};
     use geo_types::{Point, Triangle};
     let plot_centroids: Vec<Point> = geo_test_fixtures::nl_plots_wgs84()
         .iter()

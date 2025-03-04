@@ -1,7 +1,7 @@
 use std::iter::Sum;
 use crate::geometry::*;
 use crate::CoordNum;
-use super::TriangulateEarcut;
+use super::TriangulateDelaunay;
 
 pub(crate) fn twice_signed_ring_area<T>(linestring: &LineString<T>) -> T
 where
@@ -133,11 +133,11 @@ where
     T: CoordNum + Sum<T>,
 {
     fn signed_area(&self) -> T {
-        self.earcut_triangles_iter().map(|tri| tri.signed_area()).sum()
+        self.delaunay_triangles_iter().map(|tri| tri.signed_area()).sum()
     }
 
     fn unsigned_area(&self) -> T {
-        self.earcut_triangles_iter().map(|tri| tri.unsigned_area()).sum()
+        self.delaunay_triangles_iter().map(|tri| tri.unsigned_area()).sum()
     }
 }
 

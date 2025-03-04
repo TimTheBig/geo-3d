@@ -253,7 +253,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Line<T> {
 
 #[cfg(feature = "rstar")]
 impl <T> rstar::RTreeObject for Line<T>
-    where T: num_traits::Float + rstar::RTreeNum
+    where T: num_traits::Float + rstar::RTreeNum + Default
 {
     type Envelope = rstar::AABB<Point<T>>;
 
@@ -265,7 +265,7 @@ impl <T> rstar::RTreeObject for Line<T>
 
 #[cfg(feature = "rstar")]
 impl <T> rstar::PointDistance for Line<T>
-    where T: num_traits::Float + rstar::RTreeNum
+    where T: num_traits::Float + rstar::RTreeNum + Default
 {
     fn distance_2(&self, point: &Point<T>) -> T {
         let d = crate::private_utils::point_line_euclidean_distance(*point, *self);

@@ -186,18 +186,9 @@ mod test {
             .into(),
             vec![],
         );
-        let rect = Polygon::new(
-            vec![
-                (185., 237., 185.),
-                (220., 237., 220.),
-                (220., 220., 220.),
-                (185., 220., 185.),
-                (185., 237., 185.),
-            ]
-            .into(),
-            vec![],
-        );
-        assert!(v.contains(&rect));
+        let rect = Rect::new(coord!(185., 220., 185.), coord!(220., 237., 220.));
+
+        assert!(v.contains(&rect.to_polygon()));
     }
     #[test]
     // LineString is fully contained

@@ -211,7 +211,7 @@ where
 
 #[cfg(feature = "rstar")]
 impl<T> rstar::RTreeObject for MultiPolygon<T>
-    where T: num_traits::Float + rstar::RTreeNum
+    where T: num_traits::Float + rstar::RTreeNum + Default
 {
     type Envelope = rstar::AABB<crate::Point<T>>;
 

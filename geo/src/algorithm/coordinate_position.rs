@@ -7,7 +7,7 @@ use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
-use super::TriangulateEarcut;
+use super::TriangulateDelaunay;
 
 /// The position of a `Coord` relative to a `Geometry`
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -331,7 +331,7 @@ impl<T: GeoNum + Default> CoordinatePosition<T> for GeometryCow<'_, T> {
     }
 }
 
-fn inside<T: CoordNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
+fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
     debug_assert!(poly.exterior().is_closed());
 
     for linestring in poly.rings() {
@@ -341,11 +341,11 @@ fn inside<T: CoordNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usi
         }
     }
 
-    let segment = Line::new(q.clone(), q.clone() + coord! { x: T::zero(), y: T::zero(), z: T::max_value() });
+    let segment = Line::new(coord.clone(), coord!(T::max_value(), T::max_value(), T::max_value()));
 
-    // todo check triangles from polygon
-    for triangle in poly.earcut_triangles_iter() {
-        if intersect(segment, triangle) {
+    // todo it should not be on boundary if it's on inner triangle boundary
+    for triangle in poly.delaunay_triangles_iter() {
+        if line_tri_intersect(segment, triangle) {
             boundary_count.add_assign(1);
         }
     }
@@ -358,7 +358,8 @@ fn inside<T: CoordNum>(poly: &Polygon<T>, q: &Coord<T>, boundary_count: &mut usi
     }
 }
 
-fn intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
+/// Checks if a ray(`Line`) intersects a `Triangle`
+fn line_tri_intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
     let s1 = super::kernels::robust::RobustKernel::orient3d(segment.start,tri.0,tri.1,tri.2);
     let s2 = super::kernels::robust::RobustKernel::orient3d(segment.end,tri.0,tri.1,tri.2);
     // Test whether the two extermities of the segment
@@ -367,8 +368,8 @@ fn intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
         return false
     }
 
-    // Now we know that the segment 'straddles' the supporting
-    // plane. We need to test whether the three tetrahedra formed
+    // Now we know that the segment 'straddles' the supporting plane.
+    // We need to test whether the three tetrahedra formed
     // by the segment and the three edges of the triangle have the same orientation
     let s3 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.0,tri.1);
     let s4 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.1,tri.2);
@@ -377,13 +378,10 @@ fn intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
     s3 == s4 && s4 == s5
 }
 
-/// Calculate the position of a `Coord` relative to a
-/// closed `LineString`.
-pub fn coord_pos_relative_to_ring<T>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos
-where
-    T: GeoNum,
-{
-    debug_assert!(linestring.is_closed());
+/// Calculate the position of a `Coord` relative to a closed `LineString`.
+#[deprecated = "This is 2d, use [`calculate_coordinate_position`] instead"]
+pub(crate) fn coord_pos_relative_to_ring<T: GeoNum>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos {
+    assert!(linestring.is_closed(), "The ring(LineString) must be closed.");
 
     // LineString without points
     if linestring.0.is_empty() {
