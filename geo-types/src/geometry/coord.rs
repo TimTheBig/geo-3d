@@ -146,12 +146,13 @@ impl<T: CoordNum> Coord<T> {
         (self.x, self.y, self.z)
     }
 
-    // todo document + example
-    /// Get cross product of two `Coord`s
+    /// Get cross product of two `Coord`s.
     /// 
     /// # Examples
     /// 
     /// ```
+    /// # use geo_types::coord;
+    /// # use approx::assert_relative_eq;
     /// let c1 = coord! {
     ///     x: 40.02f64,
     ///     y: 113.34,
@@ -166,9 +167,9 @@ impl<T: CoordNum> Coord<T> {
     /// 
     /// let c3 = c1.cross(c2);
     /// 
-    /// assert_eq!(c3.x, )
-    /// assert_eq!(c3.y, )
-    /// assert_eq!(c3.z, )
+    /// assert_relative_eq!(c3.x, 13780.62, epsilon = 1e-2);
+    /// assert_relative_eq!(c3.y, 287.2, epsilon = 1e-2);
+    /// assert_relative_eq!(c3.z, -1591.37, epsilon = 1e-2);
     /// ```
     pub fn cross(self, other: Coord<T>) -> Coord<T> {
         coord! {

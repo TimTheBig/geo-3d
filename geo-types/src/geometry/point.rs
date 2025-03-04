@@ -5,10 +5,10 @@ use approx::{AbsDiffEq, RelativeEq};
 
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-/// A single point in 2D space.
+/// A single point in 3D space.
 ///
 /// Points can be created using the [`Point::new`] constructor,
-/// the [`point!`] macro, or from a `Coord`, two-element
+/// the [`point!`] macro, or from a `Coord`, three-element
 /// tuples, or arrays – see the `From` impl section for a
 /// complete list.
 ///
@@ -123,10 +123,11 @@ impl<T: CoordNum> Point<T> {
     /// *p_x += 1.0;
     /// assert_relative_eq!(p.x(), 2.234);
     /// ```
+    #[inline(always)]
     pub fn x_mut(&mut self) -> &mut T {
         &mut self.0.x
     }
-    /// Returns the y/vertical component of the point.
+    /// Returns the y/depth component of the point.
     ///
     /// # Examples
     ///
@@ -142,7 +143,7 @@ impl<T: CoordNum> Point<T> {
         self.0.y
     }
 
-    /// Sets the y/vertical component of the point.
+    /// Sets the y/depth component of the point.
     ///
     /// # Examples
     ///
@@ -159,7 +160,7 @@ impl<T: CoordNum> Point<T> {
         self
     }
 
-    /// Returns a mutable reference to the y/vertical component of the point
+    /// Returns a mutable reference to the y/depth component of the point
     ///
     /// # Examples
     ///
@@ -171,11 +172,12 @@ impl<T: CoordNum> Point<T> {
     /// *p_y += 1.0;
     /// assert_relative_eq!(p.y(), 3.345);
     /// ```
+    #[inline(always)]
     pub fn y_mut(&mut self) -> &mut T {
         &mut self.0.y
     }
 
-    /// Returns the z/hight component of the point.
+    /// Returns the z/height component of the point.
     ///
     /// # Examples
     ///
@@ -191,7 +193,7 @@ impl<T: CoordNum> Point<T> {
         self.0.z
     }
 
-    /// Sets the z/hight component of the point.
+    /// Sets the z/height component of the point.
     ///
     /// # Examples
     ///
@@ -208,7 +210,7 @@ impl<T: CoordNum> Point<T> {
         self
     }
 
-    /// Returns a mutable reference to the z/hight component of the point
+    /// Returns a mutable reference to the z/height component of the point
     ///
     /// # Examples
     ///
@@ -218,13 +220,14 @@ impl<T: CoordNum> Point<T> {
     /// let mut p = Point::new(1.234, 2.345, 4.380);
     /// let mut p_y = p.z_mut();
     /// *p_y += 1.0;
-    /// assert_relative_eq!(p.y(), 5.380);
+    /// assert_relative_eq!(p.z(), 5.380);
     /// ```
+    #[inline(always)]
     pub fn z_mut(&mut self) -> &mut T {
         &mut self.0.z
     }
 
-    /// Returns a tuple that contains the x/horizontal & y/vertical component of the point.
+    /// Returns a tuple that contains the x/horizontal & y/depth component of the point.
     ///
     /// # Examples
     ///
@@ -294,20 +297,6 @@ impl<T: CoordNum> Point<T> {
     ///
     /// ```
     /// use geo_types::point;
-    ///
-    /// let point_a = point! { x: 1., y: 2., z: 3. };
-    /// let point_b = point! { x: 3., y: 5., z: 3. };
-    /// let point_c = point! { x: 7., y: 12., z: 7. };
-    ///
-    /// let cross = point_a.cross_prod(point_b, point_c);
-    ///
-    /// assert_eq!(cross, 2.0)
-    /// ```
-    pub fn cross_prod_2d(self, point_b: Self, point_c: Self) -> T {
-        (point_b.x() - self.x()) * (point_c.y() - self.y())
-            - (point_b.y() - self.y()) * (point_c.x() - self.x())
-    }
-
     /// Returns the cross product of 3 points in 3D space.
     /// The result is a 3D vector, which is perpendicular to the plane formed
     /// by the vectors `self` → `point_b` and `self` → `point_c`.
@@ -315,7 +304,6 @@ impl<T: CoordNum> Point<T> {
     /// # Note
     ///
     /// - This function is **not robust** against floating-point errors.
-    /// - For 2D use cases, use `cross_prod_2d`.
     ///
     /// # Examples
     ///
@@ -328,7 +316,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// let cross = point_a.cross_prod(point_b, point_c);
     ///
-    /// assert_eq!(cross, point! { x: 0.0, y: 12.0, z: -9.0 });
+    /// assert_eq!(cross, point! { x: 12.0, y: -8.0, z: 2.0 });
     /// ```
     pub fn cross_prod(self, point_b: Self, point_c: Self) -> Self {
         let ux = point_b.x() - self.x();
@@ -346,20 +334,47 @@ impl<T: CoordNum> Point<T> {
 
         point! { x: x, y: y, z: z }
     }
-}
 
-impl<T: CoordNum> Point<T> {
+    /// Get cross product of two `Point`s.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// # use geo_types::point;
+    /// # use approx::assert_relative_eq;
+    /// let c1 = point! {
+    ///     x: 40.02f64,
+    ///     y: 113.34,
+    ///     z: 367.01,
+    /// };
+    /// 
+    /// let c2 = point! {
+    ///     x: 55.0,
+    ///     y: 116.0,
+    ///     z: 497.21,
+    /// };
+    /// 
+    /// let c3 = c1.cross(c2);
+    /// 
+    /// assert_relative_eq!(c3.x(), 13780.62, epsilon = 1e-2);
+    /// assert_relative_eq!(c3.y(), 287.2, epsilon = 1e-2);
+    /// assert_relative_eq!(c3.z(), -1591.37, epsilon = 1e-2);
+    /// ```
+    pub fn cross(self, other: Self) -> Self {
+        Point(self.0.cross(other.0))
+    }
+
     /// Converts the (x, y, z) components of Point to degrees
     ///
     /// # Example
     /// ```
     /// use geo_types::Point;
     ///
-    /// let p = Point::new(1.234, 2.345, 8.591);
+    /// let p = Point::new(1.234, 2.345, 0.7531096);
     /// let (x, y, z): (f32, f32, f32) = p.to_degrees().x_y_z();
     /// assert_eq!(x.round(), 71.0);
     /// assert_eq!(y.round(), 134.0);
-    /// assert_eq!(z.round(), 0.15);
+    /// assert_eq!(z, 43.15);
     /// ```
     pub fn to_degrees(self) -> Self {
         let (x, y, z) = self.x_y_z();
@@ -375,11 +390,11 @@ impl<T: CoordNum> Point<T> {
     /// ```
     /// use geo_types::Point;
     ///
-    /// let p = Point::new(180.0, 341.5, 0.15);
+    /// let p = Point::new(180.0, 341.5, 43.15);
     /// let (x, y, z): (f32, f32, f32) = p.to_radians().x_y_z();
     /// assert_eq!(x.round(), 3.0);
     /// assert_eq!(y.round(), 6.0);
-    /// assert_eq!(z.round(), 8.59);
+    /// assert_eq!((z * 100.0).round(), 75.0);
     /// ```
     pub fn to_radians(self) -> Self {
         let (x, y, z) = self.x_y_z();
@@ -566,7 +581,7 @@ impl<T: CoordNum> DivAssign<T> for Point<T> {
     /// ```
     /// use geo_types::Point;
     ///
-    /// let mut p = Point::new(2.0, 3.0, 10.0);
+    /// let mut p = Point::new(2.0, 3.0, 5.0);
     /// p /= 2.0;
     ///
     /// assert_eq!(p.x(), 1.0);
