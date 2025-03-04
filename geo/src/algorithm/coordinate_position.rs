@@ -7,7 +7,6 @@ use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
-
 use super::TriangulateEarcut;
 
 /// The position of a `Coord` relative to a `Geometry`
@@ -37,9 +36,8 @@ pub enum CoordPos {
 /// let outside_coord = coord! { x: 5.0, y: 5.0, z: 5.0 };
 /// assert_eq!(square_poly.coordinate_position(&outside_coord), CoordPos::Outside);
 /// ```
-pub trait CoordinatePosition {
-    type Scalar: GeoNum;
-    fn coordinate_position(&self, coord: &Coord<Self::Scalar>) -> CoordPos {
+pub trait CoordinatePosition<T: GeoNum> {
+    fn coordinate_position(&self, coord: &Coord<T>) -> CoordPos {
         let mut is_inside = false;
         let mut boundary_count = 0;
 
@@ -64,17 +62,13 @@ pub trait CoordinatePosition {
     //  2. increment `boundary_count` for each component whose Boundary contains `coord`.
     fn calculate_coordinate_position(
         &self,
-        coord: &Coord<Self::Scalar>,
+        coord: &Coord<T>,
         is_inside: &mut bool,
         boundary_count: &mut usize,
     );
 }
 
-impl<T> CoordinatePosition for Coord<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for Coord<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -87,11 +81,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Point<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for Point<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -104,11 +94,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Line<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for Line<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -130,11 +116,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for LineString<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for LineString<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -179,11 +161,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Triangle<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for Triangle<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -207,11 +185,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Rect<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for Rect<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -264,11 +238,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for MultiPoint<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for MultiPoint<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -281,11 +251,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Polygon<T>
-where
-    T: CoordNum + GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum + Default> CoordinatePosition<T> for Polygon<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -296,7 +262,7 @@ where
             return;
         }
 
-        match inside(self, coord, boundary_count) {
+        match inside_poly(self, coord, boundary_count) {
             CoordPos::OnBoundary => {
                 boundary_count.add_assign(1);
             },
@@ -306,11 +272,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for MultiLineString<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum> CoordinatePosition<T> for MultiLineString<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -323,11 +285,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for MultiPolygon<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum + Default> CoordinatePosition<T> for MultiPolygon<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -340,11 +298,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for GeometryCollection<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum + Default> CoordinatePosition<T> for GeometryCollection<T> {
     fn calculate_coordinate_position(
         &self,
         coord: &Coord<T>,
@@ -357,11 +311,7 @@ where
     }
 }
 
-impl<T> CoordinatePosition for Geometry<T>
-where
-    T: GeoNum,
-{
-    type Scalar = T;
+impl<T: GeoNum + Default> CoordinatePosition<T> for Geometry<T> {
     crate::geometry_delegate_impl! {
         fn calculate_coordinate_position(
             &self,
@@ -371,8 +321,7 @@ where
     }
 }
 
-impl<T: GeoNum> CoordinatePosition for GeometryCow<'_, T> {
-    type Scalar = T;
+impl<T: GeoNum + Default> CoordinatePosition<T> for GeometryCow<'_, T> {
     crate::geometry_cow_delegate_impl! {
         fn calculate_coordinate_position(
             &self,
@@ -490,10 +439,9 @@ where
 
 #[cfg(test)]
 mod test {
-    use geo_types::coord;
-
     use super::*;
     use crate::{line_string, point, polygon};
+    use geo_types::coord;
 
     #[test]
     fn test_empty_poly() {

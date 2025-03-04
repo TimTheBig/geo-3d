@@ -118,12 +118,10 @@ impl<T: GeoNum> MonoPoly<T> {
     }
 }
 
-impl<T: GeoNum> CoordinatePosition for MonoPoly<T> {
-    type Scalar = T;
-
+impl<T: GeoNum> CoordinatePosition<T> for MonoPoly<T> {
     fn calculate_coordinate_position(
         &self,
-        coord: &Coord<Self::Scalar>,
+        coord: &Coord<T>,
         is_inside: &mut bool,
         boundary_count: &mut usize,
     ) {
