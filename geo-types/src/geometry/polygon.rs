@@ -496,46 +496,6 @@ enum ListSign {
     Mixed,
 }
 
-impl<T: CoordNum + Signed> Polygon<T> {
-    /// Determine whether a Polygon is convex
-    // For each consecutive pair of edges of the polygon (each triplet of points),
-    // compute the z-component of the cross product of the vectors defined by the
-    // edges pointing towards the points in increasing order.
-    // Take the cross product of these vectors
-    // The polygon is convex if the z-components of the cross products are either
-    // all positive or all negative. Otherwise, the polygon is non-convex.
-    // see: https://stackoverflow.com/a/1881201/416626
-    #[deprecated(
-        since = "0.6.1",
-        note = "Please use `geo::is_convex` on `poly.exterior()` instead"
-    )]
-    pub fn is_convex(&self) -> bool {
-        let convex = self
-            .exterior
-            .0
-            .iter()
-            .enumerate()
-            .map(|(idx, _)| {
-                let prev_1 = self.previous_vertex(idx);
-                let prev_2 = self.previous_vertex(prev_1);
-                // todo make 3d or use `geo::is_convex` on `poly.exterior()`
-                Point::from(self.exterior[prev_2]).cross_prod_2d(
-                    Point::from(self.exterior[prev_1]),
-                    Point::from(self.exterior[idx]),
-                )
-            })
-            // accumulate and check cross-product result signs in a single pass
-            // positive implies ccw convexity, negative implies cw convexity
-            // anything else implies non-convexity
-            .fold(ListSign::Empty, |acc, n| match (acc, n.is_positive()) {
-                (ListSign::Empty, true) | (ListSign::Positive, true) => ListSign::Positive,
-                (ListSign::Empty, false) | (ListSign::Negative, false) => ListSign::Negative,
-                _ => ListSign::Mixed,
-            });
-        convex != ListSign::Mixed
-    }
-}
-
 // impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
 //     fn from(r: Rect<T>) -> Self {
 //         // todo find z min/max order

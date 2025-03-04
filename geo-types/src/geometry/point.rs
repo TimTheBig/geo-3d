@@ -244,7 +244,7 @@ impl<T: CoordNum> Point<T> {
         (self.0.x, self.0.y)
     }
 
-    /// Returns a tuple that contains the x/horizontal, y/vertical & z/hight component of the point.
+    /// Returns a tuple that contains the x/horizontal, y/depth & z/height component of the point.
     ///
     /// # Examples
     ///
@@ -281,22 +281,6 @@ impl<T: CoordNum> Point<T> {
         self.x() * other.x() + self.y() * other.y() + self.z() * other.z()
     }
 
-    /// Returns the cross product of 3 points. A positive value implies
-    /// `self` → `point_b` → `point_c` is counter-clockwise, negative implies
-    /// clockwise.
-    ///
-    /// # Note on Robustness
-    ///
-    /// This function is **not** robust against floating-point errors.
-    /// The [`geo`](https://docs.rs/geo) crate
-    /// offers robust predicates for standard numeric types using the
-    /// [`Kernel`](https://docs.rs/geo/algorithm/kernels/trait.Kernel.html)
-    /// trait, and these should be preferred if possible.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use geo_types::point;
     /// Returns the cross product of 3 points in 3D space.
     /// The result is a 3D vector, which is perpendicular to the plane formed
     /// by the vectors `self` → `point_b` and `self` → `point_c`.
