@@ -84,10 +84,24 @@ impl<T: CoordNum> From<Coord<T>> for [T; 3] {
     }
 }
 
+impl Coord<f64> {
+    /// A `Coord` with all max finite values.
+    pub const MAX: Self = Coord { x: f64::MAX, y: f64::MAX, z: f64::MAX };
+    /// A `Coord` with all min finite values.
+    pub const MIN: Self = Coord { x: f64::MIN, y: f64::MIN, z: f64::MIN };
+}
+
+impl Coord<f32> {
+    /// A `Coord` with all max finite values.
+    pub const MAX: Self = Coord { x: f32::MAX, y: f32::MAX, z: f32::MAX };
+    /// A `Coord` with all min finite values.
+    pub const MIN: Self = Coord { x: f32::MIN, y: f32::MIN, z: f32::MIN };
+}
+
 impl<T: CoordNum> Coord<T> {
     // todo undeprecate
     #[deprecated = "coord is now 3d try `Coord::x_y_z`"]
-    /// Returns a tuple that contains the x/horizontal & y/vertical component of the coordinate.
+    /// Returns a tuple that contains the x/horizontal & y/depth component of the coordinate.
     ///
     /// # Examples
     ///
@@ -109,7 +123,7 @@ impl<T: CoordNum> Coord<T> {
         (self.x, self.y)
     }
 
-    /// Returns a tuple that contains the x/horizontal & y/vertical component of the coordinate.
+    /// Returns a tuple that contains the x/horizontal, y/depth, & z/vertical component of the coordinate.
     ///
     /// # Examples
     ///
