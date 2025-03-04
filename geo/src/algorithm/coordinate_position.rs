@@ -379,7 +379,7 @@ fn line_tri_intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
 }
 
 /// Calculate the position of a `Coord` relative to a closed `LineString`.
-#[deprecated = "This is 2d, use [`calculate_coordinate_position`] instead"]
+#[deprecated(since = "0.30.0", note = "This is 2d, use `CoordinatePosition::coordinate_position` instead")]
 pub(crate) fn coord_pos_relative_to_ring<T: GeoNum>(coord: Coord<T>, linestring: &LineString<T>) -> CoordPos {
     assert!(linestring.is_closed(), "The ring(LineString) must be closed.");
 

@@ -1,5 +1,5 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
-use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
+use crate::coordinate_position::CoordPos;
 use crate::geometry::*;
 use crate::GeoNum;
 use crate::{HasDimensions, Relate};
@@ -28,7 +28,7 @@ fn xy_position_in_poly<T: GeoNum>(poly: &Polygon<T>, coord: &Coord<T>) -> CoordP
     let mut is_inside = false;
     let mut boundary_count = 0;
 
-    calculate_coord_poly_position(poly, coord, &mut is_inside, &mut boundary_count);
+    calculate_coord_poly_position_xy(poly, coord, &mut is_inside, &mut boundary_count);
 
     // “The boundary of an arbitrary collection of geometries whose interiors are disjoint
     // consists of geometries drawn from the boundaries of the element geometries by
@@ -42,12 +42,16 @@ fn xy_position_in_poly<T: GeoNum>(poly: &Polygon<T>, coord: &Coord<T>) -> CoordP
     }
 }
 
-fn calculate_coord_poly_position<T: GeoNum>(
+/// Calculate a `Coord`s 2d possiton in a `Polygon`
+#[expect(deprecated)]
+fn calculate_coord_poly_position_xy<T: GeoNum>(
     poly: &Polygon<T>,
     coord: &Coord<T>,
     is_inside: &mut bool,
     boundary_count: &mut usize,
 ) {
+    use crate::coordinate_position::coord_pos_relative_to_ring;
+
     if poly.is_empty() {
         return;
     }

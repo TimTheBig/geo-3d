@@ -12,8 +12,8 @@ pub trait Distance<F, Destination> {
 }
 
 use crate::algorithm::Intersects;
-use crate::coordinate_position::{coord_pos_relative_to_ring, CoordPos};
-use crate::geometry::*;
+use crate::coordinate_position::CoordPos;
+use crate::{geometry::*, CoordinatePosition};
 use crate::{CoordNum, GeoNum};
 use num_traits::{Bounded, Float};
 use rstar::primitives::CachedEnvelope;
@@ -396,7 +396,7 @@ fn nearest_neighbour_distance<F: GeoNum>(geom1: &LineString<F>, geom2: &LineStri
 }
 
 fn ring_contains_coord<T: GeoNum>(ring: &LineString<T>, c: Coord<T>) -> bool {
-    match coord_pos_relative_to_ring(c, ring) {
+    match ring.coordinate_position(&c) {
         CoordPos::Inside => true,
         CoordPos::OnBoundary | CoordPos::Outside => false,
     }
