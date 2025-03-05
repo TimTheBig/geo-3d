@@ -1,7 +1,6 @@
 use crate::{coord, CoordNum, LineString, Point, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
-use num_traits::{Float, Signed};
 
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
@@ -413,14 +412,6 @@ impl<T: CoordNum> Polygon<T> {
         self.interiors.push(new_interior);
     }
 
-    /// Wrap-around previous-vertex
-    fn previous_vertex(&self, current_vertex: usize) -> usize
-    where
-        T: Float,
-    {
-        (current_vertex + (self.exterior.0.len() - 1) - 1) % (self.exterior.0.len() - 1)
-    }
-
     /// Count the total number of rings (interior and exterior) in the polygon
     ///
     /// # Examples
@@ -485,15 +476,6 @@ impl<T: CoordNum> Polygon<T> {
     pub fn from_triangles(exterior: &[Triangle<T>], interior: &[&[Triangle<T>]]) -> Self {
         todo!("not yet implemented")
     }
-}
-
-// used to check the sign of a vec of floats
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum ListSign {
-    Empty,
-    Positive,
-    Negative,
-    Mixed,
 }
 
 // impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
