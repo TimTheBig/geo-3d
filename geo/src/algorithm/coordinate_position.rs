@@ -1,13 +1,13 @@
+use geo_types::{coord, CoordNum};
 use std::cmp::Ordering;
 use std::ops::AddAssign;
-use geo_types::{coord, CoordNum};
 
+use super::TriangulateDelaunay;
 use crate::geometry::*;
 use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
-use super::TriangulateDelaunay;
 
 /// The position of a `Coord` relative to a `Geometry`
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -265,9 +265,9 @@ impl<T: GeoNum + Default> CoordinatePosition<T> for Polygon<T> {
         match inside_poly(self, coord, boundary_count) {
             CoordPos::OnBoundary => {
                 boundary_count.add_assign(1);
-            },
-            CoordPos::Inside => { *is_inside = true },
-            CoordPos::Outside => {},
+            }
+            CoordPos::Inside => *is_inside = true,
+            CoordPos::Outside => {}
         }
     }
 }
@@ -341,7 +341,10 @@ fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: &Coord<T>, bound
         }
     }
 
-    let segment = Line::new(coord.clone(), coord!(T::max_value(), T::max_value(), T::max_value()));
+    let segment = Line::new(
+        coord.clone(),
+        coord!(T::max_value(), T::max_value(), T::max_value()),
+    );
 
     // todo it should not be on boundary if it's on inner triangle boundary
     for triangle in poly.delaunay_triangles_iter() {
@@ -360,20 +363,22 @@ fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: &Coord<T>, bound
 
 /// Checks if a ray(`Line`) intersects a `Triangle`
 fn line_tri_intersect<T: CoordNum>(segment: Line<T>, tri: Triangle<T>) -> bool {
-    let s1 = super::kernels::robust::RobustKernel::orient3d(segment.start,tri.0,tri.1,tri.2);
-    let s2 = super::kernels::robust::RobustKernel::orient3d(segment.end,tri.0,tri.1,tri.2);
+    use super::kernels;
+
+    let s1 = kernels::robust::RobustKernel::orient3d(segment.start, tri.0, tri.1, tri.2);
+    let s2 = kernels::robust::RobustKernel::orient3d(segment.end, tri.0, tri.1, tri.2);
     // Test whether the two extermities of the segment
     // are on the same side of the supporting plane of the triangle
     if s1 == s2 {
-        return false
+        return false;
     }
 
     // Now we know that the segment 'straddles' the supporting plane.
     // We need to test whether the three tetrahedra formed
     // by the segment and the three edges of the triangle have the same orientation
-    let s3 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.0,tri.1);
-    let s4 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.1,tri.2);
-    let s5 = super::kernels::robust::RobustKernel::orient3d(segment.start,segment.end,tri.2,tri.0);
+    let s3 = kernels::robust::RobustKernel::orient3d(segment.start, segment.end, tri.0, tri.1);
+    let s4 = kernels::robust::RobustKernel::orient3d(segment.start, segment.end, tri.1, tri.2);
+    let s5 = kernels::robust::RobustKernel::orient3d(segment.start, segment.end, tri.2, tri.0);
 
     s3 == s4 && s4 == s5
 }
@@ -527,7 +532,10 @@ mod test {
     #[test]
     fn test_simple_line() {
         use crate::point;
-        let line = Line::new(point![x: 0.0, y: 0.0, z: 0.0], point![x: 10.0, y: 10.0, z: 10.0]);
+        let line = Line::new(
+            point![x: 0.0, y: 0.0, z: 0.0],
+            point![x: 10.0, y: 10.0, z: 10.0],
+        );
 
         let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(line.coordinate_position(&start), CoordPos::OnBoundary);
@@ -544,7 +552,10 @@ mod test {
 
     #[test]
     fn test_degenerate_line() {
-        let line = Line::new(point![x: 0.0, y: 0.0, z: 0.0], point![x: 0.0, y: 0.0, z: 0.0]);
+        let line = Line::new(
+            point![x: 0.0, y: 0.0, z: 0.0],
+            point![x: 0.0, y: 0.0, z: 0.0],
+        );
 
         let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
         assert_eq!(line.coordinate_position(&start), CoordPos::Inside);
@@ -569,8 +580,7 @@ mod test {
 
     #[test]
     fn test_simple_line_string() {
-        let line_string =
-            line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 1.0, z: 1.0), (x: 2.0, y: 0.0, z: 2.0), (x: 3.0, y: 0.0, z: 3.0)];
+        let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 1.0, y: 1.0, z: 1.0), (x: 2.0, y: 0.0, z: 2.0), (x: 3.0, y: 0.0, z: 3.0)];
 
         let start = Coord::zero();
         assert_eq!(
@@ -694,7 +704,11 @@ mod test {
 
     #[test]
     fn test_triangle() {
-        let triangle = Triangle::new((0.0, 0.0, 0.0).into(), (5.0, 10.0, 15.0).into(), (10.0, 0.0, 10.0).into());
+        let triangle = Triangle::new(
+            (0.0, 0.0, 0.0).into(),
+            (5.0, 10.0, 15.0).into(),
+            (10.0, 0.0, 10.0).into(),
+        );
         assert_eq!(
             triangle.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
             CoordPos::Inside
@@ -711,7 +725,11 @@ mod test {
 
     #[test]
     fn test_collection() {
-        let triangle = Triangle::new((0.0, 0.0, 0.0).into(), (5.0, 10.0, 15.0).into(), (10.0, 0.0, 10.0).into());
+        let triangle = Triangle::new(
+            (0.0, 0.0, 0.0).into(),
+            (5.0, 10.0, 15.0).into(),
+            (10.0, 0.0, 10.0).into(),
+        );
         let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
         let collection = GeometryCollection::new(vec![triangle.into(), rect.into()]);
 

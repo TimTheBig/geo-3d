@@ -91,9 +91,9 @@ implement_segmentize!(LineStringSegmentize, line_segmentize, Euclidean);
 
 #[cfg(test)]
 mod test {
-    use approx::RelativeEq;
     use super::*;
     use crate::LineString;
+    use approx::RelativeEq;
 
     #[test]
     fn n_elems_bug() {

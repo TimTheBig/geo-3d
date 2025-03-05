@@ -50,10 +50,7 @@ fn bench_pt_in_poly<T, I>(
     let mon = match catch_unwind(|| monotone_subdivision([polygon.clone()])) {
         Ok(m) => m,
         Err(_) => {
-            panic!(
-                "Monotone subdivision failed for polygon: {:?}",
-                polygon
-            );
+            panic!("Monotone subdivision failed for polygon: {:?}", polygon);
         }
     };
 

@@ -89,10 +89,7 @@ mod tests {
             coord!(x: -1797084.08, y: 583528.84, z: 0.0),    // Lima, Peru
             coord!(x: 1240052.27, y: 207169.12, z: 0.0),     // Brasília, Brazil
         ]);
-        assert_eq!(
-            6_237_538.,
-            projected_line_string.length().round()
-        );
+        assert_eq!(6_237_538., projected_line_string.length().round());
     }
 
     #[test]
@@ -103,10 +100,7 @@ mod tests {
             coord!(x: 3.0, y: 3.0, z: 3.0),
         ]);
 
-        assert_eq!(
-            2.0,
-            line_string.length()
-        );
+        assert_eq!(2.0, line_string.length());
 
         let line_string = LineString::new(vec![
             coord!(x: 1.0, y: -1.0, z: 1.0),
@@ -114,9 +108,6 @@ mod tests {
             coord!(x: 3.0, y: -3.0, z: 3.0),
         ]);
 
-        assert_eq!(
-            2.0,
-            line_string.length()
-        );
+        assert_eq!(2.0, line_string.length());
     }
 }

@@ -78,7 +78,7 @@ impl<T: CoordNum, M: MapCoordsInPlace<T> + MapCoords<T, T, Output = Self>> Affin
 /// `x' = ax + by + fz + xoff`
 ///
 /// `y' = dx + ey + gz + yoff`
-/// 
+///
 /// `z' = hx + iy + jz + zoff`
 ///
 /// # Usage
@@ -446,7 +446,7 @@ impl<T: CoordNum + Neg<Output = T>> AffineTransform<T> {
     where
         <T as Neg>::Output: Mul<T>,
         <<T as Neg>::Output as Mul<T>>::Output: ToPrimitive,
-    {   
+    {
         // Determinant of the upper-left 3x3 matrix
         let determinant = self.a() * (self.e() * self.j() - self.g() * self.i())
             - self.b() * (self.d() * self.j() - self.g() * self.h())
@@ -480,7 +480,7 @@ impl<T: CoordNum + Neg<Output = T>> AffineTransform<T> {
             inv_d, inv_e, inv_g, inv_yoff,
             inv_h, inv_i, inv_j, inv_zoff,
         ))
-    }        
+    }
 }
 
 impl<T: CoordNum> fmt::Debug for AffineTransform<T> {
@@ -820,12 +820,12 @@ mod tests {
         assert_eq!(composed.0[0][1], 70.);
         assert_eq!(composed.0[0][2], 135.);
         assert_eq!(composed.0[0][3], 136.);
-    
+
         assert_eq!(composed.0[1][0], 47.);
         assert_eq!(composed.0[1][1], 74.);
         assert_eq!(composed.0[1][2], 158.);
         assert_eq!(composed.0[1][3], 145.);
-    
+
         assert_eq!(composed.0[2][0], 46.);
         assert_eq!(composed.0[2][1], 74.);
         assert_eq!(composed.0[2][2], 127.);

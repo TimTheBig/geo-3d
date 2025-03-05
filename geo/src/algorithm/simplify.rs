@@ -85,12 +85,7 @@ fn compute_rdp<T: GeoNum, const INITIAL_MIN: usize>(
         .enumerate()
         .take(rdp_indices.len() - 1) // Don't include the last index
         .skip(1) // Don't include the first index
-        .map(|(index, rdp_index)| {
-            (
-                index,
-                rdp_index.coord.distance(&first_last_line),
-            )
-        })
+        .map(|(index, rdp_index)| (index, rdp_index.coord.distance(&first_last_line)))
         .fold(
             (0usize, T::zero()),
             |(farthest_index, farthest_distance), (index, distance)| {

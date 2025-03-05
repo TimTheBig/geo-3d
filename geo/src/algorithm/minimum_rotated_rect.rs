@@ -1,9 +1,9 @@
-use std::iter::Sum;
-use num_traits::Float;
 use crate::{
     algorithm::{centroid::Centroid, rotate::Rotate, BoundingRect, CoordsIter},
     Area, ConvexHull, GeoNum, LinesIter, Polygon,
 };
+use num_traits::Float;
+use std::iter::Sum;
 
 /// Return the minimum bounding rectangle(MBR) of geometry
 /// reference: <https://en.wikipedia.org/wiki/Minimum_bounding_box>

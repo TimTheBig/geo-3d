@@ -1,5 +1,5 @@
-use crate::{CoordNum, Polygon};
 use super::LineString;
+use crate::{CoordNum, Polygon};
 
 use alloc::vec;
 use alloc::vec::Vec;
@@ -218,8 +218,8 @@ impl<T> rstar::RTreeObject for MultiPolygon<T>
     fn envelope(&self) -> Self::Envelope {
         use rstar::Envelope;
         self.iter()
-            .map(|p|p.envelope())
-            .fold(rstar::AABB::new_empty(), |a,b|a.merged(&b))
+            .map(|p| p.envelope())
+            .fold(rstar::AABB::new_empty(), |a, b| a.merged(&b))
     }
 }
 

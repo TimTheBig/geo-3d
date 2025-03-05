@@ -114,7 +114,7 @@ pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
             let e3 = point.z;
             coord!(e1, e2, e3)
         }
-    
+
         #[inline]
         fn rot_x<T: CoordNum>(point: Coord<T>, angle: T) -> Coord<T> {
             let e1 = point.x;
@@ -122,7 +122,7 @@ pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
             let e3 = angle.sin() * point.y + angle.cos() * point.z;
             coord!(e1, e2, e3)
         }
-    
+
         let mut points = Vec::with_capacity(divisions * divisions);
         let unit_y = coord!(T::zero(), T::one(), T::zero());
         for step_x in 0..divisions {
@@ -134,7 +134,7 @@ pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
                 points.push(p);
             }
         }
-    
+
         points.into()
     }
     sphere_points(104)
@@ -215,7 +215,11 @@ fn wkt_line_string_to_geo<T>(line_string: &wkt::types::LineString<T>) -> LineStr
 where
     T: WktFloat + Default + FromStr,
 {
-    LineString::from_iter(line_string.0.iter().map(|coord| (coord.x, coord.y, coord.z)))
+    LineString::from_iter(
+        line_string
+            .0.iter()
+            .map(|coord| (coord.x, coord.y, coord.z)),
+    )
 }
 
 fn wkt_polygon_to_geo<T>(polygon: &wkt::types::Polygon<T>) -> Polygon<T>

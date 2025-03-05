@@ -99,9 +99,7 @@ fn trivial_hull<T: GeoNum>(points: &mut [Coord<T>], include_on_hull: bool) -> Li
     // Maintain the CCW invariance
     use super::winding_order::WindingOrder;
     if ls.0.len() == 3 {
-        if let Some(w_o) = triangle_winding_order(
-            &Triangle::new(ls[0], ls[1], ls[2])
-        ) {
+        if let Some(w_o) = triangle_winding_order(&Triangle::new(ls[0], ls[1], ls[2])) {
             if w_o == WindingOrder::Clockwise {
                 ls.0.reverse();
             }

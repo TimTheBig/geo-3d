@@ -87,9 +87,9 @@ where
 
 #[cfg(test)]
 mod test {
-    use geo_types::coord;
     use super::*;
     use crate::IsConvex;
+    use geo_types::coord;
     fn test_convexity<T: GeoNum>(mut initial: Vec<Coord<T>>) {
         let hull = graham_hull(&mut initial, false);
         assert!(hull.is_strictly_ccw_convex());
@@ -121,7 +121,7 @@ mod test {
     fn graham_hull_test2() {
         let initial = [
             coord!(0., 10., 0.),
-            coord!(1., 1. ,1.),
+            coord!(1., 1., 1.),
             coord!(10., 0., 10.),
             coord!(1., -1., 1.),
             coord!(0., -10., 0.),

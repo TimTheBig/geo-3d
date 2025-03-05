@@ -23,8 +23,8 @@ fn criterion_benchmark(c: &mut Criterion) {
         bencher.iter(|| {
             criterion::black_box(unsafe {
                 criterion::black_box(&line_string)
-                .convex_hull()
-                .unwrap_unchecked()
+                    .convex_hull()
+                    .unwrap_unchecked()
             });
         });
     });
@@ -45,8 +45,8 @@ fn criterion_benchmark(c: &mut Criterion) {
         bencher.iter(|| {
             criterion::black_box(unsafe {
                 criterion::black_box(&line_string)
-                .convex_hull()
-                .unwrap_unchecked()
+                    .convex_hull()
+                    .unwrap_unchecked()
             });
         });
     });

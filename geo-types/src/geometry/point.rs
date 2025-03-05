@@ -306,7 +306,7 @@ impl<T: CoordNum> Point<T> {
         let ux = point_b.x() - self.x();
         let uy = point_b.y() - self.y();
         let uz = point_b.z() - self.z();
-        
+
         let vx = point_c.x() - self.x();
         let vy = point_c.y() - self.y();
         let vz = point_c.z() - self.z();
@@ -320,9 +320,9 @@ impl<T: CoordNum> Point<T> {
     }
 
     /// Get cross product of two `Point`s.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// # use geo_types::point;
     /// # use approx::assert_relative_eq;
@@ -331,15 +331,15 @@ impl<T: CoordNum> Point<T> {
     ///     y: 113.34,
     ///     z: 367.01,
     /// };
-    /// 
+    ///
     /// let c2 = point! {
     ///     x: 55.0,
     ///     y: 116.0,
     ///     z: 497.21,
     /// };
-    /// 
+    ///
     /// let c3 = c1.cross(c2);
-    /// 
+    ///
     /// assert_relative_eq!(c3.x(), 13780.62, epsilon = 1e-2);
     /// assert_relative_eq!(c3.y(), 287.2, epsilon = 1e-2);
     /// assert_relative_eq!(c3.z(), -1591.37, epsilon = 1e-2);

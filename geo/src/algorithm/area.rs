@@ -1,7 +1,7 @@
-use std::iter::Sum;
+use super::TriangulateDelaunay;
 use crate::geometry::*;
 use crate::CoordNum;
-use super::TriangulateDelaunay;
+use std::iter::Sum;
 
 pub(crate) fn twice_signed_ring_area<T>(linestring: &LineString<T>) -> T
 where

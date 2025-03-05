@@ -147,9 +147,9 @@ impl<T: CoordNum> Coord<T> {
     }
 
     /// Get cross product of two `Coord`s.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```
     /// # use geo_types::coord;
     /// # use approx::assert_relative_eq;
@@ -158,15 +158,15 @@ impl<T: CoordNum> Coord<T> {
     ///     y: 113.34,
     ///     z: 367.01,
     /// };
-    /// 
+    ///
     /// let c2 = coord! {
     ///     x: 55.0,
     ///     y: 116.0,
     ///     z: 497.21,
     /// };
-    /// 
+    ///
     /// let c3 = c1.cross(c2);
-    /// 
+    ///
     /// assert_relative_eq!(c3.x, 13780.62, epsilon = 1e-2);
     /// assert_relative_eq!(c3.y, 287.2, epsilon = 1e-2);
     /// assert_relative_eq!(c3.z, -1591.37, epsilon = 1e-2);

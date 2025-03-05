@@ -1,7 +1,7 @@
+use super::Length;
 use crate::coords_iter::CoordsIter;
 use crate::{CoordNum, Line, LineString, Point};
 use std::ops::AddAssign;
-use super::Length;
 
 /// Returns an option of the point that lies a given fraction along the line.
 ///
@@ -116,7 +116,10 @@ mod test {
 
     #[test]
     fn test_line_interpolate_point_line() {
-        let line = Line::new(coord! { x: -1.0, y: 0.0, z: 1.0 }, coord! { x: 1.0, y: 0.0, z: -1.0 });
+        let line = Line::new(
+            coord! { x: -1.0, y: 0.0, z: 1.0 },
+            coord! { x: 1.0, y: 0.0, z: -1.0 },
+        );
         // some finite examples
         assert_eq!(
             line.line_interpolate_point(-1.0),

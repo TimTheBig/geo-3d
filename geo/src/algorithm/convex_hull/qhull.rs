@@ -1,11 +1,11 @@
+use super::trivial_hull;
+use crate::{GeoNum, Winding};
 use geo_types::{coord, Coord, CoordNum, LineString};
 use glam::DVec3;
-pub use quickhull::{ErrorKind, ConvexHull};
-use crate::{GeoNum, Winding};
-use super::trivial_hull;
+pub use quickhull::{ConvexHull, ErrorKind};
 
 /// A container to make using [quickhull](https://github.com/TimTheBig/quickhull) with geo simpler
-/// 
+///
 /// # Example
 /// ```
 /// # use geo_3d::{coord, Coord, convex_hull::ConvexQHull};
@@ -33,7 +33,7 @@ impl ConvexQHull {
     pub fn try_new<T: CoordNum>(points: &[Coord<T>]) -> Result<Self, ErrorKind> {
         match ConvexHull::try_new(
             &(points.iter().map(glam_vec3_from_geo)).collect::<Vec<_>>(),
-            None
+            None,
         ) {
             Ok(ch) => Ok(ConvexQHull(ch)),
             Err(e) => Err(e),
@@ -67,7 +67,7 @@ fn glam_vec3_from_geo<T: CoordNum>(coord: &Coord<T>) -> DVec3 {
     DVec3::new(
         coord.x.to_f64().expect("CoordNum is float"),
         coord.y.to_f64().expect("CoordNum is float"),
-        coord.z.to_f64().expect("CoordNum is float")
+        coord.z.to_f64().expect("CoordNum is float"),
     )
 }
 
@@ -84,7 +84,7 @@ pub fn quick_hull<T: CoordNum + GeoNum + From<f64>>(points: &mut [Coord<T>]) -> 
             let mut ls = LineString(ps.points_iter::<T>().map(|c| { coord!(c.x.into(), c.y.into(), c.z.into()) }).collect::<Vec<_>>());
             ls.make_ccw_winding();
             Ok(ls)
-        },
+        }
         Err(e) => Err(e),
     }
 }

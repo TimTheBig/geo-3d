@@ -123,9 +123,6 @@ mod test {
             ],
         ]);
 
-        assert_eq!(
-            p1.hausdorff_distance(&multi_polygon),
-            3.0,
-        )
+        assert_eq!(p1.hausdorff_distance(&multi_polygon), 3.0)
     }
 }

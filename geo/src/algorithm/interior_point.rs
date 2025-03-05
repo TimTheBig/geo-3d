@@ -1,14 +1,9 @@
 use std::cmp::{Ordering, Reverse};
 
 use crate::algorithm::{
-    bounding_rect::BoundingRect,
-    centroid::Centroid,
-    coords_iter::CoordsIter,
-    dimensions::HasDimensions,
-    line_intersection::LineIntersection,
-    line_measures::Distance,
-    lines_iter::LinesIter,
-    relate::Relate,
+    bounding_rect::BoundingRect, centroid::Centroid, coords_iter::CoordsIter,
+    dimensions::HasDimensions, line_intersection::LineIntersection, line_measures::Distance,
+    lines_iter::LinesIter, relate::Relate,
 };
 use crate::geometry::*;
 use crate::sweep::{Intersections, SweepPoint};
@@ -515,14 +510,14 @@ mod test {
             (5.0, 1.3, 0.0),
             (5.5, 2.0, 0.0),
             (6.0, 1.3, 3.0),
-            (5.0, 1.3, 0.0)
+            (5.0, 1.3, 0.0),
         ]);
 
         let ls3 = LineString::from(vec![
             (5.0, 2.3, 0.0),
             (5.5, 3.0, 0.0),
             (6.0, 2.3, 0.0),
-            (5.0, 2.3, 0.0)
+            (5.0, 2.3, 0.0),
         ]);
 
         let p1 = Polygon::new(ls1, vec![ls2, ls3]);
@@ -537,7 +532,7 @@ mod test {
             LineString::from(vec![
                 point!(0., 1., 2.),
                 point!(1., 1., 1.),
-                point!(0., 1., 2.)
+                point!(0., 1., 2.),
             ]),
             vec![],
         );
@@ -587,7 +582,7 @@ mod test {
             LineString::from(vec![
                 point!(0., 0., 0.),
                 point!(1., 0., 1.),
-                point!(0., 0., 0.)
+                point!(0., 0., 0.),
             ]),
             vec![],
         );
@@ -601,7 +596,7 @@ mod test {
             LineString::from(vec![
                 point!(1., 1., 1.),
                 point!(1., 3., 5.),
-                point!(1., 1., 1.)
+                point!(1., 1., 1.),
             ]),
             vec![],
         );
@@ -609,7 +604,7 @@ mod test {
             LineString::from(vec![
                 point!(2., 2., 2.),
                 point!(6., 2., 8.),
-                point!(2., 2., 2.)
+                point!(2., 2., 2.),
             ]),
             vec![],
         );
@@ -625,7 +620,7 @@ mod test {
             LineString::from(vec![
                 point!(1., 1., 1.),
                 point!(1., 1., 1.),
-                point!(1., 1., 1.)
+                point!(1., 1., 1.),
             ]),
             vec![],
         );
@@ -634,7 +629,7 @@ mod test {
             LineString::from(vec![
                 point!(2., 2., 2.),
                 point!(2., 2., 2.),
-                point!(2., 2., 2.)
+                point!(2., 2., 2.),
             ]),
             vec![],
         );
@@ -654,7 +649,7 @@ mod test {
                 point!(1., 1., 1.),
                 point!(1., 3., 6.),
                 point!(3., 1., 3.),
-                point!(1., 1., 1.)
+                point!(1., 1., 1.),
             ]),
             vec![],
         );
@@ -662,7 +657,7 @@ mod test {
             LineString::from(vec![
                 point!(2., 2., 2.),
                 point!(6., 2., 2.),
-                point!(2., 2., 2.)
+                point!(2., 2., 2.),
             ]),
             vec![],
         );
@@ -678,7 +673,7 @@ mod test {
                 point!(0., 1., 2.),
                 point!(1., 1., 1.),
                 point!(1., 0., 1.),
-                point!(0., 0., 0.)
+                point!(0., 0., 0.),
             ]),
             vec![LineString::from(vec![
                 point!(0.1, 0.1, 0.1),
@@ -697,7 +692,7 @@ mod test {
                 point!(0., 1., 2.),
                 point!(1., 1., 1.),
                 point!(1., 0., 1.),
-                point!(0., 0., 0.)
+                point!(0., 0., 0.),
             ]),
             vec![LineString::new(vec![])],
         );
@@ -711,7 +706,7 @@ mod test {
             point!(0., 1., 2.),
             point!(1., 1., 1.),
             point!(1., 0., 0.),
-            point!(0., 0., 0.)
+            point!(0., 0., 0.),
         ]);
         let poly = Polygon::new(square.clone(), vec![square]);
         let interior_point = poly.interior_point().unwrap();
@@ -729,21 +724,21 @@ mod test {
             point!(0., 2., 0.),
             point!(2., 2., 2.),
             point!(2., 0., 0.),
-            point!(0., 0., 0.)
+            point!(0., 0., 0.),
         ]);
         let bottom = LineString::from(vec![
             point!(0., 0., 0.),
             point!(2., 0., 0.),
             point!(2., 1., 2.),
             point!(0., 1., 0.),
-            point!(0., 0., 0.)
+            point!(0., 0., 0.),
         ]);
         let top = LineString::from(vec![
             point!(0., 1., 2.),
             point!(2., 1., 0.),
             point!(2., 2., 2.),
             point!(0., 2., 4.),
-            point!(0., 1., 2.)
+            point!(0., 1., 2.),
         ]);
         let poly = Polygon::new(square, vec![top, bottom]);
         let interior_point = poly.interior_point().unwrap();
@@ -766,7 +761,7 @@ mod test {
             point!(2., 0., 2.),
             point!(2., 2., 2.),
             point!(0., 2., 0.),
-            point!(0., 0., 0.)
+            point!(0., 0., 0.),
         ]);
         let poly = Polygon::new(linestring, Vec::new());
         assert_eq!(
@@ -782,7 +777,7 @@ mod test {
             point!(5., 1., 5.),
             point!(5., 3., 5.),
             point!(2., 3., 4.),
-            point!(2., 1., 0.)
+            point!(2., 1., 0.),
         ]);
         let poly1 = Polygon::new(linestring, Vec::new());
         let linestring = LineString::from(vec![
@@ -790,7 +785,7 @@ mod test {
             point!(8., 1., 8.),
             point!(8., 2., 8.),
             point!(7., 2., 7.),
-            point!(7., 1., 7.)
+            point!(7., 1., 7.),
         ]);
         let poly2 = Polygon::new(linestring, Vec::new());
         let multipoly = MultiPolygon::new(vec![poly1, poly2]);
@@ -807,7 +802,7 @@ mod test {
             (2., 0., 0.),
             (2., 2., 2.),
             (0., 2., 0.),
-            (0., 0., 0.)
+            (0., 0., 0.),
         ]);
         let poly1 = Polygon::new(linestring, Vec::new());
         let linestring = LineString::from(vec![
@@ -815,7 +810,7 @@ mod test {
             (-2., 0., 0.),
             (-2., 2., 0.),
             (0., 2., 0.),
-            (0., 0., 0.)
+            (0., 0., 0.),
         ]);
         let poly2 = Polygon::new(linestring, Vec::new());
         let multipoly = MultiPolygon::new(vec![poly1, poly2]);
@@ -828,7 +823,7 @@ mod test {
     fn bounding_rect_test() {
         let bounding_rect = Rect::new(
             coord! { x: 0., y: 50., z: 0. },
-            coord! { x: 4., y: 100., z: 0. }
+            coord! { x: 4., y: 100., z: 0. },
         );
         let point = point![x: 2., y: 75., z: 0.];
         assert_eq!(point, bounding_rect.interior_point());
@@ -836,10 +831,7 @@ mod test {
 
     #[test]
     fn line_test() {
-        let line1 = Line::new(
-            coord!(0., 1., 0.),
-            coord!(1., 3., 0.)
-        );
+        let line1 = Line::new(coord!(0., 1., 0.), coord!(1., 3., 0.));
         assert_eq!(line1.interior_point(), point![x: 0., y: 1., z: 0.]);
     }
 
@@ -864,7 +856,7 @@ mod test {
             point!(0., 0., 0.),
             point!(1., 0., 0.),
             point!(1., 1., 1.),
-            point!(0., 1., 0.)
+            point!(0., 1., 0.),
         ]);
         let poly1 = Polygon::new(linestring, Vec::new());
         let linestring = LineString::from(vec![
@@ -872,7 +864,7 @@ mod test {
             point!(10., 0., 0.),
             point!(11., 0., 0.),
             point!(11., 1., 0.),
-            point!(10., 1., 0.)
+            point!(10., 1., 0.),
         ]);
         let poly2 = Polygon::new(linestring, Vec::new());
 

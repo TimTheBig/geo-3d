@@ -1,8 +1,8 @@
-use std::iter::Sum;
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::algorithm::{CoordsIter, HasDimensions};
 use crate::geometry::*;
 use crate::{CoordNum, GeoNum};
+use std::iter::Sum;
 
 // ┌────────────────────────────────┐
 // │ Implementations for Point      │

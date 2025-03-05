@@ -171,11 +171,15 @@ impl<C: CoordNum> HasDimensions for Line<C> {
         if self.start == self.end {
             // degenerate line is a point
             Dimensions::ZeroDimensional
-        } else if self.start.x != self.end.x && self.start.y != self.end.y && self.start.z != self.end.z {
+        } else if self.start.x != self.end.x
+            && self.start.y != self.end.y
+            && self.start.z != self.end.z
+        {
             Dimensions::ThreeDimensional
         } else if (self.start.x == self.end.x && self.start.y == self.end.y)
             || (self.start.y == self.end.y && self.start.z == self.end.z)
-            || (self.start.z == self.end.z && self.start.x == self.end.x) {
+            || (self.start.z == self.end.z && self.start.x == self.end.x)
+        {
             Dimensions::TwoDimensional
         } else {
             Dimensions::OneDimensional
@@ -261,17 +265,11 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
         };
 
         // Check if all points lie on the same plane or axis
-        let has_varying_x = self
-            .rings().flatten()
-            .any(|c| c.x != first.x);
+        let has_varying_x = self.rings().flatten().any(|c| c.x != first.x);
 
-            let has_varying_y = self
-            .rings().flatten()
-            .any(|c| c.y != first.y);
+        let has_varying_y = self.rings().flatten().any(|c| c.y != first.y);
 
-            let has_varying_z = self
-            .rings().flatten()
-            .any(|c| c.z != first.z);
+        let has_varying_z = self.rings().flatten().any(|c| c.z != first.z);
 
         if has_varying_x && has_varying_y && has_varying_z {
             Dimensions::ThreeDimensional
@@ -285,7 +283,7 @@ impl<C: CoordNum> HasDimensions for Polygon<C> {
             Dimensions::Empty | Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
-            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional
+            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional,
         }
     }
 }
@@ -427,7 +425,10 @@ impl<C: CoordNum> HasDimensions for Rect<C> {
         {
             // degenerate rectangle is a line
             Dimensions::OneDimensional
-        } else if self.min().x == self.max().x || self.min().y == self.max().y || self.min().z == self.max().z {
+        } else if self.min().x == self.max().x
+            || self.min().y == self.max().y
+            || self.min().z == self.max().z
+        {
             // only two dimensions are used
             Dimensions::TwoDimensional
         } else {

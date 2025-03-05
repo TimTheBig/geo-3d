@@ -1,8 +1,8 @@
-use std::iter::Sum;
 use super::Contains;
 use crate::geometry::*;
 use crate::geometry_delegate_impl;
 use crate::GeoNum;
+use std::iter::Sum;
 
 impl<T> Contains<Coord<T>> for Geometry<T>
 where

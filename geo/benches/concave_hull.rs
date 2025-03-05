@@ -21,13 +21,11 @@ fn criterion_benchmark(c: &mut Criterion) {
         let line_string = geo_test_fixtures::norway_main::<f64>();
 
         bencher.iter(|| {
-            criterion::black_box(
-                unsafe {
-                    criterion::black_box(&line_string)
+            criterion::black_box(unsafe {
+                criterion::black_box(&line_string)
                     .concave_hull(criterion::black_box(2.0))
                     .unwrap_unchecked()
-                },
-            );
+            });
         });
     });
 }

@@ -39,7 +39,7 @@ fn move_points_in_viewbox(width: f64, height: f64, points: Vec<Point>) -> Vec<Po
         new_points.push(Point::new(
             point.0.x + width / 2.0,
             point.0.y + height / 2.0,
-            0.0
+            0.0,
         ));
     }
     new_points

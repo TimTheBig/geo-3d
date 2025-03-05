@@ -115,7 +115,11 @@ mod tests {
 
             let midway =
                 MetricSpace::point_at_distance_between(new_york_city, london, 8_405_286.0 / 2.0);
-            assert_relative_eq!(Point::new(-4_126_268., 5_810_136., -8_238_310.24), midway, epsilon = 1.0);
+            assert_relative_eq!(
+                Point::new(-4_126_268., 5_810_136., -8_238_310.24),
+                midway,
+                epsilon = 1.0
+            );
 
             let end = MetricSpace::point_at_distance_between(new_york_city, london, 8_405_286.0);
             assert_relative_eq!(london, end, epsilon = 1.0);

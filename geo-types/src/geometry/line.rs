@@ -103,30 +103,30 @@ impl<T: CoordNum> Line<T> {
     }
 
     /// Calculate the generalized 3D slope.
-    /// 
+    ///
     /// The slope in 3D is defined as the magnitude of the direction vector (Δx, Δy, Δz),
     /// normalized by the horizontal displacement (√(Δx² + Δy²)).
     /// This generalization ensures a scalar value representing the steepness of the line.
-    /// 
+    ///
     /// # Examples
-    /// 
+    ///
     /// ```rust
     /// use geo_types::{Line, point};
-    /// 
+    ///
     /// // A line with a steep vertical displacement
     /// let line1 = Line::new(
     ///     point! { x: 0., y: 0., z: 0. },
     ///     point! { x: 3., y: 4., z: 5. },
     /// );
     /// assert_eq!(line1.slope(), 5. / 5.); // dz / sqrt(dx² + dy²)
-    /// 
+    ///
     /// // A purely horizontal line
     /// let line2 = Line::new(
     ///     point! { x: 0., y: 0., z: 0. },
     ///     point! { x: 6., y: 8., z: 0. },
     /// );
     /// assert_eq!(line2.slope(), 0.); // dz = 0
-    /// 
+    ///
     /// // A purely vertical line
     /// let line3 = Line::new(
     ///     point! { x: 1., y: 1., z: 0. },

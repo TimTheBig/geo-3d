@@ -1,6 +1,6 @@
 use std::iter::Sum;
 
-use geo_types::{MultiPolygon, MultiPoint, CoordNum, LineString, Point, Polygon, Rect};
+use geo_types::{CoordNum, LineString, MultiPoint, MultiPolygon, Point, Polygon, Rect};
 
 /// 3D volume of a geometry.
 ///
@@ -24,7 +24,7 @@ use geo_types::{MultiPolygon, MultiPoint, CoordNum, LineString, Point, Polygon, 
 /// polygon.exterior_mut(|line_string| {
 ///     line_string.0.reverse();
 /// });
-/// 
+///
 /// assert_eq!(polygon.signed_area(), -30.);
 /// assert_eq!(polygon.unsigned_area(), 30.);
 /// ```
@@ -34,7 +34,6 @@ where
 {
     fn volume(&self) -> T;
 }
-
 
 impl<T: CoordNum> Volume<T> for Point<T> {
     fn volume(&self) -> T {
@@ -79,7 +78,7 @@ impl<T: CoordNum> Volume<T> for Rect<T> {
 /// polygon.exterior_mut(|line_string| {
 ///     line_string.0.reverse();
 /// });
-/// 
+///
 /// assert_eq!(polygon.signed_area(), -30.);
 /// assert_eq!(polygon.unsigned_area(), 30.);
 /// ```
@@ -90,7 +89,6 @@ where
     /// None means the volume could not be calculated
     fn try_volume(&self) -> Option<T>;
 }
-
 
 impl<T: CoordNum> TryVolume<T> for Point<T> {
     fn try_volume(&self) -> Option<T> {
@@ -141,8 +139,8 @@ impl<T: CoordNum + Sum> TryVolume<T> for MultiPolygon<T> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use geo_types::coord;
     use crate::ConvexHull;
+    use geo_types::coord;
 
     #[test]
     fn rect_hull_volume() {

@@ -1,6 +1,7 @@
 use super::{Distance, Euclidean};
 use crate::{
-    CoordNum, CoordsIter, InterpolatePoint, Line, LineString, MultiLineString, MultiPolygon, Point, Polygon, Rect, Triangle
+    CoordNum, CoordsIter, InterpolatePoint, Line, LineString, MultiLineString, MultiPolygon, Point,
+    Polygon, Rect, Triangle,
 };
 use num_traits::FromPrimitive;
 
@@ -238,8 +239,12 @@ mod tests {
 
         #[test]
         fn test_line_densify() {
-            let line: Line<f64> = Line::new(coord! { x: 0.0, y: 6.0, z: 0.0 }, coord! { x: 1.0, y: 8.0, z: 0.0 });
-            let correct: LineString<f64> = vec![[0.0, 6.0, 0.0], [0.5, 7.0, 0.5], [1.0, 8.0, 1.0]].into();
+            let line: Line<f64> = Line::new(
+                coord! { x: 0.0, y: 6.0, z: 0.0 },
+                coord! { x: 1.0, y: 8.0, z: 0.0 },
+            );
+            let correct: LineString<f64> =
+                vec![[0.0, 6.0, 0.0], [0.5, 7.0, 0.5], [1.0, 8.0, 1.0]].into();
             let max_dist = 2.0;
             let densified = line.densify(max_dist);
             assert_eq!(densified, correct);

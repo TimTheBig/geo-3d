@@ -40,7 +40,7 @@ impl<T: GeoNum> Ord for SweepPoint<T> {
         match self.0.x.total_cmp(&other.0.x) {
             Ordering::Equal => match self.0.y.total_cmp(&other.0.y) {
                 Ordering::Equal => self.0.z.total_cmp(&other.0.z),
-                o => o
+                o => o,
             },
             o => o,
         }

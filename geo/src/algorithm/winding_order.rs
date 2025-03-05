@@ -171,7 +171,10 @@ where
         // Find a third point that is neither prev nor next
         let mut third = next;
         increment(&mut third);
-        while self.0[third] == self.0[i] || self.0[third] == self.0[prev] || self.0[third] == self.0[next] {
+        while self.0[third] == self.0[i]
+            || self.0[third] == self.0[prev]
+            || self.0[third] == self.0[next]
+        {
             increment(&mut third);
             if third == i {
                 return None; // Not enough unique points
@@ -301,13 +304,21 @@ mod test {
     fn test_cw_ccw() {
         // cw from above
         let ls = line_string![
-            coord!(1., 1., 1.), coord!(2., -2., -2.), coord!(-3., -3., -3.), coord!(-4., 4., 5.), coord!(1., 1., 1.)
+            coord!(1., 1., 1.),
+            coord!(2., -2., -2.),
+            coord!(-3., -3., -3.),
+            coord!(-4., 4., 5.),
+            coord!(1., 1., 1.)
         ];
         assert_eq!(ls.winding_order().unwrap(), WindingOrder::Clockwise);
 
         // ccw from above
         let ls = line_string![
-            coord!(1., 1., 1.), coord!(-4., 4., 5.), coord!(-3., -3., -3.), coord!(2., -2., -2.), coord!(1., 1., 1.)
+            coord!(1., 1., 1.),
+            coord!(-4., 4., 5.),
+            coord!(-3., -3., -3.),
+            coord!(2., -2., -2.),
+            coord!(1., 1., 1.)
         ];
         assert_eq!(ls.winding_order().unwrap(), WindingOrder::CounterClockwise);
     }

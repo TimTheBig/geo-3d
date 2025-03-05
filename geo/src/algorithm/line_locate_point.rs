@@ -1,6 +1,6 @@
-use crate::{CoordNum, Line, LineString, Point, Length};
-use std::ops::AddAssign;
 use super::Distance;
+use crate::{CoordNum, Length, Line, LineString, Point};
+use std::ops::AddAssign;
 
 /// Returns a (option of the) fraction of the line's total length
 /// representing the location of the closest point on the line to
@@ -113,7 +113,10 @@ mod test {
     #[test]
     fn test_line_locate_point_line() {
         // Some finite examples
-        let line = Line::new(coord! { x: -1.0, y: 0.0, z: -2.0 }, coord! { x: 1.0, y: 0.0, z: 2.0 });
+        let line = Line::new(
+            coord! { x: -1.0, y: 0.0, z: -2.0 },
+            coord! { x: 1.0, y: 0.0, z: 2.0 },
+        );
         let point = Point::new(0.0, 1.0, 2.0);
         assert_eq!(line.line_locate_point(&point), Some(0.5));
 
@@ -174,12 +177,18 @@ mod test {
         assert_eq!(line.line_locate_point(&point), None);
 
         // zero length line
-        let line: Line = Line::new(coord! { x: 1.0, y: 1.0, z: 1.0 }, coord! { x: 1.0, y: 1.0, z: 1.0 });
+        let line: Line = Line::new(
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
+            coord! { x: 1.0, y: 1.0, z: 1.0 },
+        );
         let pt = point!(x: 2.0, y: 2.0, z: 2.0);
         assert_eq!(line.line_locate_point(&pt), Some(0.0));
 
         // another concrete example
-        let line: Line = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 10.0, y: 0.0, z: 0.0 });
+        let line: Line = Line::new(
+            coord! { x: 0.0, y: 0.0, z: 0.0 },
+            coord! { x: 10.0, y: 0.0, z: 0.0 },
+        );
         let pt = Point::new(555.0, 555.0, 555.0);
         assert_eq!(line.line_locate_point(&pt), Some(1.0));
         let pt = Point::new(10.0000001, 0.0, 4.0);

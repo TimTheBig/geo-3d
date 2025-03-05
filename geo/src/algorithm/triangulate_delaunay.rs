@@ -1,8 +1,8 @@
 // !! todo rewraite in 3d !!
 
+use crate::{coord, CoordNum, CoordsIter, Polygon, Triangle};
 use d_delaunay::delaunay_core::{Point as DDPoint, Tds, Vertex};
 use geo_types::{Coord, MultiPoint};
-use crate::{coord, CoordNum, CoordsIter, Polygon, Triangle};
 use num_traits::NumCast;
 
 /// Triangulate polygons using an [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation).
@@ -86,10 +86,10 @@ pub trait TriangulateDelaunay<T: CoordNum> {
 
 impl<T: CoordNum + Default> TriangulateDelaunay<T> for Polygon<T> {
     fn delaunay_triangles_iter(&self) -> impl Iterator<Item = Triangle<T>> {
-        let cells = Tds::<f64, usize, usize, 3>::new(
-            polygon_to_delaunay_input(self)
-        ).bowyer_watson()
-        .unwrap().cells;
+        let cells = Tds::<f64, usize, usize, 3>::new(polygon_to_delaunay_input(self))
+            .bowyer_watson()
+            .unwrap()
+            .cells;
 
         cells.into_iter().map(|cell| {
             Triangle::new(
@@ -149,12 +149,14 @@ fn polygon_to_delaunay_input<T: CoordNum + Default>(polygon: &Polygon<T>) -> Vec
 
 fn flat_line_string_ddpoints<T: CoordNum + Default>(
     line_string: &crate::LineString<T>,
-    vertices: &mut Vec<DDPoint::<f64, 3>>,
+    vertices: &mut Vec<DDPoint<f64, 3>>,
 ) {
     for coord in &line_string.0 {
-        vertices.push(DDPoint::<f64, 3>::new(
-            [NumCast::from(coord.x).unwrap(), NumCast::from(coord.y).unwrap(), NumCast::from(coord.z).unwrap()]
-        ))
+        vertices.push(DDPoint::<f64, 3>::new([
+            NumCast::from(coord.x).unwrap(),
+            NumCast::from(coord.y).unwrap(),
+            NumCast::from(coord.z).unwrap(),
+        ]))
     }
 }
 

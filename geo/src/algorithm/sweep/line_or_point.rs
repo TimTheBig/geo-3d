@@ -2,8 +2,8 @@ use std::{cmp::Ordering, ops::Deref};
 
 use super::SweepPoint;
 use crate::{
-    line_intersection::line_intersection, Coord, GeoNum, Kernel,
-    Line, LineIntersection, Orientation,
+    line_intersection::line_intersection, Coord, GeoNum, Kernel, Line, LineIntersection,
+    Orientation,
 };
 
 /// Either a line segment or a point.
@@ -331,10 +331,10 @@ impl<T: GeoNum> LineOrPoint<T> {
 
 #[cfg(test)]
 mod tests {
-    use std::cmp::Ordering;
-    use geo_types::{Coord, LineString};
-    use crate::{GeoNum, Kernel};
     use super::LineOrPoint;
+    use crate::{GeoNum, Kernel};
+    use geo_types::{Coord, LineString};
+    use std::cmp::Ordering;
 
     // Used for debugging sweep fp issues
     #[test]

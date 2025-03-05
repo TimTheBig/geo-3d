@@ -520,7 +520,7 @@ impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
         let z_min = r.min().z;
         let z_max = r.max().z;
 
-        // Construct the 3D polygon. For a rectangle in 3D space, 
+        // Construct the 3D polygon. For a rectangle in 3D space,
         // we define two "levels" (z_min and z_max) and then close the shape.
         let exterior_coords = vec![
             // Bottom face (z_min)
@@ -529,7 +529,6 @@ impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
             (r.max().x, r.max().y, z_min),
             (r.min().x, r.max().y, z_min),
             (r.min().x, r.min().y, z_min),
-            
             // Top face (z_max)
             (r.min().x, r.min().y, z_max),
             (r.max().x, r.min().y, z_max),
@@ -542,7 +541,6 @@ impl<T: CoordNum> From<Rect<T>> for Polygon<T> {
         Polygon::new(exterior_coords.into(), Vec::new())
     }
 }
-
 
 impl<T: CoordNum> From<Triangle<T>> for Polygon<T> {
     fn from(t: Triangle<T>) -> Self {

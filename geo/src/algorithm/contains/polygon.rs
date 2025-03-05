@@ -15,7 +15,6 @@ impl<T: GeoNum> ContainsXY<Coord<T>> for Polygon<T> {
     }
 }
 
-
 impl<T: GeoNum> ContainsXY<Point<T>> for Polygon<T> {
     /// Checks whether a `Point` is inside a `Polygon`
     fn contains_2d(&self, point: &Point<T>) -> bool {

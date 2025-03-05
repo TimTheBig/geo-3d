@@ -1,5 +1,5 @@
-use num_traits::NumCast;
 use ::robust::Coord3D;
+use num_traits::NumCast;
 use std::cmp::Ordering;
 
 use crate::{Coord, CoordNum};
@@ -92,7 +92,7 @@ pub trait Kernel<T: CoordNum> {
             o if o < T::zero() => Orientation3D::Above,
             o if o > T::zero() => Orientation3D::Below,
             o if o == T::zero() => Orientation3D::CoPlanar,
-            _ => unreachable!("All numbers are covered")
+            _ => unreachable!("All numbers are covered"),
         }
     }
 
@@ -123,6 +123,6 @@ fn to_robust_coord3d<T: CoordNum>(coord: Coord<T>) -> Coord3D<f64> {
     Coord3D {
         x: <f64 as NumCast>::from(coord.x).unwrap(),
         y: <f64 as NumCast>::from(coord.y).unwrap(),
-        z: <f64 as NumCast>::from(coord.z).unwrap()
+        z: <f64 as NumCast>::from(coord.z).unwrap(),
     }
 }

@@ -119,7 +119,7 @@ mod test {
 
     #[test]
     fn different_dimensions_linestrings() {
-        let ls_a = LineString::from(vec![(1., 1. , 1.)]);
+        let ls_a = LineString::from(vec![(1., 1., 1.)]);
         let ls_b = LineString::from(vec![(2., 2., 2.), (0., 1., 0.)]);
         assert_relative_eq!(3f64.sqrt(), ls_a.frechet_distance(&ls_b));
     }

@@ -51,8 +51,7 @@ where
     }
 }
 
-impl<T: CoordNum> Intersects<Line<T>> for Triangle<T>
-{
+impl<T: CoordNum> Intersects<Line<T>> for Triangle<T> {
     fn intersects(&self, rhs: &Line<T>) -> bool {
         ray_vs_triangle(rhs, self).is_some()
     }

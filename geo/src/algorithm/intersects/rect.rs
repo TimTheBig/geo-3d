@@ -23,11 +23,17 @@ where
     T: CoordNum,
 {
     fn intersects(&self, other: &Rect<T>) -> bool {
-        if self.max().x < other.min().x || self.max().y < other.min().y || self.max().z < other.min().z {
+        if self.max().x < other.min().x
+            || self.max().y < other.min().y
+            || self.max().z < other.min().z
+        {
             return false;
         }
 
-        if self.min().x > other.max().x || self.min().y > other.max().y || self.min().z > other.max().z {
+        if self.min().x > other.max().x
+            || self.min().y > other.max().y
+            || self.min().z > other.max().z
+        {
             return false;
         }
 

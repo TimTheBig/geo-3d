@@ -693,12 +693,12 @@ impl<T: CoordNum> MapCoordsInPlace<T> for Triangle<T> {
 
 #[cfg(test)]
 mod test {
-    use std::ops::Add;
     use super::{MapCoords, MapCoordsInPlace};
     use crate::{
         coord, polygon, Coord, Geometry, GeometryCollection, Line, LineString, MultiLineString,
         MultiPoint, MultiPolygon, Point, Polygon, Rect,
     };
+    use std::ops::Add;
 
     #[test]
     fn point() {
@@ -757,12 +757,7 @@ mod test {
     fn rect_try_map_coords() {
         let rect = Rect::new((10f32, 10.0, 10.0), (20.0, 20.0, 20.0));
         let result = rect.try_map_coords(|Coord { x, y, z }| -> Result<_, &'static str> {
-            Ok((
-                x.add(10.0),
-                y.add(20.0),
-                z.add(30.0),
-            )
-                .into())
+            Ok((x.add(10.0), y.add(20.0), z.add(30.0)).into())
         });
         assert!(result.is_ok());
     }

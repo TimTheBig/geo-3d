@@ -523,7 +523,7 @@ impl <T> rstar::PointDistance for LineString<T>
     where T: num_traits::Float + rstar::RTreeNum + Default
 {
     fn distance_2(&self, point: &Point<T>) -> T {
-        let d = crate::private_utils::point_line_string_euclidean_distance(*point,self);
+        let d = crate::private_utils::point_line_string_euclidean_distance(*point, self);
         if d == T::zero() {
             d
         } else {
@@ -565,7 +565,7 @@ mod test {
         assert!(ls.abs_diff_eq(&ls_x, 1e-2));
         assert!(ls.abs_diff_ne(&ls_x, 1e-12));
 
-        let coords_y = vec![(0., 0., 0.), (5., 0. + delta, 5. -delta), (10., 10., 10.)];
+        let coords_y = vec![(0., 0., 0.), (5., 0. + delta, 5. - delta), (10., 10., 10.)];
         let ls_y: LineString<f32> = coords_y.into_iter().collect();
         assert!(ls.abs_diff_eq(&ls_y, 1e-2));
         assert!(ls.abs_diff_ne(&ls_y, 1e-12));
