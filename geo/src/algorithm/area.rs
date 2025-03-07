@@ -137,7 +137,7 @@ where
     }
 
     fn unsigned_area(&self) -> T {
-        self.delaunay_triangles_iter().map(|tri| tri.unsigned_area()).sum()
+        self.delaunay_triangles_iter().map(|tri| tri.unsigned_area()).sum::<T>().abs()
     }
 }
 
@@ -190,34 +190,26 @@ where
     }
 }
 
-// todo make sure this is serface area
-/// Because a `Rect` has no winding order, the area will always be positive.\
-/// If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
-impl<T> Area<T> for Rect<T>
-where
-    T: CoordNum,
-{
-    /// Calculate the signed area of a `Rect`.
-    ///
-    /// ## Note
-    /// - If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
+/// Because a `Rect` has no winding order, the area will always be positive.
+impl<T: CoordNum> Area<T> for Rect<T> {
+    /// Calculate the surface area of a `Rect`.\
+    /// Because a `Rect` has no winding order, the area will always be positive.
     fn signed_area(&self) -> T {
-        self.width() * self.depth() * T::max(T::one(), self.height())
+        self.unsigned_area()
     }
 
-    /// Calculate the unsigned area of a `Rect`.
-    ///
-    /// ## Note
-    /// - If height is `T::max(T::one(), self.height())` so a flat 2d `Rect` still has an area.
+    /// Calculate the unsigned surface area of a `Rect`.
     fn unsigned_area(&self) -> T {
-        self.width() * self.depth() * T::max(T::one(), self.height())
+        let dx = self.width();
+        let dy = self.depth();
+        let dz = self.height();
+
+        // Surface area formula: 2(lw + lh + wh)
+        (dx * dy + dx * dz + dy * dz) * (T::one() + T::one())
     }
 }
 
-impl<T> Area<T> for Triangle<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> Area<T> for Triangle<T> {
     fn signed_area(&self) -> T {
         self.to_lines()
             .iter()
@@ -319,10 +311,12 @@ mod test {
     #[test]
     fn rectangle_test() {
         let rect1: Rect<f32> = Rect::new(coord! { x: 10., y: 30., z: 50. }, coord! { x: 20., y: 40., z: 60. });
-        assert_relative_eq!(rect1.signed_area(), 1000.);
+        assert_eq!(rect1.signed_area(), 600.);
 
         let rect2: Rect = Rect::new(coord! { x: 10., y: 30., z: 0. }, coord! { x: 20., y: 40., z: 1. });
-        assert_eq!(rect2.signed_area(), 100.);
+        assert_eq!(rect2.signed_area(), 240.);
+
+        assert_eq!(rect2.signed_area(), rect2.unsigned_area());
     }
     #[test]
     fn area_polygon_inner_test() {

@@ -41,8 +41,7 @@ where
     }
 }
 
-// Same logic as Polygon<T>: Intersects<Line<T>>, but avoid
-// an allocation.
+// Same logic as Polygon<T>: Intersects<Line<T>>, but avoid an allocation.
 impl<T> Intersects<Line<T>> for Rect<T>
 where
     T: GeoNum,
@@ -66,12 +65,36 @@ where
 }
 symmetric_intersects_impl!(Line<T>, Rect<T>);
 
-impl<T> Intersects<Triangle<T>> for Rect<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Intersects<Triangle<T>> for Rect<T> {
     fn intersects(&self, rhs: &Triangle<T>) -> bool {
-        self.intersects(&rhs.to_polygon())
+        // Step 1: Quick rejection using AABB overlap test
+        let tri_bbox = rhs.bounding_rect(); // Get triangle's bounding box
+        if !self.intersects(&tri_bbox) {
+            return false;
+        }
+
+        // Step 2: Separating Axis Theorem (SAT)
+
+        // Check if any triangle point is inside the rectangle
+        if rhs.to_array().iter().any(|p| self.contains(p)) {
+            return true;
+        }
+
+        // Check if the triangle edges intersect with the rectangle
+        let box_edges = self.to_lines();
+        let tri_edges = rhs.to_lines();
+
+        for te in tri_edges {
+            for be in box_edges {
+                if te.intersects(&be) {
+                    return true;
+                }
+            }
+        }
+
+        // Check if rectangle is fully inside the triangle
+        self.to_coords().iter().all(|p| rhs.contains(p))
     }
 }
+
 symmetric_intersects_impl!(Triangle<T>, Rect<T>);

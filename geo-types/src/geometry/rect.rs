@@ -3,7 +3,7 @@ use crate::{coord, polygon, Coord, CoordNum, Line, Polygon};
 #[cfg(any(feature = "approx", test))]
 use approx::{AbsDiffEq, RelativeEq};
 
-/// An _axis-aligned_ bounded 2D rectangle whose area is
+/// An _axis-aligned_ bounded 3D rectangle whose area is
 /// defined by minimum and maximum `Coord`s.
 ///
 /// The constructors and setters ensure the maximum
@@ -27,7 +27,7 @@ use approx::{AbsDiffEq, RelativeEq};
 ///
 /// let rect = Rect::new(
 ///     coord! { x: 0., y: 4., z: 0.1 },
-///     coord! { x: 3., y: 10., z: 0.1 },
+///     coord! { x: 3., y: 10., z: 0.2 },
 /// );
 ///
 /// assert_eq!(3., rect.width());
@@ -111,7 +111,7 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// # Panics
     ///
-    /// Panics if `min`’s x/y is greater than the maximum coordinate’s x/y.
+    /// Panics if `min`’s x/y/z is greater than the maximum coordinate’s x/y/z.
     pub fn set_min<C>(&mut self, min: C)
     where
         C: Into<Coord<T>>,
@@ -142,7 +142,7 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// # Panics
     ///
-    /// Panics if `max`’s x/y is less than the minimum coordinate’s x/y.
+    /// Panics if `max`’s x/y/z is less than the minimum coordinate’s x/y/z.
     pub fn set_max<C>(&mut self, max: C)
     where
         C: Into<Coord<T>>,
@@ -374,7 +374,7 @@ impl<T: CoordNum> Rect<T> {
     /// );
     /// assert_eq!(
     ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 2., z: 2. },
+    ///         geo_types::coord! { x: 0., y: 2., z: 0. },
     ///         geo_types::coord! { x: 4., y: 4., z: 4. },
     ///     ),
     ///     rect2,
@@ -400,7 +400,7 @@ impl<T: CoordNum> Rect<T> {
     /// );
     ///
     /// let [rect1, rect2] = rect.split_z();
-    /// # todo update
+    ///
     /// assert_eq!(
     ///     geo_types::Rect::new(
     ///         geo_types::coord! { x: 0., y: 0., z: 0. },
@@ -410,7 +410,7 @@ impl<T: CoordNum> Rect<T> {
     /// );
     /// assert_eq!(
     ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 2., z: 2. },
+    ///         geo_types::coord! { x: 0., y: 0., z: 2. },
     ///         geo_types::coord! { x: 4., y: 4., z: 4. },
     ///     ),
     ///     rect2,
@@ -461,7 +461,8 @@ impl<T: CoordNum> Rect<T> {
     }
 }
 
-static RECT_INVALID_BOUNDS_ERROR: &str = "Failed to create Rect: 'min' coordinate's x/y/z value must be smaller or equal to the 'max' x/y/z value";
+static RECT_INVALID_BOUNDS_ERROR: &str =
+    "Failed to create Rect: 'min' coordinate's x/y/z value must be smaller or equal to the 'max' x/y/z value";
 
 #[cfg(any(feature = "approx", test))]
 impl<T> RelativeEq for Rect<T>
@@ -547,9 +548,8 @@ where
 
 #[cfg(test)]
 mod test {
-    use approx::assert_relative_eq;
-
     use super::*;
+    use approx::assert_relative_eq;
     use crate::coord;
 
     #[test]
