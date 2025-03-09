@@ -46,8 +46,8 @@ impl<T> Intersects<Triangle<T>> for Polygon<T>
 where
     T: GeoNum,
 {
-    fn intersects(&self, rect: &Triangle<T>) -> bool {
-        self.intersects(&rect.to_polygon())
+    fn intersects(&self, tri: &Triangle<T>) -> bool {
+        self.intersects(&tri.to_polygon())
     }
 }
 symmetric_intersects_impl!(Triangle<T>, Polygon<T>);
@@ -93,7 +93,10 @@ symmetric_intersects_impl!(Polygon<T>, MultiPolygon<T>);
 
 #[cfg(test)]
 mod tests {
-    use crate::*;
+    use super::*;
+    use crate::polygon;
+    use geo_types::Geometry;
+
     #[test]
     fn geom_intersects_geom() {
         let a = Geometry::<f64>::from(polygon![]);

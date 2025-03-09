@@ -154,8 +154,7 @@ where
     let find_first_non_collinear = (0..n).map(orientation_at).find_map(|(i, orientation)| {
         match orientation {
             Orientation::Collinear => {
-                // If collinear accepted, we skip, otherwise
-                // stop.
+                // If collinear accepted, we skip, otherwise stop.
                 if allow_collinear {
                     None
                 } else {

@@ -48,7 +48,7 @@ where
     fn right(self) -> Self;
 
     /// The calculates the `wedge product` between two vectors.\
-    /// Note: This is 2D only
+    /// Note: This is 2D only, for 3d use [geo_types::Coord::cross()]
     ///
     /// `a ∧ b = a.x * b.y - a.y * b.x`
     ///
@@ -70,12 +70,7 @@ where
     /// The following list highlights some examples in geo which might be
     /// brought together to use this function:
     ///
-    /// 1. [geo_types::Point::cross_prod()] is already defined on
-    ///    [geo_types::Point]... but that it seems to be some other
-    ///    operation on 3 points??
-    /// 2. [geo_types::Line] struct also has a [geo_types::Line::determinant()]
-    ///    function which is the same as `line.start.wedge_product(line.end)`
-    /// 3. The [crate::algorithm::Kernel::orient2d()] trait default
+    /// - The [`Kernel::orient2d()`](crate::algorithm::Kernel::orient2d()) trait default
     ///    implementation uses cross product to compute orientation. It returns
     ///    an enum, not the numeric value which is needed for line segment
     ///    intersection.
@@ -91,8 +86,9 @@ where
     ///   respect to the origin, or phrased differently:
     ///   "is a to the left of the line between the origin and b"?
     ///   - If this is what you are using it for, then please use
-    ///     [crate::algorithm::Kernel::orient2d()] instead as this is more
+    ///     [`Kernel::orient2d()`](crate::algorithm::Kernel::orient2d()) instead as this is more
     ///     explicit and has a `RobustKernel` option for extra precision.
+    #[deprecated(note = "This is 2D only, please use `cross()`")]
     fn wedge_product(self, other: Rhs) -> Self::Scalar;
 
     /// Try to find a vector of unit length in the same direction as this

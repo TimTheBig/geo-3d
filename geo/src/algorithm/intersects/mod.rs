@@ -15,8 +15,8 @@ use crate::*;
 /// # Examples
 ///
 /// ```
-/// use geo::Intersects;
-/// use geo::line_string;
+/// use geo_3d::Intersects;
+/// use geo_3d::line_string;
 ///
 /// let line_string_a = line_string![
 ///     (x: 3., y: 2.),
@@ -133,7 +133,7 @@ mod test {
     use crate::Intersects;
     use crate::{
         coord, line_string, polygon, Geometry, Line, LineString, MultiLineString, MultiPoint,
-        MultiPolygon, Point, Polygon, Rect,
+        MultiPolygon, Point, Polygon, Rect, Triangle,
     };
 
     /// Tests: intersection LineString and LineString
@@ -711,6 +711,21 @@ mod test {
     }
 
     #[test]
+    fn test_rect_in_tri() {
+        let rect = Rect::new(
+            coord! { x: 10., y: 20., z: 0. },
+            coord! { x: 30., y: 10., z: 0. },
+        );
+        let tri = Triangle::new(
+            coord! { x: 0., y: 0., z: 0. },
+            coord! { x: 10., y: 20., z: 0. },
+            coord! { x: 20., y: -10., z: 0. },
+        );
+        assert!(rect.intersects(&tri));
+        assert!(tri.intersects(&rect));
+    }
+
+    #[test]
     fn compile_test_geom_geom() {
         let geom: Geometry<_> = Line::from([(0.5, 0.5, 0.), (2., 1., 0.)]).into();
         assert!(geom.intersects(&geom));
@@ -718,7 +733,7 @@ mod test {
 
     #[test]
     fn exhaustive_compile_test() {
-        use geo_types::{GeometryCollection, Triangle};
+        use geo_types::GeometryCollection;
         let pt: Point = Point::new(0., 0., 0.);
         let ln: Line = Line::new((0., 0., 0.), (1., 1., 1.));
         let ls = line_string![(0., 0., 0.).into(), (1., 1., 1.).into()];

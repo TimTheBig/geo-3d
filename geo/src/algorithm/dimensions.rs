@@ -459,7 +459,8 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
 
         // Check if all points are identical
         if self.0 == self.1 && self.1 == self.2 {
-            return Dimensions::ZeroDimensional; // Triangle collapses to a single point
+            // Triangle collapses to a single point
+            return Dimensions::ZeroDimensional;
         }
 
         let cross_product = (self.1 - self.0).cross(self.2 - self.0);
@@ -472,23 +473,17 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
             }
         }
 
-        // Check if all points lie in the same plane
-        if cross_product.magnitude_squared() == C::zero() {
-            return Dimensions::TwoDimensional; // Triangle lies in a plane
-        }
-
-        Dimensions::ThreeDimensional // Triangle is truly 3D
+        // All points lie on the same plane
+        Dimensions::TwoDimensional
     }
 
     fn boundary_dimensions(&self) -> Dimensions {
         match self.dimensions() {
-            Dimensions::Empty => {
-                unreachable!("even a degenerate triangle should be at least 0-dimensional")
-            }
+            Dimensions::Empty => unreachable!("even a degenerate triangle should be at least 0-dimensional"),
             Dimensions::ZeroDimensional => Dimensions::Empty,
             Dimensions::OneDimensional => Dimensions::ZeroDimensional,
             Dimensions::TwoDimensional => Dimensions::OneDimensional,
-            Dimensions::ThreeDimensional => Dimensions::ThreeDimensional,
+            Dimensions::ThreeDimensional => unreachable!("The points of a triangle always lie on the same plane"),
         }
     }
 }
