@@ -179,12 +179,6 @@ impl<T: CoordNum> Coord<T> {
         }
     }
 
-    /// Computes the squared magnitude (length) of a 3D vector.
-    /// This avoids the overhead of calculating the square root compared to `magnitude()`.
-    pub fn magnitude_squared(self) -> T {
-        self.x * self.x + self.y * self.y + self.z * self.z
-    }
-
     /// Returns the dot product of the two coords:
     /// `dot = x1 * x2 + y1 * y2 + z1 * z2`
     ///
