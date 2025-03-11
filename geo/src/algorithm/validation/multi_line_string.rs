@@ -5,6 +5,7 @@ use crate::{GeoNum, MultiLineString};
 use std::fmt;
 
 /// A [`MultiLineString`] is valid if each [`LineString`](crate::LineString) in it is valid.
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidMultiLineString {
     /// Which element is invalid, and what was invalid about it.

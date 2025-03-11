@@ -3,6 +3,7 @@ use crate::{GeoNum, Point};
 
 use std::fmt;
 
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidPoint {
     /// A valid [`Point`] must be finite.

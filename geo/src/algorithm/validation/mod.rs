@@ -29,6 +29,8 @@ pub use triangle::InvalidTriangle;
 
 use std::boxed::Box;
 use std::fmt;
+#[cfg(feature = "use-serde")]
+use serde::{Serialize, Deserialize};
 
 /// A trait to check if a geometry is valid and report the reason(s) of invalidity.
 ///
@@ -99,6 +101,7 @@ pub trait Validation {
 }
 
 /// The role of a ring in a [`Polygon`](crate::Polygon).
+#[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum RingRole {
     Exterior,
@@ -115,10 +118,12 @@ impl fmt::Display for RingRole {
 }
 
 /// The position of the problem in a multi-geometry, starting at 0.
+#[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Clone)]
 pub struct GeometryIndex(pub usize);
 
 /// The index of the coordinate in the geometry
+#[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct CoordIndex(pub usize);
 

@@ -3,6 +3,7 @@ use crate::{GeoNum, Line};
 
 use std::fmt;
 
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidLine {
     /// A valid [`Line`] must have at least 2 distinct points to be valid - it must have a non-zero length.

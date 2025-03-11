@@ -4,6 +4,7 @@ use crate::{GeoNum, MultiPoint};
 use std::fmt;
 
 /// A [`MultiPoint`] is valid if each [`Point`](crate::Point) in it is valid.
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidMultiPoint {
     /// Which element is invalid, and what was invalid about it.

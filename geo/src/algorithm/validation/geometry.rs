@@ -11,6 +11,7 @@ use std::fmt;
 
 /// A [`Geometry`] is valid if its inner variant is valid.
 /// e.g. `Geometry::Polygon(polygon)` is valid if and only if `polygon` is valid.
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidGeometry {
     InvalidPoint(InvalidPoint),

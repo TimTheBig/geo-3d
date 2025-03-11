@@ -9,6 +9,7 @@ use std::fmt;
 /// - [x] all its polygons are valid,
 /// - [x] elements do not overlaps (i.e. their interiors must not intersect)
 /// - [x] elements touch only at points
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidMultiPolygon {
     /// For a [`MultiPolygon`] to be valid, each member [`Polygon`](crate::Polygon) must be valid.

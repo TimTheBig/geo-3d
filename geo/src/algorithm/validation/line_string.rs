@@ -3,6 +3,7 @@ use crate::{GeoNum, HasDimensions, LineString};
 
 use std::fmt;
 
+#[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidLineString {
     /// A valid [`LineString`] must have at least 2 distinct points to be valid - it must have a non-zero length.

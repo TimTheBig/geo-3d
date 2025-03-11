@@ -13,6 +13,7 @@ use std::fmt;
 /// - [ ] the polygon interior is simply connected (i.e. the rings must not touch in a way that splits the polygon into more than one part)
 ///
 /// Note: the simple connectivity of the interior is not checked by this implementation.
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidPolygon {
     /// A ring must have at least 4 points to be valid. Note that, in order to close the ring, the first and final points will be identical.

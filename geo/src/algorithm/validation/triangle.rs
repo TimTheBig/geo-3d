@@ -3,6 +3,7 @@ use crate::{CoordNum, Triangle};
 
 use std::fmt;
 
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidTriangle {
     /// A valid [`Triangle`] must have finite coordinates.

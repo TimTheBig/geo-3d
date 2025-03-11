@@ -3,6 +3,7 @@ use crate::{Coord, GeoNum};
 
 use std::fmt;
 
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidCoord {
     /// A valid [`Coord`] must be finite.

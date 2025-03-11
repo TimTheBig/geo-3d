@@ -4,6 +4,7 @@ use crate::{GeoNum, GeometryCollection};
 use std::fmt;
 
 /// A [`GeometryCollection`] is valid if all its elements are valid.
+#[cfg_attr(feature = "use-serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, PartialEq)]
 pub enum InvalidGeometryCollection {
     /// Which element is invalid, and what was invalid about it.
