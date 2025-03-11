@@ -51,17 +51,17 @@ impl<T: CoordNum> Line<T> {
     ///
     /// ```rust
     /// # use geo_types::{Line, point};
-    /// # let line = Line::new(
-    /// #     point! { x: 4., y: -12., z: 0. },
-    /// #     point! { x: 0., y: 9., z: 0. },
-    /// # );
-    /// # assert_eq!(
-    /// #     line.dx(),
-    /// line.end.x - line.start.x
+    /// let line = Line::new(
+    ///     point! { x: 4., y: -12., z: 0. },
+    ///     point! { x: 0., y: 9., z: 0. },
+    /// );
+    /// assert_eq!(
+    ///     line.dx(),
+    ///     -4.0,
     /// # );
     /// ```
     pub fn dx(&self) -> T {
-        self.delta().x
+        self.end.x - self.start.x
     }
 
     /// Calculate the difference in ‘y’ components (Δy).
@@ -70,36 +70,36 @@ impl<T: CoordNum> Line<T> {
     ///
     /// ```rust
     /// # use geo_types::{Line, point};
-    /// # let line = Line::new(
-    /// #     point! { x: 4., y: -12., z: 0. },
-    /// #     point! { x: 0., y: 9., z: 0. },
-    /// # );
-    /// # assert_eq!(
-    /// #     line.dy(),
-    /// line.end.y - line.start.y
-    /// # );
+    /// let line = Line::new(
+    ///     point! { x: 4., y: -12., z: 0. },
+    ///     point! { x: 0., y: 9., z: 0. },
+    /// );
+    /// assert_eq!(
+    ///     line.dy(),
+    ///     21.0,
+    /// );
     /// ```
     pub fn dy(&self) -> T {
-        self.delta().y
+        self.end.y - self.start.y
     }
 
     /// Calculate the difference in ‘z’ components (Δz).
     ///
-    /// Equivalent to:
+    /// # Examples
     ///
     /// ```rust
     /// # use geo_types::{Line, point};
-    /// # let line = Line::new(
-    /// #     point! { x: 4., y: -12., z: 0.3 },
-    /// #     point! { x: 0., y: 9., z: 1. },
-    /// # );
-    /// # assert_eq!(
-    /// #     line.dz(),
-    /// line.end.z - line.start.z
-    /// # );
+    /// let line = Line::new(
+    ///     point! { x: 4., y: -12., z: 0.3 },
+    ///     point! { x: 0., y: 9., z: 1. },
+    /// );
+    /// assert_eq!(
+    ///     line.dz(),
+    ///     0.7,
+    /// );
     /// ```
     pub fn dz(&self) -> T {
-        self.delta().z
+        self.end.z - self.start.z
     }
 
     /// Calculate the generalized 3D slope.
