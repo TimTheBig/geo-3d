@@ -1,4 +1,4 @@
-use crate::geometry::*;
+use crate::{geometry::*, Vector3DOps};
 use crate::Orientation::Collinear;
 use crate::{CoordNum, GeoNum, GeometryCow};
 
