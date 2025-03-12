@@ -78,7 +78,7 @@ mod line_string;
 mod point;
 mod polygon;
 mod rect;
-mod triangle;
+pub(crate) mod triangle;
 
 macro_rules! impl_contains_from_relate {
     ($for:ty,  [$($target:ty),*]) => {

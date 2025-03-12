@@ -1,48 +1,40 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
-use crate::geometry::*;
-use crate::{kernels::Kernel, GeoNum, Orientation};
+use crate::{geometry::*, GeoNum, Vector3DOps};
 
 // ┌──────────────────────────────┐
 // │ Implementations for Triangle │
 // └──────────────────────────────┘
 
-impl<T> Contains<Coord<T>> for Triangle<T>
-where
-    T: GeoNum,
-{
+// from maths-rs
+/// Returns the [barycentric](https://en.wikipedia.org/wiki/Barycentric_coordinate_system) coordinate `(u, v, w)` of coord inside triangle
+pub(crate) fn barycentric<T: GeoNum>(p: Coord<T>, tri: &Triangle<T>) -> (T, T, T) {
+    let x13 = tri.0 - tri.2;
+    let x23 = tri.1 - tri.2;
+    let x03 = p - tri.2;
+    let m13 = x13.magnitude_squared();
+    let m23 = x23.magnitude_squared();
+
+    let d = x13.dot(x23);
+    let invdet = T::one() / T::max(m13 * m23 - d * d, T::epsilon());
+    let a = x13.dot(x03);
+    let b = x23.dot(x03);
+
+    let u = invdet * (m23 * a - d * b);
+    let v = invdet * (m13 * b - d * a);
+    let w = T::one() - u - v;
+    (u, v, w)
+}
+
+impl<T: GeoNum> Contains<Coord<T>> for Triangle<T> {
     fn contains(&self, coord: &Coord<T>) -> bool {
-        // leverageing robust predicates
-        self.to_lines()
-            .map(|l| T::Ker::orient2d(l.start, l.end, *coord))
-            .windows(2)
-            .all(|win| win[0] == win[1] && win[0] != Orientation::Collinear)
-
-        // // neglecting robust prdicates, hence faster
-        // let p0x = self.0.x.to_f64().unwrap();
-        // let p0y = self.0.y.to_f64().unwrap();
-        // let p1x = self.1.x.to_f64().unwrap();
-        // let p1y = self.1.y.to_f64().unwrap();
-        // let p2x = self.2.x.to_f64().unwrap();
-        // let p2y = self.2.y.to_f64().unwrap();
-
-        // let px = coord.x.to_f64().unwrap();
-        // let py = coord.y.to_f64().unwrap();
-
-        // let a = 0.5 * (-p1y * p2x + p0y * (-p1x + p2x) + p0x * (p1y - p2y) + p1x * p2y);
-
-        // let sign = a.signum();
-
-        // let s = (p0y * p2x - p0x * p2y + (p2y - p0y) * px + (p0x - p2x) * py) * sign;
-        // let t = (p0x * p1y - p0y * p1x + (p0y - p1y) * px + (p1x - p0x) * py) * sign;
-
-        // s > 0. && t > 0. && (s + t) < 2. * a * sign
+        // from [maths-rs](https://github.com/polymonster/maths-rs)
+        // True if the coord is inside the triangle
+        let (u, v, w) = barycentric(*coord, self);
+        u > T::zero() && v > T::zero() && w > T::zero()
     }
 }
 
-impl<T> Contains<Point<T>> for Triangle<T>
-where
-    T: GeoNum,
-{
+impl<T: GeoNum> Contains<Point<T>> for Triangle<T> {
     fn contains(&self, point: &Point<T>) -> bool {
         self.contains(&point.0)
     }

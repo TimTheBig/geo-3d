@@ -1,5 +1,3 @@
-// !! todo rewraite in 3d !!
-
 use crate::{coord, CoordNum, CoordsIter, Polygon, Triangle};
 use d_delaunay::delaunay_core::{Point as DDPoint, Tds, Vertex};
 use geo_types::{Coord, MultiPoint};

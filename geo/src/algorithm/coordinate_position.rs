@@ -8,6 +8,7 @@ use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
 use crate::{BoundingRect, HasDimensions, Intersects};
 use crate::{GeoNum, GeometryCow};
+use crate::contains::triangle::barycentric;
 
 /// The position of a `Coord` relative to a `Geometry`
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
@@ -168,20 +169,20 @@ impl<T: GeoNum> CoordinatePosition<T> for Triangle<T> {
         is_inside: &mut bool,
         boundary_count: &mut usize,
     ) {
-        *is_inside = self
-            .to_lines()
-            .map(|l| {
-                let orientation = T::Ker::orient2d(l.start, l.end, *coord);
-                if orientation == Orientation::Collinear
+        *is_inside = {
+            let (u, v, w) = barycentric(*coord, self);
+            u >= T::zero() && v >= T::zero() && w >= T::zero()
+        };
+        self.to_lines()
+            .iter()
+            .for_each(|l| {
+                if *is_inside
                     && point_in_rect(*coord, l.start, l.end)
                     && coord.x != l.end.x
                 {
                     *boundary_count += 1;
                 }
-                orientation
-            })
-            .windows(2)
-            .all(|win| win[0] == win[1] && win[0] != Orientation::Collinear);
+            });
     }
 }
 
@@ -706,12 +707,16 @@ mod test {
     fn test_triangle() {
         let triangle = Triangle::new(
             (0.0, 0.0, 0.0).into(),
-            (5.0, 10.0, 15.0).into(),
+            (5.0, 10.0, 5.0).into(),
             (10.0, 0.0, 10.0).into(),
         );
         assert_eq!(
-            triangle.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
+            triangle.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 4.9 }),
             CoordPos::Inside
+        );
+        assert_eq!(
+            triangle.coordinate_position(&coord! { x: 5.0, y: 5.0, z: 5.0 }),
+            CoordPos::OnBoundary
         );
         assert_eq!(
             triangle.coordinate_position(&coord! { x: 2.5, y: 5.0, z: 2.5 }),
