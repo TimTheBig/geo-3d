@@ -205,4 +205,4 @@ pub use volume::Volume;
 
 /// Project geometry on to a 2d plane
 pub mod plane_project;
-pub use plane_project::ProjectToPlane;
+pub use plane_project::{ProjectToPlane, RightMostIter};

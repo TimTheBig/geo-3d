@@ -2,6 +2,7 @@
 //! Impls for `Coord`, `Point`, `MultiPoint`, `LineString`, `Line`, `Triangle`, and `Polygon`
 
 use geo_types::{coord, Coord, CoordNum, Line, LineString, MultiPoint, Point, Polygon, Triangle};
+use itertools::Itertools;
 use super::Vector3DOps;
 
 /// Convert a direction to a unit vector, all fields are 0-1, for use in projection
@@ -173,5 +174,99 @@ impl<T: CoordNum> ProjectToPlane<T> for Polygon<T> {
                 }
             }
         });
+    }
+}
+
+/// Gets an iterator of the right most `Coord`s
+pub trait RightMostIter<T: CoordNum> {
+    fn right_most_iter(&self) -> impl Iterator<Item = Coord<T>>;
+}
+
+impl<T: CoordNum> RightMostIter<T> for LineString<T> {
+    fn right_most_iter(&self) -> impl Iterator<Item = Coord<T>> {
+        self.0.iter()
+            .take(self.0.len() - 1)
+            .circular_tuple_windows::<(&Coord<T>, &Coord<T>, &Coord<T>)>()
+            .filter_map(|(&next, &point, &prev)| {
+                if orientation(&prev, &point, &next) == Orientation::Right {
+                    Some(point)
+                } else {
+                    None
+                }
+            })
+    }
+}
+
+impl<T: CoordNum> RightMostIter<T> for Polygon<T> {
+    fn right_most_iter(&self) -> impl Iterator<Item = Coord<T>> {
+        self.exterior().right_most_iter()
+    }
+}
+
+impl<T: CoordNum> RightMostIter<T> for Triangle<T> {
+    fn right_most_iter(&self) -> impl Iterator<Item = Coord<T>> {
+        match orientation(&self.0, &self.1, &self.2) {
+            Orientation::Left => [self.2, self.1, self.0].into_iter(),
+            Orientation::Right => [self.0, self.1, self.2].into_iter(),
+            Orientation::Linear => unreachable!(),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+enum Orientation {
+    Linear,
+    Left,
+    Right,
+}
+
+/// The `Orientation` of **q** relitive to **p** and **r**.
+/// 2d Left/Right
+fn orientation<T: CoordNum>(p: &Coord<T>, q: &Coord<T>, r: &Coord<T>) -> Orientation {
+    let left_val = (q.x - p.x) * (r.y - p.y);
+    let right_val = (q.y - p.y) * (r.x - p.x);
+
+    if left_val == right_val {
+        Orientation::Linear
+    } else if left_val > right_val {
+        Orientation::Left
+    } else {
+        Orientation::Right
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use geo_types::coord;
+    use super::{orientation, Orientation};
+
+    #[test]
+    fn test_orientation() {
+        assert_eq!(
+            orientation(
+                &coord!(-1.0, 0.0, 0.0),
+                &coord!(0.0, 0.0, 0.0),
+                &coord!(1.0, 0.0, 0.0),
+            ),
+            Orientation::Linear,
+        );
+
+        assert_eq!(
+            orientation(
+                &coord!(-1.0, 0.1, 0.0),
+                &coord!(-1.1, 0.0, 0.0),
+                &coord!(1.0, 0.0, 0.0),
+            ),
+            Orientation::Left,
+        );
+
+        assert_eq!(
+            orientation(
+                &coord!(-1.0, 0.1, 0.0),
+                &coord!(1.1, 0.0, 0.0),
+                &coord!(1.0, 0.0, 0.0),
+            ),
+            Orientation::Right,
+        )
     }
 }
