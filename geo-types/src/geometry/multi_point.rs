@@ -6,6 +6,7 @@ use approx::{AbsDiffEq, RelativeEq};
 use alloc::vec;
 use alloc::vec::Vec;
 use core::iter::FromIterator;
+use core::ops::{Index, IndexMut};
 #[cfg(feature = "multithreading")]
 use rayon::prelude::*;
 
@@ -136,6 +137,20 @@ impl<T: CoordNum> MultiPoint<T> {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Point<T>> {
         self.0.iter_mut()
+    }
+}
+
+impl<T: CoordNum> Index<usize> for MultiPoint<T> {
+    type Output = Point<T>;
+
+    fn index(&self, index: usize) -> &Point<T> {
+        self.0.index(index)
+    }
+}
+
+impl<T: CoordNum> IndexMut<usize> for MultiPoint<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Point<T> {
+        self.0.index_mut(index)
     }
 }
 

@@ -339,6 +339,58 @@ impl<T: CoordNum> Div<T> for Coord<T> {
     }
 }
 
+/// Multiply two coordinates.
+///
+/// # Examples
+///
+/// ```
+/// # use geo_types::coord;
+/// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
+/// let q = p * coord!(4.0, 4.0, 4.0);
+///
+/// assert_eq!(q.x, 5.0);
+/// assert_eq!(q.y, 10.0);
+/// assert_eq!(q.z, 20.0);
+/// ```
+impl<T: CoordNum> Mul for Coord<T> {
+    type Output = Self;
+
+    #[inline]
+    fn mul(self, rhs: Coord<T>) -> Self {
+        coord! {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+/// Divide two coordinates.
+///
+/// # Examples
+///
+/// ```
+/// # use geo_types::coord;
+/// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
+/// let q = p / coord!(4.0, 4.0, 2.0);
+///
+/// assert_eq!(q.x, 0.3125);
+/// assert_eq!(q.y, 0.625);
+/// assert_eq!(q.z, 2.5);
+/// ```
+impl<T: CoordNum> Div for Coord<T> {
+    type Output = Self;
+
+    #[inline]
+    fn div(self, rhs: Coord<T>) -> Self {
+        coord! {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z,
+        }
+    }
+}
+
 use num_traits::Zero;
 /// Create a coordinate at the origin.
 ///
