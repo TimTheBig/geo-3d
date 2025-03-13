@@ -175,7 +175,7 @@ impl<T: CoordNum> AffineTransform<T> {
         );
         debug_assert!(
             other.0[3] == [T::zero(), T::zero(), T::zero(), T::one()],
-            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}",other.0[3]
+            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}", other.0[3]
         );
 
         Self([
@@ -375,9 +375,9 @@ impl<T: CoordNum> AffineTransform<T> {
         // Enforce invariace
         debug_assert!(
             self.0[3] == [T::zero(), T::zero(), T::zero(), T::one()],
-            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}",
-            self.0[3],
+            "The last row is invariant so it must equal [0, 0, 0, 1] not {:?}", self.0[3],
         );
+
         Coord {
             x: self.0[0][0] * coord.x + self.0[0][1] * coord.y + self.0[0][2] * coord.z + self.0[0][3],
             y: self.0[1][0] * coord.x + self.0[1][1] * coord.y + self.0[1][2] * coord.z + self.0[1][3],

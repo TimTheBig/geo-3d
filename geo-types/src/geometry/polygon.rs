@@ -472,10 +472,6 @@ impl<T: CoordNum> Polygon<T> {
             .collect();
         Polygon::new(exterior, vec![])
     }
-
-    pub fn from_triangles(exterior: &[Triangle<T>], interior: &[&[Triangle<T>]]) -> Self {
-        todo!("not yet implemented")
-    }
 }
 
 // impl<T: CoordNum> From<Rect<T>> for Polygon<T> {

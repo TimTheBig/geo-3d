@@ -308,6 +308,7 @@ mod test {
 
         assert!(err < 1e-2);
     }
+
     #[test]
     fn rectangle_test() {
         let rect1: Rect<f32> = Rect::new(coord! { x: 10., y: 30., z: 50. }, coord! { x: 20., y: 40., z: 60. });
@@ -318,6 +319,7 @@ mod test {
 
         assert_eq!(rect2.signed_area(), rect2.unsigned_area());
     }
+
     #[test]
     fn area_polygon_inner_test() {
         let poly = polygon![
@@ -347,6 +349,7 @@ mod test {
         ];
         assert_relative_eq!(poly.signed_area(), 98.);
     }
+
     #[test]
     fn area_multipolygon_test() {
         let poly0 = polygon![
@@ -374,6 +377,7 @@ mod test {
         assert_relative_eq!(mpoly.signed_area(), 102.);
         assert_relative_eq!(mpoly.signed_area(), 102.);
     }
+
     #[test]
     fn area_line_test() {
         let line1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 1.0, y: 1.0, z: 1.0 });

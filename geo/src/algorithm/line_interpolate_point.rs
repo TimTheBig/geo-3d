@@ -16,7 +16,7 @@ use std::ops::AddAssign;
 /// # Examples
 ///
 /// ```
-/// use geo::{LineString, point};
+/// # use geo::{LineString, point};
 /// use geo::LineInterpolatePoint;
 ///
 /// let linestring: LineString = vec![

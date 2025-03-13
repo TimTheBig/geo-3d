@@ -102,7 +102,7 @@ pub trait HasDimensions {
     /// ## Examples
     ///
     /// ```
-    /// use geo_types::{GeometryCollection, Rect, Point};
+    /// # use geo_types::{GeometryCollection, Rect, Point};
     /// use geo::dimensions::{Dimensions, HasDimensions};
     ///
     /// // a point has no boundary
@@ -216,7 +216,7 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
     }
 
     /// ```
-    /// use geo_types::line_string;
+    /// # use geo_types::line_string;
     /// use geo::dimensions::{HasDimensions, Dimensions};
     ///
     /// let ls = line_string![(x: 0.,  y: 0., z: 0.), (x: 0., y: 1., z: 0.), (x: 1., y: 1., z: 1.)];
@@ -492,7 +492,7 @@ impl<C: GeoNum> HasDimensions for Triangle<C> {
 mod tests {
     use super::*;
 
-    const ONE: Coord = crate::coord!(x: 1.0, y: 1.0, z: 1.0);
+    const ONE: Coord = Coord { x: 1.0, y: 1.0, z: 1.0 };
     use crate::wkt;
 
     #[test]

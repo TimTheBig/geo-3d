@@ -2,7 +2,7 @@ use crate::{GeoNum, Point};
 
 /// The result of trying to find the closest spot on an object to a point.
 #[cfg_attr(feature = "use-serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Closest<F: GeoNum> {
     /// The point actually intersects with the object.
     Intersection(Point<F>),
@@ -18,20 +18,20 @@ impl<F: GeoNum> Closest<F> {
         use crate::Distance;
 
         let left = match *self {
-            Closest::Indeterminate => return *other,
-            Closest::Intersection(_) => return *self,
+            Closest::Indeterminate => return other.to_owned(),
+            Closest::Intersection(_) => return self.to_owned(),
             Closest::SinglePoint(l) => l,
         };
         let right = match *other {
-            Closest::Indeterminate => return *self,
-            Closest::Intersection(_) => return *other,
+            Closest::Indeterminate => return self.to_owned(),
+            Closest::Intersection(_) => return other.to_owned(),
             Closest::SinglePoint(r) => r,
         };
 
         if left.distance(p) <= right.distance(p) {
-            *self
+            self.clone()
         } else {
-            *other
+            other.clone()
         }
     }
 }

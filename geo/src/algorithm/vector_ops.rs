@@ -20,7 +20,7 @@ where
     ///
     fn magnitude(self) -> Self::Scalar;
 
-    /// The squared distance between this coordinate and the origin.
+    /// The squared distance between this coordinate and the origin.\
     /// (Avoids the square root calculation when it is not needed)
     ///
     /// `x² + y² + z²`

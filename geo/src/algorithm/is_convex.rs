@@ -134,14 +134,11 @@ impl<T: GeoNum> IsConvex for LineString<T> {
 /// triplets, and expecting a specific orientation. The
 /// output is `None` or the only non-collinear orientation,
 /// unless everything is collinear.
-fn is_convex_shaped<T>(
+fn is_convex_shaped<T: GeoNum>(
     coords: &[Coord<T>],
     allow_collinear: bool,
     specific_orientation: Option<Orientation>,
-) -> Option<Orientation>
-where
-    T: GeoNum,
-{
+) -> Option<Orientation> {
     let n = coords.len();
 
     let orientation_at = |i: usize| {
