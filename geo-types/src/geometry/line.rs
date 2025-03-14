@@ -277,6 +277,21 @@ impl <T> rstar::PointDistance for Line<T>
 mod test {
     use super::*;
     use crate::{coord, point};
+    use approx::assert_relative_eq;
+
+    #[test]
+    fn test_determinant() {
+        assert_eq!(
+            Line::new(coord!(0.5, 0.5, 0.5), coord!(4.6, 4.6, 4.6)).determinant(),
+            0.0,
+        );
+
+        assert_relative_eq!(
+            Line::new(coord!(0.5, 0.5, 4.04), coord!(4.6, 4.6, 4.641088)).determinant(),
+            23.0,
+            epsilon = 1e-7,
+        );
+    }
 
     #[test]
     fn test_abs_diff_eq() {

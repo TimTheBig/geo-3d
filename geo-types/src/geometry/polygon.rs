@@ -1,4 +1,4 @@
-use crate::{coord, CoordNum, LineString, Point, Rect, Triangle};
+use crate::{coord, CoordNum, LineString, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
 
@@ -610,7 +610,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Polygon<T> {
 impl<T> rstar::RTreeObject for Polygon<T>
     where T: num_traits::Float + rstar::RTreeNum + Default + Default
 {
-    type Envelope = rstar::AABB<Point<T>>;
+    type Envelope = rstar::AABB<super::Point<T>>;
 
     fn envelope(&self) -> Self::Envelope {
         self.exterior.envelope()

@@ -5,17 +5,11 @@
 
 use crate::{Coord, CoordNum, Line, LineString, Point, Rect};
 
-pub fn line_string_bounding_rect<T>(line_string: &LineString<T>) -> Option<Rect<T>>
-where
-    T: CoordNum,
-{
+pub fn line_string_bounding_rect<T: CoordNum>(line_string: &LineString<T>) -> Option<Rect<T>> {
     get_bounding_rect(line_string.coords().cloned())
 }
 
-pub fn line_bounding_rect<T>(line: Line<T>) -> Rect<T>
-where
-    T: CoordNum,
-{
+pub fn line_bounding_rect<T: CoordNum>(line: Line<T>) -> Rect<T> {
     Rect::new(line.start, line.end)
 }
 
@@ -106,17 +100,11 @@ where
     (dx_p * dx_p + dy_p * dy_p + dz_p * dz_p).sqrt()
 }
 
-pub fn line_euclidean_length<T>(line: Line<T>) -> T
-where
-    T: CoordNum,
-{
+pub fn line_euclidean_length<T: CoordNum>(line: Line<T>) -> T {
     line.dx().hypot(line.dy()).hypot(line.dz())
 }
 
-pub fn point_line_string_euclidean_distance<T>(p: Point<T>, l: &LineString<T>) -> T
-where
-    T: CoordNum,
-{
+pub fn point_line_string_euclidean_distance<T: CoordNum>(p: Point<T>, l: &LineString<T>) -> T {
     // No need to continue if the point is on the LineString, or it's empty
     if line_string_contains_point(l, p) || l.0.is_empty() {
         return T::zero();
@@ -134,18 +122,15 @@ where
     line_segment_distance(p.into(), l.start, l.end)
 }
 
-pub fn point_contains_point<T>(p1: Point<T>, p2: Point<T>) -> bool
-where
-    T: CoordNum,
-{
-    let distance = line_euclidean_length(Line::new(p1, p2)).to_f32().unwrap();
+pub fn point_contains_point<T: CoordNum>(p1: Point<T>, p2: Point<T>) -> bool {
+    let distance = line_euclidean_length(Line::new(p1, p2)).to_f64().unwrap();
     approx::relative_eq!(distance, 0.0)
 }
 
-pub fn line_string_contains_point<T>(line_string: &LineString<T>, point: Point<T>) -> bool
-where
-    T: CoordNum,
-{
+pub fn line_string_contains_point<T: CoordNum>(
+    line_string: &LineString<T>,
+    point: Point<T>,
+) -> bool {
     // LineString without points
     if line_string.0.is_empty() {
         return false;
