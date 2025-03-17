@@ -14,7 +14,7 @@ pub(crate) struct EdgeIntersection<F: GeoNum> {
 }
 
 impl<F: GeoNum> EdgeIntersection<F> {
-    pub fn new(coord: Coord<F>, segment_index: usize, dist: F) -> EdgeIntersection<F> {
+    pub const fn new(coord: Coord<F>, segment_index: usize, dist: F) -> EdgeIntersection<F> {
         EdgeIntersection {
             coord,
             segment_index,
@@ -22,15 +22,15 @@ impl<F: GeoNum> EdgeIntersection<F> {
         }
     }
 
-    pub fn coordinate(&self) -> Coord<F> {
+    pub const fn coordinate(&self) -> Coord<F> {
         self.coord
     }
 
-    pub fn segment_index(&self) -> usize {
+    pub const fn segment_index(&self) -> usize {
         self.segment_index
     }
 
-    pub fn distance(&self) -> F {
+    pub const fn distance(&self) -> F {
         self.dist
     }
 }

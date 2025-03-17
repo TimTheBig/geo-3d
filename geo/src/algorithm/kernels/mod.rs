@@ -15,7 +15,7 @@ pub enum Orientation {
 impl Orientation {
     /// Helper to convert orientation-3d into an ordering.
     #[inline]
-    pub(crate) fn as_ordering(&self) -> Ordering {
+    pub(crate) const fn as_ordering(&self) -> Ordering {
         match self {
             Orientation::CounterClockwise => Ordering::Less,
             Orientation::Clockwise => Ordering::Greater,

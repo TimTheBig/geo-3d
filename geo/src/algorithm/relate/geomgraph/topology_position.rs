@@ -49,7 +49,7 @@ impl fmt::Debug for TopologyPosition {
 }
 
 impl TopologyPosition {
-    pub fn area(on: CoordPos, left: CoordPos, right: CoordPos) -> Self {
+    pub const fn area(on: CoordPos, left: CoordPos, right: CoordPos) -> Self {
         Self::Area {
             on: Some(on),
             left: Some(left),
@@ -57,7 +57,7 @@ impl TopologyPosition {
         }
     }
 
-    pub fn empty_area() -> Self {
+    pub const fn empty_area() -> Self {
         Self::Area {
             on: None,
             left: None,
@@ -65,11 +65,11 @@ impl TopologyPosition {
         }
     }
 
-    pub fn line_or_point(on: CoordPos) -> Self {
+    pub const fn line_or_point(on: CoordPos) -> Self {
         Self::LineOrPoint { on: Some(on) }
     }
 
-    pub fn empty_line_or_point() -> Self {
+    pub const fn empty_line_or_point() -> Self {
         Self::LineOrPoint { on: None }
     }
 
@@ -86,7 +86,7 @@ impl TopologyPosition {
         }
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         matches!(
             self,
             Self::LineOrPoint { on: None }
@@ -98,7 +98,7 @@ impl TopologyPosition {
         )
     }
 
-    pub fn is_any_empty(&self) -> bool {
+    pub const fn is_any_empty(&self) -> bool {
         !matches!(
             self,
             Self::LineOrPoint { on: Some(_) }
@@ -110,11 +110,11 @@ impl TopologyPosition {
         )
     }
 
-    pub fn is_area(&self) -> bool {
+    pub const fn is_area(&self) -> bool {
         matches!(self, Self::Area { .. })
     }
 
-    pub fn is_line(&self) -> bool {
+    pub const fn is_line(&self) -> bool {
         matches!(self, Self::LineOrPoint { .. })
     }
 

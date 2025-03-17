@@ -59,13 +59,13 @@ impl<T: GeoNum> MonoPoly<T> {
 
     /// Get a reference to the mono poly's top chain.
     #[must_use]
-    pub fn top(&self) -> &LineString<T> {
+    pub const fn top(&self) -> &LineString<T> {
         &self.top
     }
 
     /// Get a reference to the mono poly's bottom chain.
     #[must_use]
-    pub fn bot(&self) -> &LineString<T> {
+    pub const fn bot(&self) -> &LineString<T> {
         &self.bot
     }
 

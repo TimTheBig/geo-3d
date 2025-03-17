@@ -48,7 +48,7 @@ impl<'a, F> RelateOperation<'a, F>
 where
     F: GeoNum,
 {
-    pub(crate) fn new(graph_a: GeometryGraph<'a, F>, graph_b: GeometryGraph<'a, F>) -> Self {
+    pub(crate) const fn new(graph_a: GeometryGraph<'a, F>, graph_b: GeometryGraph<'a, F>) -> Self {
         Self {
             graph_a,
             graph_b,

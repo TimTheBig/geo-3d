@@ -70,7 +70,7 @@ where
     F: GeoNum,
     NF: NodeFactory<F>,
 {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         NodeMap {
             map: BTreeMap::new(),
             _node_factory: PhantomData,

@@ -74,7 +74,7 @@ impl<T: GeoNum> From<Coord<T>> for LineOrPoint<T> {
 impl<T: GeoNum> LineOrPoint<T> {
     /// Checks if the variant is a line.
     #[inline]
-    pub fn is_line(&self) -> bool {
+    pub const fn is_line(&self) -> bool {
         matches!(self, Self::Line { .. })
     }
 
@@ -88,7 +88,7 @@ impl<T: GeoNum> LineOrPoint<T> {
     }
 
     #[inline]
-    pub fn left(&self) -> SweepPoint<T> {
+    pub const fn left(&self) -> SweepPoint<T> {
         match self {
             LineOrPoint::Point(p) => *p,
             LineOrPoint::Line { left, .. } => *left,
@@ -96,7 +96,7 @@ impl<T: GeoNum> LineOrPoint<T> {
     }
 
     #[inline]
-    pub fn right(&self) -> SweepPoint<T> {
+    pub const fn right(&self) -> SweepPoint<T> {
         match self {
             LineOrPoint::Point(p) => *p,
             LineOrPoint::Line { right, .. } => *right,
@@ -109,7 +109,7 @@ impl<T: GeoNum> LineOrPoint<T> {
     }
 
     #[inline]
-    pub fn end_points(&self) -> (SweepPoint<T>, SweepPoint<T>) {
+    pub const fn end_points(&self) -> (SweepPoint<T>, SweepPoint<T>) {
         match self {
             LineOrPoint::Point(p) => (*p, *p),
             LineOrPoint::Line { left, right } => (*left, *right),

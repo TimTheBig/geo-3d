@@ -84,7 +84,7 @@ impl<T: CoordNum> Default for GeometryCollection<T> {
 
 impl<T: CoordNum> GeometryCollection<T> {
     /// Returns a new GeometryCollection with the given `Vec`
-    pub fn new(value: Vec<Geometry<T>>) -> Self {
+    pub const fn new(value: Vec<Geometry<T>>) -> Self {
         Self(value)
     }
 

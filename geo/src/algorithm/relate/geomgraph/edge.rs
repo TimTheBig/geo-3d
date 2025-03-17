@@ -39,7 +39,7 @@ impl<F: GeoNum> Edge<F> {
         }
     }
 
-    pub(crate) fn label(&self) -> &Label {
+    pub(crate) const fn label(&self) -> &Label {
         &self.label
     }
 
@@ -58,7 +58,7 @@ impl<F: GeoNum> Edge<F> {
         &self.coords
     }
 
-    pub fn is_isolated(&self) -> bool {
+    pub const fn is_isolated(&self) -> bool {
         self.is_isolated
     }
 
@@ -66,7 +66,7 @@ impl<F: GeoNum> Edge<F> {
         self.is_isolated = false;
     }
 
-    pub fn edge_intersections(&self) -> &BTreeSet<EdgeIntersection<F>> {
+    pub const fn edge_intersections(&self) -> &BTreeSet<EdgeIntersection<F>> {
         &self.edge_intersections
     }
 

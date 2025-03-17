@@ -73,7 +73,7 @@ pub struct InvalidInputError {
 }
 
 impl InvalidInputError {
-    fn new(message: String) -> Self {
+    const fn new(message: String) -> Self {
         Self { message }
     }
 }
@@ -87,7 +87,7 @@ impl std::fmt::Display for InvalidInputError {
 
 impl std::fmt::Debug for IntersectionMatrix {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        fn char_for_dim(dim: &Dimensions) -> &'static str {
+        const fn char_for_dim(dim: &Dimensions) -> &'static str {
             match dim {
                 Dimensions::Empty => "F",
                 Dimensions::ZeroDimensional => "0",

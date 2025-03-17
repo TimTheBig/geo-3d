@@ -119,7 +119,7 @@ impl<'a, T: CoordNum + Send + Sync> IntoParallelIterator for &'a mut MultiPoint<
 }
 
 impl<T: CoordNum> MultiPoint<T> {
-    pub fn new(value: Vec<Point<T>>) -> Self {
+    pub const fn new(value: Vec<Point<T>>) -> Self {
         Self(value)
     }
 

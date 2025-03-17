@@ -15,7 +15,7 @@ impl<F: GeoNum> CoordNode<F> {
         self.label.swap_args()
     }
 
-    pub(crate) fn label(&self) -> &Label {
+    pub(crate) const fn label(&self) -> &Label {
         &self.label
     }
 
@@ -32,14 +32,14 @@ impl<F> CoordNode<F>
 where
     F: GeoNum,
 {
-    pub fn new(coordinate: Coord<F>) -> CoordNode<F> {
+    pub const fn new(coordinate: Coord<F>) -> CoordNode<F> {
         CoordNode {
             coordinate,
             label: Label::empty_line_or_point(),
         }
     }
 
-    pub fn coordinate(&self) -> &Coord<F> {
+    pub const fn coordinate(&self) -> &Coord<F> {
         &self.coordinate
     }
 

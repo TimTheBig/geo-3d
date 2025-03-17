@@ -30,7 +30,7 @@ pub enum LineIntersection<F: GeoNum> {
 }
 
 impl<F: GeoNum> LineIntersection<F> {
-    pub fn is_proper(&self) -> bool {
+    pub const fn is_proper(&self) -> bool {
         match self {
             Self::Collinear { .. } => false,
             Self::SinglePoint { is_proper, .. } => *is_proper,
@@ -159,11 +159,11 @@ where
 }
 
 fn collinear_intersection<F: GeoNum>(p: Line<F>, q: Line<F>) -> Option<LineIntersection<F>> {
-    fn collinear<F: GeoNum>(intersection: Line<F>) -> LineIntersection<F> {
+    const fn collinear<F: GeoNum>(intersection: Line<F>) -> LineIntersection<F> {
         LineIntersection::Collinear { intersection }
     }
 
-    fn improper<F: GeoNum>(intersection: Coord<F>) -> LineIntersection<F> {
+    const fn improper<F: GeoNum>(intersection: Coord<F>) -> LineIntersection<F> {
         LineIntersection::SinglePoint {
             intersection,
             is_proper: false,

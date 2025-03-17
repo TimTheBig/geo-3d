@@ -18,7 +18,7 @@ impl<F> EdgeEndBundle<F>
 where
     F: GeoNum,
 {
-    pub(crate) fn new(coordinate: Coord<F>) -> Self {
+    pub(crate) const fn new(coordinate: Coord<F>) -> Self {
         Self {
             coordinate,
             edge_ends: vec![],
@@ -173,7 +173,7 @@ impl<F> LabeledEdgeEndBundle<F>
 where
     F: GeoNum,
 {
-    pub fn label(&self) -> &Label {
+    pub const fn label(&self) -> &Label {
         &self.label
     }
 
@@ -185,7 +185,7 @@ where
         Edge::<F>::update_intersection_matrix(self.label(), intersection_matrix);
     }
 
-    pub fn coordinate(&self) -> &Coord<F> {
+    pub const fn coordinate(&self) -> &Coord<F> {
         &self.edge_end_bundle.coordinate
     }
 }

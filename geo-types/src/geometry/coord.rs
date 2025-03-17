@@ -119,7 +119,7 @@ impl<T: CoordNum> Coord<T> {
     /// assert_eq!(x, 40.02f64);
     /// ```
     #[inline]
-    pub fn x_y(&self) -> (T, T) {
+    pub const fn x_y(&self) -> (T, T) {
         (self.x, self.y)
     }
 
@@ -142,7 +142,7 @@ impl<T: CoordNum> Coord<T> {
     /// assert_eq!(z, 397.01);
     /// ```
     #[inline]
-    pub fn x_y_z(&self) -> (T, T, T) {
+    pub const fn x_y_z(&self) -> (T, T, T) {
         (self.x, self.y, self.z)
     }
 

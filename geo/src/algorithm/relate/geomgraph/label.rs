@@ -34,7 +34,7 @@ impl Label {
     }
 
     /// Construct an empty `Label` for relating a 1-D line or 0-D point to both geometries.
-    pub fn empty_line_or_point() -> Label {
+    pub const fn empty_line_or_point() -> Label {
         Label {
             geometry_topologies: [
                 TopologyPosition::empty_line_or_point(),
@@ -44,7 +44,7 @@ impl Label {
     }
 
     /// Construct an empty `Label` for relating a 2-D area to both geometries.
-    pub fn empty_area() -> Self {
+    pub const fn empty_area() -> Self {
         Self {
             geometry_topologies: [
                 TopologyPosition::empty_area(),
@@ -57,7 +57,7 @@ impl Label {
     /// `geom_index`.
     ///
     /// The label's position for the other geometry will be initialized as empty.
-    pub fn new(geom_index: usize, position: TopologyPosition) -> Self {
+    pub const fn new(geom_index: usize, position: TopologyPosition) -> Self {
         let mut label = match position {
             TopologyPosition::LineOrPoint { .. } => Self::empty_line_or_point(),
             TopologyPosition::Area { .. } => Self::empty_area(),
@@ -102,23 +102,23 @@ impl Label {
             .count()
     }
 
-    pub fn is_empty(&self, geom_index: usize) -> bool {
+    pub const fn is_empty(&self, geom_index: usize) -> bool {
         self.geometry_topologies[geom_index].is_empty()
     }
 
-    pub fn is_any_empty(&self, geom_index: usize) -> bool {
+    pub const fn is_any_empty(&self, geom_index: usize) -> bool {
         self.geometry_topologies[geom_index].is_any_empty()
     }
 
-    pub fn is_area(&self) -> bool {
+    pub const fn is_area(&self) -> bool {
         self.geometry_topologies[0].is_area() || self.geometry_topologies[1].is_area()
     }
 
-    pub fn is_geom_area(&self, geom_index: usize) -> bool {
+    pub const fn is_geom_area(&self, geom_index: usize) -> bool {
         self.geometry_topologies[geom_index].is_area()
     }
 
-    pub fn is_line(&self, geom_index: usize) -> bool {
+    pub const fn is_line(&self, geom_index: usize) -> bool {
         self.geometry_topologies[geom_index].is_line()
     }
 }

@@ -21,7 +21,7 @@ impl<F> SegmentIntersector<F>
 where
     F: GeoNum,
 {
-    fn is_adjacent_segments(i1: usize, i2: usize) -> bool {
+    const fn is_adjacent_segments(i1: usize, i2: usize) -> bool {
         let difference = if i1 > i2 { i1 - i2 } else { i2 - i1 };
         difference == 1
     }
@@ -50,11 +50,11 @@ where
         self.boundary_nodes = Some([boundary_nodes_0, boundary_nodes_1]);
     }
 
-    pub fn has_proper_intersection(&self) -> bool {
+    pub const fn has_proper_intersection(&self) -> bool {
         self.proper_intersection_point.is_some()
     }
 
-    pub fn has_proper_interior_intersection(&self) -> bool {
+    pub const fn has_proper_interior_intersection(&self) -> bool {
         self.has_proper_interior_intersection
     }
 

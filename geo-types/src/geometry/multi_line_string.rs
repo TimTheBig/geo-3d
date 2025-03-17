@@ -41,7 +41,7 @@ pub struct MultiLineString<T: CoordNum = f64>(pub Vec<LineString<T>>);
 
 impl<T: CoordNum> MultiLineString<T> {
     /// Instantiate Self from the raw content value
-    pub fn new(value: Vec<LineString<T>>) -> Self {
+    pub const fn new(value: Vec<LineString<T>>) -> Self {
         Self(value)
     }
 

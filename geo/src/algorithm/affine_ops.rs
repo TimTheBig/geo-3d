@@ -156,7 +156,7 @@ impl<T: CoordNum> Default for AffineTransform<T> {
 macro_rules! affine_field_getter {
     ($field_name:ident[$pos_0:literal][$pos_1:literal]) => {
         /// See [AffineTransform::new] for this value's role in the affine transformation.
-        pub fn $field_name(&self) -> T {
+        pub const fn $field_name(&self) -> T {
             self.0[$pos_0][$pos_1]
         }
     };

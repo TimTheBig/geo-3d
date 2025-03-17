@@ -143,13 +143,13 @@ where
         graph
     }
 
-    pub(crate) fn geometry(&self) -> &GeometryCow<F> {
+    pub(crate) const fn geometry(&self) -> &GeometryCow<F> {
         &self.parent_geometry
     }
 
     /// Determine whether a component (node or edge) that appears multiple times in elements
     /// of a Multi-Geometry is in the boundary or the interior of the Geometry
-    pub fn determine_boundary(boundary_count: usize) -> CoordPos {
+    pub const fn determine_boundary(boundary_count: usize) -> CoordPos {
         // For now, we only support the SFS "Mod-2 Rule"
         // We could make this configurable if we wanted to support alternative boundary rules.
         if boundary_count % 2 == 1 {

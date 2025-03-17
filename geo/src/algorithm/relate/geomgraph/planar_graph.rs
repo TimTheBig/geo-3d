@@ -63,7 +63,7 @@ impl<F: GeoNum> PlanarGraph<F> {
         &self.edges
     }
 
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         PlanarGraph {
             nodes: NodeMap::new(),
             edges: vec![],

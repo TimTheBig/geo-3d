@@ -152,7 +152,7 @@ impl<F> EdgeEndBundleStar<F>
 where
     F: GeoNum,
 {
-    pub(crate) fn new() -> Self {
+    pub(crate) const fn new() -> Self {
         EdgeEndBundleStar {
             edge_map: std::collections::BTreeMap::new(),
             point_in_area_location: None,

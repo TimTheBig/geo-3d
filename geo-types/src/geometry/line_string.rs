@@ -194,7 +194,7 @@ impl<T: CoordNum> DoubleEndedIterator for CoordinatesIter<'_, T> {
 
 impl<T: CoordNum> LineString<T> {
     /// Instantiate Self from the raw content value
-    pub fn new(value: Vec<Coord<T>>) -> Self {
+    pub const fn new(value: Vec<Coord<T>>) -> Self {
         Self(value)
     }
 

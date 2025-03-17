@@ -13,7 +13,7 @@ pub(crate) struct EdgeEndBuilder<F: GeoNum> {
 }
 
 impl<F: GeoNum> EdgeEndBuilder<F> {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         EdgeEndBuilder {
             _marker: std::marker::PhantomData,
         }

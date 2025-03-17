@@ -441,7 +441,7 @@ where
 
 struct CentroidOperation<T: GeoNum>(Option<WeightedCentroid<T>>);
 impl<T: GeoNum> CentroidOperation<T> {
-    fn new() -> Self {
+    const fn new() -> Self {
         CentroidOperation(None)
     }
 

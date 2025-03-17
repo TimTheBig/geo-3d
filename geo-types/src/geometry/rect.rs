@@ -103,7 +103,7 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// assert_eq!(rect.min(), coord! { x: 5., y: 5., z: 5. });
     /// ```
-    pub fn min(self) -> Coord<T> {
+    pub const fn min(self) -> Coord<T> {
         self.min
     }
 
@@ -134,7 +134,7 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// assert_eq!(rect.max(), coord! { x: 15., y: 15., z: 15. });
     /// ```
-    pub fn max(self) -> Coord<T> {
+    pub const fn max(self) -> Coord<T> {
         self.max
     }
 
@@ -245,7 +245,7 @@ impl<T: CoordNum> Rect<T> {
     }
 
     /// Returns the spatial representation of the `Rect`
-    pub fn to_coords(self) -> [Coord<T>; 8] {
+    pub const fn to_coords(self) -> [Coord<T>; 8] {
         [
             // top
             coord!(x: self.min.x, y: self.min.y, z: self.max.z),
@@ -261,7 +261,7 @@ impl<T: CoordNum> Rect<T> {
     }
 
     /// Return the lines of a `Rect`
-    pub fn to_lines(&self) -> [Line<T>; 12] {
+    pub const fn to_lines(&self) -> [Line<T>; 12] {
         [
             // top
             Line::new(

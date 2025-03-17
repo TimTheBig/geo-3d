@@ -25,7 +25,7 @@ macro_rules! impl_iterator {
             > $struct_name<'a, T, $item_type, G>
         {
             /// Create a new iterator
-            pub fn new(geom: &'a G, index: usize, end: usize) -> Self {
+            pub const fn new(geom: &'a G, index: usize, end: usize) -> Self {
                 Self { geom, index, end }
             }
         }

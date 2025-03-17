@@ -13,15 +13,15 @@ pub struct Triangle<T: CoordNum = f64>(pub Coord<T>, pub Coord<T>, pub Coord<T>)
 
 impl<T: CoordNum> Triangle<T> {
     /// Instantiate Self from the raw content value
-    pub fn new(v1: Coord<T>, v2: Coord<T>, v3: Coord<T>) -> Self {
+    pub const fn new(v1: Coord<T>, v2: Coord<T>, v3: Coord<T>) -> Self {
         Self(v1, v2, v3)
     }
 
-    pub fn to_array(&self) -> [Coord<T>; 3] {
+    pub const fn to_array(&self) -> [Coord<T>; 3] {
         [self.0, self.1, self.2]
     }
 
-    pub fn to_lines(&self) -> [Line<T>; 3] {
+    pub const fn to_lines(&self) -> [Line<T>; 3] {
         [
             Line::new(self.0, self.1),
             Line::new(self.1, self.2),

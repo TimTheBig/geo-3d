@@ -171,7 +171,7 @@ impl<F> PreparedGeometry<'_, F>
 where
     F: GeoNum + RTreeNum,
 {
-    pub(crate) fn geometry(&self) -> &GeometryCow<F> {
+    pub(crate) const fn geometry(&self) -> &GeometryCow<F> {
         self.geometry_graph.geometry()
     }
 }

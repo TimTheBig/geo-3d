@@ -47,7 +47,7 @@ pub struct MonotonicPolygons<T: GeoNum>(Vec<MonoPoly<T>>);
 
 impl<T: GeoNum> MonotonicPolygons<T> {
     /// Get a reference to the monotone polygons.
-    pub fn subdivisions(&self) -> &Vec<MonoPoly<T>> {
+    pub const fn subdivisions(&self) -> &Vec<MonoPoly<T>> {
         &self.0
     }
 

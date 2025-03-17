@@ -191,7 +191,7 @@ impl<T: CoordNum> Polygon<T> {
     ///
     /// assert_eq!(polygon.exterior(), &exterior);
     /// ```
-    pub fn exterior(&self) -> &LineString<T> {
+    pub const fn exterior(&self) -> &LineString<T> {
         &self.exterior
     }
 

@@ -111,7 +111,7 @@ impl<'a, T: CoordNum + Send + Sync> IntoParallelIterator for &'a mut MultiPolygo
 
 impl<T: CoordNum> MultiPolygon<T> {
     /// Instantiate Self from the raw content value
-    pub fn new(value: Vec<Polygon<T>>) -> Self {
+    pub const fn new(value: Vec<Polygon<T>>) -> Self {
         Self(value)
     }
 

@@ -22,7 +22,7 @@ pub enum Dimensions {
 
 impl Dimensions {
     /// The physical number of dimensions in this geometry.
-    pub fn size(&self) -> usize {
+    pub const fn size(&self) -> usize {
         match self {
             Self::Xy => 2,
             Self::Xyz | Self::Xym => 3,

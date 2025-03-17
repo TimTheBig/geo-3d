@@ -8,7 +8,7 @@ use crate::{Coord, GeoNum, Line, Rect};
 pub(crate) struct RobustLineIntersector;
 
 impl RobustLineIntersector {
-    pub fn new() -> RobustLineIntersector {
+    pub const fn new() -> RobustLineIntersector {
         RobustLineIntersector
     }
 }

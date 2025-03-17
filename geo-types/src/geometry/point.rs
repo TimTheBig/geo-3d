@@ -90,7 +90,7 @@ impl<T: CoordNum> Point<T> {
     /// assert_eq!(p.x(), 1.234);
     /// ```
     #[inline(always)]
-    pub fn x(self) -> T {
+    pub const fn x(self) -> T {
         self.0.x
     }
 
@@ -139,7 +139,7 @@ impl<T: CoordNum> Point<T> {
     /// assert_eq!(p.y(), 2.345);
     /// ```
     #[inline(always)]
-    pub fn y(self) -> T {
+    pub const fn y(self) -> T {
         self.0.y
     }
 
@@ -189,7 +189,7 @@ impl<T: CoordNum> Point<T> {
     /// assert_eq!(p.z(), 4.382);
     /// ```
     #[inline(always)]
-    pub fn z(self) -> T {
+    pub const fn z(self) -> T {
         self.0.z
     }
 
@@ -240,7 +240,7 @@ impl<T: CoordNum> Point<T> {
     /// assert_eq!(y, 2.345);
     /// assert_eq!(x, 1.234);
     /// ```
-    pub fn x_y(self) -> (T, T) {
+    pub const fn x_y(self) -> (T, T) {
         (self.0.x, self.0.y)
     }
 
@@ -258,7 +258,7 @@ impl<T: CoordNum> Point<T> {
     /// assert_eq!(x, 1.234);
     /// assert_eq!(z, 7.509);
     /// ```
-    pub fn x_y_z(self) -> (T, T, T) {
+    pub const fn x_y_z(self) -> (T, T, T) {
         (self.0.x, self.0.y, self.0.z)
     }
 }

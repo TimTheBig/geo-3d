@@ -47,7 +47,7 @@ pub enum WindingOrder {
 
 impl WindingOrder {
     #[allow(dead_code)]
-    pub(crate) fn inverse(&self) -> Self {
+    pub(crate) const fn inverse(&self) -> Self {
         match self {
             WindingOrder::Clockwise => WindingOrder::CounterClockwise,
             WindingOrder::CounterClockwise => WindingOrder::Clockwise,

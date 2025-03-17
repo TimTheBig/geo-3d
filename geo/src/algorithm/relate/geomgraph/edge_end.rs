@@ -65,7 +65,7 @@ where
         }
     }
 
-    pub fn label(&self) -> &Label {
+    pub const fn label(&self) -> &Label {
         &self.label
     }
 
@@ -73,11 +73,11 @@ where
         &mut self.label
     }
 
-    pub fn coordinate(&self) -> &Coord<F> {
+    pub const fn coordinate(&self) -> &Coord<F> {
         &self.key.coord_0
     }
 
-    pub fn key(&self) -> &EdgeEndKey<F> {
+    pub const fn key(&self) -> &EdgeEndKey<F> {
         &self.key
     }
 }
