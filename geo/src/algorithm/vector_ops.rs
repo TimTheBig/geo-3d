@@ -1,9 +1,9 @@
 //! This module defines the [Vector3DOps] trait and implements it for the
 //! [Coord] struct.
 
-use crate::{Coord, CoordNum};
+use crate::{Coord, Point, CoordNum};
 
-/// Defines vector operations for 3D coordinate types which implement CoordNum
+/// Defines vector operations for 3D coordinate types which implement `CoordNum`
 ///
 /// This trait is intended for internal use within the geo crate as a way to
 /// bring together the various hand-crafted linear algebra operations used
@@ -27,70 +27,6 @@ where
     ///
     fn magnitude_squared(self) -> Self::Scalar;
 
-    /// Rotate this coordinate around the origin by 90 degrees clockwise.
-    ///
-    /// `a.left() => (-a.y, a.x)`
-    ///
-    /// Assumes a coordinate system where positive `y` is up and positive `x` is
-    /// to the right. The described rotation direction is consistent with the
-    /// documentation for [crate::algorithm::rotate::Rotate].
-    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
-    fn left(self) -> Self;
-
-    /// Rotate this coordinate around the origin by 90 degrees anti-clockwise.
-    ///
-    /// `a.right() => (a.y, -a.x)`
-    ///
-    /// Assumes a coordinate system where positive `y` is up and positive `x` is
-    /// to the right. The described rotation direction is consistent with the
-    /// documentation for [crate::algorithm::rotate::Rotate].
-    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
-    fn right(self) -> Self;
-
-    /// The calculates the `wedge product` between two vectors.\
-    /// Note: This is 2D only, for 3d use [geo_types::Coord::cross()]
-    ///
-    /// `a ∧ b = a.x * b.y - a.y * b.x`
-    ///
-    /// Also known as:
-    ///
-    ///  - `exterior product`
-    ///    - because the wedge product comes from 'Exterior Algebra'
-    ///  - `perpendicular product`
-    ///    -  because it is equivalent to `a.dot(b.right())`
-    ///  - `2D cross product`
-    ///    - because it is equivalent to the signed magnitude of the
-    ///      conventional 3D cross product assuming `z` ordinates are zero
-    ///  - `determinant`
-    ///    - because it is equivalent to the `determinant` of the 2x2 matrix
-    ///      formed by the column-vector inputs.
-    ///
-    /// ## Examples
-    ///
-    /// The following list highlights some examples in geo which might be
-    /// brought together to use this function:
-    ///
-    /// - The [`Kernel::orient2d()`](crate::algorithm::Kernel::orient2d()) trait default
-    ///    implementation uses cross product to compute orientation. It returns
-    ///    an enum, not the numeric value which is needed for line segment
-    ///    intersection.
-    ///
-    /// ## Properties
-    ///
-    /// - The absolute value of the cross product is the area of the
-    ///   parallelogram formed by the operands
-    /// - Anti-commutative: The sign of the output is reversed if the operands
-    ///   are reversed
-    /// - If the operands are collinear with the origin, the value is zero
-    /// - The sign can be used to check if the operands are clockwise with
-    ///   respect to the origin, or phrased differently:
-    ///   "is a to the left of the line between the origin and b"?
-    ///   - If this is what you are using it for, then please use
-    ///     [`Kernel::orient2d()`](crate::algorithm::Kernel::orient2d()) instead as this is more
-    ///     explicit and has a `RobustKernel` option for extra precision.
-    #[deprecated(note = "This is 2D only, please use `cross()`")]
-    fn wedge_product(self, other: Rhs) -> Self::Scalar;
-
     /// Try to find a vector of unit length in the same direction as this
     /// vector.
     ///
@@ -110,15 +46,8 @@ where
     fn is_finite(self) -> bool;
 }
 
-impl<T> Vector3DOps for Coord<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> Vector3DOps for Coord<T> {
     type Scalar = T;
-
-    fn wedge_product(self, other: Coord<T>) -> Self::Scalar {
-        self.x * other.y - self.y * other.x
-    }
 
     fn magnitude(self) -> Self::Scalar {
         self.dot(self).sqrt()
@@ -126,24 +55,6 @@ where
 
     fn magnitude_squared(self) -> Self::Scalar {
         self.dot(self)
-    }
-
-    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
-    fn left(self) -> Self {
-        Self {
-            x: -self.y,
-            y: self.x,
-            z: self.z,
-        }
-    }
-
-    /// This assumes a 2D rotation in the XY plane, leaving Z unchanged.
-    fn right(self) -> Self {
-        Self {
-            x: self.y,
-            y: -self.x,
-            z: self.z,
-        }
     }
 
     fn try_normalize(self) -> Option<Self> {
@@ -166,34 +77,30 @@ where
     }
 }
 
+impl<T: CoordNum> Vector3DOps for Point<T> {
+    type Scalar = T;
+
+    fn magnitude(self) -> Self::Scalar {
+        self.0.magnitude()
+    }
+
+    fn magnitude_squared(self) -> Self::Scalar {
+        self.0.magnitude_squared()
+    }
+
+    fn try_normalize(self) -> Option<Self> {
+        self.0.try_normalize().map(|c| Point(c))
+    }
+
+    fn is_finite(self) -> bool {
+        self.0.is_finite()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Vector3DOps;
     use crate::coord;
-
-    #[test]
-    fn test_wedge_product() {
-        // perpendicular unit length
-        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
-        let b = coord! { x: 0f64, y: 1f64, z: 0.0 };
-
-        // expect the area of the parallelogram
-        assert_eq!(a.wedge_product(b), 1f64);
-        // swapping the operands reverses the sign
-        assert_eq!(b.wedge_product(a), -1f64);
-
-        // Add skew; the results should be the same
-        let a = coord! { x: 1f64, y: 0f64, z: 0.0 };
-        let b = coord! { x: 1f64, y: 1f64, z: 0.0 };
-
-        assert_eq!(a.wedge_product(b), 1f64);
-        assert_eq!(b.wedge_product(a), -1f64);
-
-        // Collinear case should yield zero
-        let a = coord! { x: 2f64, y: 2f64, z: 3f64 };
-        let b = coord! { x: 1f64, y: 1f64, z: 1f64 };
-        assert_eq!(a.wedge_product(b), 0f64);
-    }
 
     #[test]
     fn test_dot_product() {
@@ -240,51 +147,6 @@ mod test {
 
         let a = coord! { x: -3f64, y: 4f64, z: 0.0 };
         assert_eq!(a.magnitude_squared(), 25f64);
-    }
-
-    #[test]
-    fn test_left_right() {
-        // Use a coordinate with a nonzero z so that we can confirm that left/right
-        // rotations leave z unchanged.
-        let a = coord! { x: 1f64, y: 0f64, z: 2.0 };
-        let a_left = coord! { x: -0f64, y: 1f64, z: 2.0 };
-        let a_right = coord! { x: 0f64, y: -1f64, z: 2.0 };
-
-        assert_eq!(a.left(), a_left);
-        assert_eq!(a.right(), a_right);
-        assert_eq!(a.left(), -a.right());
-    }
-
-    #[test]
-    fn test_left_right_match_rotate() {
-        use crate::algorithm::rotate::Rotate;
-        use crate::Point;
-        // The aim of this test is to confirm that wording in documentation is
-        // consistent.
-
-        // when the user is in a coordinate system where the y axis is flipped
-        // (eg screen coordinates in a HTML canvas), then rotation directions
-        // will be different to those described in the documentation.
-
-        // The documentation for the Rotate trait says: 'Positive angles are
-        // counter-clockwise, and negative angles are clockwise rotations'
-
-        let counter_clockwise_rotation_degrees = 90.0;
-        let clockwise_rotation_degrees = -counter_clockwise_rotation_degrees;
-
-        let a: Point = coord! { x: 1.0, y: 0.0, z: 0.0 }.into();
-        let origin: Point = coord! { x: 0.0, y: 0.0, z: 0.0 }.into();
-
-        // left() is equivalent to a 90° counter-clockwise rotation.
-        assert_relative_eq!(
-            Point::from(a.0.left()),
-            a.rotate_around_point(counter_clockwise_rotation_degrees, origin),
-        );
-        // right() is equivalent to a 90° clockwise rotation.
-        assert_relative_eq!(
-            Point::from(a.0.right()),
-            a.rotate_around_point(clockwise_rotation_degrees, origin),
-        );
     }
 
     #[test]
