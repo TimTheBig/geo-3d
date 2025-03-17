@@ -327,9 +327,9 @@ impl<T: CoordNum> AffineTransform<T> {
         let zoff = z0 - z0 * zfact;
 
         Self::new(
-            xfact, T::zero(), T::zero(), xoff,
-            T::zero(), yfact, T::zero(), yoff,
-            T::zero(), T::zero(), zfact, zoff
+            [xfact, T::zero(), T::zero(), xoff],
+            [T::zero(), yfact, T::zero(), yoff],
+            [T::zero(), T::zero(), zfact, zoff],
         )
     }
 
@@ -355,9 +355,9 @@ impl<T: CoordNum> AffineTransform<T> {
     /// ```
     pub fn translate(xoff: T, yoff: T, zoff: T) -> Self {
         Self::new(
-            T::one(), T::zero(), T::zero(), xoff,
-            T::zero(), T::one(), T::zero(), yoff,
-            T::zero(), T::zero(), T::one(), zoff
+            [T::one(), T::zero(), T::zero(), xoff],
+            [T::zero(), T::one(), T::zero(), yoff],
+            [T::zero(), T::zero(), T::one(), zoff],
         )
     }
 
@@ -394,7 +394,11 @@ impl<T: CoordNum> AffineTransform<T> {
     ///  [h, i, j, zoff],
     ///  [0, 0, 0, 1]] <-- not part of the input arguments
     /// ```
-    pub fn new(a: T, b: T, f: T, xoff: T, d: T, e: T, g: T, yoff: T, h: T, i: T, j: T, zoff: T) -> Self {
+    pub fn new(
+        [a, b, f, xoff]: [T; 4],
+        [d, e, g, yoff]: [T; 4],
+        [h, i, j, zoff]: [T; 4],
+    ) -> Self {
         Self([
             [a, b, f, xoff],
             [d, e, g, yoff],
@@ -476,9 +480,9 @@ impl<T: CoordNum + Neg<Output = T>> AffineTransform<T> {
         let inv_zoff = -(self.xoff() * inv_h + self.yoff() * inv_i + self.zoff() * inv_j);
 
         Some(Self::new(
-            inv_a, inv_b, inv_f, inv_xoff,
-            inv_d, inv_e, inv_g, inv_yoff,
-            inv_h, inv_i, inv_j, inv_zoff,
+            [inv_a, inv_b, inv_f, inv_xoff],
+            [inv_d, inv_e, inv_g, inv_yoff],
+            [inv_h, inv_i, inv_j, inv_zoff],
         ))
     }
 }
@@ -506,7 +510,9 @@ impl<T: CoordNum> Display for AffineTransform<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(
             f,
-            "[[{:?}, {:?}, {:?}, {:?}],\n[{:?}, {:?}, {:?}, {:?}],\n[{:?}, {:?}, {:?}, {:?}]]]",
+            "[[{:?}, {:?}, {:?}, {:?}],
+            [{:?}, {:?}, {:?}, {:?}],
+            [{:?}, {:?}, {:?}, {:?}]]",
             self.a(), self.b(), self.f(), self.xoff(),
             self.d(), self.e(), self.g(), self.yoff(),
             self.h(), self.i(), self.j(), self.zoff(),
@@ -517,9 +523,19 @@ impl<T: CoordNum> Display for AffineTransform<T> {
 impl<T: CoordNum> From<[T; 12]> for AffineTransform<T> {
     fn from(arr: [T; 12]) -> Self {
         Self::new(
-            arr[0], arr[1], arr[2], arr[3],
-            arr[4], arr[5], arr[6], arr[7],
-            arr[8], arr[9], arr[10], arr[11]
+            [arr[0], arr[1], arr[2], arr[3]],
+            [arr[4], arr[5], arr[6], arr[7]],
+            [arr[8], arr[9], arr[10], arr[11]],
+        )
+    }
+}
+
+impl<T: CoordNum> From<[[T; 4]; 3]> for AffineTransform<T> {
+    fn from(arr: [[T; 4]; 3]) -> Self {
+        Self::new(
+            arr[0],
+            arr[1],
+            arr[2],
         )
     }
 }
@@ -527,9 +543,9 @@ impl<T: CoordNum> From<[T; 12]> for AffineTransform<T> {
 impl<T: CoordNum> From<(T, T, T, T, T, T, T, T, T, T, T, T)> for AffineTransform<T> {
     fn from(tup: (T, T, T, T, T, T, T, T, T, T, T, T)) -> Self {
         Self::new(
-            tup.0, tup.1, tup.2, tup.3,
-            tup.4, tup.5, tup.6, tup.7,
-            tup.8, tup.9, tup.10, tup.11
+            [tup.0, tup.1, tup.2, tup.3],
+            [tup.4, tup.5, tup.6, tup.7],
+            [tup.8, tup.9, tup.10, tup.11],
         )
     }
 }
@@ -559,9 +575,9 @@ impl<U: CoordNum> AffineTransform<U> {
         let zoff = U::zero(); // No change in the z-axis for a 2D rotation in 3D space.
 
         Self::new(
-            cos_theta, -sin_theta, U::zero(), xoff,
-            sin_theta,  cos_theta, U::zero(), yoff,
-            U::zero(),  U::zero(), U::one(), zoff,
+            [cos_theta, -sin_theta, U::zero(), xoff],
+            [sin_theta,  cos_theta, U::zero(), yoff],
+            [U::zero(),  U::zero(), U::one(), zoff],
         )
     }
 
@@ -591,9 +607,9 @@ impl<U: CoordNum> AffineTransform<U> {
         let rad = degrees.to_radians();
 
         Self::new(
-            U::one(), U::zero(), U::zero(), U::zero(),
-            U::zero(), rad.cos(), -(rad.sin()), U::zero(),
-            U::zero(), rad.sin(), rad.cos(), U::zero(),
+            [U::one(), U::zero(), U::zero(), U::zero()],
+            [U::zero(), rad.cos(), -(rad.sin()), U::zero()],
+            [U::zero(), rad.sin(), rad.cos(), U::zero()],
         )
     }
 
@@ -623,9 +639,9 @@ impl<U: CoordNum> AffineTransform<U> {
         let rad = degrees.to_radians();
 
         Self::new(
-            rad.cos(), U::zero(), rad.sin(), U::zero(),
-            U::zero(), U::one(), U::zero(), U::zero(),
-            -(rad.sin()), U::zero(), rad.cos(), U::zero(),
+            [rad.cos(), U::zero(), rad.sin(), U::zero()],
+            [U::zero(), U::one(), U::zero(), U::zero()],
+            [-(rad.sin()), U::zero(), rad.cos(), U::zero()],
         )
     }
 
@@ -655,9 +671,9 @@ impl<U: CoordNum> AffineTransform<U> {
         let rad = degrees.to_radians();
 
         Self::new(
-            rad.cos(), -(rad.sin()), U::zero(), U::zero(),
-            rad.sin(), rad.cos(), U::zero(), U::zero(),
-            U::zero(), U::zero(), U::one(), U::zero(),
+            [rad.cos(), -(rad.sin()), U::zero(), U::zero()],
+            [rad.sin(), rad.cos(), U::zero(), U::zero()],
+            [U::zero(), U::zero(), U::one(), U::zero()],
         )
     }
 
@@ -710,10 +726,11 @@ impl<U: CoordNum> AffineTransform<U> {
         let yoff = -x0 * tany;
         let zoff = -z0 * tanz;
         Self::new(
-            U::one(), tanx, U::zero(), xoff,
-            tany, U::one(), U::zero(), yoff,
+            [U::one(), tanx, U::zero(), xoff],
+            [tany, U::one(), U::zero(), yoff],
             // todo check `tanz` pos
-            U::zero(), tanz, U::one(), zoff)
+            [U::zero(), tanz, U::one(), zoff],
+        )
     }
 
     /// **Add** an affine transform for skewing.
@@ -812,8 +829,16 @@ mod tests {
     // [0, 0, 0, 1]]
     #[test]
     fn matrix_multiply() {
-        let a = AffineTransform::new(1., 2., 6., 5., 3., 4., 9., 6., 4., 8., 7., 14.);
-        let b = AffineTransform::new(7., 8., 3., 11., 9., 10., 2., 12., 3., 9., 4., 19.);
+        let a = AffineTransform::new(
+            [1., 2., 6., 5.],
+            [3., 4., 9., 6.],
+            [4., 8., 7., 14.],
+        );
+        let b = AffineTransform::new(
+            [7., 8., 3., 11.],
+            [9., 10., 2., 12.],
+            [3., 9., 4., 19.]
+        );
         let composed = a.compose(&b);
 
         assert_eq!(composed.0[0][0], 43.);
@@ -878,9 +903,9 @@ mod tests {
     #[test]
     fn test_affine_transform_getters() {
         let transform = AffineTransform::new(
-            10.0, 0.0, 8.7, 400_000.0,
-            0.0, -10.0, -8.7, 500_000.0,
-            89.5, -3.4, 12.0, 600_000.0
+            [10.0, 0.0, 8.7, 400_000.0],
+            [0.0, -10.0, -8.7, 500_000.0],
+            [89.5, -3.4, 12.0, 600_000.0],
         );
 
         assert_eq!(transform.a(), 10.0);
