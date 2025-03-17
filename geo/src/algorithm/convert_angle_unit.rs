@@ -48,18 +48,16 @@ impl<T: CoordNum, G: MapCoords<T, T, Output = Self> + MapCoordsInPlace<T>> ToDeg
 #[cfg(test)]
 mod tests {
     use std::f64::consts::PI;
-
     use approx::assert_relative_eq;
-    use geo_types::Line;
-
+    use geo_types::{coord, Line};
     use super::*;
 
-    fn line_degrees_mock() -> Line {
-        Line::new((90.0, 180., 90.0), (0., -90., 0.))
+    const fn line_degrees_mock() -> Line {
+        Line::new(coord!(90.0, 180., 90.0), coord!(0., -90., 0.))
     }
 
     fn line_radians_mock() -> Line {
-        Line::new((PI / 2., PI, PI / 2.), (0., -PI / 2., 0.))
+        Line::new(coord!(PI / 2., PI, PI / 2.), coord!(0., -PI / 2., 0.))
     }
 
     #[test]

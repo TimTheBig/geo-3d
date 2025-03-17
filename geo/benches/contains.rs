@@ -93,8 +93,8 @@ fn criterion_benchmark(c: &mut Criterion) {
         let polygon = Polygon::<f64>::new(geo_test_fixtures::louisiana(), vec![]);
         // crossing part of, but not contained by Louisiana
         let line = Line::new(
-            geo_test_fixtures::baton_rouge(),
-            point!(x: -89.641854, y: 30.026283, z: -89.641854),
+            geo_test_fixtures::baton_rouge().into(),
+            coord!(x: -89.641854, y: 30.026283, z: -89.641854),
         );
         bencher.iter(|| {
             assert!(!criterion::black_box(&polygon).contains(criterion::black_box(&line)));

@@ -239,7 +239,7 @@ mod tests {
     fn line_string_with_single_element_behaves_like_line() {
         let points = vec![(0.0, 0.0, 0.0), (100.0, 100.0, 100.0)];
         let line_string = LineString::<f32>::from(points.clone());
-        let line = Line::new(points[0], points[1]);
+        let line = Line::new(points[0].into(), points[1].into());
 
         let some_random_points = vec![
             point!(x: 0.0, y: 0.0, z: 0.0),

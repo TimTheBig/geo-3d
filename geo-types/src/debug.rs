@@ -196,7 +196,7 @@ mod tests {
     }
     #[test]
     fn line() {
-        let line_string = Line::new((1., 2., 3.), (3., 4., 5.));
+        let line_string = Line::new((1., 2., 3.).into(), (3., 4., 5.).into());
         assert_eq!("LINE(1.0 2.0 3.0,3.0 4.0 5.0)", format!("{line_string:?}"));
     }
     #[test]
@@ -410,7 +410,7 @@ mod tests {
     fn geometry_collection_with_mixed_geometries() {
         let geometry_collection: GeometryCollection<f32> = GeometryCollection::from(vec![
             Geometry::Point(Point::new(1.0, 2.0, 3.0)),
-            Geometry::Line(Line::new((1.0, 2.0, 3.0), (3.0, 4.0, 5.0))),
+            Geometry::Line(Line::new((1.0, 2.0, 3.0).into(), (3.0, 4.0, 5.0).into())),
             Geometry::Polygon(Polygon::new(
                 LineString::from(vec![(0.0, 0.0, 0.0), (1.0, 0.0, 1.0), (1.0, 1.0, 1.0), (0.0, 0.0, 0.0)]),
                 vec![],

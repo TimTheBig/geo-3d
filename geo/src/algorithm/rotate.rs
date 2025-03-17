@@ -152,6 +152,7 @@ mod test {
     use crate::geometry::*;
     use crate::{line_string, point, polygon};
     use approx::assert_relative_eq;
+    use geo_types::coord;
 
     #[test]
     fn test_rotate_around_point() {
@@ -430,8 +431,8 @@ mod test {
 
     #[test]
     fn test_rotate_line_around_point() {
-        let line0 = Line::new(Point::new(0., 0., 0.), Point::new(0., 2., 0.));
-        let line1 = Line::new(Point::new(0., 0., 0.), Point::new(-2., 0., 0.));
+        let line0 = Line::new(coord!(0., 0., 0.), coord!(0., 2., 0.));
+        let line1 = Line::new(coord!(0., 0., 0.), coord!(-2., 0., 0.));
         assert_relative_eq!(
             line0.rotate_around_point(90., Point::new(0., 0., 0.)),
             line1

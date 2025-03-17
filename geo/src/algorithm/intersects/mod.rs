@@ -735,7 +735,7 @@ mod test {
     fn exhaustive_compile_test() {
         use geo_types::GeometryCollection;
         let pt: Point = Point::new(0., 0., 0.);
-        let ln: Line = Line::new((0., 0., 0.), (1., 1., 1.));
+        let ln: Line = Line::new(coord!(0., 0., 0.), coord!(1., 1., 1.));
         let ls = line_string![(0., 0., 0.).into(), (1., 1., 1.).into()];
         let poly = Polygon::new(
             LineString::from(vec![

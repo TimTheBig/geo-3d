@@ -532,10 +532,9 @@ mod test {
 
     #[test]
     fn test_simple_line() {
-        use crate::point;
         let line = Line::new(
-            point![x: 0.0, y: 0.0, z: 0.0],
-            point![x: 10.0, y: 10.0, z: 10.0],
+            coord![x: 0.0, y: 0.0, z: 0.0],
+            coord![x: 10.0, y: 10.0, z: 10.0],
         );
 
         let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
@@ -554,8 +553,8 @@ mod test {
     #[test]
     fn test_degenerate_line() {
         let line = Line::new(
-            point![x: 0.0, y: 0.0, z: 0.0],
-            point![x: 0.0, y: 0.0, z: 0.0],
+            coord![x: 0.0, y: 0.0, z: 0.0],
+            coord![x: 0.0, y: 0.0, z: 0.0],
         );
 
         let start = coord! { x: 0.0, y: 0.0, z: 0.0 };
