@@ -141,7 +141,7 @@ impl<T: GeoNum> CoordinatePosition<T> for MonoPoly<T> {
                 *boundary_count += 1;
                 return;
             }
-            _ => {}
+            Orientation::CounterClockwise => {}
         }
         match T::Ker::orient2d(bot.start, *coord, bot.end) {
             Orientation::CounterClockwise => (),
@@ -149,7 +149,7 @@ impl<T: GeoNum> CoordinatePosition<T> for MonoPoly<T> {
                 *is_inside = true;
                 *boundary_count += 1;
             }
-            _ => {
+            Orientation::Clockwise => {
                 *is_inside = true;
             }
         }

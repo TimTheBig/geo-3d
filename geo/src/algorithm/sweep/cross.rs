@@ -1,8 +1,7 @@
 use std::{fmt::Debug, rc::Rc, sync::Arc};
 
 use geo_types::Line;
-
-use super::*;
+use super::LineOrPoint;
 use crate::GeoNum;
 
 /// Interface for types that can be processed to detect crossings.

@@ -180,7 +180,7 @@ pub use vincenty_length::VincentyLength;
 pub mod winding_order;
 pub use winding_order::Winding;
 
-/// Determine whether `Geometry` `A` is completely within by `Geometry` `B`.
+/// Determine whether geometry `A` is completely within by geometry `B`.
 pub mod within;
 pub use within::Within;
 

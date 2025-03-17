@@ -150,7 +150,7 @@ where
                     "cb: {seg:?} {ty:?} (crossable = {cross:?})",
                     cross = seg.cross_cloned().line()
                 );
-                segments.push(Crossing::from_segment(seg, ty))
+                segments.push(Crossing::from_segment(seg, ty));
             });
         }
 

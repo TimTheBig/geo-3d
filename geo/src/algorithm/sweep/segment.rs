@@ -1,4 +1,4 @@
-use super::*;
+use super::{Cross, IMSegment, LineOrPoint};
 use crate::GeoNum;
 use std::{cmp::Ordering, fmt::Debug};
 

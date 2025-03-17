@@ -1,4 +1,4 @@
-use super::kernels::*;
+use super::kernels::{Kernel, Orientation, Orientation3D};
 use crate::coords_iter::CoordsIter;
 use crate::utils::EitherIter;
 use crate::{CoordNum, GeoNum, LineString, Point};
@@ -47,7 +47,7 @@ pub enum WindingOrder {
 
 impl WindingOrder {
     #[allow(dead_code)]
-    pub(crate) const fn inverse(&self) -> Self {
+    pub(crate) const fn inverse(self) -> Self {
         match self {
             WindingOrder::Clockwise => WindingOrder::CounterClockwise,
             WindingOrder::CounterClockwise => WindingOrder::Clockwise,
@@ -239,7 +239,7 @@ where
     match K::orient2d(p, q, r) {
         Orientation::CounterClockwise => Some(WindingOrder::CounterClockwise),
         Orientation::Clockwise => Some(WindingOrder::Clockwise),
-        _ => None,
+        Orientation::Collinear => None,
     }
 }
 

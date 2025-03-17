@@ -124,7 +124,7 @@ impl<T: CoordNum + Sum> TryVolume<T> for Polygon<T> {
             self.exterior().try_volume()?
             -
             self.interiors().iter()
-            .map(|ls| ls.try_volume()).try_fold(T::zero(), |total, vol| -> Option<T> { Some(total + vol?) })?
+            .map(TryVolume::try_volume).try_fold(T::zero(), |total, vol| -> Option<T> { Some(total + vol?) })?
         )
     }
 }
@@ -132,7 +132,7 @@ impl<T: CoordNum + Sum> TryVolume<T> for Polygon<T> {
 impl<T: CoordNum + Sum> TryVolume<T> for MultiPolygon<T> {
     fn try_volume(&self) -> Option<T> {
         // volume of all `Polygon`
-        self.iter().map(|ls| ls.try_volume()).sum()
+        self.iter().map(TryVolume::try_volume).sum()
     }
 }
 

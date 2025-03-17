@@ -23,7 +23,7 @@ impl<C: Cross + Clone> Sweep<C> {
 
         let mut sweep = Sweep {
             events: BinaryHeap::with_capacity(size),
-            active_segments: Default::default(),
+            active_segments: VecSet::default(),
             is_simple,
         };
         for cr in iter {
@@ -146,7 +146,7 @@ impl<C: Cross + Clone> Sweep<C> {
                 let mut should_add = true;
                 let mut insert_idx = self.active_segments.index_not_of(&segment);
                 if !self.is_simple {
-                    for is_next in [true, false].into_iter() {
+                    for is_next in [true, false] {
                         let active = if is_next {
                             if insert_idx < self.active_segments.len() {
                                 self.active_segments[insert_idx].clone()

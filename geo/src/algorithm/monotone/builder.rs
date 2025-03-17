@@ -49,7 +49,7 @@ impl<T: GeoNum> Builder<T> {
                     } else {
                         let line = LineOrPoint::from(line);
                         debug!("adding line {:?}", line);
-                        Some((line, Default::default()))
+                        Some((line, Info::default()))
                     }
                 })
         });

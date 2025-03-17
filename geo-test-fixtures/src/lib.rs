@@ -268,7 +268,7 @@ pub(crate) fn file(name: &Path) -> String {
     let mut res = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     res.push("fixtures");
     res.push(name);
-    if let None = name.extension() {
+    if name.extension().is_none() {
         res.set_extension("wkt");
     }
 

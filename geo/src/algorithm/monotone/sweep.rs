@@ -91,7 +91,7 @@ impl<T: GeoNum, P: Debug + Clone> SimpleSweep<T, P> {
             return;
         }
 
-        use EventType::*;
+        use EventType::{LineLeft, LineRight};
         let segment = &event.payload;
         trace!(
             "handling event: {pt:?} ({ty:?}) @ {seg:?}",

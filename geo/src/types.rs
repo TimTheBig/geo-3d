@@ -14,6 +14,7 @@ pub enum Closest<F: GeoNum> {
 
 impl<F: GeoNum> Closest<F> {
     /// Compare two `Closest`s relative to `p` and return a copy of the best one.
+    #[must_use = "Use the copy of the best one"]
     pub fn best_of_two(&self, other: &Self, p: Point<F>) -> Self {
         use crate::Distance;
 

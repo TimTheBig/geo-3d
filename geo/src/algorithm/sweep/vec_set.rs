@@ -10,7 +10,7 @@ pub struct VecSet<T: Ord> {
 impl<T: Ord> Default for VecSet<T> {
     fn default() -> Self {
         Self {
-            data: Default::default(),
+            data: Vec::new(),
         }
     }
 }
@@ -39,7 +39,7 @@ impl<T: PartialOrd + Debug> VecSet<Active<T>> {
     }
 
     pub fn insert_at(&mut self, idx: usize, segment: T) {
-        self.data.insert(idx, Active(segment))
+        self.data.insert(idx, Active(segment));
     }
 
     pub fn remove_at(&mut self, idx: usize) -> T {

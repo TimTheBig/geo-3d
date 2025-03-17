@@ -263,7 +263,7 @@ impl<T: GeoNum + Default> CoordinatePosition<T> for Polygon<T> {
             return;
         }
 
-        match inside_poly(self, coord, boundary_count) {
+        match inside_poly(self, coord.clone(), boundary_count) {
             CoordPos::OnBoundary => {
                 boundary_count.add_assign(1);
             }
@@ -332,7 +332,7 @@ impl<T: GeoNum + Default> CoordinatePosition<T> for GeometryCow<'_, T> {
     }
 }
 
-fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: &Coord<T>, boundary_count: &mut usize) -> CoordPos {
+fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: Coord<T>, boundary_count: &mut usize) -> CoordPos {
     debug_assert!(poly.exterior().is_closed());
 
     for linestring in poly.rings() {
@@ -343,7 +343,7 @@ fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: &Coord<T>, bound
     }
 
     let segment = Line::new(
-        coord.clone(),
+        coord,
         coord!(T::max_value(), T::max_value(), T::max_value()),
     );
 
