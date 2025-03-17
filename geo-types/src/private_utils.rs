@@ -123,7 +123,7 @@ where
 }
 
 pub fn point_contains_point<T: CoordNum>(p1: Point<T>, p2: Point<T>) -> bool {
-    let distance = line_euclidean_length(Line::new(p1, p2)).to_f64().unwrap();
+    let distance = line_euclidean_length(Line::new(p1.0, p2.0)).to_f64().unwrap();
     approx::relative_eq!(distance, 0.0)
 }
 

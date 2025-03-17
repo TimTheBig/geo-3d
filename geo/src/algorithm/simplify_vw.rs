@@ -369,13 +369,13 @@ where
         let middle_point = Point::from(orig.0[smallest.current]);
         let right_point = Point::from(orig.0[right as usize]);
 
-        let line_1 = CachedEnvelope::new(Line::new(left_point, middle_point));
-        let line_2 = CachedEnvelope::new(Line::new(middle_point, right_point));
+        let line_1 = CachedEnvelope::new(Line::new(left_point.0, middle_point.0));
+        let line_2 = CachedEnvelope::new(Line::new(middle_point.0, right_point.0));
         assert!(tree.remove(&line_1).is_some());
         assert!(tree.remove(&line_2).is_some());
 
         // Restore continuous line segment
-        tree.insert(CachedEnvelope::new(Line::new(left_point, right_point)));
+        tree.insert(CachedEnvelope::new(Line::new(left_point.0, right_point.0)));
 
         // Recompute the adjacent triangle(s), using left and right adjacent points
         // this may add new triangles to the heap
@@ -405,8 +405,8 @@ where
     let new_segment_end = orig[triangle.right];
     // created by candidate point removal
     let new_segment = CachedEnvelope::new(Line::new(
-        Point::from(orig[triangle.left]),
-        Point::from(orig[triangle.right]),
+        orig[triangle.left],
+        orig[triangle.right],
     ));
     let bounding_rect = Triangle::new(
         orig[triangle.left],

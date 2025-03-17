@@ -400,16 +400,17 @@ mod test {
     #[test]
     fn test_linestring_proj() {
         let mut ls = line_string![
-            coord!(0.0, 0.0, 0.0)
-            coord!(
-            coord!(
-            coord!(
-            coord!(
+            coord!(0.5, 0.5, 0.5),
+            coord!(2.0, 5.5, 6.9),
+            coord!(3.0, 2.3, 5.8),
+            coord!(9.4, 7.8, 2.2),
+            coord!(0.5, 0.5, 0.5),
         ];
+        let old_ls = ls.clone();
         ls.proj_mut(coord!(0.7071067812, 0.0, 0.7071067812));
         assert_eq!(
             // 45˚ plane
-            .proj(coord!(0.7071067812, 0.0, 0.7071067812)),
+            old_ls.proj(coord!(0.7071067812, 0.0, 0.7071067812)),
             ls,
         );
 

@@ -46,7 +46,7 @@ impl<T> Intersects<Line<T>> for Rect<T>
 where
     T: GeoNum,
 {
-    // todo check 3D, maybe more lines are needed
+    // todo check 3d, maybe more lines are needed
     fn intersects(&self, rhs: &Line<T>) -> bool {
         // left top
         let lt = self.min();

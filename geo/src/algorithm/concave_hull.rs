@@ -238,8 +238,8 @@ where
             interior_points_tree.remove(&closest_point);
             line_tree.remove(&line);
             let point = Point::new(closest_point.x, closest_point.y, closest_point.z);
-            let start_line = Line::new(line.start_point(), point);
-            let end_line = Line::new(point, line.end_point());
+            let start_line = Line::new(line.start, point.0);
+            let end_line = Line::new(point.0, line.end);
             line_tree.insert(start_line);
             line_tree.insert(end_line);
             line_queue.push_front(end_line);

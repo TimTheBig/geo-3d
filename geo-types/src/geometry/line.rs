@@ -29,13 +29,10 @@ impl<T: CoordNum> Line<T> {
     /// assert_eq!(line.start, coord! { x: 0., y: 0., z: 0. });
     /// assert_eq!(line.end, coord! { x: 1., y: 2., z: 3. });
     /// ```
-    pub fn new<C>(start: C, end: C) -> Self
-    where
-        C: Into<Coord<T>>,
-    {
+    pub const fn new(start: Coord<T>, end: Coord<T>) -> Self {
         Self {
-            start: start.into(),
-            end: end.into(),
+            start,
+            end,
         }
     }
 
@@ -187,7 +184,7 @@ impl<T: CoordNum> Line<T> {
 
 impl<T: CoordNum> From<[(T, T, T); 2]> for Line<T> {
     fn from(coord: [(T, T, T); 2]) -> Self {
-        Line::new(coord[0], coord[1])
+        Line::new(coord[0].into(), coord[1].into())
     }
 }
 #[cfg(any(feature = "approx", test))]
@@ -302,8 +299,8 @@ mod test {
                 x: 0. + delta,
                 y: 0.,
                 z: 0.,
-            },
-            point! { x: 1., y: 1., z: 1. },
+            }.0,
+            point! { x: 1., y: 1., z: 1. }.0,
         );
         assert!(line.abs_diff_eq(&line_start_x, 1e-2));
         assert!(line.abs_diff_ne(&line_start_x, 1e-12));
@@ -354,8 +351,8 @@ mod test {
                 x: 0. + delta,
                 y: 0.,
                 z: 0.
-            },
-            point! { x: 1., y: 1., z: 1. },
+            }.0,
+            point! { x: 1., y: 1., z: 1. }.0,
         );
         let line_start_y = Line::new(
             coord! {

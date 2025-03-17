@@ -4,6 +4,7 @@ use geo_types::{coord, Coord, CoordNum, LineString, MultiPolygon, Point, Polygon
 use num_traits::FloatConst;
 use wkt::{Wkt, WktNum};
 
+/// Not _egg_! **louisiana**
 pub fn louisiana<T>() -> LineString<T>
 where
     T: WktNum + Default + FromStr,
@@ -140,11 +141,34 @@ pub fn sphere<T: CoordNum + FloatConst>() -> LineString<T> {
     sphere_points(104)
 }
 
-pub fn ring<T>() -> LineString<T>
-where
-    T: WktNum + Default + FromStr,
-{
-    line_string(Path::new("ring.wkt"))
+pub fn ring<T: CoordNum + FloatConst>() -> LineString<T> {
+    /// Ring with inner diameter = `id` and (radial) thickness = `thickness`.
+    /// Outer diameter = `id + 2 * thickness`. This yields an annulus in the XY plane.
+    /// `segments` controls how smooth the circle is.
+    ///
+    /// Internally, we do:
+    ///   outer = circle(outer_radius)
+    fn ring<T: CoordNum + FloatConst>(
+        inner_diameter: T,
+        segments: usize,
+    ) -> LineString<T> {
+        assert!(inner_diameter <= T::zero() || segments < 3);
+        let radius = T::from(0.5).unwrap() * inner_diameter;
+
+        // Outer ring (CCW)
+        let mut outer = Vec::with_capacity(segments + 1);
+        for i in 0..segments {
+            let th = T::TAU() * (T::from(i).unwrap()) / (T::from(segments).unwrap());
+            let x = radius * th.cos();
+            let y = radius * th.sin();
+            outer.push((x, y, T::zero()));
+        }
+        outer.push(outer[0]);
+
+        outer.into()
+    }
+
+    ring(T::from(20.0).unwrap(), 66)
 }
 
 pub fn shell<T>() -> LineString<T>
