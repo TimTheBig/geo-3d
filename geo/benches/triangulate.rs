@@ -7,7 +7,7 @@ fn criterion_benchmark(c: &mut criterion::Criterion) {
         let multi_poly = geo_test_fixtures::nl_zones::<f64>();
         bencher.iter(|| {
             for poly in &multi_poly {
-                let triangulation = TriangulateDelaunay::earcut_triangles(poly);
+                let triangulation = poly.delaunay_triangles();
                 assert!(triangulation.len() > 1);
                 criterion::black_box(triangulation);
             }
@@ -17,7 +17,7 @@ fn criterion_benchmark(c: &mut criterion::Criterion) {
     c.bench_function("TriangulateEarcut - large_poly", |bencher| {
         let poly = Polygon::new(geo_test_fixtures::norway_main::<f64>(), vec![]);
         bencher.iter(|| {
-            let triangulation = TriangulateDelaunay::earcut_triangles(&poly);
+            let triangulation = (&poly).delaunay_triangles();
             assert!(triangulation.len() > 1);
             criterion::black_box(triangulation);
         });

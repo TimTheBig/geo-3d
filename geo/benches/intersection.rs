@@ -102,7 +102,7 @@ fn point_triangle_intersection(c: &mut Criterion) {
         .collect();
     let zone_triangles: Vec<Triangle> = geo_test_fixtures::nl_zones()
         .iter()
-        .flat_map(|plot| plot.earcut_triangles_iter())
+        .flat_map(|plot| plot.delaunay_triangles_iter())
         .collect();
 
     c.bench_function("Point intersects triangle", |bencher| {
