@@ -208,7 +208,7 @@ where
 {
     // Epsilon must be greater than zero for any meaningful simplification to happen
     if *epsilon <= T::zero() {
-        return orig.0.to_vec();
+        return orig.0.clone();
     }
     let subset = visvalingam_indices(orig, epsilon);
     // filter orig using the indices
@@ -250,7 +250,7 @@ where
                 interiors
                     .iter()
                     .flat_map(|ring| *ring)
-                    .flat_map(|line_string| line_string.lines()),
+                    .flat_map(geo_types::LineString::lines),
             )
             .map(CachedEnvelope::new)
             .collect::<Vec<_>>(),
@@ -265,7 +265,7 @@ where
         for ring in interior_rings {
             rings.push(visvalingam_preserve::<T, INITIAL_MIN, MIN_POINTS>(
                 ring, epsilon, &mut tree,
-            ))
+            ));
         }
     }
     rings
@@ -273,17 +273,16 @@ where
 
 // todo make 3d
 /// Visvalingam-Whyatt with self-intersection detection to preserve topologies
-/// this is a port of the technique at https://www.jasondavies.com/simplify/
-//
-// Constants:
-//
-// * `INITIAL_MIN`
-//   * If we ever have fewer than these, stop immediately
-// * `MIN_POINTS`
-//   * If we detect a self-intersection before point removal, and we only have `MIN_POINTS` left,
-//     stop: since a self-intersection causes removal of the spatially previous point, THAT could
-//     lead to a further self-intersection without the possibility of removing more points,
-//     potentially leaving the geometry in an invalid state.
+/// this is a port of the technique at <https://www.jasondavies.com/simplify/>
+///
+/// ## Constants:
+/// * `INITIAL_MIN`
+///   * If we ever have fewer than these, stop immediately
+/// * `MIN_POINTS`
+///   * If we detect a self-intersection before point removal, and we only have `MIN_POINTS` left,
+///     stop: since a self-intersection causes removal of the spatially previous point, THAT could
+///     lead to a further self-intersection without the possibility of removing more points,
+///     potentially leaving the geometry in an invalid state.
 fn visvalingam_preserve<T, const INITIAL_MIN: usize, const MIN_POINTS: usize>(
     orig: &LineString<T>,
     epsilon: &T,
@@ -293,7 +292,7 @@ where
     T: GeoNum + RTreeNum,
 {
     if orig.0.len() < 3 || *epsilon <= T::zero() {
-        return orig.0.to_vec();
+        return orig.0.clone();
     }
     let max = orig.0.len();
     let mut counter = orig.0.len();

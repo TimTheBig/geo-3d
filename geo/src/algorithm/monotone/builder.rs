@@ -104,7 +104,7 @@ impl<T: GeoNum> Builder<T> {
             .map(|seg| (seg.payload().next_is_inside.get(), seg.payload().help.get()))
             .unwrap_or((false, None));
         debug!("bot region: {:?}", bot_region);
-        debug!("bot segment: {:?}", bot_segment.as_ref().map(|s| s.line()));
+        debug!("bot segment: {:?}", bot_segment.as_ref().map(super::segment::RcSegment::line));
 
         // Step 3. Reduce incoming segments.  Any two consecutive incoming
         // segment that encloses the input region should now complete a
@@ -269,7 +269,7 @@ impl<T: GeoNum> Builder<T> {
                 first.payload().next_is_inside.set(!bot_region);
                 first.payload().chain_idx.set(idx);
                 if let Some(b) = bot_segment {
-                    b.payload().helper_chain.set(Some(idx))
+                    b.payload().helper_chain.set(Some(idx));
                 }
             }
             (Some(idx), Some(jdx)) => {
@@ -295,7 +295,7 @@ impl<T: GeoNum> Builder<T> {
                         .set(Some([idx, jdx]));
                 }
                 if let Some(b) = bot_segment {
-                    b.payload().helper_chain.set(Some(idx))
+                    b.payload().helper_chain.set(Some(idx));
                 }
             }
             _ => unreachable!(),

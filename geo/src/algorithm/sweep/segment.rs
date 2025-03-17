@@ -156,8 +156,8 @@ pub(super) enum SplitSegments<T: GeoNum> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
+    use crate::sweep::SweepPoint;
 
     impl<T: GeoNum> PartialEq for SplitSegments<T> {
         fn eq(&self, other: &Self) -> bool {

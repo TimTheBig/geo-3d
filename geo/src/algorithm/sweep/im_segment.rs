@@ -140,7 +140,7 @@ impl<C: Cross + Clone> IMSegment<C> {
         if let Some(parent) = parent {
             let segment_geom = RefCell::borrow(&segment.inner).geom;
 
-            let mut child = RefCell::borrow(&parent.inner).overlapping.as_ref().cloned();
+            let mut child = RefCell::borrow(&parent.inner).overlapping.clone();
             let mut tgt = Cow::Borrowed(&segment);
 
             while let Some(child_seg) = child {
@@ -159,7 +159,7 @@ impl<C: Cross + Clone> IMSegment<C> {
                 }
 
                 tgt = Cow::Owned(new_segment);
-                child = child_overlapping.as_ref().cloned();
+                child = child_overlapping.clone();
             }
         }
         segment

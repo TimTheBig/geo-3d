@@ -85,13 +85,14 @@ impl<T: GeoNum, P: Debug + Clone> SimpleSweep<T, P> {
     where
         F: FnMut(Event<T, RcSegment<T, P>>),
     {
+        use EventType::{LineLeft, LineRight};
+
         // We may get spurious events from adjusting the line segment.  Ignore.
         if event.point != event.payload.line().left() && event.point != event.payload.line().right()
         {
             return;
         }
 
-        use EventType::{LineLeft, LineRight};
         let segment = &event.payload;
         trace!(
             "handling event: {pt:?} ({ty:?}) @ {seg:?}",

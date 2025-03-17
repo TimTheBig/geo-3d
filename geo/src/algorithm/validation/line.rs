@@ -42,7 +42,7 @@ impl<F: GeoNum> Validation for Line<F> {
             handle_validation_error(InvalidLine::NonFiniteCoord(CoordIndex(1)))?;
         }
         if self.start == self.end {
-            handle_validation_error(InvalidLine::IdenticalCoords)?
+            handle_validation_error(InvalidLine::IdenticalCoords)?;
         }
         Ok(())
     }

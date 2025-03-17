@@ -26,10 +26,10 @@ impl Orientation {
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum Orientation3D {
-    /// CounterClockwise,
+    /// `CounterClockwise`,
     /// a point lies `below` a plane if the plane appears in clockwise order when viewed from below
     Below,
-    /// Clockwise,
+    /// `Clockwise`,
     /// a point lies `above` a plane if the plane appears in counterclockwise order when viewed from above
     Above,
     CoPlanar,
