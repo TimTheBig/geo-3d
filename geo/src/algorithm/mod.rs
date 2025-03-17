@@ -168,14 +168,6 @@ pub use triangulate_delaunay::TriangulateDelaunay;
 mod vector_ops;
 pub use vector_ops::Vector3DOps;
 
-/// Calculate the Vincenty distance between two `Point`s.
-pub mod vincenty_distance;
-pub use vincenty_distance::VincentyDistance;
-
-/// Calculate the Vincenty length of a `LineString`.
-pub mod vincenty_length;
-pub use vincenty_length::VincentyLength;
-
 /// Calculate and work with the winding order of `Linestring`s.
 pub mod winding_order;
 pub use winding_order::Winding;
