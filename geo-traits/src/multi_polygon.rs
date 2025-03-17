@@ -66,7 +66,7 @@ impl<T: CoordNum> MultiPolygonTrait for MultiPolygon<T> {
     }
 
     unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 
@@ -87,7 +87,7 @@ impl<'a, T: CoordNum> MultiPolygonTrait for &'a MultiPolygon<T> {
     }
 
     unsafe fn polygon_unchecked(&self, i: usize) -> Self::PolygonType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 

@@ -67,7 +67,7 @@ impl<T: CoordNum> LineStringTrait for LineString<T> {
     }
 
     unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 
@@ -88,7 +88,7 @@ impl<'a, T: CoordNum> LineStringTrait for &'a LineString<T> {
     }
 
     unsafe fn coord_unchecked(&self, i: usize) -> Self::CoordType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 

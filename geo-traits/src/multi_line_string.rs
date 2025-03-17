@@ -68,7 +68,7 @@ impl<T: CoordNum> MultiLineStringTrait for MultiLineString<T> {
     }
 
     unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 
@@ -89,7 +89,7 @@ impl<'a, T: CoordNum> MultiLineStringTrait for &'a MultiLineString<T> {
     }
 
     unsafe fn line_string_unchecked(&self, i: usize) -> Self::LineStringType<'_> {
-        self.0.get_unchecked(i)
+        unsafe { self.0.get_unchecked(i) }
     }
 }
 
