@@ -75,8 +75,7 @@ impl<T: PartialOrd + Debug> ActiveSet for VecSet<Active<T>> {
     ) -> Option<&Active<Self::Seg>> {
         let segment = Active::active_ref(segment);
         let ub = match self.data.binary_search(segment) {
-            Ok(i) => i,
-            Err(i) => i,
+            Ok(i) | Err(i) => i,
         };
         self.data[..ub].iter().rev().find(|s| f(s))
     }

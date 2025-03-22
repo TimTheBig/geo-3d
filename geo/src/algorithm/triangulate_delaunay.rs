@@ -154,7 +154,7 @@ fn flat_line_string_ddpoints<T: CoordNum + Default>(
             NumCast::from(coord.x).unwrap(),
             NumCast::from(coord.y).unwrap(),
             NumCast::from(coord.z).unwrap(),
-        ]))
+        ]));
     }
 }
 

@@ -49,7 +49,7 @@ where
 
     fn translate_mut(&mut self, x_offset: T, y_offset: T, z_offset: T) {
         let transform = AffineTransform::translate(x_offset, y_offset, z_offset);
-        self.affine_transform_mut(&transform)
+        self.affine_transform_mut(&transform);
     }
 }
 

@@ -148,7 +148,7 @@ impl<T: CoordNum> ProjectToPlane<T> for MultiPoint<T> {
         let plane = to_unit_vec(plane);
 
         for i in 0..self.0.len() {
-            self[i].0 = proj_coord(self[i].0, plane)
+            self[i].0 = proj_coord(self[i].0, plane);
         }
     }
 

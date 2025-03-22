@@ -25,19 +25,13 @@ where
 }
 
 // These impls give us a min-heap
-impl<T> Ord for VScore<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> Ord for VScore<T> {
     fn cmp(&self, other: &VScore<T>) -> Ordering {
         other.area.partial_cmp(&self.area).unwrap()
     }
 }
 
-impl<T> PartialOrd for VScore<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> PartialOrd for VScore<T> {
     fn partial_cmp(&self, other: &VScore<T>) -> Option<Ordering> {
         Some(self.cmp(other))
     }
@@ -197,11 +191,11 @@ fn recompute_triangles<T: CoordNum>(
             right: bi as usize,
             intersector: false,
         };
-        pq.push(v)
+        pq.push(v);
     }
 }
 
-// Wrapper for visvalingam_indices, mapping indices back to points
+/// Wrapper for [`visvalingam_indices`], mapping indices back to points
 fn visvalingam<T>(orig: &LineString<T>, epsilon: &T) -> Vec<Coord<T>>
 where
     T: CoordNum,
@@ -467,6 +461,7 @@ pub trait SimplifyVw<T, Epsilon = T> {
     ///
     /// assert_eq!(expected, simplified);
     /// ```
+    #[must_use]
     fn simplify_vw(&self, epsilon: &T) -> Self
     where
         T: CoordNum;
@@ -582,6 +577,7 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     ///
     /// assert_relative_eq!(expected, simplified, epsilon = 1e-6);
     /// ```
+    #[must_use]
     fn simplify_vw_preserve(&self, epsilon: &T) -> Self
     where
         T: CoordNum + RTreeNum;

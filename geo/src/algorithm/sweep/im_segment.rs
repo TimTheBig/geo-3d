@@ -34,7 +34,7 @@ impl<C: Cross> IMSegment<C> {
         RefCell::borrow(&self.inner).overlapping.is_some()
     }
     pub fn overlap(&self) -> Option<Self> {
-        RefCell::borrow(&self.inner).overlapping.as_ref().cloned()
+        RefCell::borrow(&self.inner).overlapping.clone()
     }
     pub fn is_first_segment(&self) -> bool {
         RefCell::borrow(&self.inner).first_segment
@@ -134,7 +134,7 @@ impl<C: Cross + Clone> IMSegment<C> {
 
         // Push events to process the created segment.
         for e in [segment.left_event(), segment.right_event()] {
-            cb(e)
+            cb(e);
         }
 
         if let Some(parent) = parent {
@@ -162,6 +162,7 @@ impl<C: Cross + Clone> IMSegment<C> {
                 child = child_overlapping.clone();
             }
         }
+
         segment
     }
 

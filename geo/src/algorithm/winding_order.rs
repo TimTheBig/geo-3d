@@ -184,7 +184,7 @@ where
         match K::orientation_3d(self.0[prev], self.0[third], self.0[next], self.0[i]) {
             Orientation3D::Below => Some(WindingOrder::CounterClockwise),
             Orientation3D::Above => Some(WindingOrder::Clockwise),
-            _ => None,
+            Orientation3D::CoPlanar => None,
         }
     }
 
