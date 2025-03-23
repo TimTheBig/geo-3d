@@ -66,10 +66,6 @@ name = "intersection"
 harness = false
 
 [[bench]]
-name = "vincenty_distance"
-harness = false
-
-[[bench]]
 name = "extremes"
 harness = false
 
