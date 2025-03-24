@@ -1,6 +1,6 @@
 /// Creates a [`Point`] from the given coordinates.
 ///
-/// ```no_run
+/// ```ignore
 /// point! { x: <number>, y: <number>, z: <number> }
 /// point!(<coordinate>)
 /// ```
@@ -41,7 +41,7 @@ macro_rules! point {
 
 /// Creates a [`Coord`] from the given scalars.
 ///
-/// ```no_run
+/// ```ignore
 /// coord! { x: <number>, y: <number>, z: <number> }
 /// ```
 ///
@@ -78,7 +78,7 @@ macro_rules! coord {
 
 /// Creates a [`LineString`] containing the given coordinates.
 ///
-/// ```no_run
+/// ```ignore
 /// line_string![Coord OR (x: <number>, y: <number>, z: <number>), …]
 /// ```
 ///
@@ -170,7 +170,7 @@ macro_rules! line_string {
 
 /// Creates a [`Polygon`] containing the given coordinates.
 ///
-/// ```no_run
+/// ```ignore
 /// polygon![Coord OR (x: <number>, y: <number>, z: <number>), …]
 ///
 /// // or

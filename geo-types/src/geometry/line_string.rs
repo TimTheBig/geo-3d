@@ -337,8 +337,9 @@ impl<T: CoordNum> LineString<T> {
     }
 
     /// The 3D eqlivelent of `is_closed`, this is required to calculate volume
+    #[doc(hidden)]
     pub fn is_enclosed(&self) -> bool {
-        todo!("requawer two connections per point for polygon")
+        todo!("require two connections per point for polygon")
     }
 }
 

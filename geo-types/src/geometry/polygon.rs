@@ -1,4 +1,4 @@
-use crate::{coord, CoordNum, LineString, Rect, Triangle};
+use crate::{coord, Coord, CoordNum, Line, LineString, Rect, Triangle};
 use alloc::vec;
 use alloc::vec::Vec;
 
@@ -471,6 +471,45 @@ impl<T: CoordNum> Polygon<T> {
             .chain(shape.iter().map(|p| coord!(p.0, p.1, end_height)))
             .collect();
         Polygon::new(exterior, vec![])
+    }
+
+    // burglarized from [`csgrs`](https://github.com/timschmidt/csgrs)
+    /// Return an iterator over paired vertices each forming an edge of the polygon.
+    pub fn exterior_edges(&self) -> impl Iterator<Item=(&Coord<T>, &Coord<T>)> {
+        self.exterior.0.iter().zip(self.exterior.0.iter().cycle().skip(1))
+    }
+
+    // burglarized from [`csgrs`](https://github.com/timschmidt/csgrs)
+    /// Return an iterator over paired vertices each forming an edge of the polygon.\
+    /// Note: This copies the `Coord`s if you only need a reference to the coords try [`Polygon::exterior_edges`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use geo_types::{coord, Polygon, Line, LineString};
+    /// #
+    /// let polygon = Polygon::new(
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
+    ///     vec![],
+    /// );
+    ///
+    /// let expected_edges = [
+    ///     Line::new(coord!(0., 0., 0.), coord!(1., 1., 1.)),
+    ///     Line::new(coord!(1., 1., 1.), coord!(1., 0., 1.)),
+    ///     Line::new(coord!(1., 0., 1.), coord!(0., 0., 1.)),
+    ///     Line::new(coord!(0., 0., 1.), coord!(0., 0., 0.)),
+    ///     Line::new(coord!(0., 0., 0.), coord!(0., 0., 0.)),
+    /// ];
+    ///
+    /// # assert_eq!(polygon.exterior_lines().collect::<Vec<_>>(), expected_edges);
+    /// ```
+    /// ```ignore
+    ///
+    /// assert_eq!(polygon.exterior_lines(), expected_edges.into_iter());
+    /// ```
+    pub fn exterior_lines(&self) -> impl Iterator<Item=Line<T>> {
+        self.exterior.0.iter().zip(self.exterior.0.iter().cycle().skip(1))
+            .map(|(start, end)| Line::new(*start, *end))
     }
 }
 
