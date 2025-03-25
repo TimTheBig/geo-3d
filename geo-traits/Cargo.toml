@@ -13,6 +13,6 @@ edition = "2024"
 default = ["geo-types"]
 
 [dependencies]
-geo-types = { version = "0.9", optional = true, path = "../geo-types" }
+geo-types = { version = "0.9", optional = true, path = "../geo-types", package = "geo-3d-types"}
 
 [dev-dependencies]

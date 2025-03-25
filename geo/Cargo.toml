@@ -20,7 +20,7 @@ multithreading = ["geo-types/multithreading"]
 
 [dependencies]
 float_next_after = "1.0"
-geo-types = { version = "0.9.0", path = "../geo-types", features = ["approx", "use-rstar"] }
+geo-types = { version = "0.9.0", path = "../geo-types", features = ["approx", "use-rstar"], package = "geo-3d-types" }
 log = "0.4"
 num-traits = "0.2"
 proj = { version = "0.29", optional = true }

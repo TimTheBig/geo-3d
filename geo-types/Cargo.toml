@@ -1,12 +1,12 @@
 [package]
-name = "geo-types"
+name = "geo-3d-types"
 version = "0.9.0"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/TimTheBig/geo-3d"
 documentation = "https://docs.rs/geo-types/"
 readme = "../README.md"
 keywords = ["geo", "3d", "geospatial"]
-description = "Geospatial primitive data types"
+description = "3D geospatial primitive data types"
 edition = "2024"
 
 [features]

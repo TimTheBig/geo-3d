@@ -8,7 +8,6 @@ members = [
 ]
 
 [patch.crates-io]
-
 # Ensure any transitive dependencies also use the local geo/geo-types
 geo = { package = "geo-3d", path = "geo" }
-geo-types = { path = "geo-types" }
+geo-types = { package = "geo-3d-types", path = "geo-types" }

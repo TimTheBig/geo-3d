@@ -6,5 +6,5 @@ publish = false
 
 [dependencies]
 wkt = { version = "0.14", git = "https://github.com/TimTheBig/wkt.git", default-features = false }
-geo-types = { path = "../geo-types" }
+geo-types = { path = "../geo-types", package = "geo-3d-types"}
 num-traits = "0.2"
