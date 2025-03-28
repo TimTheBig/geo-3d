@@ -12,8 +12,7 @@ use crate::{Coord, GeoNum, GeometryCow};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-/// Computes an [`IntersectionMatrix`] describing the topological relationship between two
-/// Geometries.
+/// Computes an [`IntersectionMatrix`] describing the topological relationship between two Geometries.
 ///
 /// `RelateOperation` does not currently support [`GeometryCollection`]s with overlapping Polygons,
 /// and may provide surprising results in that case.
@@ -21,10 +20,7 @@ use std::rc::Rc;
 /// This implementation relies heavily on the functionality of [`GeometryGraph`].
 ///
 /// Based on [JTS's `RelateComputer` as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/operation/relate/RelateComputer.java)
-pub(crate) struct RelateOperation<'a, F>
-where
-    F: GeoNum,
-{
+pub(crate) struct RelateOperation<'a, F: GeoNum> {
     graph_a: GeometryGraph<'a, F>,
     graph_b: GeometryGraph<'a, F>,
     nodes: NodeMap<F, RelateNodeFactory>,
@@ -34,20 +30,14 @@ where
 
 #[derive(PartialEq)]
 pub(crate) struct RelateNodeFactory;
-impl<F> NodeFactory<F> for RelateNodeFactory
-where
-    F: GeoNum,
-{
+impl<F: GeoNum> NodeFactory<F> for RelateNodeFactory {
     type Node = (CoordNode<F>, EdgeEndBundleStar<F>);
     fn create_node(coordinate: Coord<F>) -> Self::Node {
         (CoordNode::new(coordinate), EdgeEndBundleStar::new())
     }
 }
 
-impl<'a, F> RelateOperation<'a, F>
-where
-    F: GeoNum,
-{
+impl<'a, F: GeoNum> RelateOperation<'a, F> {
     pub(crate) const fn new(graph_a: GeometryGraph<'a, F>, graph_b: GeometryGraph<'a, F>) -> Self {
         Self {
             graph_a,

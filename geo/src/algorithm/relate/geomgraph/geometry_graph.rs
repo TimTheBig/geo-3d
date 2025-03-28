@@ -29,10 +29,7 @@ use std::rc::Rc;
 ///
 /// GeometryGraph is based on [JTS's `GeomGraph` as of 1.18.1](https://github.com/locationtech/jts/blob/jts-1.18.1/modules/core/src/main/java/org/locationtech/jts/geomgraph/GeometryGraph.java)
 #[derive(Clone)]
-pub struct GeometryGraph<'a, F>
-where
-    F: GeoNum,
-{
+pub struct GeometryGraph<'a, F: GeoNum> {
     arg_index: usize,
     parent_geometry: GeometryCow<'a, F>,
     tree: Option<Rc<RTree<Segment<F>>>>,
@@ -43,12 +40,9 @@ where
 
 ///  PlanarGraph delegations
 ///
-/// In JTS, which is written in Java, GeometryGraph inherits from PlanarGraph. Here in Rust land we
-/// use composition and delegation to the same effect.
-impl<F> GeometryGraph<'_, F>
-where
-    F: GeoNum,
-{
+/// In JTS, which is written in Java, GeometryGraph inherits from PlanarGraph.
+/// Here in Rust land we use composition and delegation to the same effect.
+impl<F: GeoNum> GeometryGraph<'_, F> {
     pub(crate) fn set_tree(&mut self, tree: Rc<RTree<Segment<F>>>) {
         self.tree = Some(tree);
     }

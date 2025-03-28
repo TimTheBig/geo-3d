@@ -18,11 +18,11 @@ mod relate_operation;
 /// # Examples
 ///
 /// ```
-/// use geo::{coord, Line, Rect, line_string};
-/// use crate::geo::relate::Relate;
+/// # use geo_3d::{coord, Line, Rect, line_string};
+/// use crate::geo_3d::relate::Relate;
 ///
-/// let line = Line::new(coord! { x: 2.0, y: 2.0}, coord! { x: 4.0, y: 4.0 });
-/// let rect = Rect::new(coord! { x: 2.0, y: 2.0}, coord! { x: 4.0, y: 4.0 });
+/// let line = Line::new(coord! { x: 2.0, y: 2.0, z: 2.0 }, coord! { x: 4.0, y: 4.0, z: 4.0 });
+/// let rect = Rect::new(coord! { x: 2.0, y: 2.0, z: 2.0 }, coord! { x: 4.0, y: 4.0, z: 4.0 });
 /// let intersection_matrix = rect.relate(&line);
 ///
 /// assert!(intersection_matrix.is_intersects());
@@ -30,8 +30,8 @@ mod relate_operation;
 /// assert!(intersection_matrix.is_contains());
 /// assert!(!intersection_matrix.is_within());
 ///
-/// let line = Line::new(coord! { x: 1.0, y: 1.0}, coord! { x: 5.0, y: 5.0 });
-/// let rect = Rect::new(coord! { x: 2.0, y: 2.0}, coord! { x: 4.0, y: 4.0 });
+/// let line = Line::new(coord! { x: 1.0, y: 1.0, z: 1.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 });
+/// let rect = Rect::new(coord! { x: 2.0, y: 2.0, z: 2.0 }, coord! { x: 4.0, y: 4.0, z: 4.0 });
 /// let intersection_matrix = rect.relate(&line);
 /// assert!(intersection_matrix.is_intersects());
 /// assert!(!intersection_matrix.is_disjoint());
@@ -39,11 +39,11 @@ mod relate_operation;
 /// assert!(!intersection_matrix.is_within());
 ///
 /// let rect_boundary = line_string![
-///     (x: 2.0, y: 2.0),
-///     (x: 4.0, y: 2.0),
-///     (x: 4.0, y: 4.0),
-///     (x: 2.0, y: 4.0),
-///     (x: 2.0, y: 2.0)
+///     (x: 2.0, y: 2.0, z: 2.0),
+///     (x: 4.0, y: 2.0, z: 4.0),
+///     (x: 4.0, y: 4.0, z: 4.0),
+///     (x: 2.0, y: 4.0, z: 2.0),
+///     (x: 2.0, y: 2.0, z: 2.0)
 /// ];
 /// let intersection_matrix = rect.relate(&rect_boundary);
 /// assert!(intersection_matrix.is_intersects());

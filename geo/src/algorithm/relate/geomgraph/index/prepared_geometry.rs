@@ -13,7 +13,7 @@ use rstar::{RTree, RTreeNum};
 /// multiple topological comparisons against the `PreparedGeometry`.
 ///
 /// ```
-/// use geo::{Relate, PreparedGeometry, wkt};
+/// use geo_3d::{Relate, PreparedGeometry, wkt};
 ///
 /// let polygon = wkt! { POLYGON((2.0 2.0,2.0 6.0,4.0 6.0)) };
 /// let touching_line = wkt! { LINESTRING(0.0 0.0,2.0 2.0) };
