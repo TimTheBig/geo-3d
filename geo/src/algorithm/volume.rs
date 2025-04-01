@@ -56,7 +56,7 @@ impl<T: CoordNum> Volume<T> for Rect<T> {
     }
 }
 
-/// 3D volume of a geometry.
+/// Failible 3D volume of a geometry.
 ///
 /// # Examples
 ///
@@ -90,24 +90,7 @@ where
     fn try_volume(&self) -> Option<T>;
 }
 
-impl<T: CoordNum> TryVolume<T> for Point<T> {
-    fn try_volume(&self) -> Option<T> {
-        None
-    }
-}
-
-impl<T: CoordNum> TryVolume<T> for MultiPoint<T> {
-    fn try_volume(&self) -> Option<T> {
-        None
-    }
-}
-
-impl<T: CoordNum> TryVolume<T> for Rect<T> {
-    fn try_volume(&self) -> Option<T> {
-        Some(self.volume())
-    }
-}
-
+// todo
 impl<T: CoordNum> TryVolume<T> for LineString<T> {
     fn try_volume(&self) -> Option<T> {
         if !self.is_closed() || !self.is_enclosed() {
@@ -146,7 +129,7 @@ mod test {
     fn rect_hull_volume() {
         // inssrue that polygon volume is consistent with rect volume
         assert_eq!(
-            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).try_volume().unwrap(),
+            Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).volume(),
             Rect::new(coord!(-10.0, -10.0, -10.0), coord!(10.0, 10.0, 10.0)).to_polygon().try_volume().unwrap(),
         );
         // this tests to make sure the volume of a convex_hull is smaller

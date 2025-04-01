@@ -27,14 +27,8 @@ use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 pub struct Coord<T: CoordNum = f64> {
     pub x: T,
     pub y: T,
-    #[cfg_attr(feature = "serde", serde(default = "T::zero"), serde(skip_serializing_if = "not_serializable"))]
+    #[cfg_attr(feature = "serde", serde(default = "T::zero"))]
     pub z: T,
-}
-
-/// This help serde to see if the z should be serialized, courntly this only skips zero
-#[cfg(feature = "serde")]
-fn not_serializable<T: CoordNum>(num: &T) -> bool {
-    !num.is_zero()
 }
 
 impl<T: CoordNum> From<(T, T, T)> for Coord<T> {
@@ -106,8 +100,8 @@ impl<T: CoordNum> Coord<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::coord;
-    ///
+    /// # use geo_3d_types::coord;
+    /// #
     /// let c = coord! {
     ///     x: 40.02f64,
     ///     y: 116.34,
@@ -128,8 +122,8 @@ impl<T: CoordNum> Coord<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::coord;
-    ///
+    /// # use geo_3d_types::coord;
+    /// #
     /// let c = coord! {
     ///     x: 40.02f64,
     ///     y: 116.34,
@@ -151,7 +145,7 @@ impl<T: CoordNum> Coord<T> {
     /// # Examples
     ///
     /// ```
-    /// # use geo_types::coord;
+    /// # use geo_3d_types::coord;
     /// # use approx::assert_relative_eq;
     /// let c1 = coord! {
     ///     x: 40.02f64,
@@ -185,8 +179,8 @@ impl<T: CoordNum> Coord<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Coord};
-    ///
+    /// # use geo_3d_types::{coord, Coord};
+    /// #
     /// let coord = coord! { x: 1.5, y: 0.5, z: 8.5 };
     /// let dot = coord.dot(coord! { x: 2.0, y: 4.5, z: 6.3 });
     ///
@@ -199,13 +193,13 @@ impl<T: CoordNum> Coord<T> {
 
 use core::ops::{Add, Div, Mul, Neg, Sub};
 
-/// Negate a coordinate.
+/// Negate a coordinate, fliping the sines of x, y, and z.
 ///
 /// # Examples
 ///
 /// ```
-/// use geo_types::coord;
-///
+/// # use geo_3d_types::coord;
+/// #
 /// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
 /// let q = -p;
 ///
@@ -234,8 +228,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use geo_types::coord;
-///
+/// # use geo_3d_types::coord;
+/// #
 /// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
 /// let q = coord! { x: 1.5, y: 2.5, z: 5.5 };
 /// let sum = p + q;
@@ -262,8 +256,8 @@ impl<T: CoordNum> Add for Coord<T> {
 /// # Examples
 ///
 /// ```
-/// use geo_types::coord;
-///
+/// # use geo_3d_types::coord;
+/// #
 /// let p = coord! { x: 1.5, y: 2.5, z: 5.0 };
 /// let q = coord! { x: 1.25, y: 2.5, z: 5.5 };
 /// let diff = p - q;
@@ -290,8 +284,8 @@ impl<T: CoordNum> Sub for Coord<T> {
 /// # Examples
 ///
 /// ```
-/// use geo_types::coord;
-///
+/// # use geo_3d_types::coord;
+/// #
 /// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
 /// let q = p * 4.;
 ///
@@ -317,8 +311,8 @@ impl<T: CoordNum> Mul<T> for Coord<T> {
 /// # Examples
 ///
 /// ```
-/// use geo_types::coord;
-///
+/// # use geo_3d_types::coord;
+/// #
 /// let p = coord! { x: 5., y: 10., z: 15. };
 /// let q = p / 4.;
 ///
@@ -344,7 +338,7 @@ impl<T: CoordNum> Div<T> for Coord<T> {
 /// # Examples
 ///
 /// ```
-/// # use geo_types::coord;
+/// # use geo_3d_types::coord;
 /// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
 /// let q = p * coord!(4.0, 4.0, 4.0);
 ///
@@ -370,7 +364,7 @@ impl<T: CoordNum> Mul for Coord<T> {
 /// # Examples
 ///
 /// ```
-/// # use geo_types::coord;
+/// # use geo_3d_types::coord;
 /// let p = coord! { x: 1.25, y: 2.5, z: 5.0 };
 /// let q = p / coord!(4.0, 4.0, 2.0);
 ///
@@ -397,7 +391,7 @@ use num_traits::Zero;
 /// # Examples
 ///
 /// ```
-/// use geo_types::Coord;
+/// # use geo_3d_types::Coord;
 /// use num_traits::Zero;
 ///
 /// let p: Coord = Zero::zero(); // or Coord::zero()

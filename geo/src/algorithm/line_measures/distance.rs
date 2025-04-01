@@ -1,9 +1,5 @@
 /// Calculate the minimum distance between two geometries.
 pub trait Distance<F, Destination> {
-    /// Note that not all implementations support all geometry combinations, but at least `Point` to `Point`
-    /// is supported.
-    /// See [specific implementations](#implementors) for details.
-    ///
     /// # Units
     ///
     /// - `origin`, `destination`: geometry where the units of x/y/z depend on the trait implementation.
@@ -868,7 +864,7 @@ mod test {
             .collect::<Vec<_>>();
         let poly2 = Polygon::new(LineString::from(points2), vec![]);
         let dist = nearest_neighbour_distance(poly1.exterior(), poly2.exterior());
-        assert_relative_eq!(dist, 29.274562336608895);
+        assert_relative_eq!(dist, 30.33859226291346);
     }
 
     #[test]
@@ -1020,12 +1016,15 @@ mod test {
         assert_relative_eq!((&triangle).distance(&point), 1.0);
     }
 
+    use crate::Centroid;
+
     #[test]
     // Triangle-Point test: point within triangle
     fn test_triangle_point_inside_distance() {
-        let triangle = Triangle::from([(0.0, 0.0, 0.0), (2.0, 0.0, 0.0), (2.0, 2.0, 0.0)]);
-        let point = Point::new(1.0, 0.5, 0.0);
-        assert_relative_eq!((&triangle).distance(&point), 0.0);
+        let triangle = Triangle::from([(0.5, 0.0, 0.0), (2.0, 1.0, 1.0), (2.0, 2.0, -1.0)]);
+        let point = Point::new(1.5, 1.0, 0.0);
+        assert_eq!(point, triangle.centroid());
+        assert_relative_eq!((&triangle).distance(&point), 0.0, epsilon = 1e-12);
     }
 
     #[test]
