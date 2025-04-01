@@ -304,7 +304,7 @@ impl<T: CoordNum> LineString<T> {
     /// assert_eq!(3, line_string.num_coords());
     /// # }
     /// ```
-    #[deprecated(note = "Use geo::CoordsIter::coords_count instead")]
+    #[deprecated(note = "Use geo_3d::CoordsIter::coords_count instead")]
     pub fn num_coords(&self) -> usize {
         self.0.len()
     }

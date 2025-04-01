@@ -29,8 +29,8 @@ pub use builder::monotone_subdivision;
 /// `Intersects<Coord>` trait.
 ///
 /// ```rust
-/// use geo::prelude::*;
-/// use geo::{polygon, coord};
+/// use geo_3d::prelude::*;
+/// use geo_3d::{polygon, coord};
 ///
 /// let polygon = polygon![
 ///     (x: -2., y: 1., z: -2.),

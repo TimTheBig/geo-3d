@@ -3,7 +3,7 @@
 // you need to temporarily change that to make this benchmark work again.
 //
 // use criterion::{criterion_group, criterion_main, criterion};
-// use geo::stitch::StitchTriangles;
+// use geo_3d::stitch::StitchTriangles;
 //
 // fn criterion_benchmark(c: &mut criterion) {
 //     c.bench_function("stitch", |bencher| {

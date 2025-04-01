@@ -5,7 +5,7 @@ use crate::{Coord, CoordNum, MapCoords};
 /// # Examples
 ///
 /// ```rust
-/// use geo::{Convert, LineString, line_string};
+/// use geo_3d::{Convert, LineString, line_string};
 ///
 /// let line_string_32: LineString<f32> = line_string![
 ///     (x: 5., y: 10., z: 15.),
@@ -42,7 +42,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use geo::{TryConvert, LineString, line_string};
+/// use geo_3d::{TryConvert, LineString, line_string};
 ///
 /// let line_string_64: LineString<f64> = line_string![
 ///     (x: 5., y: 10., z: 15.),

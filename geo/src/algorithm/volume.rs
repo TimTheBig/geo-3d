@@ -7,8 +7,8 @@ use geo_types::{CoordNum, LineString, MultiPoint, MultiPolygon, Point, Polygon, 
 /// # Examples
 ///
 /// ```
-/// use geo::polygon;
-/// use geo::Volume;
+/// use geo_3d::polygon;
+/// use geo_3d::Volume;
 ///
 /// let mut polygon = polygon![
 ///     (x: 0., y: 0., z: 0.),
@@ -61,8 +61,8 @@ impl<T: CoordNum> Volume<T> for Rect<T> {
 /// # Examples
 ///
 /// ```
-/// use geo::polygon;
-/// use geo::Volume;
+/// use geo_3d::polygon;
+/// use geo_3d::Volume;
 ///
 /// let mut polygon = polygon![
 ///     (x: 0., y: 0., z: 0.),

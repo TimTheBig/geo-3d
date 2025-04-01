@@ -15,9 +15,9 @@ pub trait LinesIter<'a> {
     /// # Examples
     ///
     /// ```
-    /// use geo::line_string;
-    /// use geo::lines_iter::LinesIter;
-    /// use geo::{coord, Line};
+    /// use geo_3d::line_string;
+    /// use geo_3d::lines_iter::LinesIter;
+    /// use geo_3d::{coord, Line};
     ///
     /// let ls = line_string![
     ///     (x: 1., y: 2., z: 1.),

@@ -55,7 +55,6 @@ fn proj_coord<T: CoordNum>(c: Coord<T>, plane: Coord<T>) -> Coord<T> {
 }
 
 impl<T: CoordNum> ProjectToPlane<T> for Coord<T> {
-    #[must_use = "Use the projected Coord"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let plane = to_unit_vec(plane);
 
@@ -68,7 +67,6 @@ impl<T: CoordNum> ProjectToPlane<T> for Coord<T> {
 }
 
 impl<T: CoordNum> ProjectToPlane<T> for Point<T> {
-    #[must_use = "Use the projected Point"]
     fn proj(&self, plane: Coord<T>) -> Self {
         Point(self.0.proj(plane))
     }
@@ -81,7 +79,6 @@ impl<T: CoordNum> ProjectToPlane<T> for Point<T> {
 }
 
 impl<T: CoordNum> ProjectToPlane<T> for Line<T> {
-    #[must_use = "Use the projected Line"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let plane = to_unit_vec(plane);
 
@@ -104,7 +101,6 @@ impl<T: CoordNum> ProjectToPlane<T> for LineString<T> {
     ///
     /// Note:
     /// - This allocates a new `Vec` to save an allocation use [`proj_mut`](ProjectToPlane::proj_mut)
-    #[must_use = "Use the projected LineString"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let plane = to_unit_vec(plane);
 
@@ -137,7 +133,6 @@ impl<T: CoordNum> ProjectToPlane<T> for MultiPoint<T> {
     ///
     /// Note:
     /// - This allocates a new `Vec` to save an allocation use [`proj_mut`](ProjectToPlane::proj_mut)
-    #[must_use = "Use the projected MultiPoint"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let plane = to_unit_vec(plane);
 
@@ -166,7 +161,6 @@ impl<T: CoordNum> ProjectToPlane<T> for MultiPoint<T> {
 }
 
 impl<T: CoordNum> ProjectToPlane<T> for Triangle<T> {
-    #[must_use = "Use the projected Triangle"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let plane = to_unit_vec(plane);
 
@@ -191,7 +185,6 @@ impl<T: CoordNum> ProjectToPlane<T> for Polygon<T> {
     ///
     /// Note:
     /// - This allocates a new `Vec` to save an allocation use [`proj_mut`](ProjectToPlane::proj_mut)
-    #[must_use = "Use the projected Polygon"]
     fn proj(&self, plane: Coord<T>) -> Self {
         let mut new_poly = self.clone();
         new_poly.proj_mut(plane);

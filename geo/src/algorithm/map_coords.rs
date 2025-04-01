@@ -155,7 +155,7 @@ pub trait MapCoordsInPlace<T> {
     /// use geo_3d::MapCoordsInPlace;
     /// use geo_3d::Coord;
     ///
-    /// let mut p1 = geo::point!{x: 10f32, y: 20., z: 30.};
+    /// let mut p1 = geo_3d::point!{x: 10f32, y: 20., z: 30.};
     ///
     /// p1.try_map_coords_in_place(|Coord { x, y, z }| -> Result<_, &str> {
     ///     Ok(Coord {
@@ -167,7 +167,7 @@ pub trait MapCoordsInPlace<T> {
     ///
     /// assert_eq!(
     ///     p1,
-    ///     geo::point!{x: 1010f32, y: 40f32, z: 15f32},
+    ///     geo_3d::point!{x: 1010f32, y: 40f32, z: 15f32},
     /// );
     /// # Ok::<(), &str>(())
     /// ```

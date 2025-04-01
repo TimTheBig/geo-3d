@@ -12,8 +12,8 @@ use crate::GeoNum;
 /// # Examples
 ///
 /// ```
-/// use geo::{line_string, polygon};
-/// use geo::ConvexHull;
+/// use geo_3d::{line_string, polygon};
+/// use geo_3d::ConvexHull;
 ///
 /// // an L shape
 /// let poly = polygon![

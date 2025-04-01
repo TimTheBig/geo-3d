@@ -35,8 +35,8 @@ use serde::{Serialize, Deserialize};
 /// A trait to check if a geometry is valid and report the reason(s) of invalidity.
 ///
 /// ```
-/// use geo::algorithm::Validation;
-/// use geo::wkt;
+/// use geo_3d::algorithm::Validation;
+/// use geo_3d::wkt;
 ///
 /// let valid_polygon = wkt!(POLYGON((0. 0., 1. 1., 1. 0., 0. 0.)));
 /// assert!(valid_polygon.is_valid());
@@ -46,7 +46,7 @@ use serde::{Serialize, Deserialize};
 ///
 /// // Get the first validation error, as a `Result`
 /// let validation_error = invalid_polygon.check_validation().unwrap_err();
-/// use geo::algorithm::validation::{InvalidPolygon, RingRole};
+/// use geo_3d::algorithm::validation::{InvalidPolygon, RingRole};
 /// assert_eq!(validation_error, InvalidPolygon::TooFewPointsInRing(RingRole::Exterior));
 ///
 /// // Get a human readable error

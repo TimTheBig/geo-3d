@@ -15,7 +15,7 @@ use std::iter::Sum;
 ///
 /// ```
 /// use geo_types::{line_string, polygon, LineString, Polygon};
-/// use geo::MinimumRotatedRect;
+/// use geo_3d::MinimumRotatedRect;
 /// let poly: Polygon<f64> = polygon![(x: 3.3, y: 30.4, z: 3.3), (x: 1.7, y: 24.6, z: 1.7), (x: 13.4, y: 25.1, z: 13.4), (x: 14.4, y: 31.0, z: 14.4),(x:3.3,y:30.4)];
 /// let mbr = MinimumRotatedRect::minimum_rotated_rect(&poly).unwrap();
 /// assert_eq!(

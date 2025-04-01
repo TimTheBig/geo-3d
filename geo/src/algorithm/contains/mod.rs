@@ -7,8 +7,8 @@
 /// # Examples
 ///
 /// ```
-/// use geo::Contains;
-/// use geo::{line_string, point, Polygon};
+/// use geo_3d::Contains;
+/// use geo_3d::{line_string, point, Polygon};
 ///
 /// let line_string = line_string![
 ///     (x: 0., y: 0., z: 0.),
@@ -45,8 +45,8 @@ pub trait Contains<Rhs = Self> {
 /// # Examples
 ///
 /// ```
-/// use geo::Contains2D;
-/// use geo::{line_string, point, Polygon};
+/// use geo_3d::Contains2D;
+/// use geo_3d::{line_string, point, Polygon};
 ///
 /// let line_string = line_string![
 ///     (x: 0., y: 0., z: 0.),

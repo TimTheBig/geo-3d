@@ -70,8 +70,8 @@ impl<F: CoordNum> Distance<F, Point<F>> for Point<F> {
     ///
     /// # Example
     /// ```
-    /// use geo::{Euclidean, Distance};
-    /// use geo::Point;
+    /// use geo_3d::{Euclidean, Distance};
+    /// use geo_3d::Point;
     /// // web mercator
     /// let new_york_city = Point::new(-8238310.24, 4942194.78);
     /// // web mercator

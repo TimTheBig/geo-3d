@@ -46,8 +46,8 @@ where
 /// # Examples
 ///
 /// ```
-/// use geo::polygon;
-/// use geo::Area;
+/// use geo_3d::polygon;
+/// use geo_3d::Area;
 ///
 /// let mut polygon = polygon![
 ///     (x: 0., y: 0., z: 0.),

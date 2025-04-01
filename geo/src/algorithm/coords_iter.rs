@@ -22,18 +22,18 @@ pub trait CoordsIter {
     /// # Examples
     ///
     /// ```
-    /// use geo::coords_iter::CoordsIter;
+    /// use geo_3d::coords_iter::CoordsIter;
     ///
-    /// let multi_point = geo::MultiPoint::new(vec![
-    ///     geo::point!(x: -10., y: 0., z: 10.),
-    ///     geo::point!(x: 20., y: 20., z: 20.),
-    ///     geo::point!(x: 30., y: 40., z: 50.),
+    /// let multi_point = geo_3d::MultiPoint::new(vec![
+    ///     geo_3d::point!(x: -10., y: 0., z: 10.),
+    ///     geo_3d::point!(x: 20., y: 20., z: 20.),
+    ///     geo_3d::point!(x: 30., y: 40., z: 50.),
     /// ]);
     ///
     /// let mut iter = multi_point.coords_iter();
-    /// assert_eq!(Some(geo::coord! { x: -10., y: 0., z: -10. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 20., y: 20., z: 20. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 30., y: 40., z: 30. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: -10., y: 0., z: -10. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 20., y: 20., z: 20. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 30., y: 40., z: 30. }), iter.next());
     /// assert_eq!(None, iter.next());
     /// ```
     fn coords_iter(&self) -> Self::Iter<'_>;
@@ -43,8 +43,8 @@ pub trait CoordsIter {
     /// # Examples
     ///
     /// ```
-    /// use geo::coords_iter::CoordsIter;
-    /// use geo::line_string;
+    /// use geo_3d::coords_iter::CoordsIter;
+    /// use geo_3d::line_string;
     ///
     /// let ls = line_string![
     ///     (x: 1., y: 2., z: 1.),
@@ -61,8 +61,8 @@ pub trait CoordsIter {
     /// # Examples
     ///
     /// ```
-    /// use geo::coords_iter::CoordsIter;
-    /// use geo::polygon;
+    /// use geo_3d::coords_iter::CoordsIter;
+    /// use geo_3d::polygon;
     ///
     /// // a diamond shape
     /// let polygon = polygon![
@@ -85,11 +85,11 @@ pub trait CoordsIter {
     /// ];
     ///
     /// let mut iter = polygon.exterior_coords_iter();
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 0., z: 1. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 2., y: 1., z: 2. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 2., z: 1. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 0., y: 1., z: 0. }), iter.next());
-    /// assert_eq!(Some(geo::coord! { x: 1., y: 0., z: 1. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 1., y: 0., z: 1. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 2., y: 1., z: 2. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 1., y: 2., z: 1. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 0., y: 1., z: 0. }), iter.next());
+    /// assert_eq!(Some(geo_3d::coord! { x: 1., y: 0., z: 1. }), iter.next());
     /// assert_eq!(None, iter.next());
     /// ```
     fn exterior_coords_iter(&self) -> Self::ExteriorIter<'_>;

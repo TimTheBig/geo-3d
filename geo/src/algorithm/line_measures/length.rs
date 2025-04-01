@@ -5,9 +5,9 @@ use crate::{CoordNum, Line, LineString, MultiLineString};
 ///
 /// # Examples
 /// ```
-/// use geo::algorithm::line_measures::{Length, Euclidean};
+/// use geo_3d::algorithm::line_measures::{Length, Euclidean};
 ///
-/// let line_string = geo::wkt!(LINESTRING(
+/// let line_string = geo_3d::wkt!(LINESTRING(
 ///     0.0 0.0 0.0,
 ///     3.0 4.0 5.0,
 ///     3.0 5.0 7.0

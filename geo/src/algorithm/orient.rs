@@ -11,8 +11,8 @@ pub trait Orient {
     /// # Examples
     ///
     /// ```
-    /// use geo::orient::{Direction, Orient};
-    /// use geo::polygon;
+    /// use geo_3d::orient::{Direction, Orient};
+    /// use geo_3d::polygon;
     ///
     /// // a diamond shape
     /// let polygon = polygon![

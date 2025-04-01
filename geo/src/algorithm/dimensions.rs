@@ -9,7 +9,7 @@ use crate::{CoordNum, GeoNum, GeometryCow};
 ///
 /// ```
 /// use geo_types::{Point, Rect, line_string};
-/// use geo::dimensions::{HasDimensions, Dimensions};
+/// use geo_3d::dimensions::{HasDimensions, Dimensions};
 ///
 /// let point = Point::new(0.0, 5.0, 0.0);
 /// let line_string = line_string![(x: 0.0, y: 0.0, z: 0.0), (x: 5.0, y: 5.0, z: 5.0), (x: 0.0, y: 5.0, z: 0.0)];
@@ -44,7 +44,7 @@ pub trait HasDimensions {
     /// never be considered empty.
     /// ```
     /// use geo_types::{Point, coord, LineString};
-    /// use geo::HasDimensions;
+    /// use geo_3d::HasDimensions;
     ///
     /// let line_string = LineString::new(vec![
     ///     coord! { x: 0., y: 0. },
@@ -69,7 +69,7 @@ pub trait HasDimensions {
     ///
     /// ```
     /// use geo_types::{GeometryCollection, Rect, Point};
-    /// use geo::dimensions::{Dimensions, HasDimensions};
+    /// use geo_3d::dimensions::{Dimensions, HasDimensions};
     ///
     /// // normal rectangle
     /// let rect = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
@@ -103,7 +103,7 @@ pub trait HasDimensions {
     ///
     /// ```
     /// # use geo_types::{GeometryCollection, Rect, Point};
-    /// use geo::dimensions::{Dimensions, HasDimensions};
+    /// use geo_3d::dimensions::{Dimensions, HasDimensions};
     ///
     /// // a point has no boundary
     /// let point = Point::new(10.0, 10.0, 10.0);
@@ -217,7 +217,7 @@ impl<C: CoordNum> HasDimensions for LineString<C> {
 
     /// ```
     /// # use geo_types::line_string;
-    /// use geo::dimensions::{HasDimensions, Dimensions};
+    /// use geo_3d::dimensions::{HasDimensions, Dimensions};
     ///
     /// let ls = line_string![(x: 0.,  y: 0., z: 0.), (x: 0., y: 1., z: 0.), (x: 1., y: 1., z: 1.)];
     /// assert_eq!(Dimensions::ZeroDimensional, ls.boundary_dimensions());

@@ -15,8 +15,8 @@ pub trait FrechetDistance<T, Rhs = Self> {
     /// # Examples
     ///
     /// ```
-    /// use geo::FrechetDistance;
-    /// use geo::line_string;
+    /// use geo_3d::FrechetDistance;
+    /// use geo_3d::line_string;
     ///
     /// let line_string_a = line_string![
     ///     (x: 1., y: 1., z: 1.),

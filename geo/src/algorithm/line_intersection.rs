@@ -47,8 +47,8 @@ impl<F: GeoNum> LineIntersection<F> {
 ///
 /// ```
 /// use geo_types::coord;
-/// use geo::{Line, Coord};
-/// use geo::line_intersection::{line_intersection, LineIntersection};
+/// use geo_3d::{Line, Coord};
+/// use geo_3d::line_intersection::{line_intersection, LineIntersection};
 ///
 /// let line_1 = Line::new(coord! { x: 0.0, y: 0.0, z: 0.0 }, coord! { x: 5.0, y: 5.0, z: 5.0 } );
 /// let line_2 = Line::new(coord! { x: 0.0, y: 5.0, z: 0.0 }, coord! { x: 5.0, y: 0.0, z: 5.0 } );

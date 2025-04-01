@@ -20,8 +20,8 @@ pub trait Rotate<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Rotate;
-    /// use geo::line_string;
+    /// use geo_3d::Rotate;
+    /// use geo_3d::line_string;
     /// use approx::assert_relative_eq;
     ///
     /// let line_string = line_string![
@@ -64,8 +64,8 @@ pub trait Rotate<T: CoordNum> {
     /// # Examples
     ///
     /// ```
-    /// use geo::Rotate;
-    /// use geo::{line_string, point};
+    /// use geo_3d::Rotate;
+    /// use geo_3d::{line_string, point};
     ///
     /// let ls = line_string![
     ///     (x: 0.0, y: 0.0),

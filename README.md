@@ -22,10 +22,10 @@ Please refer to [the documentation](https://docs.rs/geo-3d) for a complete list.
 <!-- todo update -->
 ```rust
 // primitives
-use geo::{line_string, polygon};
+use geo_3d::{line_string, polygon};
 
 // algorithms
-use geo::ConvexHull;
+use geo_3d::ConvexHull;
 
 // An L shape
 let poly = polygon![

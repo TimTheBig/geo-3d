@@ -218,7 +218,7 @@ extern crate approx;
 extern crate log;
 
 /// A prelude which re-exports the traits for manipulating objects in this
-/// crate. Typically imported with `use geo::prelude::*`.
+/// crate. Typically imported with `use geo_3d::prelude::*`.
 pub mod prelude {
     pub use crate::algorithm::*;
 }

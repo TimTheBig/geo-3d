@@ -16,8 +16,8 @@ use crate::GeoNum;
 /// # Examples
 ///
 /// ```
-/// use geo::Centroid;
-/// use geo::{point, polygon};
+/// use geo_3d::Centroid;
+/// use geo_3d::{point, polygon};
 ///
 /// // rhombus shaped polygon
 /// let polygon = polygon![
@@ -41,8 +41,8 @@ pub trait Centroid {
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{line_string, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{line_string, point};
     ///
     /// let line_string = line_string![
     ///     (x: 40.02f64, y: 116.34),
@@ -68,8 +68,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{Line, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{Line, point};
     ///
     /// let line = Line::new(
     ///     point!(x: 1.0f64, y: 3.0, z: 4.0),
@@ -99,8 +99,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{line_string, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{line_string, point};
     ///
     /// let line_string = line_string![
     ///   (x: 1.0f32, y: 1.0, z: 1.0),
@@ -133,8 +133,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{MultiLineString, line_string, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{MultiLineString, line_string, point};
     ///
     /// let multi_line_string = MultiLineString::new(vec![
     ///     // centroid: (2.5, 2.5, 2.5)
@@ -167,8 +167,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{polygon, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{polygon, point};
     ///
     /// let polygon = polygon![
     ///     (x: 0.0f32, y: 0.0, z: 0.0),
@@ -201,8 +201,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{MultiPolygon, polygon, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{MultiPolygon, polygon, point};
     ///
     /// let multi_polygon = MultiPolygon::new(vec![
     ///   // centroid (1.0, 0.5, z: 1.0)
@@ -245,8 +245,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{Rect, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{Rect, point};
     ///
     /// let rect = Rect::new(
     ///   point!(x: 0.0f32, y: 0.0, z: 0.0),
@@ -274,8 +274,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{Triangle, coord, point};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{Triangle, coord, point};
     ///
     /// let triangle = Triangle::new(
     ///   coord!(x: 0.0f32, y: -1.0, z: 0.0),
@@ -308,8 +308,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::point;
+    /// use geo_3d::Centroid;
+    /// use geo_3d::point;
     ///
     /// let point = point!(x: 1.0f32, y: 2.0, z: 3.0);
     ///
@@ -363,8 +363,8 @@ where
         /// # Examples
         ///
         /// ```
-        /// use geo::Centroid;
-        /// use geo::{Geometry, Rect, point};
+        /// use geo_3d::Centroid;
+        /// use geo_3d::{Geometry, Rect, point};
         ///
         /// let rect = Rect::new(
         ///   point!(x: 0.0f32, y: 0.0, z: 0.0),
@@ -401,8 +401,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo::Centroid;
-    /// use geo::{Geometry, GeometryCollection, Rect, Triangle, point, coord};
+    /// use geo_3d::Centroid;
+    /// use geo_3d::{Geometry, GeometryCollection, Rect, Triangle, point, coord};
     ///
     /// let rect_geometry = Geometry::from(Rect::new(
     ///   point!(x: 0.0f32, y: 0.0, z: 0.0),

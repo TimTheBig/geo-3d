@@ -46,8 +46,8 @@ where
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo::OutlierDetection;
-    /// use geo::{point, MultiPoint};
+    /// use geo_3d::OutlierDetection;
+    /// use geo_3d::{point, MultiPoint};
     ///
     /// let v = vec![
     ///     point!(x: 0.0, y: 0.0, z: 0.0),
@@ -65,8 +65,8 @@ where
     ///
     /// ## Computing indices, sorting by LOF score
     ///```
-    /// use geo::OutlierDetection;
-    /// use geo::{point, MultiPoint};
+    /// use geo_3d::OutlierDetection;
+    /// use geo_3d::{point, MultiPoint};
     ///
     /// // these points contain 4 strong outliers
     /// let v = vec![
@@ -121,8 +121,8 @@ where
     ///
     /// # Examples
     ///```
-    /// use geo::OutlierDetection;
-    /// use geo::{point, Point, MultiPoint};
+    /// use geo_3d::OutlierDetection;
+    /// use geo_3d::{point, Point, MultiPoint};
     /// let v: Vec<Point<f64>> = vec![
     ///     point!(x: 0.16, y: 0.14, z: 0.16),
     ///     point!(x: 0.15, y: 0.33, z: 0.15),

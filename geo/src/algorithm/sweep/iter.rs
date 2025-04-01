@@ -74,8 +74,8 @@ impl<C: Cross + Clone> Crossing<C> {
 /// yielded point.
 ///
 /// ```rust,ignore
-/// use geo::Line;
-/// use geo::sweep::CrossingsIter;
+/// use geo_3d::Line;
+/// use geo_3d::sweep::CrossingsIter;
 /// use std::iter::FromIterator;
 /// let input = vec![
 ///     Line::from([(1., 0., 1.), (0., 1., 0.)]),
@@ -181,8 +181,8 @@ where
 /// custom types.
 ///
 /// ```rust
-/// use geo::Line;
-/// use geo::sweep::Intersections;
+/// use geo_3d::Line;
+/// use geo_3d::sweep::Intersections;
 /// use std::iter::FromIterator;
 /// let input = vec![
 ///     Line::from([(1., 0., 1.), (0., 1., 0.)]),

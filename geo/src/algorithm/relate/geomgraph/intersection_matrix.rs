@@ -350,7 +350,7 @@ impl IntersectionMatrix {
     ///
     /// ```
     /// use geo_types::{Polygon, polygon};
-    /// use geo::relate::Relate;
+    /// use geo_3d::relate::Relate;
     ///
     /// let poly1 = polygon![
     ///     (x: 125., y: 179.),
@@ -445,7 +445,7 @@ impl IntersectionMatrix {
     ///
     /// ```
     /// use geo_types::{LineString, line_string, polygon};
-    /// use geo::relate::Relate;
+    /// use geo_3d::relate::Relate;
     ///
     /// let line_string: LineString = line_string![(x: 85.0, y: 194.0), (x: 162.0, y: 135.0)];
     /// let poly = polygon![
@@ -505,7 +505,7 @@ impl IntersectionMatrix {
     ///
     /// ```
     /// use geo_types::{Polygon, polygon};
-    /// use geo::relate::Relate;
+    /// use geo_3d::relate::Relate;
     ///
     /// let poly1 = polygon![
     ///     (x: 125., y: 179.),
@@ -559,7 +559,7 @@ impl IntersectionMatrix {
     ///
     /// ```
     /// use geo_types::{LineString, Rect, line_string};
-    /// use geo::{coordinate_position::CoordPos, dimensions::Dimensions, relate::Relate};
+    /// use geo_3d::{coordinate_position::CoordPos, dimensions::Dimensions, relate::Relate};
     ///
     /// let line_string: LineString = line_string![(x: 0.0, y: 0.0), (x: 10.0, y: 0.0), (x: 5.0, y: 5.0)];
     /// let rect = Rect::new((0.0, 0.0), (5.0, 5.0));
@@ -610,8 +610,8 @@ impl IntersectionMatrix {
     /// - *: matches anything
     ///
     /// ```
-    /// use geo::algorithm::Relate;
-    /// use geo::geometry::Polygon;
+    /// use geo_3d::algorithm::Relate;
+    /// use geo_3d::geometry::Polygon;
     /// use wkt::TryFromWkt;
     ///
     /// let a = Polygon::<f64>::try_from_wkt_str("POLYGON((0 0 0, 4 0 -4, 4 4 4, 0 4 8, 0 0 0))").expect("valid WKT");
@@ -646,7 +646,7 @@ impl IntersectionMatrix {
 
 /// Build an IntersectionMatrix based on a string specification.
 /// ```
-/// use geo::algorithm::relate::IntersectionMatrix;
+/// use geo_3d::algorithm::relate::IntersectionMatrix;
 /// use std::str::FromStr;
 ///
 /// let intersection_matrix = IntersectionMatrix::from_str("212101212").expect("valid DE-9IM specification");

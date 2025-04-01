@@ -440,8 +440,8 @@ pub trait SimplifyVw<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
-    /// use geo::SimplifyVw;
-    /// use geo::line_string;
+    /// use geo_3d::SimplifyVw;
+    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 5.0, y: 2.0, z: 5.0),

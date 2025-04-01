@@ -14,8 +14,8 @@ use std::ops::AddAssign;
 /// # Examples
 ///
 /// ```
-/// use geo::{LineString, point};
-/// use geo::LineLocatePoint;
+/// use geo_3d::{LineString, point};
+/// use geo_3d::LineLocatePoint;
 ///
 /// let linestring: LineString = vec![
 ///     [-1.0, 0.0, 1.0],

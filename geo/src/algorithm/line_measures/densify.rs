@@ -14,8 +14,8 @@ use num_traits::FromPrimitive;
 /// # Examples
 /// ```
 /// # use approx::assert_relative_eq;
-/// use geo::{wkt, Densify};
-/// use geo::line_measures::Euclidean;
+/// use geo_3d::{wkt, Densify};
+/// use geo_3d::line_measures::Euclidean;
 ///
 /// let line_string = wkt!(LINESTRING(0.0 0.0 0.0,0.0 6.0 9.0,1.0 7.0 9.0));
 ///
