@@ -1,7 +1,7 @@
 [package]
 name = "geo-3d"
 description = "3D geospatial primitives and algorithms"
-version = "0.31.0"
+version = "0.31.1"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/TimTheBig/geo-3d"
 documentation = "https://docs.rs/geo-3d/"

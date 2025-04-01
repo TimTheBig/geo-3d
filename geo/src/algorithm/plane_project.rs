@@ -15,6 +15,7 @@ fn to_unit_vec<T: CoordNum>(dir: Coord<T>) -> Coord<T> {
 pub trait ProjectToPlane<T: CoordNum>: Sized {
     /// Project to a plane defined by a normal
     // FOR IMPLEMENTERS: this normal must first be converted to a unit vec
+    #[must_use = "Use the projected Geometry"]
     fn proj(&self, plane: Coord<T>) -> Self;
 
     /// Project to a plane defined by a normal, updating `Self` in place.
