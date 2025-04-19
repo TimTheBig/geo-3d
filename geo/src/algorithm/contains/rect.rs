@@ -1,4 +1,4 @@
-use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
+use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::{geometry::*, Area, CoordsIter, HasDimensions, Intersects};
 use crate::{CoordNum, GeoNum};
 use std::iter::Sum;
@@ -6,6 +6,15 @@ use std::iter::Sum;
 // ┌──────────────────────────┐
 // │ Implementations for Rect │
 // └──────────────────────────┘
+
+impl<T: CoordNum> ContainsXY<Coord<T>> for Rect<T> {
+    fn contains_2d(&self, coord: &Coord<T>) -> bool {
+        coord.x > self.min().x
+            && coord.x < self.max().x
+            && coord.y > self.min().y
+            && coord.y < self.max().y
+    }
+}
 
 impl<T> Contains<Coord<T>> for Rect<T>
 where

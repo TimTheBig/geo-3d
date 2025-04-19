@@ -1,5 +1,5 @@
-use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains};
-use crate::{geometry::*, GeoNum, Vector3DOps};
+use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
+use crate::{geometry::*, GeoNum, Vector3DOps, coord};
 
 // ┌──────────────────────────────┐
 // │ Implementations for Triangle │
@@ -23,6 +23,23 @@ pub(crate) fn barycentric<T: GeoNum>(p: Coord<T>, tri: &Triangle<T>) -> (T, T, T
     let v = invdet * (m13 * b - d * a);
     let w = T::one() - u - v;
     (u, v, w)
+}
+
+impl<T: GeoNum> ContainsXY<Coord<T>> for Triangle<T> {
+    fn contains_2d(&self, coord: &Coord<T>) -> bool {
+        let mut coord = *coord;
+        coord.z = T::zero();
+        let tri_xy = Triangle(
+            coord!(self.0.x, self.0.y, T::zero()),
+            coord!(self.1.x, self.1.y, T::zero()),
+            coord!(self.2.x, self.2.y, T::zero()),
+        );
+
+        // from [maths-rs](https://github.com/polymonster/maths-rs)
+        // True if the coord is inside the triangle
+        let (u, v, w) = barycentric(coord, &tri_xy);
+        u > T::zero() && v > T::zero() && w > T::zero()
+    }
 }
 
 impl<T: GeoNum> Contains<Coord<T>> for Triangle<T> {

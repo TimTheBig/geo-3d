@@ -163,6 +163,46 @@ macro_rules! affine_field_getter {
 }
 
 impl<T: CoordNum> AffineTransform<T> {
+    /// Create a new custom transform matrix
+    ///
+    /// The argument order matches that of the affine transform matrix:
+    ///```ignore
+    /// [[a, b, f, xoff],
+    ///  [d, e, g, yoff],
+    ///  [h, i, j, zoff],
+    ///  [0, 0, 0, 1]] <-- not part of the input arguments
+    /// ```
+    pub fn new(
+        [a, b, f, xoff]: [T; 4],
+        [d, e, g, yoff]: [T; 4],
+        [h, i, j, zoff]: [T; 4],
+    ) -> Self {
+        Self([
+            [a, b, f, xoff],
+            [d, e, g, yoff],
+            [h, i, j, zoff],
+            [T::zero(), T::zero(), T::zero(), T::one()]
+        ])
+    }
+
+    /// Create a new custom transform matrix, with no z transform
+    ///
+    /// The argument order matches that of the affine transform matrix:
+    ///```ignore
+    /// [[a, b, 1, xoff],
+    ///  [d, e, 1, yoff],
+    ///  [h, i, 1, zoff],
+    ///  [0, 0, 0, 1]] <-- not part of the input arguments
+    /// ```
+    pub fn new_2d(a: T, b: T, xoff: T, d: T, e: T, yoff: T) -> Self {
+        Self([
+            [a, b, T::one(), xoff],
+            [d, e, T::one(), yoff],
+            [T::one(), T::one(), T::one(), T::zero()],
+            [T::zero(), T::zero(), T::zero(), T::one()]
+        ])
+    }
+
     /// Create a new affine transformation by composing two `AffineTransform`s.
     ///
     /// This is a **cumulative** operation; the new transform is *added* to the existing transform.
@@ -383,46 +423,6 @@ impl<T: CoordNum> AffineTransform<T> {
             y: self.0[1][0] * coord.x + self.0[1][1] * coord.y + self.0[1][2] * coord.z + self.0[1][3],
             z: self.0[2][0] * coord.x + self.0[2][1] * coord.y + self.0[2][2] * coord.z + self.0[2][3],
         }
-    }
-
-    /// Create a new custom transform matrix
-    ///
-    /// The argument order matches that of the affine transform matrix:
-    ///```ignore
-    /// [[a, b, f, xoff],
-    ///  [d, e, g, yoff],
-    ///  [h, i, j, zoff],
-    ///  [0, 0, 0, 1]] <-- not part of the input arguments
-    /// ```
-    pub fn new(
-        [a, b, f, xoff]: [T; 4],
-        [d, e, g, yoff]: [T; 4],
-        [h, i, j, zoff]: [T; 4],
-    ) -> Self {
-        Self([
-            [a, b, f, xoff],
-            [d, e, g, yoff],
-            [h, i, j, zoff],
-            [T::zero(), T::zero(), T::zero(), T::one()]
-        ])
-    }
-
-    /// Create a new custom transform matrix, with no z transform
-    ///
-    /// The argument order matches that of the affine transform matrix:
-    ///```ignore
-    /// [[a, b, 1, xoff],
-    ///  [d, e, 1, yoff],
-    ///  [h, i, 1, zoff],
-    ///  [0, 0, 0, 1]] <-- not part of the input arguments
-    /// ```
-    pub fn new_2d(a: T, b: T, xoff: T, d: T, e: T, yoff: T) -> Self {
-        Self([
-            [a, b, T::one(), xoff],
-            [d, e, T::one(), yoff],
-            [T::one(), T::one(), T::one(), T::zero()],
-            [T::zero(), T::zero(), T::zero(), T::one()]
-        ])
     }
 
     // See [AffineTransform::new] for these value's roles in the affine transformation.

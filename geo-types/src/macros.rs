@@ -74,6 +74,15 @@ macro_rules! coord {
     ($x:expr, $y:expr, $z:expr) => {
         $crate::Coord { x: $x, y: $y, z: $z }
     };
+    (ZERO) => {
+        $crate::coord!(::num_traits::Zero::zero(), ::num_traits::Zero::zero(), ::num_traits::Zero::zero())
+    };
+    (MAX) => {
+        $crate::coord!(::num_traits::Float::max_value(), ::num_traits::Float::max_value(), ::num_traits::Float::max_value())
+    };
+    (MIN) => {
+        $crate::coord!(::num_traits::Float::min_value(), ::num_traits::Float::min_value(), ::num_traits::Float::min_value())
+    };
 }
 
 /// Creates a [`LineString`] containing the given coordinates.

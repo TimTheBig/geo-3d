@@ -140,7 +140,7 @@ impl<T: CoordNum> Coord<T> {
         (self.x, self.y, self.z)
     }
 
-    /// Get cross product of two `Coord`s.
+    /// Get cross product(`×`) of two `Coord`s.
     ///
     /// # Examples
     ///
@@ -213,6 +213,21 @@ impl<T: CoordNum> Coord<T> {
         (self.x - other.x).abs() < epsilon
         && (self.y - other.y).abs() < epsilon
         && (self.z - other.z).abs() < epsilon
+    }
+    /// Creates a coord with all elements set to `v`.
+    ///
+    /// # Example
+    /// ```
+    /// # use geo_3d_types::Coord;
+    /// #
+    /// let coord = Coord::splat(1.5);
+    ///
+    /// assert_eq!(coord, Coord { x: 1.5, y: 1.5, z: 1.5 });
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn splat(v: T) -> Self {
+        Self { x: v, y: v, z: v }
     }
 }
 

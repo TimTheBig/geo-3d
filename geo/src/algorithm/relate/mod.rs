@@ -54,7 +54,7 @@ mod relate_operation;
 /// ```
 ///
 /// Note: `Relate` must not be called on geometries containing `NaN` coordinates.
-pub trait Relate<F: GeoNum + Default> {
+pub trait Relate<F: GeoNum> {
     /// Construct a [`GeometryGraph`]
     fn geometry_graph(&self, arg_index: usize) -> GeometryGraph<F>;
 
@@ -67,7 +67,7 @@ pub trait Relate<F: GeoNum + Default> {
 macro_rules! relate_impl {
     ($($t:ty ,)*) => {
         $(
-            impl<F: GeoNum + Default> Relate<F> for $t {
+            impl<F: GeoNum> Relate<F> for $t {
                 fn geometry_graph(&self, arg_index: usize) -> GeometryGraph<F> {
                     GeometryGraph::new(arg_index, GeometryCow::from(self))
                 }

@@ -155,16 +155,17 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use geo_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
-    ///     coord! { x: 15., y: 15., z: 15. },
+    ///     coord! { x: 15., y: 10., z: 10. },
     /// );
     ///
     /// assert_eq!(rect.width(), 10.);
     /// ```
+    #[doc(alias = "dx")]
     pub fn width(self) -> T {
         self.max().x - self.min().x
     }
@@ -173,16 +174,17 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use geo_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
-    ///     coord! { x: 15., y: 15., z: 15. },
+    ///     coord! { x: 10., y: 15., z: 10. },
     /// );
     ///
     /// assert_eq!(rect.depth(), 10.);
     /// ```
+    #[doc(alias = "dy")]
     pub fn depth(self) -> T {
         self.max().y - self.min().y
     }
@@ -191,16 +193,17 @@ impl<T: CoordNum> Rect<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```
     /// use geo_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
-    ///     coord! { x: 15., y: 15., z: 15. },
+    ///     coord! { x: 10., y: 10., z: 15. },
     /// );
     ///
     /// assert_eq!(rect.height(), 10.);
     /// ```
+    #[doc(alias = "dz")]
     pub fn height(self) -> T {
         self.max().z - self.min().z
     }
