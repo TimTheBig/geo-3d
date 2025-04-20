@@ -127,6 +127,7 @@ impl<T: GeoNum> IsConvex for LineString<T> {
     }
 }
 
+// todo make 3d
 /// A utility that tests convexity of a sequence of
 /// coordinates. It verifies that for all `0 <= i < n`, the
 /// vertices at positions `i`, `i+1`, `i+2` (mod `n`) have

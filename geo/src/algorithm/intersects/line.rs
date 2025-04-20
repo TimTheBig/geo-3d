@@ -24,6 +24,7 @@ impl<T: CoordNum> Intersects<Coord<T>> for Line<T> {
 symmetric_intersects_impl!(Coord<T>, Line<T>);
 symmetric_intersects_impl!(Line<T>, Point<T>);
 
+// todo make 3d, with a way to get the point of intersection, try liner systems
 impl<T: GeoNum> Intersects<Line<T>> for Line<T> {
     fn intersects(&self, line: &Line<T>) -> bool {
         // Special case: self is equiv. to a point.

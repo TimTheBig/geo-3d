@@ -142,6 +142,7 @@ impl<T: CoordNum> Line<T> {
         }
     }
 
+    // todo check
     /// Calculate the [determinant](https://en.wikipedia.org/wiki/Determinant) of the line in 3D.
     ///
     /// In 3D, the determinant is generalized as the magnitude of the cross product of the

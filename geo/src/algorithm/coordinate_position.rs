@@ -344,7 +344,7 @@ fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: Coord<T>, bounda
 
     let segment = Line::new(
         coord,
-        coord!(T::max_value(), T::max_value(), T::max_value()),
+        coord!(MAX),
     );
 
     // todo it should not be on boundary if it's on inner triangle boundary

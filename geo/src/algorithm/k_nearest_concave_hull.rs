@@ -297,10 +297,7 @@ where
     }
 }
 
-fn intersects<T>(hull: &[Coord<T>], line: &[&Coord<T>; 2]) -> bool
-where
-    T: GeoNum,
-{
+fn intersects<T: GeoNum>(hull: &[Coord<T>], line: &[&Coord<T>; 2]) -> bool {
     // This is the case of finishing the contour.
     if *line[1] == hull[0] {
         return false;
