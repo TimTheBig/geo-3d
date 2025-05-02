@@ -112,7 +112,6 @@ where
 {
     type Output = Option<Rect<T>>;
 
-    ///
     /// Return the BoundingRect for a Polygon
     fn bounding_rect(&self) -> Self::Output {
         let line = self.exterior();

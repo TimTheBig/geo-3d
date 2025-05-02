@@ -66,10 +66,7 @@ where
 // then recalculate the new triangle area and push it onto the heap
 // based on Huon Wilson's original implementation:
 // https://github.com/huonw/isrustfastyet/blob/25e7a68ff26673a8556b170d3c9af52e1c818288/mem/line_simplify.rs
-fn visvalingam_indices<T>(orig: &LineString<T>, epsilon: &T) -> Vec<usize>
-where
-    T: CoordNum,
-{
+fn visvalingam_indices<T: CoordNum>(orig: &LineString<T>, epsilon: &T) -> Vec<usize> {
     // No need to continue without at least three points
     if orig.0.len() < 3 {
         return orig.0.iter().enumerate().map(|(idx, _)| idx).collect();
@@ -136,8 +133,7 @@ where
         recompute_triangles(&smallest, orig, &mut pq, ll, left, right, rr, max, epsilon);
     }
     // Filter out the points that have been deleted, returning remaining point indices
-    orig.0
-        .iter()
+    orig.0.iter()
         .enumerate()
         .zip(adjacent.iter())
         .filter_map(|(tup, adj)| if *adj != (0, 0) { Some(tup.0) } else { None })
@@ -196,10 +192,7 @@ fn recompute_triangles<T: CoordNum>(
 }
 
 /// Wrapper for [`visvalingam_indices`], mapping indices back to points
-fn visvalingam<T>(orig: &LineString<T>, epsilon: &T) -> Vec<Coord<T>>
-where
-    T: CoordNum,
-{
+fn visvalingam<T: CoordNum>(orig: &LineString<T>, epsilon: &T) -> Vec<Coord<T>> {
     // Epsilon must be greater than zero for any meaningful simplification to happen
     if *epsilon <= T::zero() {
         return orig.0.clone();
@@ -207,8 +200,7 @@ where
     let subset = visvalingam_indices(orig, epsilon);
     // filter orig using the indices
     // using get would be more robust here, but the input subset is guaranteed to be valid in this case
-    orig.0
-        .iter()
+    orig.0.iter()
         .zip(subset.iter())
         .map(|(_, s)| orig[*s])
         .collect()
@@ -429,7 +421,7 @@ where
 /// simplified by simplifying all their constituent geometries individually.
 ///
 /// An epsilon less than or equal to zero will return an unaltered version of the geometry.
-pub trait SimplifyVw<T, Epsilon = T> {
+pub trait SimplifyVw<T: CoordNum, Epsilon = T> {
     /// Returns the simplified representation of a geometry, using the [Visvalingam-Whyatt](http://www.tandfonline.com/doi/abs/10.1179/000870493786962263) algorithm
     ///
     /// See [here](https://bost.ocks.org/mike/simplify/) for a graphical explanation
@@ -440,8 +432,8 @@ pub trait SimplifyVw<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
+    /// # use geo_3d::line_string;
     /// use geo_3d::SimplifyVw;
-    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 5.0, y: 2.0, z: 5.0),
@@ -462,9 +454,7 @@ pub trait SimplifyVw<T, Epsilon = T> {
     /// assert_eq!(expected, simplified);
     /// ```
     #[must_use]
-    fn simplify_vw(&self, epsilon: &T) -> Self
-    where
-        T: CoordNum;
+    fn simplify_vw(&self, epsilon: &T) -> Self;
 }
 
 /// Simplifies a geometry, returning the retained _indices_ of the output
@@ -478,7 +468,7 @@ pub trait SimplifyVw<T, Epsilon = T> {
 /// If the area of this triangle is less than `epsilon`, we will remove the point.
 ///
 /// An `epsilon` less than or equal to zero will return an unaltered version of the geometry.
-pub trait SimplifyVwIdx<T, Epsilon = T> {
+pub trait SimplifyVwIdx<T: CoordNum, Epsilon = T> {
     /// Returns the simplified representation of a geometry, using the [Visvalingam-Whyatt](http://www.tandfonline.com/doi/abs/10.1179/000870493786962263) algorithm
     ///
     /// See [here](https://bost.ocks.org/mike/simplify/) for a graphical explanation
@@ -486,8 +476,8 @@ pub trait SimplifyVwIdx<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
+    /// # use geo_3d::line_string;
     /// use geo_3d::SimplifyVwIdx;
-    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 5.0, y: 2.0, z: 5.0),
@@ -507,9 +497,7 @@ pub trait SimplifyVwIdx<T, Epsilon = T> {
     ///
     /// assert_eq!(expected, simplified);
     /// ```
-    fn simplify_vw_idx(&self, epsilon: &T) -> Vec<usize>
-    where
-        T: CoordNum;
+    fn simplify_vw_idx(&self, epsilon: &T) -> Vec<usize>;
 }
 
 /// Simplifies a geometry, attempting to preserve its topology by removing self-intersections
@@ -549,9 +537,9 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     /// # Examples
     ///
     /// ```
-    /// use approx::assert_relative_eq;
+    /// # use approx::assert_relative_eq;
+    /// # use geo_3d::line_string;
     /// use geo_3d::SimplifyVwPreserve;
-    /// use geo_3d::line_string;
     ///
     /// let line_string = line_string![
     ///     (x: 10., y: 60., z: 10.),
@@ -579,14 +567,11 @@ pub trait SimplifyVwPreserve<T, Epsilon = T> {
     /// ```
     #[must_use]
     fn simplify_vw_preserve(&self, epsilon: &T) -> Self
-    where
-        T: CoordNum + RTreeNum;
+    where T: CoordNum + RTreeNum;
 }
 
 impl<T> SimplifyVwPreserve<T> for LineString<T>
-where
-    T: GeoNum + RTreeNum,
-{
+where T: GeoNum + RTreeNum {
     fn simplify_vw_preserve(&self, epsilon: &T) -> LineString<T> {
         let mut simplified = vwp_wrapper::<_, 2, 4>(self, None, epsilon);
         LineString::from(simplified.pop().unwrap())
@@ -594,9 +579,7 @@ where
 }
 
 impl<T> SimplifyVwPreserve<T> for MultiLineString<T>
-where
-    T: GeoNum + RTreeNum,
-{
+where T: GeoNum + RTreeNum {
     fn simplify_vw_preserve(&self, epsilon: &T) -> MultiLineString<T> {
         MultiLineString::new(
             self.0
@@ -608,9 +591,7 @@ where
 }
 
 impl<T> SimplifyVwPreserve<T> for Polygon<T>
-where
-    T: GeoNum + RTreeNum,
-{
+where T: GeoNum + RTreeNum {
     fn simplify_vw_preserve(&self, epsilon: &T) -> Polygon<T> {
         let mut simplified =
         // min_points was formerly 6, but that's too conservative for small polygons
@@ -622,9 +603,7 @@ where
 }
 
 impl<T> SimplifyVwPreserve<T> for MultiPolygon<T>
-where
-    T: GeoNum + RTreeNum,
-{
+where T: GeoNum + RTreeNum {
     fn simplify_vw_preserve(&self, epsilon: &T) -> MultiPolygon<T> {
         MultiPolygon::new(
             self.0
@@ -635,37 +614,25 @@ where
     }
 }
 
-impl<T> SimplifyVw<T> for LineString<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> SimplifyVw<T> for LineString<T> {
     fn simplify_vw(&self, epsilon: &T) -> LineString<T> {
         LineString::from(visvalingam(self, epsilon))
     }
 }
 
-impl<T> SimplifyVwIdx<T> for LineString<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> SimplifyVwIdx<T> for LineString<T> {
     fn simplify_vw_idx(&self, epsilon: &T) -> Vec<usize> {
         visvalingam_indices(self, epsilon)
     }
 }
 
-impl<T> SimplifyVw<T> for MultiLineString<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> SimplifyVw<T> for MultiLineString<T> {
     fn simplify_vw(&self, epsilon: &T) -> MultiLineString<T> {
         MultiLineString::new(self.iter().map(|l| l.simplify_vw(epsilon)).collect())
     }
 }
 
-impl<T> SimplifyVw<T> for Polygon<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> SimplifyVw<T> for Polygon<T> {
     fn simplify_vw(&self, epsilon: &T) -> Polygon<T> {
         Polygon::new(
             self.exterior().simplify_vw(epsilon),
@@ -677,10 +644,7 @@ where
     }
 }
 
-impl<T> SimplifyVw<T> for MultiPolygon<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> SimplifyVw<T> for MultiPolygon<T> {
     fn simplify_vw(&self, epsilon: &T) -> MultiPolygon<T> {
         MultiPolygon::new(self.iter().map(|p| p.simplify_vw(epsilon)).collect())
     }
@@ -736,6 +700,7 @@ mod test {
         let simplified = visvalingam(&ls, &30.);
         assert_eq!(simplified, correct_ls);
     }
+
     #[test]
     fn simple_vwp_test() {
         // this LineString will have a self-intersection if the point with the
@@ -767,6 +732,7 @@ mod test {
         let correct_ls: Vec<_> = correct.iter().map(|e| Coord::from((e.0, e.1, e.2))).collect();
         assert_eq!(simplified[0], correct_ls);
     }
+
     #[test]
     fn retained_vwp_test() {
         // we would expect outer[2] to be removed, as its associated area
@@ -791,6 +757,7 @@ mod test {
         let simplified = poly.simplify_vw_preserve(&95.4);
         assert_relative_eq!(simplified.exterior(), &outer, epsilon = 1e-6);
     }
+
     #[test]
     fn remove_inner_point_vwp_test() {
         // we would expect outer[2] to be removed, as its associated area
@@ -823,6 +790,7 @@ mod test {
         assert_eq!(simplified.exterior(), &outer);
         assert_eq!(simplified.interiors()[0], correct_inner);
     }
+
     #[test]
     fn very_long_vwp_test() {
         // simplify an 8k-point LineString, eliminating self-intersections

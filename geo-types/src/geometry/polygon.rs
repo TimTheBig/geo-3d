@@ -647,7 +647,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Polygon<T> {
 
 #[cfg(feature = "rstar")]
 impl<T> rstar::RTreeObject for Polygon<T>
-    where T: num_traits::Float + rstar::RTreeNum + Default + Default
+    where T: num_traits::Float + rstar::RTreeNum + Default
 {
     type Envelope = rstar::AABB<super::Point<T>>;
 

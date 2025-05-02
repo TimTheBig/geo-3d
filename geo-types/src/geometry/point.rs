@@ -644,7 +644,7 @@ where
 #[cfg(feature = "rstar")]
 impl<T> ::rstar::Point for Point<T>
 where
-    T: num_traits::Float + rstar::RTreeNum + Default + Default,
+    T: num_traits::Float + rstar::RTreeNum + Default,
 {
     type Scalar = T;
 
