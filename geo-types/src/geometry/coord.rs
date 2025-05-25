@@ -190,30 +190,6 @@ impl<T: CoordNum> Coord<T> {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    /// Checks if two `Coord`s are significantly close
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use geo_3d_types::coord;
-    /// #
-    /// let a = coord!(0., 0., 0.);
-    /// let b = coord!(2., 0., 0.);
-    /// let c = coord!(0., 0.000000009, 0.);
-    /// let d = coord!(0., 0.00002, 0.);
-    ///
-    /// assert!(!a.robust_eq(b));
-    /// assert!(a.robust_eq(a));
-    /// assert!(a.robust_eq(c));
-    /// assert!(!a.robust_eq(d));
-    /// ```
-    pub fn robust_eq(&self, other: Coord<T>) -> bool {
-        let epsilon = T::epsilon() + T::epsilon();
-
-        (self.x - other.x).abs() < epsilon
-        && (self.y - other.y).abs() < epsilon
-        && (self.z - other.z).abs() < epsilon
-    }
     /// Creates a coord with all elements set to `v`.
     ///
     /// # Example
