@@ -2,6 +2,9 @@ use crate::{coord, CoordNum, CoordsIter, Polygon, Triangle};
 use d_delaunay::delaunay_core::{Point as DDPoint, Tds, Vertex};
 use geo_types::{Coord, MultiPoint};
 use num_traits::NumCast;
+use voro_rs::prelude::Container0;
+
+use super::{BoundingRect, HasDimensions};
 
 /// Triangulate polygons using an [Delaunay triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation).
 pub trait TriangulateDelaunay<T: CoordNum> {
@@ -82,20 +85,42 @@ pub trait TriangulateDelaunay<T: CoordNum> {
     fn delaunay_triangles_iter(&self) -> impl Iterator<Item = Triangle<T>>;
 }
 
+impl TriangulateDelaunay<f64> for Polygon<f64> {
+    fn delaunay_triangles_iter(&self) -> impl Iterator<Item = Triangle<f64>> {
+        if self.is_empty() {
+            return std::iter::empty::<Triangle<f64>>();
+        }
+        let bounding_rect = self.bounding_rect().expect("is_empty check above");
+
+        let mut container = voro_rs::container::ContainerStd::new(
+            unsafe { core::mem::transmute::<Coord<f64>, [f64; 3]>(bounding_rect.min()) },
+            unsafe { core::mem::transmute::<Coord<f64>, [f64; 3]>(bounding_rect.max()) },
+            [2, 2, 2],
+            [false, false, false],
+        );
+        for (i, coord) in self.rings().flatten().enumerate() {
+            container.put(i, unsafe { core::mem::transmute::<Coord<f64>, [f64; 3]>(*coord) }, 0);
+        }
+
+        container.
+    }
+}
+
 impl<T: CoordNum + Default> TriangulateDelaunay<T> for Polygon<T> {
     fn delaunay_triangles_iter(&self) -> impl Iterator<Item = Triangle<T>> {
-        let cells = Tds::<f64, usize, usize, 3>::new(polygon_to_delaunay_input(self))
-            .bowyer_watson()
-            .unwrap()
-            .cells;
+        if self.is_empty() {
+            return std::iter::empty::<Triangle<T>>();
+        }
 
-        cells.into_iter().map(|cell| {
-            Triangle::new(
-                vertex_to_coord::<T>(cell.1.vertices[0]),
-                vertex_to_coord::<T>(cell.1.vertices[1]),
-                vertex_to_coord::<T>(cell.1.vertices[2]),
-            )
-        })
+        let bounding_rect = self.bounding_rect().expect("is_empty check above");
+        let mut container = voro_rs::container::ContainerStd::new(
+            coord!(bounding_rect.min().x, bounding_rect.min().y, bounding_rect.min().z),
+            coord!(bounding_rect.max().x, bounding_rect.max().y, bounding_rect.max().z),
+            [2, 2, 2],
+            [false, false, false],
+        );
+        for (i, coord) in 
+        container.put(n, xyz, r);
     }
 }
 

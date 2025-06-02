@@ -124,7 +124,7 @@ fn coords_are_equal<T>(c1: &Coord<T>, c2: &Coord<T>) -> bool
 where
     T: GeoNum + RTreeNum,
 {
-    float_equal(c1.x, c2.x) && float_equal(c1.y, c2.y)
+    float_equal(c1.x, c2.x) && float_equal(c1.y, c2.y) && float_equal(c1.z, c2.z)
 }
 
 fn float_equal<T>(a: T, b: T) -> bool
