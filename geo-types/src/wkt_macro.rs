@@ -4,10 +4,10 @@
 /// This is evaluated at compile time, so you don't need to worry about runtime errors from invalid
 /// WKT syntax.
 ///
-/// Note that `POINT EMPTY` is not accepted because it is not representable as a `geo_types::Point`.
+/// Note that `POINT EMPTY` is not accepted because it is not representable as a `geo_3d_types::Point`.
 ///
 /// ```
-/// use geo_types::wkt;
+/// use geo_3d_types::wkt;
 /// let point = wkt! { POINT(1.0 2.0 3.0) };
 /// assert_eq!(point.x(), 1.0);
 /// assert_eq!(point.y(), 2.0);

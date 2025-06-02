@@ -22,7 +22,7 @@ impl<T: CoordNum> Line<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Line};
+    /// use geo_3d_types::{coord, Line};
     ///
     /// let line = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 2., z: 3. });
     ///
@@ -47,7 +47,7 @@ impl<T: CoordNum> Line<T> {
     /// Equivalent to:
     ///
     /// ```rust
-    /// # use geo_types::{Line, point};
+    /// # use geo_3d_types::{Line, point};
     /// let line = Line::new(
     ///     point! { x: 4., y: -12., z: 0. },
     ///     point! { x: 0., y: 9., z: 0. },
@@ -66,7 +66,7 @@ impl<T: CoordNum> Line<T> {
     /// Equivalent to:
     ///
     /// ```rust
-    /// # use geo_types::{Line, point};
+    /// # use geo_3d_types::{Line, point};
     /// let line = Line::new(
     ///     point! { x: 4., y: -12., z: 0. },
     ///     point! { x: 0., y: 9., z: 0. },
@@ -85,7 +85,7 @@ impl<T: CoordNum> Line<T> {
     /// # Examples
     ///
     /// ```rust
-    /// # use geo_types::{Line, point};
+    /// # use geo_3d_types::{Line, point};
     /// let line = Line::new(
     ///     point! { x: 4., y: -12., z: 0.3 },
     ///     point! { x: 0., y: 9., z: 1. },
@@ -108,7 +108,7 @@ impl<T: CoordNum> Line<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{Line, point};
+    /// use geo_3d_types::{Line, point};
     ///
     /// // A line with a steep vertical displacement
     /// let line1 = Line::new(
@@ -152,7 +152,7 @@ impl<T: CoordNum> Line<T> {
     /// # Example
     ///
     /// ```rust
-    /// # use geo_types::{Line, point};
+    /// # use geo_3d_types::{Line, point};
     /// # let line = Line::new(
     /// #     point! { x: 4., y: -12., z: 4. },
     /// #     point! { x: 0., y: 9., z: 0. },
@@ -203,7 +203,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Line};
+    /// use geo_3d_types::{coord, Line};
     ///
     /// let a = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. });
     /// let b = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1.001, y: 1., z: 1. });
@@ -236,7 +236,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for Line<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Line};
+    /// use geo_3d_types::{coord, Line};
     ///
     /// let a = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1., y: 1., z: 1. });
     /// let b = Line::new(coord! { x: 0., y: 0., z: 0. }, coord! { x: 1.001, y: 1., z: 1. });

@@ -10,7 +10,7 @@
 /// Creating a [`Point`], supplying x/y/z values:
 ///
 /// ```
-/// use geo_types::{point, coord};
+/// use geo_3d_types::{point, coord};
 ///
 /// let p = point! { x: 181.2, y: 51.79, z: 72.52 };
 ///
@@ -50,13 +50,13 @@ macro_rules! point {
 /// Creating a [`Coord`], supplying x/y/z values:
 ///
 /// ```
-/// use geo_types::coord;
+/// use geo_3d_types::coord;
 ///
 /// let c = coord! { x: 181.2, y: 51.79, z: 82.916 };
 /// let c1 = coord!(181.2, 51.79, 82.916);
 ///
-/// assert_eq!(c, geo_types::coord! { x: 181.2, y: 51.79, z: 82.916 });
-/// assert_eq!(c1, geo_types::coord! { x: 181.2, y: 51.79, z: 82.916 });
+/// assert_eq!(c, geo_3d_types::coord! { x: 181.2, y: 51.79, z: 82.916 });
+/// assert_eq!(c1, geo_3d_types::coord! { x: 181.2, y: 51.79, z: 82.916 });
 /// ```
 ///
 /// [`Coord`]: ./struct.Coord.html
@@ -96,7 +96,7 @@ macro_rules! coord {
 /// Creating a [`LineString`], supplying x/y/z values:
 ///
 /// ```
-/// use geo_types::line_string;
+/// use geo_3d_types::line_string;
 ///
 /// let ls = line_string![
 ///     (x: -21.95156, y: 64.1446, z: 82.074),
@@ -105,7 +105,7 @@ macro_rules! coord {
 ///     (x: -21.951445, y: 64.145508, z: 82.07424),
 /// ];
 ///
-/// assert_eq!(ls[1], geo_types::coord! {
+/// assert_eq!(ls[1], geo_3d_types::coord! {
 ///     x: -21.951,
 ///     y: 64.14479,
 ///     z: 82.07814,
@@ -115,24 +115,24 @@ macro_rules! coord {
 /// Creating a [`LineString`], supplying [`Coord`]s:
 ///
 /// ```
-/// use geo_types::line_string;
+/// use geo_3d_types::line_string;
 ///
-/// let coord1 = geo_types::coord! {
+/// let coord1 = geo_3d_types::coord! {
 ///     x: -21.95156,
 ///     y: 64.1446,
 ///     z: 82.074,
 /// };
-/// let coord2 = geo_types::coord! {
+/// let coord2 = geo_3d_types::coord! {
 ///     x: -21.951,
 ///     y: 64.14479,
 ///     z: 82.07814,
 /// };
-/// let coord3 = geo_types::coord! {
+/// let coord3 = geo_3d_types::coord! {
 ///     x: -21.95044,
 ///     y: 64.14527,
 ///     z: 82.941,
 /// };
-/// let coord4 = geo_types::coord! {
+/// let coord4 = geo_3d_types::coord! {
 ///     x: -21.951445,
 ///     y: 64.145508,
 ///     z: 82.07424,
@@ -142,7 +142,7 @@ macro_rules! coord {
 ///
 /// assert_eq!(
 ///     ls[1],
-///     geo_types::coord! {
+///     geo_3d_types::coord! {
 ///         x: -21.951,
 ///         y: 64.14479,
 ///         z: 82.07814,
@@ -198,7 +198,7 @@ macro_rules! line_string {
 /// Creating a [`Polygon`] without interior rings, supplying x/y/z values:
 ///
 /// ```
-/// use geo_types::polygon;
+/// use geo_3d_types::polygon;
 ///
 /// let poly = polygon![
 ///     (x: -111., y: 45., z: 8.4),
@@ -209,14 +209,14 @@ macro_rules! line_string {
 ///
 /// assert_eq!(
 ///     poly.exterior()[1],
-///     geo_types::coord! { x: -111., y: 41., z: 8.8 },
+///     geo_3d_types::coord! { x: -111., y: 41., z: 8.8 },
 /// );
 /// ```
 ///
 /// Creating a [`Polygon`], supplying x/y/z values:
 ///
 /// ```
-/// use geo_types::polygon;
+/// use geo_3d_types::polygon;
 ///
 /// let poly = polygon!(
 ///     exterior: [
@@ -237,7 +237,7 @@ macro_rules! line_string {
 ///
 /// assert_eq!(
 ///     poly.exterior()[1],
-///     geo_types::coord! { x: -111., y: 41., z: 8.3 },
+///     geo_3d_types::coord! { x: -111., y: 41., z: 8.3 },
 /// );
 /// ```
 ///

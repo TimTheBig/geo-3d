@@ -35,46 +35,46 @@ use core::ops::{Index, IndexMut};
 /// Create a [`LineString`] by calling it directly:
 ///
 /// ```
-/// use geo_types::{coord, LineString};
+/// use geo_3d_types::{coord, LineString};
 ///
 /// let line_string = LineString::new(vec![
-///     coord! { x: 0., y: 0. },
-///     coord! { x: 10., y: 0. },
+///     coord! { x: 0., y: 0., z: 0. },
+///     coord! { x: 10., y: 0., z: 10. },
 /// ]);
 /// ```
 ///
 /// Create a [`LineString`] with the [`line_string!`][`crate::line_string!`] macro:
 ///
 /// ```
-/// use geo_types::line_string;
+/// use geo_3d_types::line_string;
 ///
 /// let line_string = line_string![
-///     (x: 0., y: 0.),
-///     (x: 10., y: 0.),
+///     (x: 0., y: 0., z: 0.),
+///     (x: 10., y: 0., z: 10.),
 /// ];
 /// ```
 ///
 /// By converting from a [`Vec`] of coordinate-like things:
 ///
 /// ```
-/// use geo_types::LineString;
+/// use geo_3d_types::LineString;
 ///
-/// let line_string: LineString<f32> = vec![(0., 0.), (10., 0.)].into();
+/// let line_string: LineString<f32> = vec![(0., 0., 0.), (10., 0., 10.)].into();
 /// ```
 ///
 /// ```
-/// use geo_types::LineString;
+/// use geo_3d_types::LineString;
 ///
-/// let line_string: LineString = vec![[0., 0.], [10., 0.]].into();
+/// let line_string: LineString = vec![[0., 0., 0.], [10., 0., 10.]].into();
 /// ```
 //
 /// Or by `collect`ing from a [`Coord`] iterator
 ///
 /// ```
-/// use geo_types::{coord, LineString};
+/// use geo_3d_types::{coord, LineString};
 ///
 /// let mut coords_iter =
-///     vec![coord! { x: 0., y: 0. }, coord! { x: 10., y: 0. }].into_iter();
+///     vec![coord! { x: 0., y: 0., z: 0. }, coord! { x: 10., y: 0., z: 10. }].into_iter();
 ///
 /// let line_string: LineString<f32> = coords_iter.collect();
 /// ```
@@ -83,11 +83,11 @@ use core::ops::{Index, IndexMut};
 /// [`LineString`] provides five iterators: [`coords`](LineString::coords), [`coords_mut`](LineString::coords_mut), [`points`](LineString::points), [`lines`](LineString::lines), and [`triangles`](LineString::triangles):
 ///
 /// ```
-/// use geo_types::{coord, LineString};
+/// use geo_3d_types::{coord, LineString};
 ///
 /// let line_string = LineString::new(vec![
-///     coord! { x: 0., y: 0. },
-///     coord! { x: 10., y: 0. },
+///     coord! { x: 0., y: 0., z: 0. },
+///     coord! { x: 10., y: 0., z: 10. },
 /// ]);
 ///
 /// line_string.coords().for_each(|coord| println!("{:?}", coord));
@@ -100,7 +100,7 @@ use core::ops::{Index, IndexMut};
 /// Note that its [`IntoIterator`] impl yields [`Coord`]s when looping:
 ///
 /// ```
-/// use geo_types::{coord, LineString};
+/// use geo_3d_types::{coord, LineString};
 ///
 /// let line_string = LineString::new(vec![
 ///     coord! { x: 0., y: 0. },
@@ -120,7 +120,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// You can decompose a [`LineString`] into a [`Vec`] of [`Coord`]s or [`Point`]s:
 /// ```
-/// use geo_types::{coord, LineString, Point};
+/// use geo_3d_types::{coord, LineString, Point};
 ///
 /// let line_string = LineString::new(vec![
 ///     coord! { x: 0., y: 0. },
@@ -235,23 +235,23 @@ impl<T: CoordNum> LineString<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Line, LineString};
+    /// use geo_3d_types::{coord, Line, LineString};
     ///
-    /// let mut coords = vec![(0., 0.), (5., 0.), (7., 9.)];
+    /// let mut coords = vec![(0., 0., 0.), (5., 0., 5.), (7., 9., 7.)];
     /// let line_string: LineString<f32> = coords.into_iter().collect();
     ///
     /// let mut lines = line_string.lines();
     /// assert_eq!(
     ///     Some(Line::new(
-    ///         coord! { x: 0., y: 0. },
-    ///         coord! { x: 5., y: 0. }
+    ///         coord! { x: 0., y: 0., z: 0. },
+    ///         coord! { x: 5., y: 0., z: 5. }
     ///     )),
     ///     lines.next()
     /// );
     /// assert_eq!(
     ///     Some(Line::new(
-    ///         coord! { x: 5., y: 0. },
-    ///         coord! { x: 7., y: 9. }
+    ///         coord! { x: 5., y: 0., z: 5. },
+    ///         coord! { x: 7., y: 9., z: 7. }
     ///     )),
     ///     lines.next()
     /// );
@@ -294,9 +294,9 @@ impl<T: CoordNum> LineString<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::LineString;
+    /// use geo_3d_types::LineString;
     ///
-    /// let mut coords = vec![(0., 0.), (5., 0.), (7., 9.)];
+    /// let mut coords = vec![(0., 0., 0.), (5., 0., 5.), (7., 9., 7.)];
     /// let line_string: LineString<f32> = coords.into_iter().collect();
     ///
     /// # #[allow(deprecated)]
@@ -316,9 +316,9 @@ impl<T: CoordNum> LineString<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::LineString;
+    /// use geo_3d_types::LineString;
     ///
-    /// let mut coords = vec![(0., 0.), (5., 0.), (0., 0.)];
+    /// let mut coords = vec![(0., 0., 0.), (5., 0., 5.), (0., 0., 0.)];
     /// let line_string: LineString<f32> = coords.into_iter().collect();
     /// assert!(line_string.is_closed());
     /// ```
@@ -346,7 +346,10 @@ impl<T: CoordNum> LineString<T> {
 /// Turn a [`Vec`] of [`Point`]-like objects into a [`LineString`].
 impl<T: CoordNum, IC: Into<Coord<T>>> From<Vec<IC>> for LineString<T> {
     fn from(v: Vec<IC>) -> Self {
-        Self(v.into_iter().map(|c| c.into()).collect())
+        let mut ls = Self(v.into_iter().map(|c| c.into()).collect());
+        ls.close();
+
+        ls
     }
 }
 
@@ -358,14 +361,17 @@ impl<T: CoordNum> From<Line<T>> for LineString<T> {
 
 impl<T: CoordNum> From<&Line<T>> for LineString<T> {
     fn from(line: &Line<T>) -> Self {
-        Self(vec![line.start, line.end])
+        Self(vec![line.start, line.end, line.start])
     }
 }
 
 /// Turn an iterator of [`Point`]-like objects into a [`LineString`].
 impl<T: CoordNum, IC: Into<Coord<T>>> FromIterator<IC> for LineString<T> {
     fn from_iter<I: IntoIterator<Item = IC>>(iter: I) -> Self {
-        Self(iter.into_iter().map(|c| c.into()).collect())
+        let mut ls = Self(iter.into_iter().map(|c| c.into()).collect());
+        ls.close();
+
+        ls
     }
 }
 
@@ -427,7 +433,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::LineString;
+    /// use geo_3d_types::LineString;
     ///
     /// let mut coords_a = vec![(0., 0.), (5., 0.), (7., 9.)];
     /// let a: LineString<f32> = coords_a.into_iter().collect();
@@ -473,7 +479,7 @@ impl<T: AbsDiffEq<Epsilon = T> + CoordNum> AbsDiffEq for LineString<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::LineString;
+    /// use geo_3d_types::LineString;
     ///
     /// let mut coords_a = vec![(0., 0.), (5., 0.), (7., 9.)];
     /// let a: LineString<f32> = coords_a.into_iter().collect();

@@ -23,18 +23,18 @@ use approx::{AbsDiffEq, RelativeEq};
 /// # Examples
 ///
 /// ```
-/// use geo_types::{coord, Rect};
+/// use geo_3d_types::{coord, Rect};
 ///
 /// let rect = Rect::new(
-///     coord! { x: 0., y: 4., z: 0.1 },
-///     coord! { x: 3., y: 10., z: 0.2 },
+///     coord! { x: 0.0, y: 4.0, z: 1.0 },
+///     coord! { x: 3.0, y: 10.0, z: 2.0 },
 /// );
 ///
-/// assert_eq!(3., rect.width());
-/// assert_eq!(6., rect.depth());
-/// assert_eq!(0.1, rect.height());
+/// assert_eq!(3.0, rect.width());
+/// assert_eq!(6.0, rect.depth());
+/// assert_eq!(1.0, rect.height());
 /// assert_eq!(
-///     coord! { x: 1.5, y: 7., z: 0.1 },
+///     coord! { x: 1.5, y: 7., z: 1.5 },
 ///     rect.center()
 /// );
 /// ```
@@ -51,14 +51,14 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 10., y: 20., z: 30. },
     ///     coord! { x: 30., y: 20., z: 10. }
     /// );
-    /// assert_eq!(rect.min(), coord! { x: 10., y: 10., z: 10. });
-    /// assert_eq!(rect.max(), coord! { x: 30., y: 20., z: 10. });
+    /// assert_eq!(rect.min(), coord! { x: 10., y: 20., z: 10. });
+    /// assert_eq!(rect.max(), coord! { x: 30., y: 20., z: 30. });
     /// ```
     pub fn new<C>(c1: C, c2: C) -> Self
     where
@@ -94,7 +94,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -125,7 +125,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -156,7 +156,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -175,7 +175,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -194,7 +194,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -213,7 +213,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{coord, Rect, polygon};
+    /// use geo_3d_types::{coord, Rect, polygon};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 0., y: 0., z: 0. },
@@ -325,24 +325,24 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// let rect = geo_types::Rect::new(
-    ///     geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///     geo_types::coord! { x: 4., y: 4., z: 4. },
+    /// let rect = geo_3d_types::Rect::new(
+    ///     geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///     geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     /// );
     ///
     /// let [rect1, rect2] = rect.split_x();
     ///
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///         geo_types::coord! { x: 2., y: 4., z: 4. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///         geo_3d_types::coord! { x: 2., y: 4., z: 4. },
     ///     ),
     ///     rect1,
     /// );
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 2., y: 0., z: 0. },
-    ///         geo_types::coord! { x: 4., y: 4., z: 4. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 2., y: 0., z: 0. },
+    ///         geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     ///     ),
     ///     rect2,
     /// );
@@ -361,24 +361,24 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// let rect = geo_types::Rect::new(
-    ///     geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///     geo_types::coord! { x: 4., y: 4., z: 4. },
+    /// let rect = geo_3d_types::Rect::new(
+    ///     geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///     geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     /// );
     ///
     /// let [rect1, rect2] = rect.split_y();
     ///
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///         geo_types::coord! { x: 4., y: 2., z: 4. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///         geo_3d_types::coord! { x: 4., y: 2., z: 4. },
     ///     ),
     ///     rect1,
     /// );
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 2., z: 0. },
-    ///         geo_types::coord! { x: 4., y: 4., z: 4. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 0., y: 2., z: 0. },
+    ///         geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     ///     ),
     ///     rect2,
     /// );
@@ -397,24 +397,24 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```
-    /// let rect = geo_types::Rect::new(
-    ///     geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///     geo_types::coord! { x: 4., y: 4., z: 4. },
+    /// let rect = geo_3d_types::Rect::new(
+    ///     geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///     geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     /// );
     ///
     /// let [rect1, rect2] = rect.split_z();
     ///
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 0., z: 0. },
-    ///         geo_types::coord! { x: 4., y: 4., z: 2. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 0., y: 0., z: 0. },
+    ///         geo_3d_types::coord! { x: 4., y: 4., z: 2. },
     ///     ),
     ///     rect1,
     /// );
     /// assert_eq!(
-    ///     geo_types::Rect::new(
-    ///         geo_types::coord! { x: 0., y: 0., z: 2. },
-    ///         geo_types::coord! { x: 4., y: 4., z: 4. },
+    ///     geo_3d_types::Rect::new(
+    ///         geo_3d_types::coord! { x: 0., y: 0., z: 2. },
+    ///         geo_3d_types::coord! { x: 4., y: 4., z: 4. },
     ///     ),
     ///     rect2,
     /// );
@@ -445,7 +445,7 @@ impl<T: CoordNum> Rect<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{coord, Rect};
+    /// use geo_3d_types::{coord, Rect};
     ///
     /// let rect = Rect::new(
     ///     coord! { x: 5., y: 5., z: 5. },
@@ -482,7 +482,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Rect;
+    /// use geo_3d_types::Rect;
     ///
     /// let a = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
     /// let b = Rect::new((0.0, 0.0, 0.0), (10.01, 10.0, 10.0));
@@ -527,7 +527,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{point, Rect};
+    /// use geo_3d_types::{point, Rect};
     ///
     /// let a = Rect::new((0.0, 0.0, 0.0), (10.0, 10.0, 10.0));
     /// let b = Rect::new((0.0, 0.0, 0.0), (10.01, 10.0, 10.0));

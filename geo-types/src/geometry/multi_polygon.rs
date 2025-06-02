@@ -144,7 +144,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{polygon, Polygon, MultiPolygon};
+    /// use geo_3d_types::{polygon, Polygon, MultiPolygon};
     ///
     /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 0.5), (x: 0., y: 0., z: 0.)];
     /// let a = MultiPolygon::new(vec![a_el]);
@@ -188,7 +188,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{polygon, Polygon, MultiPolygon};
+    /// use geo_3d_types::{polygon, Polygon, MultiPolygon};
     ///
     /// let a_el: Polygon<f32> = polygon![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 7., y: 9., z: 0.5), (x: 0., y: 0., z: 0.)];
     /// let a = MultiPolygon::new(vec![a_el]);

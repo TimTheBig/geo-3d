@@ -27,7 +27,7 @@ use rayon::prelude::*;
 /// Iterating over a `MultiPoint` yields the `Point`s inside.
 ///
 /// ```
-/// use geo_types::{MultiPoint, Point};
+/// use geo_3d_types::{MultiPoint, Point};
 /// let points: MultiPoint<_> = vec![(0., 0., 0.), (1., 2., 3.)].into();
 /// for point in points {
 ///     println!("Point x = {}, y = {}, z = {}", point.x(), point.y(), point.z());
@@ -169,8 +169,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::MultiPoint;
-    /// use geo_types::point;
+    /// use geo_3d_types::MultiPoint;
+    /// use geo_3d_types::point;
     ///
     /// let a = MultiPoint::new(vec![point![x: 0., y: 0.], point![x: 10., y: 10.]]);
     /// let b = MultiPoint::new(vec![point![x: 0., y: 0.], point![x: 10.001, y: 10.]]);
@@ -211,8 +211,8 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::MultiPoint;
-    /// use geo_types::point;
+    /// use geo_3d_types::MultiPoint;
+    /// use geo_3d_types::point;
     ///
     /// let a = MultiPoint::new(vec![point![x: 0., y: 0.], point![x: 10., y: 10.]]);
     /// let b = MultiPoint::new(vec![point![x: 0., y: 0.], point![x: 10.001, y: 10.]]);

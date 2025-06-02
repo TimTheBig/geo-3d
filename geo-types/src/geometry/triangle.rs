@@ -34,7 +34,7 @@ impl<T: CoordNum> Triangle<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use geo_types::{coord, Triangle, polygon};
+    /// use geo_3d_types::{coord, Triangle, polygon};
     ///
     /// let triangle = Triangle::new(
     ///     coord! { x: 0., y: 0., z: 0. },
@@ -90,7 +90,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{point, Triangle};
+    /// use geo_3d_types::{point, Triangle};
     ///
     /// let a = Triangle::new((0.0, 0.0, 0.0).into(), (10.0, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
     /// let b = Triangle::new((0.0, 0.0, 0.0).into(), (10.01, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
@@ -137,7 +137,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{point, Triangle};
+    /// use geo_3d_types::{point, Triangle};
     ///
     /// let a = Triangle::new((0.0, 0.0, 0.0).into(), (10.0, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());
     /// let b = Triangle::new((0.0, 0.0, 0.0).into(), (10.01, 10.0, 10.0).into(), (0.0, 5.0, 0.0).into());

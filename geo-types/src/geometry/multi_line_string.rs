@@ -51,12 +51,12 @@ impl<T: CoordNum> MultiLineString<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{MultiLineString, LineString, line_string};
+    /// use geo_3d_types::{MultiLineString, LineString, line_string};
     ///
-    /// let open_line_string: LineString<f32> = line_string![(x: 0., y: 0.), (x: 5., y: 0.)];
+    /// let open_line_string: LineString<f32> = line_string![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.)];
     /// assert!(!MultiLineString::new(vec![open_line_string.clone()]).is_closed());
     ///
-    /// let closed_line_string: LineString<f32> = line_string![(x: 0., y: 0.), (x: 5., y: 0.), (x: 0., y: 0.)];
+    /// let closed_line_string: LineString<f32> = line_string![(x: 0., y: 0., z: 0.), (x: 5., y: 0., z: 5.), (x: 0., y: 0., z: 0.)];
     /// assert!(MultiLineString::new(vec![closed_line_string.clone()]).is_closed());
     ///
     /// // MultiLineString is not closed if *any* of it's LineStrings are not closed
@@ -165,7 +165,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{MultiLineString, line_string};
+    /// use geo_3d_types::{MultiLineString, line_string};
     ///
     /// let a = MultiLineString::new(vec![line_string![(x: 0., y: 0.), (x: 10., y: 10.)]]);
     /// let b = MultiLineString::new(vec![line_string![(x: 0., y: 0.), (x: 10.01, y: 10.)]]);
@@ -207,7 +207,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{MultiLineString, line_string};
+    /// use geo_3d_types::{MultiLineString, line_string};
     ///
     /// let a = MultiLineString::new(vec![line_string![(x: 0., y: 0.), (x: 10., y: 10.)]]);
     /// let b = MultiLineString::new(vec![line_string![(x: 0., y: 0.), (x: 10.01, y: 10.)]]);

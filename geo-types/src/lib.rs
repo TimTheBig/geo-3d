@@ -29,7 +29,7 @@
 //! By default, coordinates are 64-bit floating point numbers, but this is generic, and you may specify any numeric type that implements [`CoordNum`] or [`CoordNum`]. As well as [`f64`], this includes common numeric types like [`f32`], [`i32`], [`i64`], etc.
 //!
 //! ```rust
-//! use geo_types::Point;
+//! use geo_3d_types::Point;
 //!
 //! // Geometries are f64 by default
 //! let point: Point = Point::new(1.0, 2.0, 3.0);

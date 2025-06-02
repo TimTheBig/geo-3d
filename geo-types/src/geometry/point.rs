@@ -21,7 +21,7 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 /// # Examples
 ///
 /// ```
-/// use geo_types::{coord, Point};
+/// use geo_3d_types::{coord, Point};
 /// let p1: Point = (0., 1., 2.).into();
 /// let c = coord! { x: 10., y: 20., z: 30. };
 /// let p2: Point = c.into();
@@ -66,7 +66,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.234, 2.345, 8.735);
     ///
@@ -83,7 +83,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.234, 2.345, 8.735);
     ///
@@ -99,7 +99,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.234, 2.345, 8.735);
     /// p.set_x(9.876);
@@ -117,7 +117,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     /// let mut p = Point::new(1.234, 2.345, 8.735);
     /// let mut p_x = p.x_mut();
     /// *p_x += 1.0;
@@ -132,7 +132,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.234, 2.345, 8.735);
     ///
@@ -148,7 +148,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.234, 2.345, 8.735);
     /// p.set_y(9.876);
@@ -166,7 +166,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     /// let mut p = Point::new(1.234, 2.345, 8.735);
     /// let mut p_y = p.y_mut();
     /// *p_y += 1.0;
@@ -182,7 +182,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.234, 2.345, 4.382);
     ///
@@ -198,7 +198,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.234, 2.345, 4.380);
     /// p.set_z(9.876);
@@ -216,7 +216,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     /// let mut p = Point::new(1.234, 2.345, 4.380);
     /// let mut p_y = p.z_mut();
     /// *p_y += 1.0;
@@ -232,7 +232,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.234, 2.345, 3.872);
     /// let (x, y) = p.x_y();
@@ -249,7 +249,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.234, 2.345, 7.509);
     /// let (x, y, z) = p.x_y_z();
@@ -270,7 +270,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{point, Point};
+    /// use geo_3d_types::{point, Point};
     ///
     /// let point = point! { x: 1.5, y: 0.5, z: 8.5 };
     /// let dot = point.dot(point! { x: 2.0, y: 4.5, z: 6.3 });
@@ -292,7 +292,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::point;
+    /// use geo_3d_types::point;
     ///
     /// let point_a = point! { x: 1., y: 2., z: 3. };
     /// let point_b = point! { x: 3., y: 5., z: 3. };
@@ -324,7 +324,7 @@ impl<T: CoordNum> Point<T> {
     /// # Examples
     ///
     /// ```
-    /// # use geo_types::point;
+    /// # use geo_3d_types::point;
     /// # use approx::assert_relative_eq;
     /// let c1 = point! {
     ///     x: 40.02f64,
@@ -352,7 +352,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// # Example
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.234, 2.345, 0.7531096);
     /// let (x, y, z): (f32, f32, f32) = p.to_degrees().x_y_z();
@@ -372,7 +372,7 @@ impl<T: CoordNum> Point<T> {
     ///
     /// # Example
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(180.0, 341.5, 43.15);
     /// let (x, y, z): (f32, f32, f32) = p.to_radians().x_y_z();
@@ -400,7 +400,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = -Point::new(-1.25, 2.5, -7.3);
     ///
@@ -421,7 +421,7 @@ impl<T: CoordNum> Add for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.25, 2.5, 5.0) + Point::new(1.5, 2.5, 5.0);
     ///
@@ -440,7 +440,7 @@ impl<T: CoordNum> AddAssign for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.25, 2.5, 5.0);
     /// p += Point::new(1.5, 2.5, 5.0);
@@ -462,7 +462,7 @@ impl<T: CoordNum> Sub for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(1.25, 3.0, 8.0) - Point::new(1.5, 2.5, 3.5);
     ///
@@ -481,7 +481,7 @@ impl<T: CoordNum> SubAssign for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(1.25, 2.5, 8.0);
     /// p -= Point::new(1.5, 2.5, 3.5);
@@ -503,7 +503,7 @@ impl<T: CoordNum> Mul<T> for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(2.0, 3.0, 5.0) * 2.0;
     ///
@@ -522,7 +522,7 @@ impl<T: CoordNum> MulAssign<T> for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(2.0, 3.0, 5.0);
     /// p *= 2.0;
@@ -544,7 +544,7 @@ impl<T: CoordNum> Div<T> for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let p = Point::new(2.0, 3.0, 5.0) / 2.0;
     ///
@@ -563,7 +563,7 @@ impl<T: CoordNum> DivAssign<T> for Point<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let mut p = Point::new(2.0, 3.0, 5.0);
     /// p /= 2.0;
@@ -592,7 +592,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let a = Point::new(2.0, 3.0, 1.01);
     /// let b = Point::new(2.0, 3.01, 1.02);
@@ -628,7 +628,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::Point;
+    /// use geo_3d_types::Point;
     ///
     /// let a = Point::new(2.0, 3.0, 4.0);
     /// let b = Point::new(2.0, 3.0000001, 4.1);

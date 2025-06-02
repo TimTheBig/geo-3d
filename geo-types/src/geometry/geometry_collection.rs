@@ -23,7 +23,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// ```
 /// use std::convert::TryFrom;
-/// use geo_types::{Point, point, Geometry, GeometryCollection};
+/// use geo_3d_types::{Point, point, Geometry, GeometryCollection};
 /// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
@@ -35,7 +35,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// ```
 /// use std::convert::TryFrom;
-/// use geo_types::{Point, point, Geometry, GeometryCollection};
+/// use geo_3d_types::{Point, point, Geometry, GeometryCollection};
 /// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
@@ -46,7 +46,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// ```
 /// use std::convert::TryFrom;
-/// use geo_types::{Point, point, Geometry, GeometryCollection};
+/// use geo_3d_types::{Point, point, Geometry, GeometryCollection};
 /// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let mut gc = GeometryCollection::new_from(vec![pe]);
@@ -63,7 +63,7 @@ use core::ops::{Index, IndexMut};
 ///
 /// ```
 /// use std::convert::TryFrom;
-/// use geo_types::{Point, point, Geometry, GeometryCollection};
+/// use geo_3d_types::{Point, point, Geometry, GeometryCollection};
 /// let p = point!(x: 1.0, y: 1.0, z: 1.0);
 /// let pe = Geometry::Point(p);
 /// let gc = GeometryCollection::new_from(vec![pe]);
@@ -242,7 +242,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{GeometryCollection, point};
+    /// use geo_3d_types::{GeometryCollection, point};
     ///
     /// let a = GeometryCollection::new_from(vec![point![x: 1.0, y: 2.0].into()]);
     /// let b = GeometryCollection::new_from(vec![point![x: 1.0, y: 2.01].into()]);
@@ -284,7 +284,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{GeometryCollection, point};
+    /// use geo_3d_types::{GeometryCollection, point};
     ///
     /// let a = GeometryCollection::new_from(vec![point![x: 0.0, y: 0.0].into()]);
     /// let b = GeometryCollection::new_from(vec![point![x: 0.0, y: 0.1].into()]);
