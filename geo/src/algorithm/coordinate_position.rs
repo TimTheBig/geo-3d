@@ -2,7 +2,7 @@ use geo_types::{coord, CoordNum};
 use std::cmp::Ordering;
 use std::ops::AddAssign;
 
-use super::TriangulateDelaunay;
+use super::Triangulate;
 use crate::geometry::*;
 use crate::intersects::{point_in_rect, value_in_between};
 use crate::kernels::*;
@@ -332,8 +332,9 @@ impl<T: GeoNum + Default> CoordinatePosition<T> for GeometryCow<'_, T> {
     }
 }
 
+// todo add `all_inside_poly` function to save on trianglulation
 fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: Coord<T>, boundary_count: &mut usize) -> CoordPos {
-    debug_assert!(poly.exterior().is_closed());
+    assert!(poly.exterior().is_closed());
 
     for linestring in poly.rings() {
         // LineString without points
@@ -348,7 +349,7 @@ fn inside_poly<T: CoordNum + Default>(poly: &Polygon<T>, coord: Coord<T>, bounda
     );
 
     // todo it should not be on boundary if it's on inner triangle boundary
-    for triangle in poly.delaunay_triangles_iter() {
+    for triangle in poly.triangles() {
         if line_tri_intersect(segment, triangle) {
             boundary_count.add_assign(1);
         }

@@ -161,8 +161,8 @@ pub mod translate;
 pub use translate::Translate;
 
 /// Triangulate polygons using an [ear-cutting algorithm](https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf).
-pub mod triangulate_delaunay;
-pub use triangulate_delaunay::TriangulateDelaunay;
+pub mod triangulate;
+pub use triangulate::Triangulate;
 
 /// Vector Operations for 3D coordinates
 mod vector_ops;

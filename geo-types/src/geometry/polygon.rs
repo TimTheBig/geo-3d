@@ -195,6 +195,23 @@ impl<T: CoordNum> Polygon<T> {
         &self.exterior
     }
 
+    /// Take the exterior `LineString` ring leving it empty.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use geo_3d_types::{LineString, Polygon};
+    ///
+    /// let exterior = LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]);
+    ///
+    /// let polygon = Polygon::new(exterior.clone(), vec![]);
+    ///
+    /// assert_eq!(polygon.exterior(), &exterior);
+    /// ```
+    pub fn take_exterior(&mut self) -> LineString<T> {
+        LineString(core::mem::take(&mut self.exterior.0))
+    }
+
     /// Execute the provided closure `f`, which is provided with a mutable
     /// reference to the exterior `LineString` ring.
     ///
@@ -203,7 +220,7 @@ impl<T: CoordNum> Polygon<T> {
     /// # Examples
     ///
     /// ```
-    /// use geo_types::{coord, LineString, Polygon};
+    /// use geo_3d_types::{coord, LineString, Polygon};
     ///
     /// let mut polygon = Polygon::new(
     ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.)]),
@@ -211,11 +228,12 @@ impl<T: CoordNum> Polygon<T> {
     /// );
     ///
     /// polygon.exterior_mut(|exterior| {
+    ///     exterior.0[1] = coord! { x: 1., y: 2., z: 1. };
     /// });
     ///
     /// assert_eq!(
     ///     polygon.exterior(),
-    ///     &LineString::from(vec![(0., 0.), (1., 2.), (1., 0.), (0., 0.),])
+    ///     &LineString::from(vec![(0., 0., 0.), (1., 2., 1.), (1., 0., 1.), (0., 0., 0.),])
     /// );
     /// ```
     ///
@@ -307,7 +325,7 @@ impl<T: CoordNum> Polygon<T> {
     /// assert!(polygon.interiors().is_empty());
     /// ```
     pub fn take_interiors(&mut self) -> Vec<LineString<T>> {
-        std::mem::take(&mut self.interiors)
+        core::mem::take(&mut self.interiors)
     }
 
     /// Execute the provided closure `f`, which is provided with a mutable
@@ -535,6 +553,23 @@ impl<T: CoordNum> Polygon<T> {
     pub fn exterior_lines(&self) -> impl Iterator<Item=Line<T>> {
         self.exterior.0.iter().zip(self.exterior.0.iter().cycle().skip(1))
             .map(|(start, end)| Line::new(*start, *end))
+    }
+
+    /// How many coords a `Polygon` contains in all rings
+    /// # Examples
+    ///
+    /// ```
+    /// # use geo_3d_types::{coord, Polygon, Line, LineString};
+    /// #
+    /// let polygon = Polygon::new(
+    ///     LineString::from(vec![(0., 0., 0.), (1., 1., 1.), (1., 0., 1.), (0., 0., 1.), (0., 0., 0.)]),
+    /// #    vec![],
+    /// );
+    ///
+    /// assert_eq!(polygon.coords_count(), 5);
+    /// ```
+    pub fn coords_count(&self) -> usize {
+        self.rings().flatten().count()
     }
 }
 

@@ -94,7 +94,7 @@ fn point_rect_intersection(c: &mut Criterion) {
 }
 
 fn point_triangle_intersection(c: &mut Criterion) {
-    use geo_3d::{Centroid, TriangulateDelaunay};
+    use geo_3d::{Centroid, Triangulate};
     use geo_types::{Point, Triangle};
     let plot_centroids: Vec<Point> = geo_test_fixtures::nl_plots_wgs84()
         .iter()
@@ -102,7 +102,7 @@ fn point_triangle_intersection(c: &mut Criterion) {
         .collect();
     let zone_triangles: Vec<Triangle> = geo_test_fixtures::nl_zones()
         .iter()
-        .flat_map(|plot| plot.delaunay_triangles_iter())
+        .flat_map(|plot| plot.triangles_iter())
         .collect();
 
     c.bench_function("Point intersects triangle", |bencher| {

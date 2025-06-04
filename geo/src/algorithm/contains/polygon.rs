@@ -1,7 +1,7 @@
 use super::{impl_contains_from_relate, impl_contains_geometry_for, Contains, ContainsXY};
 use crate::coordinate_position::CoordPos;
 use crate::geometry::*;
-use crate::GeoNum;
+use crate::{GeoNum, CoordNum};
 use crate::{HasDimensions, Relate};
 
 // ┌─────────────────────────────┐
@@ -149,7 +149,8 @@ impl<T: GeoNum> Contains<MultiPoint<T>> for MultiPolygon<T> {
         if self.is_empty() || rhs.is_empty() {
             return false;
         }
-        rhs.iter().all(|point| self.contains(point))
+        // rhs.iter().all(|point| self.contains(point))
+        multipolygon_contains_many(self, &rhs.0)
     }
 }
 
@@ -199,4 +200,72 @@ impl<F: GeoNum> Contains<Triangle<F>> for MultiPolygon<F> {
     fn contains(&self, rhs: &Triangle<F>) -> bool {
         rhs.relate(self).is_within()
     }
+}
+
+fn multipolygon_contains_many<T: CoordNum, C: Into<Coord<T>> + Copy>(mpoly: &MultiPolygon<T>, coords: &[C]) -> bool {
+    mpoly.iter().any(|poly| polygon_contains_many(poly, coords))
+}
+
+/// Function to save on trianglulation
+fn polygon_contains_many<T: CoordNum, C: Into<Coord<T>> + Copy>(poly: &Polygon<T>, coords: &[C]) -> bool {
+    use crate::Triangulate;
+    // todo bounding box skip optamizeation
+    // use super::BoundingRect;
+
+    assert!(poly.exterior().is_closed());
+
+    if poly.coords_count() < 3 {
+        return false;
+    }
+
+    let tri_poly = poly.triangles();
+
+    fn inside_tri_poly<T: CoordNum + Default>(poly: &[Triangle<T>], coord: Coord<T>) -> bool {
+        let mut boundary_count: usize = 0;
+
+        let segment = Line::new(
+            coord,
+            crate::coord!(MAX),
+        );
+
+        // todo it should not be on boundary if it's on inner triangle boundary
+        for triangle in poly {
+            if line_tri_intersect(segment, triangle) {
+                boundary_count += 1;
+            }
+        }
+
+        // is odd
+        if boundary_count % 2 != 0 {
+            // Inside
+            true
+        } else {
+            // Outside
+            false
+        }
+    }
+
+    /// Checks if a ray(`Line`) intersects a `Triangle`
+    fn line_tri_intersect<T: CoordNum>(segment: Line<T>, tri: &Triangle<T>) -> bool {
+        use crate::kernels::{robust::RobustKernel, Kernel};
+
+        let s1 = RobustKernel::orient3d(segment.start, tri.0, tri.1, tri.2);
+        let s2 = RobustKernel::orient3d(segment.end, tri.0, tri.1, tri.2);
+        // Test whether the two extermities of the segment
+        // are on the same side of the supporting plane of the triangle
+        if s1 == s2 {
+            return false;
+        }
+
+        // Now we know that the segment 'straddles' the supporting plane.
+        // We need to test whether the three tetrahedra formed
+        // by the segment and the three edges of the triangle have the same orientation
+        let s3 = RobustKernel::orient3d(segment.start, segment.end, tri.0, tri.1);
+        let s4 = RobustKernel::orient3d(segment.start, segment.end, tri.1, tri.2);
+        let s5 = RobustKernel::orient3d(segment.start, segment.end, tri.2, tri.0);
+
+        s3 == s4 && s4 == s5
+    }
+
+    coords.iter().all(|c| inside_tri_poly(&tri_poly, Into::<Coord<T>>::into(*c)))
 }

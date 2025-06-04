@@ -78,6 +78,21 @@ impl<T: CoordNum> From<Coord<T>> for [T; 3] {
     }
 }
 
+#[cfg(feature = "earclip-rs")]
+impl<T: CoordNum> earclip_rs::GetXYZ for Coord<T> {
+    fn x(&self) -> f64 {
+        self.x.to_f64().unwrap()
+    }
+
+    fn y(&self) -> f64 {
+        self.y.to_f64().unwrap()
+    }
+
+    fn z(&self) -> Option<f64> {
+        Some(self.z.to_f64().unwrap())
+    }
+}
+
 impl Coord<f64> {
     /// A `Coord` with all max finite values.
     pub const MAX: Self = Coord { x: f64::MAX, y: f64::MAX, z: f64::MAX };

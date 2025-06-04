@@ -1,4 +1,4 @@
-use super::TriangulateDelaunay;
+use super::Triangulate;
 use crate::geometry::*;
 use crate::CoordNum;
 use std::iter::Sum;
@@ -128,23 +128,19 @@ where
 /// **Note.** The implementation handles polygons whose
 /// holes do not all have the same orientation. The sign of
 /// the output is the same as that of the exterior shell.
-impl<T> Area<T> for Polygon<T>
-where
-    T: CoordNum + Sum<T>,
-{
+impl<T: CoordNum + Sum<T>> Area<T> for Polygon<T> {
     fn signed_area(&self) -> T {
-        self.delaunay_triangles_iter().map(|tri| tri.signed_area()).sum()
+        self.triangles().iter()
+            .map(|tri| tri.signed_area()).sum()
     }
 
     fn unsigned_area(&self) -> T {
-        self.delaunay_triangles_iter().map(|tri| tri.unsigned_area()).sum::<T>().abs()
+        self.triangles().iter()
+            .map(|tri| tri.unsigned_area()).sum()
     }
 }
 
-impl<T> Area<T> for MultiPoint<T>
-where
-    T: CoordNum,
-{
+impl<T: CoordNum> Area<T> for MultiPoint<T> {
     fn signed_area(&self) -> T {
         T::zero()
     }
